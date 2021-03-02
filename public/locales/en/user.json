@@ -1,0 +1,8 @@
+{
+  "user-name-taken": "This user name is already taken",
+  "email-taken": "Thie Email is already taken",
+  "not-found": "User not found",
+  "invalid-email": "Invalid email",
+  "error-password": "Password must contain at least one letter and one number",
+  "password-8": "Password must contain at least 8 characters"
+}

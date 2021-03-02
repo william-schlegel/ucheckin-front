@@ -1,0 +1,20 @@
+{
+  "name": "Name",
+  "owner": "Owner",
+  "status": "Status",
+  "action": "Action",
+  "actions": "Actions",
+  "license": "License",
+  "new": "New",
+  "delete": "Delete",
+  "edit": "Edit",
+  "update": "Update",
+  "save": "save",
+  "cancel": "Cancel",
+  "loading": "Loading...",
+  "required": "This field is required",
+  "search": "Search...",
+  "description": "Description",
+  "description-description": "Description for internal usage",
+  "unknown": "Unknown"
+}

@@ -1,0 +1,13 @@
+{
+  "invalid-password": "The password is invalid or the user does not have password",
+  "connection": "Connection",
+  "enter-email-pwd": "Enter your email address or your user name and your password",
+  "email": "Your email or user name",
+  "password": "Your password",
+  "remember-me": "Remember me",
+  "login": "Login",
+  "create-account": "Create an account",
+  "email-required": "The email or user name is required",
+  "password-required": "The password is required",
+  "disconnected-message": "You are disconnected, you will be redirected to the login page"
+}

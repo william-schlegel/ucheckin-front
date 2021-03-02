@@ -1,0 +1,9 @@
+{
+  "title": "List of applications",
+  "api-key": "API Key",
+  "save-ok": "Application saved",
+  "save-error": "Error while saving application: ",
+  "deleted": "Application deleted",
+  "application": "Application",
+  "licenceModel": "Licence Model"
+}

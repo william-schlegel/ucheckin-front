@@ -1,0 +1,14 @@
+{
+  "user-created": "User created",
+  "new-account": "New Account",
+  "enter-email": "Enter your email and password to signin",
+  "first-name": "First name",
+  "name": "Last name",
+  "user-name": "User name",
+  "email": "Email",
+  "password": "Password",
+  "company": "Company",
+  "submit": "Submit",
+  "have-account": "Do you already have an account?",
+  "login": "Login"
+}
