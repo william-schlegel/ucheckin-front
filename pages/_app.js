@@ -1,7 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import NProgress from 'nprogress';
 import Router from 'next/router';
-import { appWithTranslation } from 'next-i18next';
 
 import Page from '../components/Page';
 import '../components/styles/nprogress.css';
@@ -34,4 +33,4 @@ MyApp.getInitialProps = async function ({ Component, ctx }) {
   return { pageProps };
 };
 
-export default withData(appWithTranslation(MyApp));
+export default withData(MyApp);

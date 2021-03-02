@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
 import Header from './Header';
+import Nav from './Nav';
 
 const GlobalStyles = createGlobalStyle`
   html {
@@ -30,7 +31,7 @@ const GlobalStyles = createGlobalStyle`
   }
   a {
     text-decoration: none;
-    color: var(--black);
+    color: var(--blue);
   }
   a:hover {
     text-decoration: underline;
@@ -38,18 +39,28 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const InnerStyles = styled.div`
-  max-width: var(--maxWidth);
+  /* max-width: var(--maxWidth); */
+  width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  grid-area: 2 / 2 / 3 / 3;
 `;
 
+const MainScreen = styled.div`
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) 10fr;
+  grid-template-rows: 1fr auto;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+`;
 export default function Page({ children }) {
   return (
-    <div>
+    <MainScreen>
       <GlobalStyles />
       <Header />
+      <Nav />
       <InnerStyles>{children}</InnerStyles>
-    </div>
+    </MainScreen>
   );
 }
 
