@@ -1,6 +1,7 @@
 {
   "name": "Name",
   "owner": "Owner",
+  "users": "Users",
   "status": "Status",
   "action": "Action",
   "actions": "Actions",
@@ -16,5 +17,10 @@
   "search": "Search...",
   "description": "Description",
   "description-description": "Description for internal usage",
-  "unknown": "Unknown"
+  "unknown": "Unknown",
+  "page-count": "Page {{page}} of {{count}}",
+  "prev": "Prev.",
+  "next": "Next",
+  "item-count": "{{count}} item only",
+  "item-count_plural": "{{count}} items total"
 }

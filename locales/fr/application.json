@@ -1,9 +1,11 @@
 {
-  "title": "List of applications",
-  "api-key": "API Key",
-  "save-ok": "Application saved",
-  "save-error": "Error while saving application: ",
-  "deleted": "Application deleted",
+  "title": "Liste des applications",
+  "api-key": "Clé API",
+  "save-ok": "Application enregistrée",
+  "save-error": "Erreur lors de la sauvegarde de l'application: {{error}}",
+  "deleted": "Application supprimée",
   "application": "Application",
-  "licenceModel": "Licence Model"
+  "applications": "Applications",
+  "licenceModel": "Modèle de license",
+  "date-expiration": "Date dexpiration de la license"
 }

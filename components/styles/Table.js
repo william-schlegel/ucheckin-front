@@ -5,7 +5,8 @@ const Table = styled.table`
   width: 100%;
   border: 1px solid var(--offWhite);
   thead {
-    font-size: 10px;
+    font-weight: 500;
+    font-size: 2rem;
   }
   td,
   th {
@@ -16,9 +17,12 @@ const Table = styled.table`
     &:last-child {
       border-right: none;
       width: 150px;
-      button {
-        width: 100%;
-      }
+    }
+    .badge {
+      margin-right: 3px;
+      border: 1px solid var(--offWhite);
+      border-radius: 1rem;
+      padding: 0.5rem 1rem;
     }
   }
   tr {

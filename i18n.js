@@ -5,6 +5,6 @@ module.exports = {
     '*': ['common', 'navigation'],
     '/': ['dashboard'],
     '/signin': ['signin', 'signup'],
-    '/application': ['application'],
+    'rgx:^/application': ['application'],
   },
 };
