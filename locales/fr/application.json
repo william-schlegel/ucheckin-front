@@ -6,6 +6,8 @@
   "deleted": "Application supprimée",
   "application": "Application",
   "applications": "Applications",
-  "licenceModel": "Modèle de license",
-  "date-expiration": "Date dexpiration de la license"
+  "licence-model": "Modèle de license",
+  "date-expiration": "Date dexpiration de la license",
+  "none": "Pas de license",
+  "licence-unkown": "License inconnue : {{code}}"
 }

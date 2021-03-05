@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTable } from 'react-table';
 import useTranslation from 'next-translate/useTranslation';
 
-import TableStyle from './styles/Table';
+import TableStyle, { Badge } from './styles/Table';
 import DisplayError from './ErrorMessage';
 import Loading from './Loading';
 import ActionButton from './ActionButton';
@@ -29,8 +29,6 @@ export default function Table({
 }) {
   const hiddenColumns = useMemo(() => {
     const colId = columns.findIndex((c) => c.accessor === 'id');
-    console.log('columns', columns);
-    console.log('colId', colId);
     if (colId >= 0) return ['id'];
     return [];
   }, [columns]);
@@ -60,11 +58,9 @@ export default function Table({
       <tbody {...getTableBodyProps()}>
         {rows.map((row) => {
           prepareRow(row);
-          console.log('row', row);
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                console.log('cell', cell);
                 if (cell.column.id === 'action-buttons') {
                   return (
                     <td {...cell.getCellProps()}>
@@ -82,9 +78,7 @@ export default function Table({
                   return (
                     <td {...cell.getCellProps()}>
                       {row.original.users.map((user) => (
-                        <span className="badge" key={user.id}>
-                          {user.name}
-                        </span>
+                        <Badge key={user.id}>{user.name}</Badge>
                       ))}
                     </td>
                   );

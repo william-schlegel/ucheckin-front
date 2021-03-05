@@ -6,5 +6,7 @@
   "deleted": "Application deleted",
   "application": "Application",
   "applications": "Applications",
-  "licenceModel": "Licence Model"
+  "licence-model": "Licence Model",
+  "none": "No licence",
+  "licence-unkown": "Licence unknown : {{code}}"
 }

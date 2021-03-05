@@ -1,12 +1,16 @@
 import styled from 'styled-components';
 
-const IconButtonStyles = styled.button`
-  margin: 0 0.5rem 0 0;
+const IconButtonStyles = styled.button.attrs((props) => ({
+  color: props.color || 'var(--blue)',
+  hoverColor: props.hoverColor || 'var(--pink)',
+}))`
+  margin: 0;
   height: 100%;
   background-color: transparent;
   border: transparent none;
+  color: ${(props) => props.color};
   &:hover {
-    background-color: var(--pink);
+    color: ${(props) => props.hoverColor};
   }
 `;
 

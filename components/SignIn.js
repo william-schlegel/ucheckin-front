@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import Form from './styles/Form';
@@ -24,11 +25,12 @@ const SIGNIN_MUTATION = gql`
 `;
 
 export default function SignIn() {
-  const { inputs, handleChange, resetForm } = useForm({
+  const initialState = useRef({
     email: '',
     password: '',
   });
-  const [signin, { data, loading }] = useMutation(SIGNIN_MUTATION, {
+  const { inputs, handleChange, resetForm } = useForm(initialState.current);
+  const [signin, { data }] = useMutation(SIGNIN_MUTATION, {
     variables: inputs,
     // refetch the currently logged in user
     refetchQueries: [{ query: CURRENT_USER_QUERY }],

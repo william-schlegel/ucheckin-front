@@ -58,7 +58,7 @@ const HeaderStyles = styled.header`
         margin: 0.25rem;
         padding: 0;
         li {
-          font-size: 2rem;
+          /* font-size: 2rem; */
           display: block;
           width: 100%;
           padding: 0.5rem 2rem;

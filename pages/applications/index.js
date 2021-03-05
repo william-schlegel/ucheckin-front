@@ -10,7 +10,7 @@ import { perPage } from '../../config';
 import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
 
-export const PAGINATION_QUERY = gql`
+const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
     countPage: _allApplicationsMeta {
       count
@@ -18,7 +18,7 @@ export const PAGINATION_QUERY = gql`
   }
 `;
 
-const ALL_APPLICATIONS_QUERY = gql`
+export const ALL_APPLICATIONS_QUERY = gql`
   query ALL_APPLICATIONS_QUERY($skip: Int = 0, $first: Int) {
     allApplications(first: $first, skip: $skip) {
       id
@@ -37,11 +37,11 @@ const ALL_APPLICATIONS_QUERY = gql`
 `;
 
 export default function Applications() {
-  const { query } = useRouter();
+  const router = useRouter();
   const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
     PAGINATION_QUERY
   );
-  const page = parseInt(query.page) || 1;
+  const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.countPage || 1;
   const { t } = useTranslation('application');
   const { data, error, loading } = useQuery(ALL_APPLICATIONS_QUERY, {
@@ -59,6 +59,7 @@ export default function Applications() {
   ]);
 
   function editApplication(id) {
+    router.push(`/application/${id}`);
     console.log(`edit ${id}`);
   }
 

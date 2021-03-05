@@ -22,5 +22,12 @@
   "prev": "Préc.",
   "next": "Suiv.",
   "item-count": "{{count}} élément seulement",
-  "item-count_plural": "{{count}} éléments au total"
+  "item-count_plural": "{{count}} éléments au total",
+  "copy": "Copier dans le presse-papier",
+  "copied": "Elément copié !",
+  "search-user": "Rechercher un utilisateur",
+  "search-users": "Rechercher des utilisateurs",
+  "user-not-found": "aucun utilisateur trouvé",
+  "date": "Date",
+  "back": "Retour vers {{label}}"
 }

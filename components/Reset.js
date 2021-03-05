@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import Form from './styles/Form';
@@ -22,11 +24,12 @@ const RESET_MUTATION = gql`
 `;
 
 export default function Reset({ token }) {
-  const { inputs, handleChange, resetForm } = useForm({
+  const initialState = useRef({
     email: '',
     password: '',
     token,
   });
+  const { inputs, handleChange, resetForm } = useForm(initialState);
   const [reset, { data, loading, error }] = useMutation(RESET_MUTATION, {
     variables: inputs,
   });
@@ -79,3 +82,7 @@ export default function Reset({ token }) {
     </Form>
   );
 }
+
+Reset.propTypes = {
+  token: PropTypes.string.isRequired,
+};

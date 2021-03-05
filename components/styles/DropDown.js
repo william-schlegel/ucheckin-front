@@ -34,11 +34,16 @@ const glow = keyframes`
 
 const SearchStyles = styled.div`
   position: relative;
+  width: 100%;
   input {
+    padding: 1rem;
+    /* font-size: 1.5rem; */
+    border: 1px solid var(--lightGray);
     width: 100%;
-    padding: 10px;
-    border: 0;
-    font-size: 2rem;
+    &:focus {
+      outline: 0;
+      border-color: var(--blue);
+    }
     &.loading {
       animation: ${glow} 0.5s ease-in-out infinite alternate;
     }

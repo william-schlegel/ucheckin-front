@@ -6,7 +6,7 @@ const NavStyles = styled.ul`
   padding: 0;
   display: flex;
   flex-direction: column;
-  font-size: 2rem;
+  font-size: 1.25rem;
   border-right: var(--lightGray) solid 1px;
   a,
   button {
@@ -16,7 +16,7 @@ const NavStyles = styled.ul`
     position: relative;
     text-transform: uppercase;
     font-weight: 900;
-    font-size: 1em;
+    /* font-size: 1em; */
     background: none;
     border: 0;
     white-space: nowrap;
@@ -52,7 +52,7 @@ const NavStyles = styled.ul`
     border-top: 1px solid var(--lightGrey);
     width: 100%;
     /* justify-content: center; */
-    font-size: 1.5rem;
+    /* font-size: 1.5rem; */
   }
 `;
 

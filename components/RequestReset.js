@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import Form from './styles/Form';
@@ -14,9 +15,10 @@ const REQUEST_RESET_MUTATION = gql`
 `;
 
 export default function RequestReset() {
-  const { inputs, handleChange, resetForm } = useForm({
+  const initialState = useRef({
     email: '',
   });
+  const { inputs, handleChange, resetForm } = useForm(initialState);
   const [signup, { data, loading, error }] = useMutation(
     REQUEST_RESET_MUTATION,
     {

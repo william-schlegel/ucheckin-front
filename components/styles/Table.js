@@ -6,7 +6,7 @@ const Table = styled.table`
   border: 1px solid var(--offWhite);
   thead {
     font-weight: 500;
-    font-size: 2rem;
+    /* font-size: 2rem; */
   }
   td,
   th {
@@ -18,18 +18,21 @@ const Table = styled.table`
       border-right: none;
       width: 150px;
     }
-    .badge {
-      margin-right: 3px;
-      border: 1px solid var(--offWhite);
-      border-radius: 1rem;
-      padding: 0.5rem 1rem;
-    }
   }
   tr {
     &:hover {
       background: var(--offWhite);
     }
   }
+`;
+
+export const Badge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  margin: 0 3px 0 0;
+  border: 1px solid var(--offWhite);
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
 `;
 
 export default Table;

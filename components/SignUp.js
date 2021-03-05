@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import Form from './styles/Form';
@@ -19,11 +20,12 @@ const SIGNUP_MUTATION = gql`
 `;
 
 export default function SignUp() {
-  const { inputs, handleChange, resetForm } = useForm({
+  const initialState = useRef({
     email: '',
     name: '',
     password: '',
   });
+  const { inputs, handleChange, resetForm } = useForm(initialState.current);
   const [signup, { data, loading, error }] = useMutation(SIGNUP_MUTATION, {
     variables: inputs,
     // refectch the currently logged in user

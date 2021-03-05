@@ -1,5 +1,5 @@
-import Document, { Html, Head, NextScript, Main } from "next/document";
-import { ServerStyleSheet } from "styled-components";
+import Document, { Html, Head, NextScript, Main } from 'next/document';
+import { ServerStyleSheet } from 'styled-components';
 
 export default class MyDocument extends Document {
   static getInitialProps({ renderPage }) {
@@ -14,7 +14,12 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="en-US">
-        <Head />
+        <Head>
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/2.14.1/react-datepicker.min.css"
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />

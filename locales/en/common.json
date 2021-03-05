@@ -22,5 +22,12 @@
   "prev": "Prev.",
   "next": "Next",
   "item-count": "{{count}} item only",
-  "item-count_plural": "{{count}} items total"
+  "item-count_plural": "{{count}} items total",
+  "copy": "Copy to Clipboard",
+  "copied": "Element copied!",
+  "search-user": "Search for user",
+  "search-users": "Search for users",
+  "user-not-found": "No user found",
+  "date": "Date",
+  "back": "Back to {{label}}"
 }
