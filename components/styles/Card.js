@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const Card = styled.div`
   box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05);
@@ -67,7 +67,7 @@ export const FormBody = styled.div`
   input,
   textarea,
   select {
-    padding: 1rem;
+    padding: 0.5rem;
     font-size: 1.25rem;
     border: 1px solid var(--lightGray);
     width: 100%;
@@ -76,6 +76,10 @@ export const FormBody = styled.div`
       border-color: var(--blue);
     }
   }
+`;
+
+export const FormBodyFull = styled(FormBody)`
+  grid-template-columns: auto;
 `;
 
 export const FormFooter = styled.div`
@@ -88,11 +92,52 @@ export const FormFooter = styled.div`
 
 export const FormHeader = styled.div`
   display: flex;
+  width: 100%;
   align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid var(--lightGray);
   margin: 1rem 0;
   padding-bottom: 1rem;
   font-size: 1.5rem;
   color: var(--blue);
+  justify-content: space-between;
+`;
+
+export const FormTitle = styled.div`
+  display: flex;
+  align-items: center;
+  span {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    color: var(--pink);
+  }
+`;
+
+const loading = keyframes`
+  from {
+    background-position: 0 0;
+    /* rotate: 0; */
+  }
+
+  to {
+    background-position: 100% 100%;
+    /* rotate: 360deg; */
+  }
+`;
+
+export const FormWithBar = styled(Form)`
+  &::before {
+    height: 10px;
+    content: '';
+    display: block;
+    background-image: linear-gradient(
+      to right,
+      var(--blue) 0%,
+      var(--pink) 50%,
+      var(--blue) 100%
+    );
+    &[aria-busy='true']::before {
+      background-size: 50% auto;
+      animation: ${loading} 0.5s linear infinite;
+    }
+  }
 `;

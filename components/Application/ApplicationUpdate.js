@@ -21,7 +21,7 @@ const UPDATE_APPLICATION_MUTATION = gql`
         name: $name
         apiKey: $apiKey
         owner: { connect: $owner }
-        users: { connect: $users }
+        users: { disconnectAll: true, connect: $users }
         license: $license
         validity: $validity
       }
@@ -36,7 +36,7 @@ function update(cache, payload) {
   cache.evict(cache.identify(payload.data.updateApplication));
 }
 
-export default function UpdateApplication({ id, updatedApp }) {
+export default function UpdateApplication({ id, updatedApp, onSuccess }) {
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION_MUTATION
   );
@@ -51,8 +51,6 @@ export default function UpdateApplication({ id, updatedApp }) {
     id,
   };
 
-  console.log('variables', variables);
-
   return (
     <>
       <ButtonValidation
@@ -62,6 +60,7 @@ export default function UpdateApplication({ id, updatedApp }) {
             variables,
             update,
           }).catch((err) => alert(err.message));
+          onSuccess();
         }}
         update
       />
@@ -80,4 +79,5 @@ UpdateApplication.propTypes = {
     license: PropTypes.string,
     validity: PropTypes.string,
   }),
+  onSuccess: PropTypes.func.isRequired,
 };

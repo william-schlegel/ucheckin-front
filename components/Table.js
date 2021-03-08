@@ -3,10 +3,11 @@ import { useMemo } from 'react';
 import { useTable } from 'react-table';
 import useTranslation from 'next-translate/useTranslation';
 
-import TableStyle, { Badge } from './styles/Table';
+import TableStyle from './styles/Table';
 import DisplayError from './ErrorMessage';
 import Loading from './Loading';
 import ActionButton from './Buttons/ActionButton';
+import Badge from './styles/Badge';
 
 export function useColumns(columns) {
   const { t } = useTranslation('common');

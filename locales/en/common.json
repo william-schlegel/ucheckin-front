@@ -30,5 +30,8 @@
   "user-not-found": "No user found",
   "date": "Date",
   "back": "Back to {{label}}",
-  "close": "Close"
+  "close": "Close",
+  "confirm-delete": "Can you confirm deletion of this item?",
+  "help": "Help",
+  "ok": "Okay"
 }

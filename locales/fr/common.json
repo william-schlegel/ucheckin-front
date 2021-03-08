@@ -30,5 +30,8 @@
   "user-not-found": "aucun utilisateur trouvé",
   "date": "Date",
   "back": "Retour vers {{label}}",
-  "close": "Fermer"
+  "close": "Fermer",
+  "confirm-delete": "Pouvez-vous confirmer la suppression de cet élément ?",
+  "help": "Aide",
+  "ok": "Ok"
 }

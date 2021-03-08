@@ -8,5 +8,9 @@
   "applications": "Applications",
   "licence-model": "Licence Model",
   "none": "No licence",
-  "licence-unkown": "Licence unknown : {{code}}"
+  "licence-unkown": "Licence unknown : {{code}}",
+  "new-application": "New application",
+  "date-expiration": "Expiration date",
+  "help-title": "Help about applications",
+  "help-text": "Some help text"
 }

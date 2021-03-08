@@ -16,19 +16,21 @@ import {
   Row,
   Label,
   FormHeader,
+  FormTitle,
 } from '../styles/Card';
 import ActionButton from '../Buttons/ActionButton';
 import { useUser } from '../User';
 import useForm from '../../lib/useForm';
-import { Badge } from '../styles/Table';
+import Badge from '../styles/Badge';
 import SearchUser from '../SearchUser';
 import DatePicker, { formatDate } from '../DatePicker';
 import ApplicationDelete from './ApplicationDelete';
 import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
+import Modale from '../Modale';
 
-const QUERY_APPLICATION = gql`
+export const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
     Application(where: { id: $id }) {
       name
@@ -54,6 +56,7 @@ export default function Application({ id }) {
   const [editOwner, setEditOwner] = useState(false);
   const [editUsers, setEditUsers] = useState(false);
   const [showDate, setShowDate] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const { t } = useTranslation('application');
   const clipboard = useClipboard({
@@ -94,7 +97,8 @@ export default function Application({ id }) {
   }, [setInputs, data]);
 
   function removeUser(idUser) {
-    console.log('remove user', idUser);
+    const users = inputs.users.filter((u) => u.key !== idUser);
+    setInputs({ ...inputs, users });
   }
 
   function handleDateChange(dt) {
@@ -120,140 +124,166 @@ export default function Application({ id }) {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <Form>
-      <FormHeader>
-        <span>
-          {t('application')} {inputs.name}
-        </span>
-        <ButtonBack route="/applications" label={t('navigation:application')} />
-      </FormHeader>
-      <FormBody>
-        {canEdit ? (
-          <Row>
-            <Label htmlFor="name" required>
-              {t('common:name')}
-            </Label>
-            <input
-              required
-              type="text"
-              id="name"
-              name="name"
-              value={inputs.name}
-              onChange={handleChange}
-            />
-          </Row>
-        ) : (
-          <Row>
-            <Label>{t('common:name')}</Label>
-            <span>{inputs.name}</span>
-          </Row>
-        )}
-        <Row>
-          <Label>{t('api-key')}</Label>
-          <Block>
-            <span>{inputs.apiKey}</span>
+    <>
+      <Modale
+        isOpen={helpOpen}
+        setIsOpen={setHelpOpen}
+        title={t('help-title')}
+        cancelLabel={t('common:ok')}
+      >
+        <p>{t('help-text')}</p>
+      </Modale>
+      <Form>
+        <FormHeader>
+          <FormTitle>
+            {t('application')} <span>{inputs.name}</span>
             <ActionButton
-              type="copy"
-              cb={() => clipboard.copy(inputs.apiKey)}
+              type="help"
+              label={t('common:help')}
+              cb={() => setHelpOpen(true)}
             />
-            {clipboard.copied && <span>{t('common:copied')}</span>}
-          </Block>
-        </Row>
-        <Row>
-          <Label>{t('common:owner')}</Label>
-          <Block>
-            <span>{inputs.owner.value}</span>
-            {user.role.canManageApplication && (
-              <ActionButton type="edit" cb={() => setEditOwner(!editOwner)} />
-            )}
-            {user.role.canManageApplication && editOwner && (
-              <SearchUser
+          </FormTitle>
+          <ButtonBack
+            route="/applications"
+            label={t('navigation:application')}
+          />
+        </FormHeader>
+        <FormBody>
+          {canEdit ? (
+            <Row>
+              <Label htmlFor="name" required>
+                {t('common:name')}
+              </Label>
+              <input
                 required
-                name="owner"
-                value={inputs.owner}
+                type="text"
+                id="name"
+                name="name"
+                value={inputs.name}
                 onChange={handleChange}
               />
+            </Row>
+          ) : (
+            <Row>
+              <Label>{t('common:name')}</Label>
+              <span>{inputs.name}</span>
+            </Row>
+          )}
+          <Row>
+            <Label>{t('api-key')}</Label>
+            <Block>
+              <span>{inputs.apiKey}</span>
+              <ActionButton
+                type="copy"
+                cb={() => clipboard.copy(inputs.apiKey)}
+              />
+              {clipboard.copied && <span>{t('common:copied')}</span>}
+            </Block>
+          </Row>
+          <Row>
+            <Label>{t('common:owner')}</Label>
+            <Block>
+              <span>{inputs.owner.value}</span>
+              {user.role.canManageApplication && (
+                <ActionButton type="edit" cb={() => setEditOwner(!editOwner)} />
+              )}
+              {user.role.canManageApplication && editOwner && (
+                <SearchUser
+                  required
+                  name="owner"
+                  value={inputs.owner}
+                  onChange={handleChange}
+                />
+              )}
+            </Block>
+          </Row>
+          <Row>
+            <Label>{t('common:users')}</Label>
+            <Block>
+              {inputs.users.map((u) => (
+                <Badge key={u.key}>
+                  <span>{u.value}</span>
+                  {canEdit && (
+                    <ActionButton
+                      type="delete"
+                      size={20}
+                      cb={() => removeUser(u.key)}
+                    />
+                  )}
+                </Badge>
+              ))}
+              {canEdit && (
+                <ActionButton type="edit" cb={() => setEditUsers(!editUsers)} />
+              )}
+            </Block>
+            {canEdit && editUsers && (
+              <>
+                <span>&nbsp;</span>
+                <SearchUser
+                  required
+                  name="users"
+                  value={inputs.users}
+                  onChange={handleChange}
+                  multiple
+                />
+              </>
             )}
-          </Block>
-        </Row>
-        <Row>
-          <Label>{t('common:users')}</Label>
-          <Block>
-            {inputs.users.map((u) => (
-              <Badge key={u.key}>
-                <span>{u.value}</span>
-                {canEdit && (
-                  <ActionButton
-                    type="delete"
-                    size={20}
-                    cb={() => removeUser(u.key)}
+          </Row>
+          {user.role.canManageApplication ? (
+            <Row>
+              <Label htmlFor="license">{t('licence-model')}</Label>
+              <select
+                required
+                type="text"
+                id="license"
+                name="license"
+                value={inputs.license}
+                onChange={handleChange}
+              >
+                {['NONE', 'UCHECKIN', 'WIUS'].map((l) => (
+                  <option key={l} value={l}>
+                    {getLicenseName(l)}
+                  </option>
+                ))}
+              </select>
+            </Row>
+          ) : (
+            <Row>
+              <Label>{t('licence-model')}</Label>
+              <span>{getLicenseName(inputs.license)}</span>
+            </Row>
+          )}
+          {inputs.license === 'WIUS' && (
+            <Row>
+              <Label>{t('date-expiration')}</Label>
+              <Block>
+                <span>{formatDate(inputs.validity)}</span>
+                {user.role.canManageApplication && (
+                  <ActionButton type="date" cb={() => setShowDate(!showDate)} />
+                )}
+                {user.role.canManageApplication && showDate && (
+                  <DatePicker
+                    ISOStringValue={inputs.validity}
+                    onChange={handleDateChange}
                   />
                 )}
-              </Badge>
-            ))}
-            {canEdit && (
-              <ActionButton type="edit" cb={() => setEditUsers(!editUsers)} />
-            )}
-          </Block>
-          {canEdit && editUsers && (
-            <>
-              <span>&nbsp;</span>
-              <SearchUser
-                required
-                name="users"
-                value={inputs.users}
-                onChange={handleChange}
-                multiple
-              />
-            </>
+              </Block>
+            </Row>
+          )}{' '}
+        </FormBody>
+        <FormFooter>
+          {canEdit && id && (
+            <ApplicationUpdate
+              id={id}
+              updatedApp={inputs}
+              onSuccess={() => Router.push('/applications')}
+            />
           )}
-        </Row>
-        {user.role.canManageApplication ? (
-          <Row>
-            <Label htmlFor="license">{t('licence-model')}</Label>
-            <select
-              required
-              type="text"
-              id="license"
-              name="license"
-              value={inputs.license}
-              onChange={handleChange}
-            >
-              {['NONE', 'UCHECKIN', 'WIUS'].map((l) => (
-                <option key={l} value={l}>
-                  {getLicenseName(l)}
-                </option>
-              ))}
-            </select>
-          </Row>
-        ) : (
-          <Row>
-            <Label>{t('licence-model')}</Label>
-            <span>{getLicenseName(inputs.license)}</span>
-          </Row>
-        )}
-        <Row>
-          <Label>{t('date-expiration')}</Label>
-          <Block>
-            <span>{formatDate(inputs.validity)}</span>
-            {user.role.canManageApplication && (
-              <ActionButton type="date" cb={() => setShowDate(!showDate)} />
-            )}
-            {user.role.canManageApplication && showDate && (
-              <DatePicker
-                ISOStringValue={inputs.validity}
-                onChange={handleDateChange}
-              />
-            )}
-          </Block>
-        </Row>
-      </FormBody>
-      <FormFooter>
-        {canEdit && id && <ApplicationUpdate id={id} updatedApp={inputs} />}
-        {canEdit && id && <ApplicationDelete id={id} />}
-        <ButtonCancel onClick={() => Router.back()} />
-      </FormFooter>
-    </Form>
+          {canEdit && id && <ApplicationDelete id={id} />}
+          <ButtonCancel onClick={() => Router.back()} />
+        </FormFooter>
+      </Form>
+    </>
   );
 }
 

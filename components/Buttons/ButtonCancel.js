@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import ActionButton from './ActionButton';
 import { CancelButtonStyled } from '../styles/Button';
 
-export default function CancelButton({ onClick }) {
+export default function CancelButton({ onClick, label }) {
   const { t } = useTranslation('common');
+  const cancelLabel = label || t('cancel');
   return (
     <CancelButtonStyled type="button" onClick={onClick}>
       <>
-        <ActionButton type="delete" label={t('cancel')} cb={onClick} />
-        {t('cancel')}
+        <ActionButton type="delete" label={cancelLabel} cb={onClick} />
+        {cancelLabel}
       </>
     </CancelButtonStyled>
   );
@@ -18,4 +19,5 @@ export default function CancelButton({ onClick }) {
 
 CancelButton.propTypes = {
   onClick: PropTypes.func.isRequired,
+  label: PropTypes.string,
 };

@@ -9,8 +9,25 @@ import {
   Trash,
   Check,
   Plus,
+  HelpCircle,
 } from 'react-feather';
-import IconButtonStyles from '../styles/IconButton';
+import styled from 'styled-components';
+
+const IconButtonStyles = styled.a.attrs((props) => ({
+  color: props.color || 'var(--blue)',
+  hoverColor: props.hoverColor || 'var(--pink)',
+}))`
+  display: flex;
+  align-items: center;
+  margin: 0;
+  height: 100%;
+  background-color: transparent;
+  border: transparent none;
+  color: ${(props) => props.color};
+  &:hover {
+    color: ${(props) => props.hoverColor};
+  }
+`;
 
 export default function ActionButton({
   type,
@@ -34,6 +51,7 @@ export default function ActionButton({
       {type === 'back' && <ChevronLeft size={size} />}
       {type === 'trash' && <Trash size={size} />}
       {type === 'plus' && <Plus size={size} />}
+      {type === 'help' && <HelpCircle size={size} />}
     </IconButtonStyles>
   );
 }

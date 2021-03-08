@@ -16,4 +16,34 @@ const DrawerStyled = styled.div`
   }
 `;
 
+export const DrawerHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--lightGray);
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  h3 {
+    display: inline;
+    color: var(--pink);
+    font-weight: 500;
+    font-size: 2rem;
+    margin: 0;
+    padding-left: 2rem;
+  }
+`;
+
+export const DrawerFooter = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-top: 1px solid var(--lightGray);
+  padding-top: 0.5rem;
+  margin-top: 1rem;
+`;
+
+export const DrawerBody = styled.div`
+  margin: 1rem;
+`;
+
 export default DrawerStyled;

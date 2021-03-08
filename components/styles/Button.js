@@ -6,8 +6,9 @@ export const ButtonStyled = styled.button`
   border: 0;
   color: var(--blue);
   border-radius: 5px;
-  padding: 1rem 3rem;
-  margin: 0 1rem;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  margin-right: 1rem;
   & > * {
     color: var(--blue);
   }
