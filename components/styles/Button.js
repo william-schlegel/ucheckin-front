@@ -5,6 +5,9 @@ export const ButtonStyled = styled.button`
   background: none;
   border: 0;
   color: var(--blue);
+  border-radius: 5px;
+  padding: 1rem 3rem;
+  margin: 0 1rem;
   & > * {
     color: var(--blue);
   }
@@ -22,9 +25,6 @@ export const ButtonStyled = styled.button`
 export const DeleteButtonStyled = styled(ButtonStyled)`
   background-color: #f22;
   border: solid 1px red;
-  border-radius: 5px;
-  padding: 1rem 3rem;
-  margin: 0 1rem;
   color: white;
   & > * {
     color: white !important;
@@ -41,9 +41,6 @@ export const DeleteButtonStyled = styled(ButtonStyled)`
 export const CancelButtonStyled = styled(ButtonStyled)`
   background-color: var(--lightGray);
   border: solid 1px var(--gray);
-  border-radius: 5px;
-  margin: 0 1rem;
-  padding: 1rem 3rem;
   color: var(--black);
   & > * {
     color: var(--black) !important;
@@ -65,9 +62,6 @@ export const CancelButtonStyled = styled(ButtonStyled)`
 export const ValidationButtonStyled = styled(ButtonStyled)`
   background-color: #262;
   border: solid 1px #020;
-  border-radius: 5px;
-  padding: 1rem 3rem;
-  margin: 0 1rem;
   color: white;
   & > * {
     color: white !important;
@@ -75,6 +69,22 @@ export const ValidationButtonStyled = styled(ButtonStyled)`
   &:hover {
     color: white;
     background-image: linear-gradient(to bottom, #262 0%, #262 90%, #4d4 100%);
+    & > * {
+      color: white !important;
+    }
+  }
+`;
+
+export const NewButtonStyled = styled(ButtonStyled)`
+  background-color: #66b;
+  border: solid 1px #115;
+  color: white;
+  & > * {
+    color: white !important;
+  }
+  &:hover {
+    color: white;
+    background-image: linear-gradient(to bottom, #336 0%, #336 90%, #44d 100%);
     & > * {
       color: white !important;
     }

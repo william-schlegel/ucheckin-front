@@ -26,7 +26,7 @@ const Table = styled.table`
   }
 `;
 
-export const Badge = styled.span`
+export const Badge = styled.div`
   display: inline-flex;
   align-items: center;
   margin: 0 3px 0 0;

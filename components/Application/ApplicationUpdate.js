@@ -2,16 +2,16 @@ import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
-import DisplayError from './ErrorMessage';
-import ValidationButton from './ValidationButton';
+import DisplayError from '../ErrorMessage';
+import ButtonValidation from '../Buttons/ButtonValidation';
 
 const UPDATE_APPLICATION_MUTATION = gql`
   mutation UPDATE_APPLICATION_MUTATION(
     $id: ID!
     $name: String!
     $apiKey: String!
-    $owner: ID!
-    $users: [ID!]
+    $owner: UserWhereUniqueInput!
+    $users: [UserWhereUniqueInput!]!
     $license: String
     $validity: String
   ) {
@@ -20,8 +20,8 @@ const UPDATE_APPLICATION_MUTATION = gql`
       data: {
         name: $name
         apiKey: $apiKey
-        owner: $owner
-        users: $users
+        owner: { connect: $owner }
+        users: { connect: $users }
         license: $license
         validity: $validity
       }
@@ -32,25 +32,36 @@ const UPDATE_APPLICATION_MUTATION = gql`
 `;
 
 function update(cache, payload) {
-  console.log(payload);
+  console.log('payload', payload);
   cache.evict(cache.identify(payload.data.updateApplication));
 }
 
 export default function UpdateApplication({ id, updatedApp }) {
   const [updateApplication, { loading, error }] = useMutation(
-    UPDATE_APPLICATION_MUTATION,
-    {
-      variables: { id },
-      update,
-    }
+    UPDATE_APPLICATION_MUTATION
   );
+  const { name, apiKey, owner, users, license, validity } = updatedApp;
+  const variables = {
+    name,
+    apiKey,
+    owner: { id: owner.key },
+    users: users.map((u) => ({ id: u.key })),
+    license,
+    validity,
+    id,
+  };
+
+  console.log('variables', variables);
 
   return (
     <>
-      <ValidationButton
+      <ButtonValidation
         disabled={loading}
         onClick={() => {
-          updateApplication(id, updatedApp).catch((err) => alert(err.message));
+          updateApplication({
+            variables,
+            update,
+          }).catch((err) => alert(err.message));
         }}
         update
       />

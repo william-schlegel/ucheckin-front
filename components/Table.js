@@ -6,7 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import TableStyle, { Badge } from './styles/Table';
 import DisplayError from './ErrorMessage';
 import Loading from './Loading';
-import ActionButton from './ActionButton';
+import ActionButton from './Buttons/ActionButton';
 
 export function useColumns(columns) {
   const { t } = useTranslation('common');

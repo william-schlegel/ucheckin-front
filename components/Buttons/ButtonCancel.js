@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 
 import ActionButton from './ActionButton';
-import { CancelButtonStyled } from './styles/Button';
+import { CancelButtonStyled } from '../styles/Button';
 
 export default function CancelButton({ onClick }) {
   const { t } = useTranslation('common');

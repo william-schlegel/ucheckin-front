@@ -18,16 +18,17 @@
   "description": "Description",
   "description-description": "Description pour usage interne",
   "unknown": "Inconnu",
-  "page-count": "Page {{page}} de {{count}}",
+  "pagecount": "Page {{page}} de {{count}}",
   "prev": "Préc.",
   "next": "Suiv.",
-  "item-count": "{{count}} élément seulement",
-  "item-count_plural": "{{count}} éléments au total",
+  "itemcount": "{{count}} élément seulement",
+  "itemcount_plural": "{{count}} éléments au total",
   "copy": "Copier dans le presse-papier",
   "copied": "Elément copié !",
   "search-user": "Rechercher un utilisateur",
   "search-users": "Rechercher des utilisateurs",
   "user-not-found": "aucun utilisateur trouvé",
   "date": "Date",
-  "back": "Retour vers {{label}}"
+  "back": "Retour vers {{label}}",
+  "close": "Fermer"
 }

@@ -4,11 +4,15 @@ import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 
+import { useState } from 'react';
 import Pagination from '../../components/Pagination';
 import Table, { useColumns } from '../../components/Table';
 import { perPage } from '../../config';
 import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
+import EntetePage from '../../components/styles/EntetePage';
+import ButtonNew from '../../components/Buttons/ButtonNew';
+import ApplicationNew from '../../components/Application/ApplicationNew';
 
 const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -57,10 +61,16 @@ export default function Applications() {
     [t('common:owner'), 'owner.name'],
     [t('common:users'), 'users'],
   ]);
+  const [newApp, setNewApp] = useState(false);
 
   function editApplication(id) {
     router.push(`/application/${id}`);
     console.log(`edit ${id}`);
+  }
+
+  function handleCloseNewApp(id) {
+    console.log('id', id);
+    setNewApp(false);
   }
 
   if (loading) return <Loading />;
@@ -68,11 +78,17 @@ export default function Applications() {
   return (
     <>
       <Head>
-        <title>
-          {t('applications')} - {t('common:page-count', { page, count })}
-        </title>
+        <title>{t('applications')}</title>
       </Head>
-      <h3>{t('applications')}</h3>
+      <ApplicationNew open={newApp} onClose={handleCloseNewApp} />
+      <EntetePage>
+        <h3>{t('applications')}</h3>
+        <ButtonNew
+          onClick={() => {
+            setNewApp(true);
+          }}
+        />
+      </EntetePage>
       <Pagination
         page={page}
         error={errorPage}

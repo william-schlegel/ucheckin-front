@@ -6,8 +6,8 @@ import useTranslation from 'next-translate/useTranslation';
 import { useClipboard } from 'use-clipboard-copy';
 import Router from 'next/router';
 
-import DisplayError from './ErrorMessage';
-import Loading from './Loading';
+import DisplayError from '../ErrorMessage';
+import Loading from '../Loading';
 import {
   Block,
   Form,
@@ -16,17 +16,17 @@ import {
   Row,
   Label,
   FormHeader,
-} from './styles/Card';
-import ActionButton from './ActionButton';
-import { useUser } from './User';
-import useForm from '../lib/useForm';
-import { Badge } from './styles/Table';
-import SearchUser from './SearchUser';
-import DatePicker, { formatDate } from './DatePicker';
+} from '../styles/Card';
+import ActionButton from '../Buttons/ActionButton';
+import { useUser } from '../User';
+import useForm from '../../lib/useForm';
+import { Badge } from '../styles/Table';
+import SearchUser from '../SearchUser';
+import DatePicker, { formatDate } from '../DatePicker';
 import ApplicationDelete from './ApplicationDelete';
 import ApplicationUpdate from './ApplicationUpdate';
-import BackButton from './BackButton';
-import CancelButton from './CancelButton';
+import ButtonBack from '../Buttons/ButtonBack';
+import ButtonCancel from '../Buttons/ButtonCancel';
 
 const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
@@ -125,7 +125,7 @@ export default function Application({ id }) {
         <span>
           {t('application')} {inputs.name}
         </span>
-        <BackButton route="/applications" label={t('navigation:application')} />
+        <ButtonBack route="/applications" label={t('navigation:application')} />
       </FormHeader>
       <FormBody>
         {canEdit ? (
@@ -151,7 +151,7 @@ export default function Application({ id }) {
         <Row>
           <Label>{t('api-key')}</Label>
           <Block>
-            {inputs.apiKey}
+            <span>{inputs.apiKey}</span>
             <ActionButton
               type="copy"
               cb={() => clipboard.copy(inputs.apiKey)}
@@ -181,9 +181,13 @@ export default function Application({ id }) {
           <Block>
             {inputs.users.map((u) => (
               <Badge key={u.key}>
-                {u.value}
+                <span>{u.value}</span>
                 {canEdit && (
-                  <ActionButton type="delete" cb={() => removeUser(u.key)} />
+                  <ActionButton
+                    type="delete"
+                    size={20}
+                    cb={() => removeUser(u.key)}
+                  />
                 )}
               </Badge>
             ))}
@@ -247,7 +251,7 @@ export default function Application({ id }) {
       <FormFooter>
         {canEdit && id && <ApplicationUpdate id={id} updatedApp={inputs} />}
         {canEdit && id && <ApplicationDelete id={id} />}
-        <CancelButton onClick={() => Router.back()} />
+        <ButtonCancel onClick={() => Router.back()} />
       </FormFooter>
     </Form>
   );

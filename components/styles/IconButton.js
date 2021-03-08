@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const IconButtonStyles = styled.button.attrs((props) => ({
+const IconButtonStyles = styled.a.attrs((props) => ({
   color: props.color || 'var(--blue)',
   hoverColor: props.hoverColor || 'var(--pink)',
 }))`

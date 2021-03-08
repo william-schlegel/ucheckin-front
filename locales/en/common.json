@@ -18,16 +18,17 @@
   "description": "Description",
   "description-description": "Description for internal usage",
   "unknown": "Unknown",
-  "page-count": "Page {{page}} of {{count}}",
+  "pagecount": "Page {{page}} of {{count}}",
   "prev": "Prev.",
   "next": "Next",
-  "item-count": "{{count}} item only",
-  "item-count_plural": "{{count}} items total",
+  "itemcount": "{{count}} item only",
+  "itemcount_plural": "{{count}} items total",
   "copy": "Copy to Clipboard",
   "copied": "Element copied!",
   "search-user": "Search for user",
   "search-users": "Search for users",
   "user-not-found": "No user found",
   "date": "Date",
-  "back": "Back to {{label}}"
+  "back": "Back to {{label}}",
+  "close": "Close"
 }

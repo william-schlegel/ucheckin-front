@@ -17,8 +17,8 @@ export default function Pagination({ page, error, loading, count, pageRef }) {
       <Link href={`/${pageRef}/${page - 1}`}>
         <a aria-disabled={page <= 1}>← {t('prev')}</a>
       </Link>
-      <p>{t('page-count', { page, count })}</p>
-      <p> {t('item-count', { count })}</p>
+      <p>{t('pagecount', { page, count: pageCount })}</p>
+      <p> {t('itemcount', { count })}</p>
       <Link href={`/${pageRef}/${page + 1}`}>
         <a aria-disabled={page >= pageCount}>{t('next')} →</a>
       </Link>

@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 
 import ActionButton from './ActionButton';
-import { ValidationButtonStyled } from './styles/Button';
+import { ValidationButtonStyled } from '../styles/Button';
 
 export default function ValidationButton({ onClick, disabled, update }) {
   const { t } = useTranslation('common');

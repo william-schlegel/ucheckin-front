@@ -23,7 +23,7 @@ export const Block = styled.div`
   align-items: center;
   width: 100%;
   & > * {
-    margin-left: 1rem !important;
+    margin: 0 1rem !important;
     &:first-child {
       margin-left: 0 !important;
     }
