@@ -8,23 +8,22 @@ import ButtonValidation from '../Buttons/ButtonValidation';
 const UPDATE_PROFILE_MUTATION = gql`
   mutation UPDATE_PROFILE_MUTATION(
     $id: ID!
-    $email: email!
-    $name: name!
-    $company: company
-    $address: address
-    $zipCode: zipCode
-    $city: city
-    $telephone: telephone
-    $contact: contact
+    $email: String!
+    $name: String!
+    $company: String
+    $address: String
+    $zipCode: String
+    $city: String
+    $telephone: String
+    $contact: String
     $applications: [ApplicationWhereUniqueInput]
     $ownedApps: [ApplicationWhereUniqueInput]
     $role: RoleWhereUniqueInput
-    $tokens: [TokenWhereUniqueInput]
+    $tokens: [TokenWhereUniqueInput] # $photo: Upload
   ) {
     updateUser(
       id: $id
       data: {
-        id: $id
         email: $email
         name: $name
         company: $company
@@ -37,6 +36,7 @@ const UPDATE_PROFILE_MUTATION = gql`
         ownedApps: { disconnectAll: true, connect: $ownedApps }
         role: { connect: $role }
         tokens: { disconnectAll: true, connect: $tokens }
+        # photo: $photo
       }
     ) {
       id
@@ -46,7 +46,7 @@ const UPDATE_PROFILE_MUTATION = gql`
 
 function update(cache, payload) {
   console.log('payload', payload);
-  cache.evict(cache.identify(payload.data.updateApplication));
+  cache.evict(cache.identify(payload.data.updateUser));
 }
 
 export default function UpdateProfile({ id, updatedProfile, onSuccess }) {
@@ -66,6 +66,7 @@ export default function UpdateProfile({ id, updatedProfile, onSuccess }) {
     ownedApps,
     role,
     tokens,
+    // photo,
   } = updatedProfile;
   const variables = {
     id,
@@ -81,6 +82,7 @@ export default function UpdateProfile({ id, updatedProfile, onSuccess }) {
     ownedApps: ownedApps.map((a) => ({ id: a.id })),
     role: { id: role.id },
     tokens: tokens.map((a) => ({ id: a.id })),
+    // photo,
   };
 
   return (
@@ -116,6 +118,7 @@ UpdateProfile.propTypes = {
     ownedApps: PropTypes.array,
     role: PropTypes.object,
     tokens: PropTypes.array,
+    photo: PropTypes.object,
   }),
   onSuccess: PropTypes.func.isRequired,
 };

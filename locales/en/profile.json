@@ -12,6 +12,7 @@
   "tokens": "SDK access tokens",
   "token": "Token",
   "role": "Role",
+  "photo": "Avatar",
   "help-title": "Help about my profile",
   "help-text": "help"
 }

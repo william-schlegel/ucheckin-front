@@ -5,8 +5,10 @@ import { Sun, Moon, User } from 'react-feather';
 import Flag from 'react-country-flag';
 import useTranslation from 'next-translate/useTranslation';
 import setLanguage from 'next-translate/setLanguage';
+import { useRouter } from 'next/dist/client/router';
 
 import useOnClickOutside from '../lib/useOnClickOutside';
+import Signout from './SignOut';
 
 const Logo = styled.h1`
   font-size: 3rem;
@@ -46,27 +48,28 @@ const HeaderStyles = styled.header`
       }
     }
     .user-menu {
-      position: relative;
-      ul {
-        position: absolute;
-        right: -1rem;
-        top: 30px;
-        border: var(--gray) solid 1px;
-
-        border-radius: 3px;
-        list-style: none;
-        margin: 0.25rem;
-        padding: 0;
-        li {
-          /* font-size: 2rem; */
-          display: block;
-          width: 100%;
-          padding: 0.5rem 2rem;
-          text-align: left;
-          white-space: nowrap;
-          &:hover {
-            background-color: var(--pink);
-          }
+      position: absolute;
+      right: 0;
+      top: 90px;
+      border: var(--gray) solid 1px;
+      background-color: var(--background);
+      border-radius: 3px;
+      list-style: none;
+      margin: 0.25rem;
+      padding: 0;
+      button {
+        color: var(--blue);
+        font-size: 1rem;
+        display: block;
+        width: 100%;
+        padding: 0.5rem 2rem;
+        text-align: left;
+        white-space: nowrap;
+        font-weight: 900;
+        margin: 0;
+        cursor: pointer;
+        &:hover {
+          background-color: var(--pink);
         }
       }
     }
@@ -82,8 +85,9 @@ export default function Header() {
   const [darkTheme, setDarkTheme] = useState(false);
   const [flag, setFlag] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const refAvatar = useRef();
+  const refMenu = useRef();
   const { t } = useTranslation('navigation');
+  const router = useRouter();
 
   const toggleTheme = useCallback(() => {
     setDarkTheme(!darkTheme);
@@ -100,7 +104,7 @@ export default function Header() {
     setShowUserMenu(!showUserMenu);
   }, [showUserMenu]);
 
-  useOnClickOutside(refAvatar, () => setShowUserMenu(false));
+  useOnClickOutside(refMenu, () => setShowUserMenu(false));
 
   return (
     <HeaderStyles>
@@ -120,28 +124,19 @@ export default function Header() {
               aria-label="France"
             />
           </button>
-          <button ref={refAvatar} type="button" onClick={toggleUserMenu}>
+          <button type="button" onClick={toggleUserMenu}>
             <User />
-            {showUserMenu && (
-              <div className="user-menu">
-                <ul>
-                  <li>
-                    <Link href="/profile">
-                      <a>{t('profile')}</a>
-                    </Link>
-                  </li>
-                  <li>{t('signout')}</li>
-                </ul>
-              </div>
-            )}
           </button>
+          {showUserMenu && (
+            <div ref={refMenu} className="user-menu">
+              <button type="button" onClick={() => router.push('/profile')}>
+                {t('profile')}
+              </button>
+              <Signout />
+            </div>
+          )}
         </div>
-        {/* <Nav /> */}
       </div>
-      {/* <div className="sub-bar">
-        <Search />
-      </div> */}
-      {/* <Cart /> */}
     </HeaderStyles>
   );
 }

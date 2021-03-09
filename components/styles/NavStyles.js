@@ -14,9 +14,7 @@ const NavStyles = styled.ul`
     display: flex;
     align-items: flex-start;
     position: relative;
-    /* text-transform: uppercase; */
     font-weight: 900;
-    /* font-size: 1em; */
     background: none;
     border: 0;
     white-space: nowrap;

@@ -43,7 +43,7 @@ export const QUERY_PROFILE = gql`
       telephone
       contact
       photo {
-        publicUrlTransformed(transformation: { width: "300", height: "300" })
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
       applications {
         id
@@ -90,6 +90,7 @@ export default function Profile({ id }) {
     applications: [],
     tokens: [],
     role: '',
+    photo: {},
   });
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
@@ -131,6 +132,7 @@ export default function Profile({ id }) {
         applications: UserData.applications,
         tokens: UserData.tokens,
         role: UserData.role,
+        photo: UserData.photo,
       });
     }
   }, [setInputs, data]);
@@ -323,6 +325,22 @@ export default function Profile({ id }) {
               actionButtons={[{ type: 'edit', action: editApplication }]}
             />
           </Row>
+          {/* <Row>
+            <Label htmlFor="photo">{t('photo')}</Label>
+            <Block>
+              <img
+                src={inputs?.photo?.publicUrlTransformed}
+                alt={inputs.name}
+              />
+              <input
+                type="file"
+                id="photo"
+                name="photo"
+                onChange={handleChange}
+              />
+            </Block>
+          </Row> */}
+
           <RowReadOnly>
             <Label>{t('role')}</Label>
             <span>{inputs.role.name}</span>
