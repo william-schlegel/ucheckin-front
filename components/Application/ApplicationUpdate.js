@@ -32,7 +32,6 @@ const UPDATE_APPLICATION_MUTATION = gql`
 `;
 
 function update(cache, payload) {
-  console.log('payload', payload);
   cache.evict(cache.identify(payload.data.updateApplication));
 }
 

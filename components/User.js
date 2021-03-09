@@ -12,6 +12,7 @@ const CURRENT_USER_QUERY = gql`
           canManageRoles
           canSeeOtherUsers
           canManageApplication
+          canManageSignal
         }
       }
     }

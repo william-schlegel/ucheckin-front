@@ -7,6 +7,7 @@ module.exports = {
     '/': ['dashboard'],
     '/signin': ['signin', 'signup'],
     'rgx:^/application': ['application'],
+    'rgx:^/signal': ['signal'],
     'rgx:^/profile': ['profile', 'application'],
   },
 };

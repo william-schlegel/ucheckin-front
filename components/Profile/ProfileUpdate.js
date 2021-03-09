@@ -1,8 +1,10 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 
-import DisplayError from '../ErrorMessage';
+// import DisplayError from '../ErrorMessage';
+import errorMessage from '../../lib/errorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 
 const UPDATE_PROFILE_MUTATION = gql`
@@ -44,12 +46,60 @@ const UPDATE_PROFILE_MUTATION = gql`
   }
 `;
 
+const UPDATE_PROFILE_PHOTO_MUTATION = gql`
+  mutation UPDATE_PROFILE_PHOTO_MUTATION($id: ID!, $photo: Upload) {
+    updateUser(id: $id, data: { photo: $photo }) {
+      id
+      photo {
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
+      }
+    }
+  }
+`;
+
 function update(cache, payload) {
-  console.log('payload', payload);
   cache.evict(cache.identify(payload.data.updateUser));
 }
 
-export default function UpdateProfile({ id, updatedProfile, onSuccess }) {
+export function UpdatePhoto({ id, photo, onSuccess }) {
+  const [updatePhoto, { loading, error }] = useMutation(
+    UPDATE_PROFILE_PHOTO_MUTATION,
+    {
+      variables: {
+        id,
+        photo,
+      },
+    }
+  );
+
+  function handleValidation() {
+    const res = updatePhoto({
+      update,
+    }).catch((err) => alert(err.message));
+    onSuccess(res);
+  }
+
+  if (error) {
+    errorMessage({ graphqlError: error, title: t('error') });
+    return null;
+  }
+
+  return (
+    <>
+      <ButtonValidation disabled={loading} onClick={handleValidation} update />
+      {/* {error && <DisplayError error={error} />} */}
+    </>
+  );
+}
+
+UpdatePhoto.propTypes = {
+  id: PropTypes.string.isRequired,
+  photo: PropTypes.object,
+  onSuccess: PropTypes.func.isRequired,
+};
+
+export function UpdateProfile({ id, updatedProfile, onSuccess }) {
+  const { t } = useTranslation('profile');
   const [updateProfile, { loading, error }] = useMutation(
     UPDATE_PROFILE_MUTATION
   );
@@ -66,7 +116,6 @@ export default function UpdateProfile({ id, updatedProfile, onSuccess }) {
     ownedApps,
     role,
     tokens,
-    // photo,
   } = updatedProfile;
   const variables = {
     id,
@@ -82,23 +131,24 @@ export default function UpdateProfile({ id, updatedProfile, onSuccess }) {
     ownedApps: ownedApps.map((a) => ({ id: a.id })),
     role: { id: role.id },
     tokens: tokens.map((a) => ({ id: a.id })),
-    // photo,
   };
+
+  function handleValidation() {
+    updateProfile({
+      variables,
+      update,
+    }).catch((err) => alert(err.message));
+    onSuccess();
+  }
+  if (error) {
+    errorMessage({ graphqlError: error, title: t('error') });
+    return null;
+  }
 
   return (
     <>
-      <ButtonValidation
-        disabled={loading}
-        onClick={() => {
-          updateProfile({
-            variables,
-            update,
-          }).catch((err) => alert(err.message));
-          onSuccess();
-        }}
-        update
-      />
-      {error && <DisplayError error={error} />}
+      <ButtonValidation disabled={loading} onClick={handleValidation} update />
+      {/* {error && <DisplayError error={t('error', { error })} />} */}
     </>
   );
 }

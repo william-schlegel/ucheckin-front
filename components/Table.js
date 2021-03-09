@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTable } from 'react-table';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
+import Switch from 'react-switch';
 
 import TableStyle from './styles/Table';
 import DisplayError from './ErrorMessage';
@@ -10,16 +11,27 @@ import Loading from './Loading';
 import ActionButton from './Buttons/ActionButton';
 import Badge from './styles/Badge';
 import { getLicenseName } from '../lib/fixedLists';
+import { formatDate } from './DatePicker';
+import { ButtonStyled } from './styles/Button';
 
 export function useColumns(columns) {
   const { t } = useTranslation('common');
   const tableColumns = useMemo(
-    () => columns.map((col) => ({ Header: col[0], accessor: col[1] })),
+    () =>
+      columns.map((col) => ({
+        Header: col[0],
+        accessor: col[1],
+        options: col[2] || {},
+      })),
     [columns]
   );
   return [
     ...tableColumns,
-    { Header: t('actions'), accessor: 'action-buttons' },
+    {
+      Header: t('actions'),
+      accessor: 'action-buttons',
+      options: { ui: 'action-buttons' },
+    },
   ];
 }
 
@@ -37,9 +49,10 @@ export default function Table({
   actionButtons,
 }) {
   const hiddenColumns = useMemo(() => {
-    const colId = columns.findIndex((c) => c.accessor === 'id');
-    if (colId >= 0) return ['id'];
-    return [];
+    const hiddenCols = columns
+      .filter((c) => c?.options?.ui === 'hidden')
+      .map((c) => c.accessor);
+    return hiddenCols;
   }, [columns]);
 
   const {
@@ -70,7 +83,7 @@ export default function Table({
           return (
             <tr {...row.getRowProps()}>
               {row.cells.map((cell) => {
-                if (cell.column.id === 'action-buttons') {
+                if (cell.column.options.ui === 'action-buttons') {
                   return (
                     <td {...cell.getCellProps()}>
                       <ActionButtonsStyled>
@@ -87,7 +100,27 @@ export default function Table({
                     </td>
                   );
                 }
-                if (cell.column.id === 'users') {
+                if (cell.column.options?.ui === 'badge') {
+                  return (
+                    <td {...cell.getCellProps()}>
+                      <Badge>{cell.value}</Badge>
+                    </td>
+                  );
+                }
+                if (cell.column.options.ui === 'button') {
+                  return (
+                    <td {...cell.getCellProps()}>
+                      <ButtonStyled
+                        onClick={() =>
+                          cell.column.options.action(row.allCells[0].value)
+                        }
+                      >
+                        {cell.value}
+                      </ButtonStyled>
+                    </td>
+                  );
+                }
+                if (cell.column.options.ui === 'badges') {
                   return (
                     <td {...cell.getCellProps()}>
                       {row.original.users.map((user) => (
@@ -96,10 +129,31 @@ export default function Table({
                     </td>
                   );
                 }
-                if (cell.column.id === 'license') {
+                if (cell.column.options.ui === 'license') {
                   return (
                     <td {...cell.getCellProps()}>
                       {getLicenseName(cell.value)}
+                    </td>
+                  );
+                }
+                if (cell.column.options.ui === 'date') {
+                  return (
+                    <td {...cell.getCellProps()}>{formatDate(cell.value)}</td>
+                  );
+                }
+                if (cell.column.options.ui === 'checkbox') {
+                  return (
+                    <td
+                      {...cell.getCellProps()}
+                      style={{ textAlign: 'center' }}
+                    >
+                      <Switch
+                        onChange={() =>
+                          cell.column.options.action(row.allCells[0].value)
+                        }
+                        checked={cell.value}
+                        disabled={cell.column.options.disabled}
+                      />
                     </td>
                   );
                 }

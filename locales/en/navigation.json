@@ -3,6 +3,7 @@
   "signup": "Sign Up",
   "signout": "Sign Out",
   "home": "Home",
-  "application": "Application",
+  "applications": "Application",
+  "signals": "Signals",
   "profile": "Profile"
 }

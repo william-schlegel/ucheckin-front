@@ -13,6 +13,8 @@
   "token": "Token",
   "role": "Rôle",
   "photo": "Photo de profile",
+  "success": "Profile enregistré avec succès",
+  "error": "Erreur lors de l'enregistrement du profile {{error}}",
   "help-title": "Aide sur les profiles",
   "help-text": "Dans votre profile, vous pouvez retrouver les applications sur lesquelles vous pouvez intervenir et vous pouvey gérer les tokens d'accès pour les SDK"
 }

@@ -49,7 +49,6 @@ export default function SearchUser({
     items,
     selectedItem: value,
     onInputValueChange({ inputValue }) {
-      console.log('inputValue', inputValue);
       findItemsButChill({
         variables: {
           searchTerm: inputValue,
@@ -57,7 +56,6 @@ export default function SearchUser({
       });
     },
     onSelectedItemChange({ selectedItem }) {
-      console.log('selectedItem', selectedItem);
       if (!required || selectedItem)
         onChange({
           target: {

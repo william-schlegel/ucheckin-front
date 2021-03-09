@@ -14,7 +14,8 @@ export default function Nav() {
     <NavStyles>
       {user && (
         <>
-          <Link href="/applications">{t('application')}</Link>
+          <Link href="/applications">{t('applications')}</Link>
+          <Link href="/signals">{t('signals')}</Link>
           {/* <Link href="/sell">Sell</Link>
           <Link href="/orders">Orders</Link>
           <Link href="/account">Account</Link> */}

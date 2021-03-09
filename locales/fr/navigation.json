@@ -3,6 +3,7 @@
   "signup": "S'enregistrer",
   "signout": "Se déconnecter",
   "home": "Accueil",
-  "application": "Applications",
+  "applications": "Applications",
+  "signals": "Signaux",
   "profile": "Profile"
 }

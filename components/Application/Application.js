@@ -17,6 +17,7 @@ import {
   Label,
   FormHeader,
   FormTitle,
+  RowReadOnly,
 } from '../styles/Card';
 import ActionButton from '../Buttons/ActionButton';
 import { useUser } from '../User';
@@ -158,10 +159,10 @@ export default function Application({ id }) {
               />
             </Row>
           ) : (
-            <Row>
+            <RowReadOnly>
               <Label>{t('common:name')}</Label>
               <span>{inputs.name}</span>
-            </Row>
+            </RowReadOnly>
           )}
           <Row>
             <Label>{t('api-key')}</Label>
@@ -242,13 +243,13 @@ export default function Application({ id }) {
               </select>
             </Row>
           ) : (
-            <Row>
+            <RowReadOnly>
               <Label>{t('licence-model')}</Label>
               <span>{getLicenseName(inputs.license)}</span>
-            </Row>
+            </RowReadOnly>
           )}
           {inputs.license === 'WIUS' && (
-            <Row>
+            <RowReadOnly>
               <Label>{t('date-expiration')}</Label>
               <Block>
                 <span>{formatDate(inputs.validity)}</span>
@@ -262,8 +263,8 @@ export default function Application({ id }) {
                   />
                 )}
               </Block>
-            </Row>
-          )}{' '}
+            </RowReadOnly>
+          )}
         </FormBody>
         <FormFooter>
           {canEdit && id && (

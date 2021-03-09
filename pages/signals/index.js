@@ -12,29 +12,25 @@ import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
 import EntetePage from '../../components/styles/EntetePage';
 import ButtonNew from '../../components/Buttons/ButtonNew';
-import ApplicationNew from '../../components/Application/ApplicationNew';
+import SignalNew from '../../components/Signal/SignalNew';
+import { useUser } from '../../components/User';
 
 const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
-    countPage: _allApplicationsMeta {
+    countPage: _allSignalsMeta {
       count
     }
   }
 `;
 
-export const ALL_APPLICATIONS_QUERY = gql`
-  query ALL_APPLICATIONS_QUERY($skip: Int = 0, $first: Int) {
-    allApplications(first: $first, skip: $skip) {
+export const ALL_SIGNALS_QUERY = gql`
+  query ALL_SIGNALS_QUERY($skip: Int = 0, $first: Int) {
+    allSignals(first: $first, skip: $skip) {
       id
-      name
-      apiKey
-      license
+      signal
+      active
       validity
       owner {
-        id
-        name
-      }
-      users {
         id
         name
       }
@@ -42,36 +38,54 @@ export const ALL_APPLICATIONS_QUERY = gql`
   }
 `;
 
-export default function Applications() {
+export default function Signals() {
   const router = useRouter();
   const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
     PAGINATION_QUERY
   );
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.countPage || 1;
-  const { t } = useTranslation('application');
-  const { data, error, loading } = useQuery(ALL_APPLICATIONS_QUERY, {
+  const { t } = useTranslation('signal');
+  const { data, error, loading } = useQuery(ALL_SIGNALS_QUERY, {
     variables: {
       skip: (page - 1) * perPage,
       first: perPage,
     },
   });
-  const columns = useColumns([
-    ['id', 'id', { ui: 'hidden' }],
-    [t('common:name'), 'name'],
-    [t('api-key'), 'apiKey'],
-    [t('licence-model'), 'license', { ui: 'license' }],
-    [t('common:owner'), 'owner.name'],
-    [t('common:users'), 'users', { ui: 'badges' }],
-  ]);
-  const [newApp, setNewApp] = useState(false);
+  const user = useUser();
 
-  function editApplication(id) {
-    router.push(`/application/${id}`);
+  function editSignal(id) {
+    router.push(`/signal/${id}`);
   }
 
-  function handleCloseNewApp(id) {
-    setNewApp(false);
+  function validateSignal(id) {
+    console.log('validate id', id);
+  }
+
+  const columns = useColumns(
+    user
+      ? [
+          ['id', 'id', { ui: 'hidden' }],
+          [t('signal'), 'signal', { ui: 'button', action: editSignal }],
+          [t('common:owner'), 'owner.name'],
+          [
+            t('active'),
+            'active',
+            {
+              ui: 'checkbox',
+              action: validateSignal,
+              disabled: !user.role.canManageSignal,
+            },
+          ],
+          [t('validity'), 'validity', { ui: 'date' }],
+        ]
+      : []
+  );
+
+  const [newSignal, setNewSignal] = useState(false);
+
+  function handleCloseNewSignal(id) {
+    setNewSignal(false);
   }
 
   if (loading) return <Loading />;
@@ -79,14 +93,14 @@ export default function Applications() {
   return (
     <>
       <Head>
-        <title>{t('applications')}</title>
+        <title>{t('signals')}</title>
       </Head>
-      <ApplicationNew open={newApp} onClose={handleCloseNewApp} />
+      <SignalNew open={newSignal} onClose={handleCloseNewSignal} />
       <EntetePage>
-        <h3>{t('applications')}</h3>
+        <h3>{t('signals')}</h3>
         <ButtonNew
           onClick={() => {
-            setNewApp(true);
+            setNewSignal(true);
           }}
         />
       </EntetePage>
@@ -95,14 +109,14 @@ export default function Applications() {
         error={errorPage}
         loading={loadingPage}
         count={count}
-        pageRef="applications"
+        pageRef="signals"
       />
       <Table
         columns={columns}
-        data={data.allApplications}
+        data={data.allSignals}
         error={error}
         loading={loading}
-        actionButtons={[{ type: 'edit', action: editApplication }]}
+        actionButtons={[{ type: 'edit', action: editSignal }]}
       />
     </>
   );

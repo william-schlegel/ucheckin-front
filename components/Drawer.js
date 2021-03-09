@@ -7,7 +7,9 @@ import useOnClickOutside from '../lib/useOnClickOutside';
 
 export default function Drawer({ open, onClose, children, title }) {
   const ref = useRef();
-  useOnClickOutside(ref, () => onClose(null));
+  useOnClickOutside(ref, () => {
+    if (open) onClose(null);
+  });
 
   return (
     <DrawerStyled ref={ref} className={open ? 'open' : ''}>

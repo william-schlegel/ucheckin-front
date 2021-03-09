@@ -5,7 +5,9 @@ import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useClipboard } from 'use-clipboard-copy';
 import Router, { useRouter } from 'next/router';
+import { Notify } from 'notiflix';
 
+import styled from 'styled-components';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import {
@@ -28,7 +30,7 @@ import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
 import Modale from '../Modale';
 import Table, { useColumns } from '../Table';
-import ProfileUpdate from './ProfileUpdate';
+import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
 
 export const QUERY_PROFILE = gql`
   query QUERY_PROFILE($id: ID!) {
@@ -71,6 +73,12 @@ export const QUERY_PROFILE = gql`
   }
 `;
 
+const Avatar = styled.img`
+  width: 150px;
+  height: auto;
+  border-radius: 75px;
+`;
+
 export default function Profile({ id }) {
   const { loading, error, data } = useQuery(QUERY_PROFILE, {
     variables: { id },
@@ -93,6 +101,7 @@ export default function Profile({ id }) {
     photo: {},
   });
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
+  const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const columns = useColumns([
@@ -155,6 +164,10 @@ export default function Profile({ id }) {
     const token = inputs.tokens.find((tk) => tk.id === id);
     console.log('token', token);
     clipboard.copy(token.token);
+  }
+
+  function handlePhotoFile(e) {
+    setPhotoFile(e.target.files[0]);
   }
 
   if (loading) return <Loading />;
@@ -322,13 +335,13 @@ export default function Profile({ id }) {
               columns={columns}
               data={inputs.applications}
               loading={loading}
-              actionButtons={[{ type: 'edit', action: editApplication }]}
+              actionButtons={[{ type: 'view', action: editApplication }]}
             />
           </Row>
-          {/* <Row>
+          <RowFull>
             <Label htmlFor="photo">{t('photo')}</Label>
             <Block>
-              <img
+              <Avatar
                 src={inputs?.photo?.publicUrlTransformed}
                 alt={inputs.name}
               />
@@ -336,17 +349,24 @@ export default function Profile({ id }) {
                 type="file"
                 id="photo"
                 name="photo"
-                onChange={handleChange}
+                onChange={handlePhotoFile}
+              />
+              <UpdatePhoto
+                id={id}
+                photo={photoFile}
+                onSuccess={(newPhoto) =>
+                  setInputs({ ...inputs, photo: newPhoto })
+                }
               />
             </Block>
-          </Row> */}
+          </RowFull>
 
           <RowReadOnly>
             <Label>{t('role')}</Label>
             <span>{inputs.role.name}</span>
           </RowReadOnly>
 
-          <RowFull>
+          <Row>
             <Label>{t('tokens')}</Label>
             <Table
               columns={columnsToken}
@@ -365,14 +385,19 @@ export default function Profile({ id }) {
             <Block>
               <ButtonNew onClick={addToken} />
             </Block>
-          </RowFull>
+          </Row>
         </FormBody>
         <FormFooter>
           {canEdit && id && (
-            <ProfileUpdate
+            <UpdateProfile
               id={id}
               updatedProfile={inputs}
-              onSuccess={() => Router.push('/')}
+              onSuccess={() => {
+                Notify.Success(t('success'), {
+                  position: 'center-bottom',
+                  fontSize: '20px',
+                });
+              }}
             />
           )}
           {/* {canEdit && id && <ApplicationDelete id={id} />} */}

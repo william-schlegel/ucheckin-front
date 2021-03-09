@@ -10,6 +10,7 @@ import {
   Check,
   Plus,
   HelpCircle,
+  Eye,
 } from 'react-feather';
 import styled from 'styled-components';
 
@@ -52,6 +53,7 @@ export default function ActionButton({
       {type === 'trash' && <Trash size={size} />}
       {type === 'plus' && <Plus size={size} />}
       {type === 'help' && <HelpCircle size={size} />}
+      {type === 'view' && <Eye size={size} />}
     </IconButtonStyles>
   );
 }
