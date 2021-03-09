@@ -50,7 +50,7 @@ const HeaderStyles = styled.header`
       ul {
         position: absolute;
         right: -1rem;
-        top: 1.5rem;
+        top: 30px;
         border: var(--gray) solid 1px;
 
         border-radius: 3px;
@@ -125,7 +125,11 @@ export default function Header() {
             {showUserMenu && (
               <div className="user-menu">
                 <ul>
-                  <li>{t('profile')}</li>
+                  <li>
+                    <Link href="/profile">
+                      <a>{t('profile')}</a>
+                    </Link>
+                  </li>
                   <li>{t('signout')}</li>
                 </ul>
               </div>

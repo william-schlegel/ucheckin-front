@@ -1,5 +1,6 @@
 {
   "name": "Nom",
+  "email": "EMail",
   "owner": "Propriétaire",
   "users": "Utilisateurs",
   "status": "Statut",
@@ -8,6 +9,7 @@
   "license": "Licence",
   "new": "Nouveau",
   "delete": "Supprimer",
+  "trash": "Supprimer",
   "edit": "Modifier",
   "update": "Mettre à jour",
   "save": "Sauvegarder",

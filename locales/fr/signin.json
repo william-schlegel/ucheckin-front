@@ -1,13 +1,13 @@
 {
-  "invalid-password": "The password is invalid or the user does not have password",
-  "connection": "Connection",
-  "enter-email-pwd": "Enter your email address or your user name and your password",
-  "email": "Your email or user name",
-  "password": "Your password",
-  "remember-me": "Remember me",
-  "login": "Login",
-  "create-account": "Create an account",
-  "email-required": "The email or user name is required",
-  "password-required": "The password is required",
-  "disconnected-message": "You are disconnected, you will be redirected to the login page"
+  "invalid-password": "Mot de passe invalide",
+  "connection": "Connexion",
+  "enter-email-pwd": "Entrez votre adresse mail et votre mot de passe",
+  "email": "Votre email",
+  "password": "Votre mot de passe",
+  "remember-me": "Se souvenir de moi",
+  "login": "Se connecter",
+  "create-account": "Créer un compte",
+  "email-required": "L'email doit être renseigné",
+  "password-required": "Le mot de passe doit être renseigné",
+  "disconnected-message": "Vous avez été déconnecté, retour à la page d'accueil"
 }

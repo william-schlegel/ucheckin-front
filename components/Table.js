@@ -2,12 +2,14 @@ import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import { useTable } from 'react-table';
 import useTranslation from 'next-translate/useTranslation';
+import styled from 'styled-components';
 
 import TableStyle from './styles/Table';
 import DisplayError from './ErrorMessage';
 import Loading from './Loading';
 import ActionButton from './Buttons/ActionButton';
 import Badge from './styles/Badge';
+import { getLicenseName } from '../lib/fixedLists';
 
 export function useColumns(columns) {
   const { t } = useTranslation('common');
@@ -21,6 +23,12 @@ export function useColumns(columns) {
   ];
 }
 
+const ActionButtonsStyled = styled.div`
+  display: flex;
+  a {
+    display: inline;
+  }
+`;
 export default function Table({
   columns = [],
   data = [],
@@ -65,13 +73,17 @@ export default function Table({
                 if (cell.column.id === 'action-buttons') {
                   return (
                     <td {...cell.getCellProps()}>
-                      {actionButtons.map((actionButton) => (
-                        <ActionButton
-                          key={actionButton.type}
-                          type={actionButton.type}
-                          cb={() => actionButton.action(row.allCells[0].value)}
-                        />
-                      ))}
+                      <ActionButtonsStyled>
+                        {actionButtons.map((actionButton) => (
+                          <ActionButton
+                            key={actionButton.type}
+                            type={actionButton.type}
+                            cb={() =>
+                              actionButton.action(row.allCells[0].value)
+                            }
+                          />
+                        ))}
+                      </ActionButtonsStyled>
                     </td>
                   );
                 }
@@ -81,6 +93,13 @@ export default function Table({
                       {row.original.users.map((user) => (
                         <Badge key={user.id}>{user.name}</Badge>
                       ))}
+                    </td>
+                  );
+                }
+                if (cell.column.id === 'license') {
+                  return (
+                    <td {...cell.getCellProps()}>
+                      {getLicenseName(cell.value)}
                     </td>
                   );
                 }

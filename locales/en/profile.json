@@ -1,0 +1,17 @@
+{
+  "title": "Profile",
+  "profile": "My profile",
+  "company": "Company",
+  "address": "Address",
+  "zip": "Zip code",
+  "city": "City",
+  "phone": "Phone",
+  "contact": "Contact",
+  "owned-apps": "My applications",
+  "invited-apps": "Applications I'm invited on",
+  "tokens": "SDK access tokens",
+  "token": "Token",
+  "role": "Role",
+  "help-title": "Help about my profile",
+  "help-text": "help"
+}

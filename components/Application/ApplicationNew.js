@@ -10,7 +10,7 @@ import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { ALL_APPLICATIONS_QUERY } from '../../pages/applications/index';
 import { DrawerFooter } from '../styles/Drawer';
-import { FormWithBar, FormBodyFull, Label, Row } from '../styles/Card';
+import { FormBodyFull, Label, Row, Form } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
 
@@ -42,7 +42,7 @@ export default function ApplicationNew({ open, onClose }) {
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-application')}>
-      <FormWithBar>
+      <Form>
         <FormBodyFull>
           <Row>
             <Label htmlFor="name" required>
@@ -58,7 +58,7 @@ export default function ApplicationNew({ open, onClose }) {
             />
           </Row>
         </FormBodyFull>
-      </FormWithBar>
+      </Form>
       <DrawerFooter>
         <ButtonValidation
           disabled={loading}

@@ -1,5 +1,6 @@
 {
   "name": "Name",
+  "email": "EMail",
   "owner": "Owner",
   "users": "Users",
   "status": "Status",
@@ -8,6 +9,7 @@
   "license": "License",
   "new": "New",
   "delete": "Delete",
+  "trash": "Delete",
   "edit": "Edit",
   "update": "Update",
   "save": "save",

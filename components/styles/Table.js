@@ -4,6 +4,7 @@ const Table = styled.table`
   border-spacing: 0;
   width: 100%;
   border: 1px solid var(--offWhite);
+  margin-bottom: 1rem;
   thead {
     font-weight: 500;
   }

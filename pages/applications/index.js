@@ -28,6 +28,8 @@ export const ALL_APPLICATIONS_QUERY = gql`
       id
       name
       apiKey
+      license
+      validity
       owner {
         id
         name
@@ -58,6 +60,7 @@ export default function Applications() {
     ['id', 'id'],
     [t('common:name'), 'name'],
     [t('api-key'), 'apiKey'],
+    [t('licence-model'), 'license'],
     [t('common:owner'), 'owner.name'],
     [t('common:users'), 'users'],
   ]);

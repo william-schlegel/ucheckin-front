@@ -1,0 +1,17 @@
+{
+  "title": "Profile",
+  "profile": "Mon profile",
+  "company": "Société",
+  "address": "Adresse",
+  "zip": "Code postal",
+  "city": "Ville",
+  "phone": "Téléphone",
+  "contact": "Contact",
+  "owned-apps": "Mes applications",
+  "invited-apps": "Applications sur lesquelles je suis invité",
+  "tokens": "Tokens d'accès SDK",
+  "token": "Token",
+  "role": "Rôle",
+  "help-title": "Aide sur les profiles",
+  "help-text": "Dans votre profile, vous pouvez retrouver les applications sur lesquelles vous pouvez intervenir et vous pouvey gérer les tokens d'accès pour les SDK"
+}

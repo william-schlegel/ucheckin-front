@@ -77,17 +77,14 @@ export const ValidationButtonStyled = styled(ButtonStyled)`
 `;
 
 export const NewButtonStyled = styled(ButtonStyled)`
-  background-color: #66b;
-  border: solid 1px #115;
+  background-color: var(--blue);
   color: white;
+  transition: backgound-color 200ms ease;
   & > * {
     color: white !important;
   }
   &:hover {
-    color: white;
-    background-image: linear-gradient(to bottom, #336 0%, #336 90%, #44d 100%);
-    & > * {
-      color: white !important;
-    }
+    color: white !important;
+    background-color: var(--pink);
   }
 `;

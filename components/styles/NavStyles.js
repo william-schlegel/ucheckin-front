@@ -14,7 +14,7 @@ const NavStyles = styled.ul`
     display: flex;
     align-items: flex-start;
     position: relative;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     font-weight: 900;
     /* font-size: 1em; */
     background: none;
@@ -35,7 +35,7 @@ const NavStyles = styled.ul`
       transition: width 0.4s;
       transition-timing-function: cubic-bezier(1, -0.65, 0, 2.31);
       left: 50%;
-      margin-top: 3rem;
+      margin-top: 2rem;
     }
     &:hover,
     &:focus {

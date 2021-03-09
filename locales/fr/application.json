@@ -8,8 +8,10 @@
   "applications": "Applications",
   "licence-model": "Modèle de license",
   "date-expiration": "Date dexpiration de la license",
+  "ucheck-in": "Ucheck In",
+  "wi-us": "Wi-Us",
   "none": "Pas de license",
-  "licence-unkown": "License inconnue : {{code}}",
+  "licence-unkown": "License inconnue",
   "new-application": "Nouvelle application",
   "help-title": "Aide sur les applications",
   "help-text": "Les applications permettent de regrouper des signaux et des interactions sur une même clé API"

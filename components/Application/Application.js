@@ -29,6 +29,7 @@ import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import Modale from '../Modale';
+import { getLicenseName } from '../../lib/fixedLists';
 
 export const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
@@ -112,13 +113,6 @@ export default function Application({ id }) {
     });
     setShowDate(false);
     // setInputs({ ...inputs, validity: isoDate });
-  }
-
-  function getLicenseName(code) {
-    if (code === 'NONE') return t('none');
-    if (code === 'UCHECKIN') return 'Ucheck In';
-    if (code === 'WIUS') return 'Wi-Us';
-    return t('license-unkown', { code });
   }
 
   if (loading) return <Loading />;
@@ -242,7 +236,7 @@ export default function Application({ id }) {
               >
                 {['NONE', 'UCHECKIN', 'WIUS'].map((l) => (
                   <option key={l} value={l}>
-                    {getLicenseName(l)}
+                    {t(getLicenseName(l))}
                   </option>
                 ))}
               </select>

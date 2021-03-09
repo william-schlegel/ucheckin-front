@@ -11,11 +11,27 @@ export const Card = styled.div`
 `;
 
 export const Row = styled.div`
-  display: block;
+  display: flex;
   align-items: center;
   margin: 0.5rem;
-  display: flex;
   flex-direction: column;
+`;
+
+export const RowFull = styled(Row)`
+  grid-column: 1 / span 2;
+`;
+
+export const RowReadOnly = styled(Row)`
+  width: 100%;
+  flex-direction: row;
+  label {
+    display: inline-block;
+    width: auto;
+    &:after {
+      content: ':';
+      margin: 0 1rem;
+    }
+  }
 `;
 
 export const Block = styled.div`
@@ -60,7 +76,7 @@ export const Form = styled.form`
 export const FormBody = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  @media (max-width: 700px) {
+  @media (max-width: 1000px) {
     grid-template-columns: auto;
   }
   grid-gap: 0.25rem;
