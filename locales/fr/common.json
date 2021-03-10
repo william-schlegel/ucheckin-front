@@ -17,7 +17,7 @@
   "cancel": "Annuler",
   "loading": "Chargement...",
   "required": "Ce champ est requis",
-  "search": "Recehrche...",
+  "search": "Recherche...",
   "description": "Description",
   "description-description": "Description pour usage interne",
   "unknown": "Inconnu",
@@ -36,5 +36,8 @@
   "close": "Fermer",
   "confirm-delete": "Pouvez-vous confirmer la suppression de cet élément ?",
   "help": "Aide",
-  "ok": "Ok"
+  "ok": "Ok",
+  "error": "Erreur",
+  "search-filter": "Recherche par filtres",
+  "filters": "Filtres"
 }

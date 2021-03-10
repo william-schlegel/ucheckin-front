@@ -49,6 +49,10 @@ export const Block = styled.div`
   }
 `;
 
+export const BlockShort = styled(Block)`
+  width: auto;
+`;
+
 export const Label = styled.label`
   font-weight: 500;
   color: var(--blue);
@@ -61,6 +65,10 @@ export const Label = styled.label`
       color: var(--red, red);
     }
   }
+`;
+
+export const LabelShort = styled(Label)`
+  width: auto;
 `;
 
 export const Form = styled.form`
@@ -91,6 +99,17 @@ export const FormBody = styled.div`
       outline: 0;
       border-color: var(--blue);
     }
+  }
+`;
+
+export const Input = styled.input`
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  border: 1px solid var(--lightGray);
+  width: 100%;
+  &:focus {
+    outline: 0;
+    border-color: var(--blue);
   }
 `;
 

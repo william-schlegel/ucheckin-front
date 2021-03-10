@@ -36,5 +36,8 @@
   "close": "Close",
   "confirm-delete": "Can you confirm deletion of this item?",
   "help": "Help",
-  "ok": "Okay"
+  "ok": "Okay",
+  "error": "Error",
+  "search-filter": "Search by filter",
+  "filters": "Filters"
 }

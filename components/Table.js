@@ -12,7 +12,7 @@ import ActionButton from './Buttons/ActionButton';
 import Badge from './styles/Badge';
 import { getLicenseName } from '../lib/fixedLists';
 import { formatDate } from './DatePicker';
-import { ButtonStyled } from './styles/Button';
+import { NewButtonStyled } from './styles/Button';
 
 export function useColumns(columns) {
   const { t } = useTranslation('common');
@@ -110,13 +110,13 @@ export default function Table({
                 if (cell.column.options.ui === 'button') {
                   return (
                     <td {...cell.getCellProps()}>
-                      <ButtonStyled
+                      <NewButtonStyled
                         onClick={() =>
                           cell.column.options.action(row.allCells[0].value)
                         }
                       >
                         {cell.value}
-                      </ButtonStyled>
+                      </NewButtonStyled>
                     </td>
                   );
                 }
@@ -141,7 +141,7 @@ export default function Table({
                     <td {...cell.getCellProps()}>{formatDate(cell.value)}</td>
                   );
                 }
-                if (cell.column.options.ui === 'checkbox') {
+                if (cell.column.options.ui === 'switch') {
                   return (
                     <td
                       {...cell.getCellProps()}

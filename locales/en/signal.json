@@ -3,5 +3,10 @@
   "signal": "Signal",
   "active": "Active",
   "validity": "Valid until",
-  "new-signal": "New signal"
+  "new-signal": "New signal",
+  "signal-details": "Details of the signal",
+  "application": "Used in application",
+  "not-used": "Not used in any appllication",
+  "number": "Number of signals",
+  "error-number": "Error in the number of signals (maximum {{max}})"
 }

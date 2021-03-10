@@ -58,11 +58,9 @@ export default function SearchUser({
     onSelectedItemChange({ selectedItem }) {
       if (!required || selectedItem)
         onChange({
-          target: {
-            value: JSON.stringify(selectedItem),
-            name,
-            type: multiple ? 'search-users' : 'search-user',
-          },
+          value: JSON.stringify(selectedItem),
+          name,
+          type: multiple ? 'search-users' : 'search-user',
         });
     },
     itemToString: (item) => item?.name || '',

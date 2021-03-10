@@ -106,11 +106,9 @@ export default function Application({ id }) {
   function handleDateChange(dt) {
     const isoDate = new Date(dt).toISOString();
     handleChange({
-      target: {
-        name: 'validity',
-        value: isoDate,
-        type: 'date',
-      },
+      name: 'validity',
+      value: isoDate,
+      type: 'date',
     });
     setShowDate(false);
     // setInputs({ ...inputs, validity: isoDate });

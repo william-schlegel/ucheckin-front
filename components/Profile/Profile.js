@@ -105,12 +105,12 @@ export default function Profile({ id }) {
   const [canEdit, setCanEdit] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const columns = useColumns([
-    ['id', 'id'],
+    ['id', 'id', { ui: 'hidden' }],
     [t('common:name'), 'name'],
-    [t('application:licence-model'), 'license'],
+    [t('application:licence-model'), 'license', { ui: 'license' }],
   ]);
   const columnsToken = useColumns([
-    ['id', 'id'],
+    ['id', 'id', { ui: 'hidden' }],
     [t('token'), 'token'],
   ]);
   const clipboard = useClipboard({

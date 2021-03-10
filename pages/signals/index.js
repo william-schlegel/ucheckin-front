@@ -1,10 +1,11 @@
-import { useQuery } from '@apollo/client';
+import { useEffect, useRef, useState } from 'react';
+import { useQuery, useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 
-import { useState } from 'react';
+import SearchField, { useSearch } from '../../components/SearchField';
 import Pagination from '../../components/Pagination';
 import Table, { useColumns } from '../../components/Table';
 import { perPage } from '../../config';
@@ -12,10 +13,11 @@ import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
 import EntetePage from '../../components/styles/EntetePage';
 import ButtonNew from '../../components/Buttons/ButtonNew';
-import SignalNew from '../../components/Signal/SignalNew';
 import { useUser } from '../../components/User';
+import SignalDetails from '../../components/Signal/SignalDetails';
+import SignalNew from '../../components/Signal/SignalNew';
 
-const PAGINATION_QUERY = gql`
+export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
     countPage: _allSignalsMeta {
       count
@@ -24,8 +26,24 @@ const PAGINATION_QUERY = gql`
 `;
 
 export const ALL_SIGNALS_QUERY = gql`
-  query ALL_SIGNALS_QUERY($skip: Int = 0, $first: Int) {
-    allSignals(first: $first, skip: $skip) {
+  query ALL_SIGNALS_QUERY(
+    $skip: Int = 0
+    $first: Int
+    $signal: String
+    $owner: String
+    $active: Boolean
+  ) {
+    allSignals(
+      first: $first
+      skip: $skip
+      where: {
+        AND: [
+          { signal_contains_i: $signal }
+          { owner: { name_contains_i: $owner } }
+          { active: $active }
+        ]
+      }
+    ) {
       id
       signal
       active
@@ -46,16 +64,44 @@ export default function Signals() {
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.countPage || 1;
   const { t } = useTranslation('signal');
-  const { data, error, loading } = useQuery(ALL_SIGNALS_QUERY, {
-    variables: {
+  const [findSignals, { error, loading, data }] = useLazyQuery(
+    ALL_SIGNALS_QUERY
+  );
+  const user = useUser();
+  const [showSignal, setShowSignal] = useState('');
+  const [newSignal, setNewSignal] = useState(false);
+  const searchFields = useRef([
+    { field: 'signal', label: t('signal'), type: 'text' },
+    { field: 'owner', label: t('common:owner'), type: 'text' },
+    { field: 'active', label: t('active'), type: 'switch' },
+  ]);
+  const {
+    filters,
+    setFilters,
+    handleChange,
+    showFilter,
+    setShowFilter,
+    resetFilters,
+  } = useSearch(searchFields.current);
+
+  useEffect(() => {
+    const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
-    },
-  });
-  const user = useUser();
+    };
+    if (filters.signal) variables.signal = filters.signal;
+    if (filters.owner) variables.owner = filters.owner;
+    if (filters.active) variables.active = filters.active;
+    if (variables.filters) variables.skip = 0;
+    console.log('variables', variables);
+    findSignals({
+      variables,
+    });
+  }, [filters, page, findSignals]);
 
   function editSignal(id) {
-    router.push(`/signal/${id}`);
+    console.log('id', id);
+    setShowSignal(id);
   }
 
   function validateSignal(id) {
@@ -72,7 +118,7 @@ export default function Signals() {
             t('active'),
             'active',
             {
-              ui: 'checkbox',
+              ui: 'switch',
               action: validateSignal,
               disabled: !user.role.canManageSignal,
             },
@@ -82,19 +128,26 @@ export default function Signals() {
       : []
   );
 
-  const [newSignal, setNewSignal] = useState(false);
-
+  function handleCloseShowSignal(id) {
+    setShowSignal('');
+  }
   function handleCloseNewSignal(id) {
     setNewSignal(false);
   }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
+
   return (
     <>
       <Head>
         <title>{t('signals')}</title>
       </Head>
+      <SignalDetails
+        open={!!showSignal}
+        onClose={handleCloseShowSignal}
+        id={showSignal}
+      />
       <SignalNew open={newSignal} onClose={handleCloseNewSignal} />
       <EntetePage>
         <h3>{t('signals')}</h3>
@@ -110,10 +163,23 @@ export default function Signals() {
         loading={loadingPage}
         count={count}
         pageRef="signals"
+        withFilter
+        setShowFilter={setShowFilter}
+      />
+      <SearchField
+        fields={searchFields.current}
+        setShowFilter={setShowFilter}
+        showFilter={showFilter}
+        filters={filters}
+        setFilters={setFilters}
+        handleChange={handleChange}
+        query={ALL_SIGNALS_QUERY}
+        loading={loading}
+        resetFilters={resetFilters}
       />
       <Table
         columns={columns}
-        data={data.allSignals}
+        data={data?.allSignals}
         error={error}
         loading={loading}
         actionButtons={[{ type: 'edit', action: editSignal }]}

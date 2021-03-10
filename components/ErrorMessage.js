@@ -21,7 +21,19 @@ const ErrorStyles = styled.div`
 
 const DisplayError = ({ error }) => {
   const { t } = useTranslation('common');
-  if (!error || !error.message) return null;
+  if (!error) return null;
+  if (typeof error === 'string') {
+    return (
+      <ErrorStyles>
+        <p data-test="graphql-error">
+          <strong>{t('error')}</strong>
+          {error}
+        </p>
+      </ErrorStyles>
+    );
+  }
+
+  if (!error.message) return null;
   if (
     error.networkError &&
     error.networkError.result &&
@@ -51,7 +63,7 @@ DisplayError.defaultProps = {
 };
 
 DisplayError.propTypes = {
-  error: PropTypes.object,
+  error: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 export default DisplayError;

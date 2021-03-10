@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 
-const PaginationStyles = styled.div`
+const Box = styled.div`
   text-align: center;
   display: inline-grid;
-  grid-template-columns: repeat(4, auto);
   align-items: stretch;
   justify-content: center;
   align-content: center;
@@ -24,4 +23,15 @@ const PaginationStyles = styled.div`
   }
 `;
 
-export default PaginationStyles;
+export const PaginationStyles = styled(Box)`
+  grid-template-columns: repeat(4, auto);
+  margin-right: 1rem;
+`;
+
+export const SearchFilterStyles = styled(Box)`
+  display: inline-flex;
+  justify-content: flex-start;
+  & > * {
+    padding: 10px 10px;
+  }
+`;

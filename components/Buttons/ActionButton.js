@@ -11,8 +11,10 @@ import {
   Plus,
   HelpCircle,
   Eye,
+  Search,
 } from 'react-feather';
 import styled from 'styled-components';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const IconButtonStyles = styled.a.attrs((props) => ({
   color: props.color || 'var(--blue)',
@@ -35,8 +37,10 @@ export default function ActionButton({
   cb = () => {},
   label,
   size = 24,
+  loading = false,
 }) {
   const { t } = useTranslation('common');
+  if (loading) return <ClipLoader loading color="#3c64a4" />;
   return (
     <IconButtonStyles
       key={type}
@@ -54,13 +58,28 @@ export default function ActionButton({
       {type === 'plus' && <Plus size={size} />}
       {type === 'help' && <HelpCircle size={size} />}
       {type === 'view' && <Eye size={size} />}
+      {type === 'search' && <Search size={size} />}
     </IconButtonStyles>
   );
 }
 
 ActionButton.propTypes = {
-  type: PropTypes.string.isRequired,
+  type: PropTypes.oneOf([
+    'edit',
+    'check',
+    'copy',
+    'delete',
+    'close',
+    'date',
+    'back',
+    'trash',
+    'plus',
+    'help',
+    'view',
+    'search',
+  ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,
   size: PropTypes.number,
+  loading: PropTypes.bool,
 };
