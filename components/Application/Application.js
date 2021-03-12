@@ -30,7 +30,7 @@ import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import Modale from '../Modale';
-import { getLicenseName } from '../../lib/fixedLists';
+import { useLicenseName } from '../Tables/LicenseType';
 
 export const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
@@ -45,7 +45,7 @@ export const QUERY_APPLICATION = gql`
         id
         name
       }
-      license
+      licenseType
       validity
     }
   }
@@ -61,6 +61,7 @@ export default function Application({ id }) {
   const [helpOpen, setHelpOpen] = useState(false);
 
   const { t } = useTranslation('application');
+  const getLicenseName = useLicenseName();
   const clipboard = useClipboard({
     copiedTimeout: 1000,
   });
@@ -70,7 +71,7 @@ export default function Application({ id }) {
     apiKey: '',
     owner: {},
     users: [],
-    license: '',
+    licenseType: '',
     validity: new Date().toISOString(),
   });
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
@@ -92,7 +93,7 @@ export default function Application({ id }) {
         apiKey: AppData.apiKey,
         owner: { key: AppData.owner.id, value: AppData.owner.name },
         users: AppData.users.map((u) => ({ key: u.id, value: u.name })),
-        license: AppData.license,
+        licenseType: AppData.licenseType,
         validity: AppData.validity,
       });
     }
@@ -224,29 +225,29 @@ export default function Application({ id }) {
           </Row>
           {user.role.canManageApplication ? (
             <Row>
-              <Label htmlFor="license">{t('licence-model')}</Label>
+              <Label htmlFor="licenseType">{t('license-model')}</Label>
               <select
                 required
                 type="text"
-                id="license"
-                name="license"
-                value={inputs.license}
+                id="licenseType"
+                name="licenseType"
+                value={inputs.licenseType}
                 onChange={handleChange}
               >
                 {['NONE', 'UCHECKIN', 'WIUS'].map((l) => (
                   <option key={l} value={l}>
-                    {t(getLicenseName(l))}
+                    {getLicenseName(l)}
                   </option>
                 ))}
               </select>
             </Row>
           ) : (
             <RowReadOnly>
-              <Label>{t('licence-model')}</Label>
-              <span>{getLicenseName(inputs.license)}</span>
+              <Label>{t('license-model')}</Label>
+              <span>{getLicenseName(inputs.licenseType)}</span>
             </RowReadOnly>
           )}
-          {inputs.license === 'WIUS' && (
+          {inputs.licenseType === 'WIUS' && (
             <RowReadOnly>
               <Label>{t('date-expiration')}</Label>
               <Block>

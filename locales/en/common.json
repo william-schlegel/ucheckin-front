@@ -6,7 +6,7 @@
   "status": "Status",
   "action": "Action",
   "actions": "Actions",
-  "license": "License",
+  "license-type": "License type",
   "new": "New",
   "delete": "Delete",
   "trash": "Delete",

@@ -6,13 +6,16 @@ import useTranslation from 'next-translate/useTranslation';
 
 import { useState } from 'react';
 import Pagination from '../../components/Pagination';
-import Table, { useColumns } from '../../components/Table';
+import Table, { useColumns } from '../../components/Tables/Table';
 import { perPage } from '../../config';
 import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
 import EntetePage from '../../components/styles/EntetePage';
 import ButtonNew from '../../components/Buttons/ButtonNew';
 import ApplicationNew from '../../components/Application/ApplicationNew';
+import LicensesDetails from '../../components/Tables/LicensesDetails';
+import Badges from '../../components/Tables/Badges';
+import LicenseType from '../../components/Tables/LicenseType';
 
 const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -28,7 +31,7 @@ export const ALL_APPLICATIONS_QUERY = gql`
       id
       name
       apiKey
-      license
+      licenseType
       validity
       owner {
         id
@@ -37,6 +40,14 @@ export const ALL_APPLICATIONS_QUERY = gql`
       users {
         id
         name
+      }
+      licenses {
+        id
+        signal {
+          id
+          signal
+        }
+        validity
       }
     }
   }
@@ -57,12 +68,25 @@ export default function Applications() {
     },
   });
   const columns = useColumns([
-    ['id', 'id', { ui: 'hidden' }],
+    ['id', 'id', 'hidden'],
     [t('common:name'), 'name'],
     [t('api-key'), 'apiKey'],
-    [t('licence-model'), 'license', { ui: 'license' }],
+    [
+      t('license-model'),
+      'licenseType',
+      ({ cell: { value } }) => <LicenseType license={value} />,
+    ],
+    [
+      t('licenses'),
+      'licenses',
+      ({ cell: { value } }) => <LicensesDetails licenses={value} />,
+    ],
     [t('common:owner'), 'owner.name'],
-    [t('common:users'), 'users', { ui: 'badges' }],
+    [
+      t('common:users'),
+      'users',
+      ({ cell: { value } }) => <Badges labels={value} />,
+    ],
   ]);
   const [newApp, setNewApp] = useState(false);
 

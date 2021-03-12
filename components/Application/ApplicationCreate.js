@@ -10,7 +10,7 @@ const CREATE_APPLICATION_MUTATION = gql`
     $name: String!
     $owner: ID!
     $users: [ID!]
-    $license: String
+    $licenseType: String
     $validity: String
   ) {
     createApplication(
@@ -19,7 +19,7 @@ const CREATE_APPLICATION_MUTATION = gql`
         apiKey: $apiKey
         owner: $owner
         users: $users
-        license: $license
+        licenseType: $licenseType
         validity: $validity
       }
     ) {
@@ -60,7 +60,7 @@ UpdateApplication.propTypes = {
     apiKey: PropTypes.string,
     owner: PropTypes.object,
     users: PropTypes.array,
-    license: PropTypes.string,
+    licenseType: PropTypes.string,
     validity: PropTypes.string,
   }),
 };

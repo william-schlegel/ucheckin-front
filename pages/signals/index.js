@@ -7,7 +7,7 @@ import useTranslation from 'next-translate/useTranslation';
 
 import SearchField, { useSearch } from '../../components/SearchField';
 import Pagination from '../../components/Pagination';
-import Table, { useColumns } from '../../components/Table';
+import Table, { useColumns } from '../../components/Tables/Table';
 import { perPage } from '../../config';
 import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
@@ -16,6 +16,11 @@ import ButtonNew from '../../components/Buttons/ButtonNew';
 import { useUser } from '../../components/User';
 import SignalDetails from '../../components/Signal/SignalDetails';
 import SignalNew from '../../components/Signal/SignalNew';
+import Button from '../../components/Tables/Button';
+import ValidityDate from '../../components/Tables/ValidityDate';
+import Switch from '../../components/Tables/Switch';
+// TODO: server side query
+// import { initializeApollo, addApolloState } from '../../lib/apolloClient';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -100,8 +105,8 @@ export default function Signals() {
   }, [filters, page, findSignals]);
 
   function editSignal(id) {
-    console.log('id', id);
-    setShowSignal(id);
+    console.log('editSignal id', id);
+    if (id) setShowSignal(id);
   }
 
   function validateSignal(id) {
@@ -111,33 +116,48 @@ export default function Signals() {
   const columns = useColumns(
     user
       ? [
-          ['id', 'id', { ui: 'hidden' }],
-          [t('signal'), 'signal', { ui: 'button', action: editSignal }],
-          [t('common:owner'), 'owner.name'],
+          ['id', 'id', 'hidden'],
+          [
+            t('signal'),
+            'signal',
+            ({
+              column: {
+                options: { action },
+              },
+              cell: { value },
+            }) => <Button action={action} value={value} />,
+            { action: editSignal },
+          ],
           [
             t('active'),
             'active',
-            {
-              ui: 'switch',
-              action: validateSignal,
-              disabled: !user.role.canManageSignal,
-            },
+            ({
+              column: {
+                options: { disabled },
+              },
+              cell: { value },
+            }) => <Switch value={value} disabled={disabled} />,
+            { disabled: !user.role.canManageSignal, callBack: validateSignal },
           ],
-          [t('validity'), 'validity', { ui: 'date' }],
+          [t('common:owner'), 'owner.name'],
+          [
+            t('validity'),
+            'validity',
+            ({ cell: { value } }) => <ValidityDate value={value} />,
+          ],
         ]
       : []
   );
 
-  function handleCloseShowSignal(id) {
+  function handleCloseShowSignal() {
     setShowSignal('');
   }
-  function handleCloseNewSignal(id) {
+  function handleCloseNewSignal() {
     setNewSignal(false);
   }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
-
   return (
     <>
       <Head>
@@ -187,3 +207,29 @@ export default function Signals() {
     </>
   );
 }
+
+// export async function getServerSideProps(context) {
+//   console.log('context', context);
+//   const apolloClient = initializeApollo();
+
+//   await apolloClient.query({
+//     query: ALL_SIGNALS_QUERY,
+//     variables: {
+//       skip: 0,
+//       first: perPage,
+//     },
+//   });
+
+//   return addApolloState(apolloClient, {
+//     props: {},
+//   });
+
+// const { error, loading, data } = useQuery(ALL_SIGNALS_QUERY, {
+//   variables: {
+//     skip: 0,
+//     first: perPage,
+//   },
+// });
+
+// return { props: { error, loading, data } };
+// }

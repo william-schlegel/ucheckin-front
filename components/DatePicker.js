@@ -20,7 +20,6 @@ export default function DatePicker({ ISOStringValue, onChange }) {
 
 export function formatDate(dt, locale) {
   const options = { day: '2-digit', month: 'long', year: 'numeric' };
-
   const formatter = Intl.DateTimeFormat(locale, options);
   return formatter.format(new Date(dt));
 }

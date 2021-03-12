@@ -29,7 +29,7 @@ import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
 import Modale from '../Modale';
-import Table, { useColumns } from '../Table';
+import Table, { useColumns } from '../Tables/Table';
 import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
 
 export const QUERY_PROFILE = gql`
@@ -50,12 +50,12 @@ export const QUERY_PROFILE = gql`
       applications {
         id
         name
-        license
+        licenseType
       }
       ownedApps {
         id
         name
-        license
+        licenseType
       }
       role {
         id
@@ -107,7 +107,7 @@ export default function Profile({ id }) {
   const columns = useColumns([
     ['id', 'id', { ui: 'hidden' }],
     [t('common:name'), 'name'],
-    [t('application:licence-model'), 'license', { ui: 'license' }],
+    [t('application:license-model'), 'licenseType', { ui: 'license-type' }],
   ]);
   const columnsToken = useColumns([
     ['id', 'id', { ui: 'hidden' }],
