@@ -6,8 +6,8 @@ module.exports = {
     '*': ['common', 'navigation'],
     '/': ['dashboard'],
     '/signin': ['signin', 'signup'],
-    'rgx:^/application': ['application'],
-    'rgx:^/signal': ['signal'],
-    'rgx:^/profile': ['profile', 'application'],
+    'rgx:^/application': ['application', 'license'],
+    'rgx:^/signal': ['signal', 'license'],
+    'rgx:^/profile': ['profile', 'application', 'license'],
   },
 };

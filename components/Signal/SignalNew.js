@@ -8,7 +8,7 @@ import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { ALL_SIGNALS_QUERY, PAGINATION_QUERY } from '../../pages/signals/index';
+import { ALL_SIGNALS_QUERY, PAGINATION_QUERY } from './Queries';
 import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form, Block } from '../styles/Card';
 import useForm from '../../lib/useForm';

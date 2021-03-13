@@ -18,6 +18,7 @@ import {
   FormHeader,
   FormTitle,
   RowReadOnly,
+  RowFull,
 } from '../styles/Card';
 import ActionButton from '../Buttons/ActionButton';
 import { useUser } from '../User';
@@ -31,6 +32,7 @@ import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import Modale from '../Modale';
 import { useLicenseName } from '../Tables/LicenseType';
+import LicenseTable from '../License/LicenseTable';
 
 export const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
@@ -47,6 +49,18 @@ export const QUERY_APPLICATION = gql`
       }
       licenseType
       validity
+      licenses {
+        id
+        validity
+        application {
+          id
+          name
+        }
+        signal {
+          id
+          signal
+        }
+      }
     }
   }
 `;
@@ -264,6 +278,10 @@ export default function Application({ id }) {
               </Block>
             </RowReadOnly>
           )}
+          <RowFull>
+            <Label>{t('licenses')}</Label>
+            <LicenseTable licenses={data.Application.licenses} />
+          </RowFull>
         </FormBody>
         <FormFooter>
           {canEdit && id && (

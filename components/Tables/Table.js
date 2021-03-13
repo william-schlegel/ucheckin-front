@@ -12,7 +12,7 @@ import Loading from '../Loading';
 import ActionButton from '../Buttons/ActionButton';
 import NoData from './NoData';
 
-export function useColumns(columns) {
+export function useColumns(columns, action = true) {
   const { t } = useTranslation('common');
   const tableColumns = useMemo(
     () =>
@@ -38,14 +38,15 @@ export function useColumns(columns) {
       }),
     [columns]
   );
-  console.log('tableColumns', tableColumns);
-  return [
-    ...tableColumns,
-    {
-      Header: t('actions'),
-      options: { ui: 'action-buttons' },
-    },
-  ];
+  if (action)
+    return [
+      ...tableColumns,
+      {
+        Header: t('actions'),
+        options: { ui: 'action-buttons' },
+      },
+    ];
+  return tableColumns;
 }
 
 const ActionButtonsStyled = styled.div`
@@ -98,11 +99,17 @@ export default function Table({
             <tr {...row.getRowProps()}>
               {row.cells.map((cell) => {
                 if (cell.column.customRender) {
+                  // console.log(`cell`, cell);
+                  // console.log(`row`, row);
                   return (
                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                   );
                 }
-                if (cell.column.options.ui === 'action-buttons') {
+                if (
+                  Array.isArray(actionButtons) &&
+                  actionButtons.length &&
+                  cell.column.options.ui === 'action-buttons'
+                ) {
                   return (
                     <td {...cell.getCellProps()}>
                       <ActionButtonsStyled>

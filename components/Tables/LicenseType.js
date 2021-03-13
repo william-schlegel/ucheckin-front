@@ -13,9 +13,7 @@ export function useLicenseName() {
   return getLicenseName;
 }
 
-export default function LicenseType(props) {
-  const { license } = props;
-  console.log('LicenseType props', props);
+export default function LicenseType({ license }) {
   const getLicenseName = useLicenseName();
   return <span>{getLicenseName(license)}</span>;
 }

@@ -15,9 +15,11 @@ import {
   FormHeader,
   FormTitle,
   Label,
+  RowFull,
   RowReadOnly,
 } from '../styles/Card';
 import ActionButton from '../Buttons/ActionButton';
+import LicenseTable from '../License/LicenseTable';
 
 const SIGNAL_QUERY = gql`
   query SIGNAL_QUERY($id: ID!) {
@@ -30,9 +32,17 @@ const SIGNAL_QUERY = gql`
       }
       active
       validity
-      application {
+      licenses {
         id
-        name
+        application {
+          id
+          name
+        }
+        signal {
+          id
+          signal
+        }
+        validity
       }
     }
   }
@@ -60,24 +70,10 @@ export default function SignalDetails({ open, onClose, id }) {
             <Label>{t('common:owner')}</Label>
             <span>{data.Signal.owner.name}</span>
           </RowReadOnly>
-          <RowReadOnly>
-            {data.Signal.application?.id ? (
-              <>
-                <Label>{t('application')}</Label>
-                <span style={{ marginRight: '1rem' }}>
-                  {data.Signal.application.name}
-                </span>
-                <ActionButton
-                  type="view"
-                  cb={() =>
-                    router.push(`/application/${data.Signal.application?.id}`)
-                  }
-                />
-              </>
-            ) : (
-              <span>{t('not-used')}</span>
-            )}
-          </RowReadOnly>
+          <RowFull>
+            <Label>{t('license:licenses')}</Label>
+            <LicenseTable licenses={data.Signal.licenses} />
+          </RowFull>
         </FormBodyFull>
       </Form>
       <DrawerFooter>

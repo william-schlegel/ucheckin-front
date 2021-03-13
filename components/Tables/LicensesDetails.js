@@ -1,10 +1,37 @@
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-export default function LicensesDetails(props) {
+const Licenses = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  color: #111;
+  text-align: center;
+  & > * {
+    flex: 1 1 3rem;
+    padding: 0.1rem 0.25rem;
+    border-radius: 5px;
+    margin: 0.1rem;
+  }
+  .no-signal {
+    background-color: #aaa;
+  }
+  .valide {
+    background-color: #8f8;
+  }
+  .not-valide {
+    background-color: #f88;
+  }
+  .nb-license {
+    background-color: #eee;
+    border: 1px solid #aaa;
+  }
+`;
+export default function LicensesDetails({ licenses }) {
   const [count, setCount] = useState({});
-  const { licenses } = props;
-  console.log('LicensesDetails props', props);
+  const { t } = useTranslation('application');
 
   useEffect(() => {
     if (licenses) {
@@ -26,19 +53,38 @@ export default function LicensesDetails(props) {
 
   if (!licenses) return <p>???</p>;
   return (
-    <div>
-      <p>{licenses.length}</p>
-      <p>sans signal {count.withoutSignal}</p>
-      <p>signal valide {count.valid}</p>
-      <p>signal non valide {count.notValid}</p>
-    </div>
+    <Licenses>
+      {licenses.length <= 0 && <span>{t('none')}</span>}
+      {licenses.length > 0 && (
+        <span className="nb-license">{licenses.length}</span>
+      )}
+      {count.withoutSignal > 0 && (
+        <span className="no-signal">{count.withoutSignal}</span>
+      )}
+      {count.valid > 0 && <span className="valide">{count.valid}</span>}
+      {count.notValid > 0 && (
+        <span className="not-valide">{count.notValid}</span>
+      )}
+    </Licenses>
+  );
+}
+
+export function LicensesLegend() {
+  const { t } = useTranslation('application');
+  return (
+    <Licenses>
+      <span className="nb-license">{t('nb-license')}</span>
+      <span className="no-signal">{t('no-signal')}</span>
+      <span className="valide">{t('valide')}</span>
+      <span className="not-valide">{t('not-valide')}</span>
+    </Licenses>
   );
 }
 
 LicensesDetails.propTypes = {
   licenses: PropTypes.arrayOf(
     PropTypes.shape({
-      signal: PropTypes.string.isRequired,
+      signal: PropTypes.object.isRequired,
       validity: PropTypes.string.isRequired,
     })
   ),

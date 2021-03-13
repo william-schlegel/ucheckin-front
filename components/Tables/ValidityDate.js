@@ -6,5 +6,5 @@ export default function ValidityDate({ value }) {
 }
 
 ValidityDate.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
 };

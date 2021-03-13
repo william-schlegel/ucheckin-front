@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useLazyQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
@@ -19,47 +18,12 @@ import SignalNew from '../../components/Signal/SignalNew';
 import Button from '../../components/Tables/Button';
 import ValidityDate from '../../components/Tables/ValidityDate';
 import Switch from '../../components/Tables/Switch';
+import {
+  PAGINATION_QUERY,
+  ALL_SIGNALS_QUERY,
+} from '../../components/Signal/Queries';
 // TODO: server side query
 // import { initializeApollo, addApolloState } from '../../lib/apolloClient';
-
-export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    countPage: _allSignalsMeta {
-      count
-    }
-  }
-`;
-
-export const ALL_SIGNALS_QUERY = gql`
-  query ALL_SIGNALS_QUERY(
-    $skip: Int = 0
-    $first: Int
-    $signal: String
-    $owner: String
-    $active: Boolean
-  ) {
-    allSignals(
-      first: $first
-      skip: $skip
-      where: {
-        AND: [
-          { signal_contains_i: $signal }
-          { owner: { name_contains_i: $owner } }
-          { active: $active }
-        ]
-      }
-    ) {
-      id
-      signal
-      active
-      validity
-      owner {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function Signals() {
   const router = useRouter();
@@ -98,7 +62,6 @@ export default function Signals() {
     if (filters.owner) variables.owner = filters.owner;
     if (filters.active) variables.active = filters.active;
     if (variables.filters) variables.skip = 0;
-    console.log('variables', variables);
     findSignals({
       variables,
     });
@@ -125,7 +88,10 @@ export default function Signals() {
                 options: { action },
               },
               cell: { value },
-            }) => <Button action={action} value={value} />,
+              row: {
+                values: { id },
+              },
+            }) => <Button action={action} label={value} value={id} />,
             { action: editSignal },
           ],
           [
@@ -163,11 +129,13 @@ export default function Signals() {
       <Head>
         <title>{t('signals')}</title>
       </Head>
-      <SignalDetails
-        open={!!showSignal}
-        onClose={handleCloseShowSignal}
-        id={showSignal}
-      />
+      {showSignal && (
+        <SignalDetails
+          open={!!showSignal}
+          onClose={handleCloseShowSignal}
+          id={showSignal}
+        />
+      )}
       <SignalNew open={newSignal} onClose={handleCloseNewSignal} />
       <EntetePage>
         <h3>{t('signals')}</h3>

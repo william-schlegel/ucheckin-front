@@ -13,7 +13,9 @@ import DisplayError from '../../components/ErrorMessage';
 import EntetePage from '../../components/styles/EntetePage';
 import ButtonNew from '../../components/Buttons/ButtonNew';
 import ApplicationNew from '../../components/Application/ApplicationNew';
-import LicensesDetails from '../../components/Tables/LicensesDetails';
+import LicensesDetails, {
+  LicensesLegend,
+} from '../../components/Tables/LicensesDetails';
 import Badges from '../../components/Tables/Badges';
 import LicenseType from '../../components/Tables/LicenseType';
 
@@ -128,6 +130,7 @@ export default function Applications() {
         loading={loading}
         actionButtons={[{ type: 'edit', action: editApplication }]}
       />
+      <LicensesLegend />
     </>
   );
 }
