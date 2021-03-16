@@ -1,26 +1,17 @@
 import { useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 
 import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { ALL_APPLICATIONS_QUERY } from '../../pages/applications/index';
+import { ALL_APPLICATIONS_QUERY, CREATE_APPLICATION_MUTATION } from './Queries';
 import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
-
-const CREATE_APPLICATION_MUTATION = gql`
-  mutation CREATE_APPLICATION_MUTATION($name: String!) {
-    createApplication(data: { name: $name }) {
-      id
-    }
-  }
-`;
 
 export default function ApplicationNew({ open, onClose }) {
   const [createApplication, { loading, error }] = useMutation(

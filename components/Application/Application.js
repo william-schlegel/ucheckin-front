@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useClipboard } from 'use-clipboard-copy';
 import Router from 'next/router';
@@ -30,40 +29,10 @@ import ApplicationDelete from './ApplicationDelete';
 import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import Modale from '../Modale';
 import { useLicenseName } from '../Tables/LicenseType';
 import LicenseTable from '../License/LicenseTable';
-
-export const QUERY_APPLICATION = gql`
-  query QUERY_APPLICATION($id: ID!) {
-    Application(where: { id: $id }) {
-      name
-      apiKey
-      owner {
-        id
-        name
-      }
-      users {
-        id
-        name
-      }
-      licenseType
-      validity
-      licenses {
-        id
-        validity
-        application {
-          id
-          name
-        }
-        signal {
-          id
-          signal
-        }
-      }
-    }
-  }
-`;
+import { QUERY_APPLICATION } from './Queries';
+import { useHelp, Help, HelpButton } from '../Help';
 
 export default function Application({ id }) {
   const { loading, error, data } = useQuery(QUERY_APPLICATION, {
@@ -72,7 +41,9 @@ export default function Application({ id }) {
   const [editOwner, setEditOwner] = useState(false);
   const [editUsers, setEditUsers] = useState(false);
   const [showDate, setShowDate] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
+    'application'
+  );
 
   const { t } = useTranslation('application');
   const getLicenseName = useLicenseName();
@@ -133,23 +104,16 @@ export default function Application({ id }) {
   if (error) return <DisplayError error={error} />;
   return (
     <>
-      <Modale
-        isOpen={helpOpen}
-        setIsOpen={setHelpOpen}
-        title={t('help-title')}
-        cancelLabel={t('common:ok')}
-      >
-        <p>{t('help-text')}</p>
-      </Modale>
+      <Help
+        contents={helpContent}
+        visible={helpVisible}
+        handleClose={toggleHelpVisibility}
+      />
       <Form>
         <FormHeader>
           <FormTitle>
             {t('application')} <span>{inputs.name}</span>
-            <ActionButton
-              type="help"
-              label={t('common:help')}
-              cb={() => setHelpOpen(true)}
-            />
+            <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
           <ButtonBack
             route="/applications"

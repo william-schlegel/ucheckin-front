@@ -4,7 +4,7 @@ module.exports = {
   debug: true,
   pages: {
     '*': ['common', 'navigation'],
-    '/': ['dashboard'],
+    '/': ['dashboard', 'application', 'signal'],
     '/signin': ['signin', 'signup'],
     'rgx:^/application': ['application', 'license'],
     'rgx:^/signal': ['signal', 'license'],

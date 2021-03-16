@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export default function Switch({ value, disabled, callBack }) {
   return (
     <SwitchComponent
-      onChange={() => callBack(value)}
+      onChange={() => typeof callBack === 'function' && callBack(value)}
       checked={value}
       disabled={disabled}
     />

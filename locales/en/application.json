@@ -17,7 +17,5 @@
   "nb-license": "Number of licenses",
   "no-signal": "Without any associated signal",
   "valide": "Valid licenses",
-  "not-valide": "Invalid licenses (expired)",
-  "help-title": "Help about applications",
-  "help-text": "Some help text"
+  "not-valide": "Invalid licenses (expired)"
 }

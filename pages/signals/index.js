@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
@@ -12,16 +12,20 @@ import Loading from '../../components/Loading';
 import DisplayError from '../../components/ErrorMessage';
 import EntetePage from '../../components/styles/EntetePage';
 import ButtonNew from '../../components/Buttons/ButtonNew';
-import { useUser } from '../../components/User';
 import SignalDetails from '../../components/Signal/SignalDetails';
 import SignalNew from '../../components/Signal/SignalNew';
 import Button from '../../components/Tables/Button';
-import ValidityDate from '../../components/Tables/ValidityDate';
 import Switch from '../../components/Tables/Switch';
 import {
   PAGINATION_QUERY,
   ALL_SIGNALS_QUERY,
+  VALIDATE_SIGNAL_MUTATION,
 } from '../../components/Signal/Queries';
+import {
+  LicensesDetailsSignal,
+  LicensesLegendSignal,
+} from '../../components/Tables/LicensesDetails';
+import { useHelp, Help, HelpButton } from '../../components/Help';
 // TODO: server side query
 // import { initializeApollo, addApolloState } from '../../lib/apolloClient';
 
@@ -30,15 +34,24 @@ export default function Signals() {
   const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
     PAGINATION_QUERY
   );
+  // const [
+  //   updateValidity,
+  //   { error: errorUpdate, loading: lodingUpdate, data: dataUpdate },
+  // ] = useMutation(VALIDATE_SIGNAL_MUTATION, {
+  //   refetchQueries: [ALL_SIGNALS_QUERY],
+  // });
+
+  const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
+
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.countPage || 1;
   const { t } = useTranslation('signal');
   const [findSignals, { error, loading, data }] = useLazyQuery(
     ALL_SIGNALS_QUERY
   );
-  const user = useUser();
   const [showSignal, setShowSignal] = useState('');
   const [newSignal, setNewSignal] = useState(false);
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
   const searchFields = useRef([
     { field: 'signal', label: t('signal'), type: 'text' },
     { field: 'owner', label: t('common:owner'), type: 'text' },
@@ -67,53 +80,58 @@ export default function Signals() {
     });
   }, [filters, page, findSignals]);
 
-  function editSignal(id) {
-    console.log('editSignal id', id);
+  function viewSignal(id) {
     if (id) setShowSignal(id);
   }
 
-  function validateSignal(id) {
-    console.log('validate id', id);
+  function editSignal(id) {
+    if (id) router.push(`/signal/${id}`);
   }
 
-  const columns = useColumns(
-    user
-      ? [
-          ['id', 'id', 'hidden'],
-          [
-            t('signal'),
-            'signal',
-            ({
-              column: {
-                options: { action },
-              },
-              cell: { value },
-              row: {
-                values: { id },
-              },
-            }) => <Button action={action} label={value} value={id} />,
-            { action: editSignal },
-          ],
-          [
-            t('active'),
-            'active',
-            ({
-              column: {
-                options: { disabled },
-              },
-              cell: { value },
-            }) => <Switch value={value} disabled={disabled} />,
-            { disabled: !user.role.canManageSignal, callBack: validateSignal },
-          ],
-          [t('common:owner'), 'owner.name'],
-          [
-            t('validity'),
-            'validity',
-            ({ cell: { value } }) => <ValidityDate value={value} />,
-          ],
-        ]
-      : []
-  );
+  function validateSignal(id, value) {
+    console.log('validate id', id, value);
+    updateValidity({ variables: { id, value: !value } });
+  }
+
+  const columns = useColumns([
+    ['id', 'id', 'hidden'],
+    [
+      t('signal'),
+      'signal',
+      ({
+        column: {
+          options: { action },
+        },
+        cell: { value },
+        row: {
+          values: { id },
+        },
+      }) => <Button action={action} label={value} value={id} />,
+      { action: editSignal },
+    ],
+    [
+      t('active'),
+      'active',
+      ({
+        cell: { value },
+        row: {
+          values: { id },
+        },
+      }) => (
+        <Switch
+          value={value}
+          disabled={false}
+          callBack={() => validateSignal(id, value)}
+        />
+      ),
+    ],
+    [t('common:owner'), 'owner.name'],
+    [
+      t('licenses'),
+      'licenses',
+      ({ cell: { value } }) => <LicensesDetailsSignal licenses={value} />,
+    ],
+  ]);
 
   function handleCloseShowSignal() {
     setShowSignal('');
@@ -129,6 +147,11 @@ export default function Signals() {
       <Head>
         <title>{t('signals')}</title>
       </Head>
+      <Help
+        contents={helpContent}
+        visible={helpVisible}
+        handleClose={toggleHelpVisibility}
+      />
       {showSignal && (
         <SignalDetails
           open={!!showSignal}
@@ -139,6 +162,7 @@ export default function Signals() {
       <SignalNew open={newSignal} onClose={handleCloseNewSignal} />
       <EntetePage>
         <h3>{t('signals')}</h3>
+        <HelpButton showHelp={toggleHelpVisibility} />
         <ButtonNew
           onClick={() => {
             setNewSignal(true);
@@ -170,8 +194,9 @@ export default function Signals() {
         data={data?.allSignals}
         error={error}
         loading={loading}
-        actionButtons={[{ type: 'edit', action: editSignal }]}
+        actionButtons={[{ type: 'view', action: viewSignal }]}
       />
+      <LicensesLegendSignal />
     </>
   );
 }

@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
-
-import Drawer from '../Drawer';
+import useTranslation from 'next-translate/useTranslation';
 import DisplayError from '../ErrorMessage';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
+import LicenseTable from '../License/LicenseTable';
 import Loading from '../Loading';
+import { useHelp, Help, HelpButton } from '../Help';
 import {
   Form,
   FormBodyFull,
@@ -16,24 +14,31 @@ import {
   RowFull,
   RowReadOnly,
 } from '../styles/Card';
-import LicenseTable from '../License/LicenseTable';
 import { SIGNAL_QUERY } from './Queries';
 import SignalFiles from './SignalFiles';
 
-export default function SignalDetails({ open, onClose, id }) {
+export default function Signal({ id }) {
   const { loading, error, data } = useQuery(SIGNAL_QUERY, {
     variables: { id },
   });
   const { t } = useTranslation('signal');
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
 
   if (loading) return <Loading />;
-  if (!data) return null;
+  if (error) return <DisplayError error={error} />;
+
   return (
-    <Drawer onClose={onClose} open={open} title={t('signal-details')}>
+    <>
+      <Help
+        contents={helpContent}
+        visible={helpVisible}
+        handleClose={toggleHelpVisibility}
+      />
       <Form>
         <FormHeader>
           <FormTitle>
             {t('signal')} <span>{data.Signal.signal}</span>
+            <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
@@ -49,16 +54,10 @@ export default function SignalDetails({ open, onClose, id }) {
       </Form>
       <p>&nbsp;</p>
       <SignalFiles signalId={id} files={data.Signal.files} />
-      <DrawerFooter>
-        <ButtonCancel onClick={onClose} />
-        {error && <DisplayError error={error} />}
-      </DrawerFooter>
-    </Drawer>
+    </>
   );
 }
 
-SignalDetails.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
-  id: PropTypes.string.isRequired,
+Signal.propTypes = {
+  id: PropTypes.string,
 };

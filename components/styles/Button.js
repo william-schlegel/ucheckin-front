@@ -88,3 +88,7 @@ export const NewButtonStyled = styled(ButtonStyled)`
     background-color: var(--pink);
   }
 `;
+
+export const NewButtonStyledBlock = styled(NewButtonStyled)`
+  width: 100%;
+`;

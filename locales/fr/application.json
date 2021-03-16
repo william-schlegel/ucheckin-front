@@ -12,12 +12,10 @@
   "wi-us": "Wi-Us",
   "none": "Pas de licence",
   "license-unknown": "Licence inconnue {{code}}",
-  "licenses": "Licences",
+  "licenses": "Licences attachées à l'application",
   "new-application": "Nouvelle application",
   "nb-license": "Nombre de licences",
   "no-signal": "Sans signal associé",
   "valide": "Licenses valides",
-  "not-valide": "Licenses non valides (expirées)",
-  "help-title": "Aide sur les applications",
-  "help-text": "Les applications permettent de regrouper des signaux et des interactions sur une même clé API"
+  "not-valide": "Licenses non valides (expirées)"
 }

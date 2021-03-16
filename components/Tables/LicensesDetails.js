@@ -15,7 +15,8 @@ const Licenses = styled.div`
     border-radius: 5px;
     margin: 0.1rem;
   }
-  .no-signal {
+  .no-signal,
+  .no-app {
     background-color: #aaa;
   }
   .valide {
@@ -29,7 +30,8 @@ const Licenses = styled.div`
     border: 1px solid #aaa;
   }
 `;
-export default function LicensesDetails({ licenses }) {
+
+export function LicensesDetailsApplication({ licenses }) {
   const [count, setCount] = useState({});
   const { t } = useTranslation('application');
 
@@ -69,7 +71,16 @@ export default function LicensesDetails({ licenses }) {
   );
 }
 
-export function LicensesLegend() {
+LicensesDetailsApplication.propTypes = {
+  licenses: PropTypes.arrayOf(
+    PropTypes.shape({
+      signal: PropTypes.object.isRequired,
+      validity: PropTypes.string.isRequired,
+    })
+  ),
+};
+
+export function LicensesLegendApplication() {
   const { t } = useTranslation('application');
   return (
     <Licenses>
@@ -81,11 +92,63 @@ export function LicensesLegend() {
   );
 }
 
-LicensesDetails.propTypes = {
+export function LicensesDetailsSignal({ licenses }) {
+  const [count, setCount] = useState({});
+  const { t } = useTranslation('signal');
+
+  useEffect(() => {
+    if (licenses) {
+      const now = new Date();
+      setCount(
+        licenses.reduce(
+          (cnt, l) => {
+            if (!l.application.id) {
+              cnt.withoutApp += 1;
+            } else if (now > new Date(l.validity)) cnt.notValid += 1;
+            else cnt.valid += 1;
+            return cnt;
+          },
+          { withoutApp: 0, valid: 0, notValid: 0 }
+        )
+      );
+    }
+  }, [licenses]);
+
+  if (!licenses) return <p>???</p>;
+  return (
+    <Licenses>
+      {licenses.length <= 0 && <span>{t('no-license')}</span>}
+      {licenses.length > 0 && (
+        <span className="nb-license">{licenses.length}</span>
+      )}
+      {count.withoutSignal > 0 && (
+        <span className="no-app">{count.withoutApp}</span>
+      )}
+      {count.valid > 0 && <span className="valide">{count.valid}</span>}
+      {count.notValid > 0 && (
+        <span className="not-valide">{count.notValid}</span>
+      )}
+    </Licenses>
+  );
+}
+
+LicensesDetailsSignal.propTypes = {
   licenses: PropTypes.arrayOf(
     PropTypes.shape({
-      signal: PropTypes.object.isRequired,
-      validity: PropTypes.string.isRequired,
+      signal: PropTypes.object,
+      validity: PropTypes.string,
     })
   ),
 };
+
+export function LicensesLegendSignal() {
+  const { t } = useTranslation('signal');
+  return (
+    <Licenses>
+      <span className="nb-license">{t('nb-license')}</span>
+      <span className="no-app">{t('no-app')}</span>
+      <span className="valide">{t('valide')}</span>
+      <span className="not-valide">{t('not-valide')}</span>
+    </Licenses>
+  );
+}

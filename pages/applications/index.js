@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
@@ -13,47 +12,17 @@ import DisplayError from '../../components/ErrorMessage';
 import EntetePage from '../../components/styles/EntetePage';
 import ButtonNew from '../../components/Buttons/ButtonNew';
 import ApplicationNew from '../../components/Application/ApplicationNew';
-import LicensesDetails, {
-  LicensesLegend,
+import {
+  LicensesDetailsApplication,
+  LicensesLegendApplication,
 } from '../../components/Tables/LicensesDetails';
 import Badges from '../../components/Tables/Badges';
 import LicenseType from '../../components/Tables/LicenseType';
-
-const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    countPage: _allApplicationsMeta {
-      count
-    }
-  }
-`;
-
-export const ALL_APPLICATIONS_QUERY = gql`
-  query ALL_APPLICATIONS_QUERY($skip: Int = 0, $first: Int) {
-    allApplications(first: $first, skip: $skip) {
-      id
-      name
-      apiKey
-      licenseType
-      validity
-      owner {
-        id
-        name
-      }
-      users {
-        id
-        name
-      }
-      licenses {
-        id
-        signal {
-          id
-          signal
-        }
-        validity
-      }
-    }
-  }
-`;
+import Button from '../../components/Tables/Button';
+import {
+  PAGINATION_QUERY,
+  ALL_APPLICATIONS_QUERY,
+} from '../../components/Application/Queries';
 
 export default function Applications() {
   const router = useRouter();
@@ -69,9 +38,27 @@ export default function Applications() {
       first: perPage,
     },
   });
+
+  function editApplication(id) {
+    router.push(`/application/${id}`);
+  }
+
   const columns = useColumns([
     ['id', 'id', 'hidden'],
-    [t('common:name'), 'name'],
+    [
+      t('common:name'),
+      'name',
+      ({
+        column: {
+          options: { action },
+        },
+        cell: { value },
+        row: {
+          values: { id },
+        },
+      }) => <Button action={action} label={value} value={id} />,
+      { action: editApplication },
+    ],
     [t('api-key'), 'apiKey'],
     [
       t('license-model'),
@@ -81,7 +68,7 @@ export default function Applications() {
     [
       t('licenses'),
       'licenses',
-      ({ cell: { value } }) => <LicensesDetails licenses={value} />,
+      ({ cell: { value } }) => <LicensesDetailsApplication licenses={value} />,
     ],
     [t('common:owner'), 'owner.name'],
     [
@@ -92,11 +79,7 @@ export default function Applications() {
   ]);
   const [newApp, setNewApp] = useState(false);
 
-  function editApplication(id) {
-    router.push(`/application/${id}`);
-  }
-
-  function handleCloseNewApp(id) {
+  function handleCloseNewApp() {
     setNewApp(false);
   }
 
@@ -130,7 +113,7 @@ export default function Applications() {
         loading={loading}
         actionButtons={[{ type: 'edit', action: editApplication }]}
       />
-      <LicensesLegend />
+      <LicensesLegendApplication />
     </>
   );
 }

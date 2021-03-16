@@ -30,7 +30,6 @@ export const ALL_SIGNALS_QUERY = gql`
       id
       signal
       active
-      validity
       owner {
         id
         name
@@ -47,6 +46,79 @@ export const ALL_SIGNALS_QUERY = gql`
         }
         validity
       }
+    }
+  }
+`;
+
+export const VALIDATE_SIGNAL_MUTATION = gql`
+  mutation VALIDATE_SIGNAL_MUTATION($id: ID!, $value: Boolean!) {
+    updateSignal(id: $id, data: { active: $value }) {
+      id
+      signal
+      active
+    }
+  }
+`;
+
+export const SIGNAL_QUERY = gql`
+  query SIGNAL_QUERY($id: ID!) {
+    Signal(where: { id: $id }) {
+      id
+      signal
+      owner {
+        id
+        name
+      }
+      active
+      licenses {
+        id
+        application {
+          id
+          name
+        }
+        signal {
+          id
+          signal
+        }
+        validity
+      }
+      files {
+        id
+        chanel
+        duration
+        interval
+        centralFrequency
+        overlap
+        gain
+        url
+      }
+    }
+  }
+`;
+
+export const MUTATION_ADD_SIGNAL_FILE = gql`
+  mutation MUTATION_ADD_SIGNAL_FILE(
+    $signal: ID!
+    $chanel: String!
+    $duration: Int
+    $interval: Int
+    $centralFrequency: Int
+    $overlap: Int
+    $gain: Int
+  ) {
+    createSignalFile(
+      data: {
+        signal: { connect: { id: $signal } }
+        chanel: $chanel
+        duration: $duration
+        interval: $interval
+        centralFrequency: $centralFrequency
+        overlap: $overlap
+        gain: $gain
+      }
+    ) {
+      id
+      url
     }
   }
 `;

@@ -38,7 +38,9 @@ export const Block = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  & > * {
+  margin: 0;
+  gap: 1rem;
+  /* & > * {
     margin: 0 1rem !important;
     &:first-child {
       margin-left: 0 !important;
@@ -46,7 +48,7 @@ export const Block = styled.div`
     &:last-child {
       margin-right: 0 !important;
     }
-  }
+  } */
 `;
 
 export const BlockShort = styled(Block)`
@@ -87,7 +89,7 @@ export const FormBody = styled.div`
   @media (max-width: 1000px) {
     grid-template-columns: auto;
   }
-  grid-gap: 0.25rem;
+  grid-gap: 1rem;
   input,
   textarea,
   select {

@@ -22,13 +22,12 @@ import {
   Block,
   RowReadOnly,
 } from '../styles/Card';
-import ActionButton from '../Buttons/ActionButton';
 import { useUser } from '../User';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
-import Modale from '../Modale';
+import { useHelp, Help, HelpButton } from '../Help';
 import Table, { useColumns } from '../Tables/Table';
 import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
 
@@ -84,6 +83,7 @@ export default function Profile({ id }) {
     variables: { id },
   });
   const { t } = useTranslation('profile');
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const user = useUser();
   const initialValues = useRef({
     name: '',
@@ -103,7 +103,6 @@ export default function Profile({ id }) {
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
   const columns = useColumns([
     ['id', 'id', { ui: 'hidden' }],
     [t('common:name'), 'name'],
@@ -174,23 +173,16 @@ export default function Profile({ id }) {
   if (error) return <DisplayError error={error} />;
   return (
     <>
-      <Modale
-        isOpen={helpOpen}
-        setIsOpen={setHelpOpen}
-        title={t('help-title')}
-        cancelLabel={t('common:ok')}
-      >
-        <p>{t('help-text')}</p>
-      </Modale>
+      <Help
+        contents={helpContent}
+        visible={helpVisible}
+        handleClose={toggleHelpVisibility}
+      />
       <Form>
         <FormHeader>
           <FormTitle>
             {t('profile')} <span>{inputs.name}</span>
-            <ActionButton
-              type="help"
-              label={t('common:help')}
-              cb={() => setHelpOpen(true)}
-            />
+            <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
           <ButtonBack route="/" label={t('navigation:home')} />
         </FormHeader>

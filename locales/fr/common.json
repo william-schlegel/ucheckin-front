@@ -39,5 +39,10 @@
   "ok": "Ok",
   "error": "Erreur",
   "search-filter": "Recherche par filtres",
-  "filters": "Filtres"
+  "filters": "Filtres",
+  "signal": "Signal",
+  "play": "Jouer le signal",
+  "pause": "Mettre le signal en pause",
+  "download": "Télécharger le fichier du signal",
+  "clone": "Dupliquer le signal"
 }

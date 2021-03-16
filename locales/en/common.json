@@ -39,5 +39,10 @@
   "ok": "Okay",
   "error": "Error",
   "search-filter": "Search by filter",
-  "filters": "Filters"
+  "filters": "Filters",
+  "signal": "Signal",
+  "play": "Play the signal",
+  "pause": "Pause the signal",
+  "download": "Download the signal file",
+  "clone": "Clone the signal"
 }

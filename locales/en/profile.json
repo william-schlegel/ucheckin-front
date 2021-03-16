@@ -14,7 +14,5 @@
   "role": "Role",
   "photo": "Avatar",
   "success": "Profile saved with success",
-  "error": "Error while saving the profile {{error}}",
-  "help-title": "Help about my profile",
-  "help-text": "help"
+  "error": "Error while saving the profile {{error}}"
 }

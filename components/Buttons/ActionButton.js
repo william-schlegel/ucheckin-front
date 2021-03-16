@@ -12,6 +12,11 @@ import {
   HelpCircle,
   Eye,
   Search,
+  Download,
+  Play,
+  Repeat,
+  Pause,
+  Square,
 } from 'react-feather';
 import styled from 'styled-components';
 import ClipLoader from 'react-spinners/ClipLoader';
@@ -59,6 +64,11 @@ export default function ActionButton({
       {type === 'help' && <HelpCircle size={size} />}
       {type === 'view' && <Eye size={size} />}
       {type === 'search' && <Search size={size} />}
+      {type === 'download' && <Download size={size} />}
+      {type === 'play' && <Play size={size} />}
+      {type === 'pause' && <Pause size={size} />}
+      {type === 'stop' && <Square size={size} />}
+      {(type === 'clone' || type === 'repeat') && <Repeat size={size} />}
     </IconButtonStyles>
   );
 }
@@ -77,6 +87,12 @@ ActionButton.propTypes = {
     'help',
     'view',
     'search',
+    'download',
+    'play',
+    'pause',
+    'stop',
+    'clone',
+    'repeat',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

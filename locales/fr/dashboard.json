@@ -1,3 +1,5 @@
 {
-  "dashboard": "Tableau de bord"
+  "dashboard": "Tableau de bord",
+  "applications": "{{count}} dernières applications crées",
+  "signals": "{{count}} derniers signaux créés"
 }

@@ -1,3 +1,5 @@
 {
-  "dashboard": "Dashboard"
+  "dashboard": "Dashboard",
+  "applications": "Last {{count}} application created",
+  "signals": "Last {{count}} signals created"
 }
