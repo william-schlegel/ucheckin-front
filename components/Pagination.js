@@ -2,6 +2,7 @@ import Link from 'next/link';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
+import { ArrowLeft, ArrowRight } from 'react-feather';
 
 import { PaginationStyles } from './styles/PaginationStyles';
 import DisplayError from './ErrorMessage';
@@ -31,12 +32,24 @@ export default function Pagination({
     <PaginationBlock>
       <PaginationStyles>
         <Link href={`/${pageRef}/${page - 1}`}>
-          <a aria-disabled={page <= 1}>← {t('prev')}</a>
+          <a aria-disabled={page <= 1}>
+            <ArrowLeft /> {t('prev')}
+          </a>
         </Link>
-        <p>{t('pagecount', { page, count: pageCount })}</p>
-        <p> {t(count > 1 ? 'itemcount_plural' : 'itemcount', { count })}</p>
+        {count ? (
+          <p>{t('pagecount', { page, count: pageCount })}</p>
+        ) : (
+          <p>...</p>
+        )}
+        {count ? (
+          <p> {t(count > 1 ? 'itemcount_plural' : 'itemcount', { count })}</p>
+        ) : (
+          <p>...</p>
+        )}
         <Link href={`/${pageRef}/${page + 1}`}>
-          <a aria-disabled={page >= pageCount}>{t('next')} →</a>
+          <a aria-disabled={page >= pageCount}>
+            {t('next')} <ArrowRight />
+          </a>
         </Link>
       </PaginationStyles>
       {withFilter && page <= 1 && (

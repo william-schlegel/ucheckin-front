@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import ActionButton from './ActionButton';
 import { NewButtonStyled } from '../styles/Button';
 
-export default function NewButton({ onClick, disabled }) {
+export default function NewButton({ onClick, disabled, label }) {
   const { t } = useTranslation('common');
   return (
     <NewButtonStyled type="button" disabled={disabled} onClick={onClick}>
       <>
-        <ActionButton type="plus" label={t('new')} cb={onClick} />
-        {t('new')}
+        <ActionButton type="plus" label={label || t('new')} cb={onClick} />
+        {label || t('new')}
       </>
     </NewButtonStyled>
   );
@@ -19,4 +19,5 @@ export default function NewButton({ onClick, disabled }) {
 NewButton.propTypes = {
   onClick: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  label: PropTypes.string,
 };

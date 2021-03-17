@@ -30,7 +30,7 @@ export default function Applications() {
     PAGINATION_QUERY
   );
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.countPage || 1;
+  const { count } = dataPage?.count || 1;
   const { t } = useTranslation('application');
   const { data, error, loading } = useQuery(ALL_APPLICATIONS_QUERY, {
     variables: {

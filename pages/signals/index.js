@@ -44,7 +44,7 @@ export default function Signals() {
   const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
 
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.countPage || 1;
+  const { count } = dataPage?.count || 1;
   const { t } = useTranslation('signal');
   const [findSignals, { error, loading, data }] = useLazyQuery(
     ALL_SIGNALS_QUERY

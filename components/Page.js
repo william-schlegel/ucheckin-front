@@ -18,6 +18,13 @@ const GlobalStyles = createGlobalStyle`
     --maxWidth: 80vw;
     --background: #fefefe;
     --bs: 0 12px 24px 0 rgba(0,0,0,0.09);
+    --delete-color: #f22;
+    --delete-color-hover: #f66;
+    --update-color: #262;
+    --update-color-hover: #464;
+    --cancel-color: #e1e1e1;
+    --cancel-color-hover: #828282;
+
     box-sizing: border-box;
     font-size: 15px;
   }

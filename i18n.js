@@ -9,5 +9,6 @@ module.exports = {
     'rgx:^/application': ['application', 'license'],
     'rgx:^/signal': ['signal', 'license'],
     'rgx:^/profile': ['profile', 'application', 'license'],
+    'rgx:^/license': ['license'],
   },
 };

@@ -2,5 +2,11 @@
   "licenses": "Licences",
   "signal": "Signal",
   "application": "Application",
-  "validity": "Date d'expiration"
+  "validity": "Date d'expiration",
+  "associated-signal": "Signal associé",
+  "associated-application": "Application associée",
+  "valid": "Valide",
+  "new-license": "Acheter de nouvelles licences",
+  "number": "Nombre",
+  "activate-trial": "Activer ma licence d'essais"
 }

@@ -33,7 +33,7 @@ export const QUERY_APPLICATION = gql`
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
-    countPage: _allApplicationsMeta {
+    count: _allApplicationsMeta {
       count
     }
   }

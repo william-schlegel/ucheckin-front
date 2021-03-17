@@ -2,5 +2,11 @@
   "licenses": "Licenses",
   "signal": "Signal",
   "application": "Application",
-  "validity": "Expiration date"
+  "validity": "Expiration date",
+  "associated-signal": "Associated signal",
+  "associated-application": "Associated application",
+  "valid": "Valid",
+  "new-license": "Buy new licenses",
+  "number": "Number",
+  "activate-trial": "Activate my trial license"
 }

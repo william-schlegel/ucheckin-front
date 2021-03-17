@@ -28,6 +28,7 @@ export default function SignalFiles({ signalId, files }) {
   const [showDetails, setShowDetails] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [fileData, setFileData] = useState({});
+  const [actualFile, setActualFile] = useState({});
   const initialValues = useRef({
     chanel: 'CH2',
     duration: 30,
@@ -43,6 +44,7 @@ export default function SignalFiles({ signalId, files }) {
 
   const columns = useColumns([
     ['id', 'id', 'hidden'],
+    ['url', 'url', 'hidden'],
     [t('chanel'), 'chanel', ({ cell: { value } }) => <Chanel chanel={value} />],
     [t('duration'), 'duration', null, { unit: t('seconds') }],
   ]);
@@ -54,8 +56,13 @@ export default function SignalFiles({ signalId, files }) {
   }
 
   function playFile(id) {
-    console.log(`play`, id);
-    setPlaying(true);
+    console.log(`playFile`, id);
+    const actual = files.find((f) => f.id === id);
+    console.log(`playFile`, { actual });
+    if (actual) {
+      setActualFile(actual);
+      setPlaying(true);
+    }
   }
 
   function downloadFile(id) {
@@ -88,7 +95,7 @@ export default function SignalFiles({ signalId, files }) {
             columns={columns}
             data={files}
             actionButtons={[
-              { type: 'play', action: playFile, value: 'url' },
+              { type: 'play', action: playFile },
               { type: 'download', action: downloadFile },
               { type: 'clone', action: duplicateFile },
               { type: 'view', action: viewFile },
@@ -98,9 +105,10 @@ export default function SignalFiles({ signalId, files }) {
         {playing && (
           <RowFull>
             <AudioPlayer
-              trackName="6CE9D"
-              audioSrc="./6CE9D.wav"
+              trackName={getChanelName(actualFile.chanel)}
+              audioSrc={actualFile.url}
               onEnded={() => setPlaying(false)}
+              onDownloadClick={() => downloadFile(actualFile.id)}
             />
           </RowFull>
         )}
