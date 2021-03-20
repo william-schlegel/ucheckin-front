@@ -16,16 +16,22 @@ const Logo = styled.h1`
   position: relative;
   z-index: 2;
   background: var(--green);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 1rem;
   a {
     color: white;
     text-decoration: none;
     text-transform: uppercase;
-    padding: 0.5rem 1rem;
+  }
+  img {
+    height: 70px;
+    width: auto;
   }
 `;
 
 const HeaderStyles = styled.header`
-  grid-area: 1 / 1 / 2 / 3;
   .bar {
     border-bottom: 1px solid var(--green);
     display: grid;
@@ -110,6 +116,7 @@ export default function Header() {
     <HeaderStyles>
       <div className="bar">
         <Logo>
+          <img src="/images/UCHECKIN.png" alt="logo" />
           <Link href="/">Ucheck In</Link>
         </Logo>
         <div className="sub-bar">

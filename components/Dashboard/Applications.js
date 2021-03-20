@@ -70,12 +70,12 @@ export default function DashboardApplication() {
         { action: viewApp },
       ],
       [
-        t('application:license-model'),
+        t('common:license-model'),
         'licenseType',
         ({ cell: { value } }) => <LicenseType license={value} />,
       ],
       [
-        t('application:licenses'),
+        t('license:licenses'),
         'licenses',
         ({ cell: { value } }) => (
           <LicensesDetailsApplication licenses={value} />

@@ -30,6 +30,7 @@ import ButtonNew from '../Buttons/ButtonNew';
 import { useHelp, Help, HelpButton } from '../Help';
 import Table, { useColumns } from '../Tables/Table';
 import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
+import LicenseType from '../Tables/LicenseType';
 
 export const QUERY_PROFILE = gql`
   query QUERY_PROFILE($id: ID!) {
@@ -104,12 +105,16 @@ export default function Profile({ id }) {
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
   const columns = useColumns([
-    ['id', 'id', { ui: 'hidden' }],
+    ['id', 'id', 'hidden'],
     [t('common:name'), 'name'],
-    [t('application:license-model'), 'licenseType', { ui: 'license-type' }],
+    [
+      t('common:license-model'),
+      'licenseType',
+      ({ cell: { value } }) => <LicenseType license={value} />,
+    ],
   ]);
   const columnsToken = useColumns([
-    ['id', 'id', { ui: 'hidden' }],
+    ['id', 'id', 'hidden'],
     [t('token'), 'token'],
   ]);
   const clipboard = useClipboard({

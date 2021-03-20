@@ -1,94 +1,76 @@
 import styled from 'styled-components';
 
 export const ButtonStyled = styled.button`
+  --color: var(--blue);
+  --hover-color: var(--pink);
+  --bg-color: transparent;
+  --bg-hover-color: transparent;
   font-size: 1rem;
   background: none;
-  border: solid 1px var(--blue);
-  color: var(--blue);
   border-radius: 5px;
   padding: 0.5rem 1rem;
   margin: 0;
   margin-right: 1rem;
   display: flex;
   gap: 1rem;
-  transition: backgound-color 200ms ease;
+  border: solid 1px var(--color);
+  color: var(--color);
+  background-color: var(--bg-color);
+  transition: background-color 200ms ease;
   & > * {
-    color: var(--blue);
+    color: var(--color) !important;
   }
   display: flex;
   align-items: center;
+  white-space: nowrap;
   &:hover {
-    color: var(--pink);
-    border-color: var(--pink);
+    background-color: var(--bg-hover-color);
+    color: var(--hover-color);
+    border-color: var(--hover-color);
     & > * {
-      color: var(--pink);
+      color: var(--hover-color) !important;
     }
     cursor: pointer;
+  }
+  :disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 
 export const DeleteButtonStyled = styled(ButtonStyled)`
-  background-color: var(--delete-color);
-  border: solid 1px red;
-  color: white;
-  & > * {
-    color: white !important;
-  }
-  &:hover {
-    color: yellow;
-    border-color: red;
-    background-color: var(--delete-color-hover);
-    & > * {
-      color: yellow !important;
-    }
-  }
+  --hover-color: yellow;
+  --color: white;
+  --bg-hover-color: var(--delete-color-hover);
+  --bg-color: var(--delete-color);
 `;
 
 export const CancelButtonStyled = styled(ButtonStyled)`
-  background-color: var(--cancel-color);
-  border: solid 1px var(--gray);
-  color: var(--black);
-  & > * {
-    color: var(--black) !important;
-  }
-  &:hover {
-    background-color: var(--cancel-color-hover);
-    border-color: var(--gray);
-    color: var(--lightBlack);
-    & > * {
-      color: var(--lightBlack) !important;
-    }
-  }
+  --hover-color: var(--lightBlack);
+  --color: var(--black);
+  --bg-hover-color: var(--cancel-color-hover);
+  --bg-color: var(--cancel-color);
 `;
 
 export const ValidationButtonStyled = styled(ButtonStyled)`
-  background-color: var(--update-color);
-  border: solid 1px green;
-  color: white;
-  & > * {
-    color: white !important;
-  }
-  &:hover {
-    color: white;
-    background-color: var(--update-color-hover);
-    border-color: green;
-    & > * {
-      color: white !important;
-    }
-  }
+  --hover-color: white;
+  --color: white;
+  --bg-hover-color: var(--update-color-hover);
+  --bg-color: var(--update-color);
 `;
 
 export const NewButtonStyled = styled(ButtonStyled)`
-  background-color: var(--blue);
-  color: white;
-  & > * {
-    color: white !important;
-  }
-  &:hover {
-    color: white !important;
-    border-color: var(--pink);
-    background-color: var(--pink);
-  }
+  --hover-color: white;
+  --color: white;
+  --bg-hover-color: var(--pink);
+  --bg-color: var(--blue);
+`;
+
+export const PaymentButtonStyled = styled(ButtonStyled)`
+  --hover-color: white;
+  --color: white;
+  --bg-hover-color: var(--blue);
+  --bg-color: var(--pink);
 `;
 
 export const NewButtonStyledBlock = styled(NewButtonStyled)`

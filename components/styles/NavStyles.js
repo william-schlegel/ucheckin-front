@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 const NavStyles = styled.ul`
-  grid-area: 2 / 1 / 3 / 2;
   margin: 0;
   padding: 0;
   display: flex;

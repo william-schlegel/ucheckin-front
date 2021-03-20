@@ -81,6 +81,7 @@ export const Form = styled.form`
   /* font-size: 1.5rem; */
   line-height: 1.5;
   font-weight: 600;
+  margin-bottom: 1rem;
 `;
 
 export const FormBody = styled.div`
@@ -177,4 +178,19 @@ export const FormWithBar = styled(Form)`
       animation: ${loading} 0.5s linear infinite;
     }
   }
+`;
+
+export const H1 = styled.h1`
+  color: var(--pink);
+`;
+export const H2 = styled.h2`
+  color: var(--pink);
+`;
+
+export const H3 = styled.h3`
+  color: var(--pink);
+`;
+
+export const H4 = styled.h4`
+  color: var(--pink);
 `;

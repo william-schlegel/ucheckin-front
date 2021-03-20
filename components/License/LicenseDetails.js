@@ -46,7 +46,6 @@ export default function LicenseDetails({ open, onClose, id }) {
           </RowFull>
         </FormBodyFull>
       </Form>
-      <p>&nbsp;</p>
       <DrawerFooter>
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}

@@ -47,7 +47,6 @@ export default function SignalDetails({ open, onClose, id }) {
           </RowFull>
         </FormBodyFull>
       </Form>
-      <p>&nbsp;</p>
       <SignalFiles signalId={id} files={data.Signal.files} />
       <DrawerFooter>
         <ButtonCancel onClick={onClose} />

@@ -5,7 +5,7 @@ import Nav from './Nav';
 
 const GlobalStyles = createGlobalStyle`
   html {
-    --green: #008000;
+    --green: #20C05C;
     --blue: #3c64a4;
     --pink: #E63586;
     --black: #101010;
@@ -21,7 +21,7 @@ const GlobalStyles = createGlobalStyle`
     --delete-color: #f22;
     --delete-color-hover: #f66;
     --update-color: #262;
-    --update-color-hover: #464;
+    --update-color-hover: #292;
     --cancel-color: #e1e1e1;
     --cancel-color-hover: #828282;
 
@@ -58,23 +58,24 @@ const InnerStyles = styled.div`
   max-width: 1920px;
   margin: 0 auto 0 0;
   padding: 2rem;
-  grid-area: 2 / 2 / 3 / 3;
 `;
 
 const MainScreen = styled.div`
-  display: grid;
-  grid-template-columns: minmax(250px, 1fr) 10fr;
-  grid-template-rows: 1fr auto;
-  grid-column-gap: 0px;
-  grid-row-gap: 0px;
+  height: 100vh;
+`;
+
+const Content = styled.div`
+  display: flex;
 `;
 export default function Page({ children }) {
   return (
     <MainScreen>
       <GlobalStyles />
       <Header />
-      <Nav />
-      <InnerStyles>{children}</InnerStyles>
+      <Content>
+        <Nav />
+        <InnerStyles>{children}</InnerStyles>
+      </Content>
     </MainScreen>
   );
 }

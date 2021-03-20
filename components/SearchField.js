@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce';
 import { SearchFilterStyles } from './styles/PaginationStyles';
 import ActionButton from './Buttons/ActionButton';
 import { BlockShort, Input, LabelShort } from './styles/Card';
+import Spinner from './Spinner';
 
 export default function SearchField({
   fields,
@@ -64,7 +65,8 @@ export default function SearchField({
         </BlockShort>
       ))}
       <BlockShort>
-        <ActionButton type="close" cb={closeSearch} loading={loading} />
+        {loading && <Spinner />}
+        {!loading && <ActionButton type="close" cb={closeSearch} />}
       </BlockShort>
     </SearchFilterStyles>
   );

@@ -1,21 +1,24 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 
+import Counter from '../Counter';
 import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonValidation from '../Buttons/ButtonValidation';
+import ButtonPayment from '../Buttons/ButtonPayment';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { ALL_LICENSES_QUERY, PAGINATION_QUERY } from './Queries';
 import { DrawerFooter } from '../styles/Drawer';
-import { FormBodyFull, Label, Row, Form, Block } from '../styles/Card';
+import { FormBodyFull, Label, Row, Form, Block, H2 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
 import { useUser } from '../User';
 import ActionButton from '../Buttons/ActionButton';
 import SearchUser from '../SearchUser';
+import LicensePrice, { usePrice } from './LicensePrice';
+import Total from '../TotalCount';
 
 const CREATE_LICENSE_MUTATION = gql`
   mutation CREATE_LICENSE_MUTATION($data: [LicensesCreateInput]!) {
@@ -39,48 +42,48 @@ export default function LicenseNew({ open, onClose }) {
     }
   );
   const user = useUser();
+  const { price } = usePrice(user?.id);
+  const [total, setTotal] = useState(0);
   const { t } = useTranslation('license');
   const initialValues = useRef({
-    number: 1,
     owner: { key: user?.id, value: user?.name },
+    ucheckInMonth: 0,
+    ucheckInYear: 0,
+    wiUsMonth: 0,
+    wiUsYear: 0,
   });
   const { inputs, handleChange } = useForm(initialValues.current);
   const [editOwner, setEditOwner] = useState(false);
-  const [errorNumber, setErrorNumber] = useState('');
 
   function handleSubmit() {
-    const { number, owner } = inputs;
-    const max = user?.role.canManageLicense ? 100 : 10;
-    if (number < 1 || number > max) {
-      setErrorNumber(t('error-number', { max }));
-      return;
-    }
+    // TODO: handle payment before creating licenses
+    const { owner, ucheckInMonth, ucheckInYear, wiUsMonth, wiUsYear } = inputs;
     const licenses = [];
-    for (let s = 0; s < number; s += 1)
-      licenses.push({ data: { owner: { connect: { id: owner.key } } } });
-    const variables = { data: licenses };
-    createLicense({ variables }).catch((err) => alert(err.message));
+    function createNLicenses(number, type) {
+      for (let s = 0; s < number; s += 1)
+        licenses.push({
+          data: { owner: { connect: { id: owner.key } }, licenseType: type },
+        });
+      const variables = { data: licenses };
+      createLicense({ variables }).catch((err) => alert(err.message));
+    }
     onClose();
   }
+
+  useEffect(() => {
+    const { ucheckInMonth, ucheckInYear, wiUsMonth, wiUsYear } = inputs;
+    const tot =
+      parseInt(ucheckInMonth || 0) * parseFloat(price.ucheckInMonthly) +
+      parseInt(ucheckInYear || 0) * parseFloat(price.ucheckInYearly) +
+      parseInt(wiUsMonth || 0) * parseFloat(price.wiUsMonthly) +
+      parseInt(wiUsYear || 0) * parseFloat(price.wiUsYearly);
+    setTotal(tot);
+  }, [inputs, price]);
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-license')}>
       <Form>
         <FormBodyFull>
-          <Row>
-            <Label htmlFor="name" required>
-              {t('number')}
-            </Label>
-            <input
-              required
-              type="number"
-              id="number"
-              name="number"
-              value={inputs.number}
-              onChange={handleChange}
-            />
-            <DisplayError error={errorNumber} />
-          </Row>
           <Row>
             <Label>{t('common:owner')}</Label>
             <Block>
@@ -98,10 +101,49 @@ export default function LicenseNew({ open, onClose }) {
               )}
             </Block>
           </Row>
+          <Row>
+            {user?.id && (
+              <LicensePrice
+                owner={user.id}
+                dayDate={new Date().toISOString()}
+              />
+            )}
+          </Row>
+          <H2>{t('ucheck-in')}</H2>
+          <Row>
+            <Counter
+              label={t('by-month')}
+              name="ucheckInMonth"
+              input={inputs.ucheckInMonth}
+              handleChange={handleChange}
+            />
+            <Counter
+              label={t('by-year')}
+              name="ucheckInYear"
+              input={inputs.ucheckInYear}
+              handleChange={handleChange}
+            />
+          </Row>
+          <H2>{t('wi-us')}</H2>
+          <Row>
+            <Counter
+              label={t('by-month')}
+              name="wiUsMonth"
+              input={inputs.wiUsMonth}
+              handleChange={handleChange}
+            />
+            <Counter
+              label={t('by-year')}
+              name="wiUsYear"
+              input={inputs.wiUsYear}
+              handleChange={handleChange}
+            />
+          </Row>
+          <Total value={total} />
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation disabled={loading} onClick={handleSubmit} />
+        <ButtonPayment disabled={loading || !total} onClick={handleSubmit} />
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}
       </DrawerFooter>

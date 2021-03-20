@@ -1,5 +1,6 @@
 {
   "licenses": "Licences",
+  "license": "Licence",
   "signal": "Signal",
   "application": "Application",
   "validity": "Date d'expiration",
@@ -8,5 +9,19 @@
   "valid": "Valide",
   "new-license": "Acheter de nouvelles licences",
   "number": "Nombre",
-  "activate-trial": "Activer ma licence d'essais"
+  "activate-trial": "Activer ma licence d'essais",
+  "available-licenses": "Licences disponibles",
+  "count": "Nombre de licences",
+  "purchase": "Informations sur l'achat",
+  "purchase-info": "Licenses achetées par {{name}} le {{dt}}. {{info}}",
+  "trial-text": "Licence de test",
+  "license-info": "{{free}} licence(s) libre(s) sur {{total}} licence(s). {{valid}} licence(s) valide(s).",
+  "by-month": "Par mois",
+  "by-year": "Par an",
+  "ucheck-in": "Nombre de licences Ucheck-In (une licence par lieu d'exploitation)",
+  "wi-us": "Nombre de licence Wi-Us",
+  "your-price": "Votre tarif",
+  "plus": "Ajouter une licence",
+  "minus": "Diminuer d'une licence",
+  "total": "Total de la commande"
 }

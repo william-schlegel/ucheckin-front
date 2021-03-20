@@ -17,11 +17,13 @@ import {
   Repeat,
   Pause,
   Square,
+  PlusCircle,
+  MinusCircle,
+  CreditCard,
 } from 'react-feather';
 import styled from 'styled-components';
-import ClipLoader from 'react-spinners/ClipLoader';
 
-const IconButtonStyles = styled.a.attrs((props) => ({
+export const IconButtonStyles = styled.a.attrs((props) => ({
   color: props.color || 'var(--blue)',
   hoverColor: props.hoverColor || 'var(--pink)',
 }))`
@@ -42,10 +44,8 @@ export default function ActionButton({
   cb = () => {},
   label,
   size = 24,
-  loading = false,
 }) {
   const { t } = useTranslation('common');
-  if (loading) return <ClipLoader loading color="#3c64a4" />;
   return (
     <IconButtonStyles
       key={type}
@@ -68,6 +68,9 @@ export default function ActionButton({
       {type === 'play' && <Play size={size} />}
       {type === 'pause' && <Pause size={size} />}
       {type === 'stop' && <Square size={size} />}
+      {type === 'plus-circle' && <PlusCircle size={size} />}
+      {type === 'minus-circle' && <MinusCircle size={size} />}
+      {type === 'credit-card' && <CreditCard size={size} />}
       {(type === 'clone' || type === 'repeat') && <Repeat size={size} />}
     </IconButtonStyles>
   );
@@ -93,9 +96,11 @@ ActionButton.propTypes = {
     'stop',
     'clone',
     'repeat',
+    'plus-circle',
+    'minus-circle',
+    'credit-card',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,
   size: PropTypes.number,
-  loading: PropTypes.bool,
 };

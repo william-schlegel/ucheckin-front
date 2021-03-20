@@ -203,7 +203,7 @@ export default function Application({ id }) {
           </Row>
           {user.role.canManageApplication ? (
             <Row>
-              <Label htmlFor="licenseType">{t('license-model')}</Label>
+              <Label htmlFor="licenseType">{t('common:license-model')}</Label>
               <select
                 required
                 type="text"
@@ -221,7 +221,7 @@ export default function Application({ id }) {
             </Row>
           ) : (
             <RowReadOnly>
-              <Label>{t('license-model')}</Label>
+              <Label>{t('common:license-model')}</Label>
               <span>{getLicenseName(inputs.licenseType)}</span>
             </RowReadOnly>
           )}

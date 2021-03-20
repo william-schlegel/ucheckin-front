@@ -4,11 +4,11 @@ module.exports = {
   debug: true,
   pages: {
     '*': ['common', 'navigation'],
-    '/': ['dashboard', 'application', 'signal'],
+    '/': ['dashboard', 'signal', 'license', 'application'],
     '/signin': ['signin', 'signup'],
     'rgx:^/application': ['application', 'license'],
     'rgx:^/signal': ['signal', 'license'],
-    'rgx:^/profile': ['profile', 'application', 'license'],
+    'rgx:^/profile': ['profile', 'license'],
     'rgx:^/license': ['license'],
   },
 };

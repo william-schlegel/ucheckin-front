@@ -44,5 +44,11 @@
   "play": "Play the signal",
   "pause": "Pause the signal",
   "download": "Download the signal file",
-  "clone": "Clone the signal"
+  "clone": "Clone the signal",
+  "payment": "Proceed to payment",
+  "license-model": "License Model",
+  "no-license": "No license",
+  "license-unknown": "License unknown {{code}}",
+  "ucheck-in": "Ucheck In",
+  "wi-us": "Wi-Us"
 }

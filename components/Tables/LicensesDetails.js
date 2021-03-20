@@ -1,7 +1,9 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { HelpCircle } from 'react-feather';
 import styled from 'styled-components';
+import { IconButtonStyles } from '../Buttons/ActionButton';
 
 const Licenses = styled.div`
   display: flex;
@@ -10,7 +12,8 @@ const Licenses = styled.div`
   color: #111;
   text-align: center;
   & > * {
-    flex: 1 1 3rem;
+    flex: 1 1 1.5rem;
+    align-items: center;
     padding: 0.1rem 0.25rem;
     border-radius: 5px;
     margin: 0.1rem;
@@ -56,7 +59,7 @@ export function LicensesDetailsApplication({ licenses }) {
   if (!licenses) return <p>???</p>;
   return (
     <Licenses>
-      {licenses.length <= 0 && <span>{t('none')}</span>}
+      {licenses.length <= 0 && <span>{t('common:no-license')}</span>}
       {licenses.length > 0 && (
         <span className="nb-license">{licenses.length}</span>
       )}
@@ -80,15 +83,48 @@ LicensesDetailsApplication.propTypes = {
   ),
 };
 
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const HelpButton = styled(IconButtonStyles)`
+  position: relative;
+  display: flex;
+  gap: 1rem;
+`;
+
+const LegendContent = styled(Licenses)`
+  position: absolute;
+  left: 0;
+  top: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 400px;
+`;
+
 export function LicensesLegendApplication() {
   const { t } = useTranslation('application');
+  const [helpVisible, setHelpVisible] = useState(false);
+  function toggleHelp() {
+    setHelpVisible(!helpVisible);
+  }
   return (
-    <Licenses>
-      <span className="nb-license">{t('nb-license')}</span>
-      <span className="no-signal">{t('no-signal')}</span>
-      <span className="valide">{t('valide')}</span>
-      <span className="not-valide">{t('not-valide')}</span>
-    </Licenses>
+    <ButtonContainer>
+      <HelpButton onMouseEnter={toggleHelp} onMouseLeave={toggleHelp}>
+        <HelpCircle />
+        <span>{t('licenses')}</span>
+        {helpVisible && (
+          <LegendContent>
+            <span className="nb-license">{t('nb-license')}</span>
+            <span className="no-signal">{t('no-signal')}</span>
+            <span className="valide">{t('valide')}</span>
+            <span className="not-valide">{t('not-valide')}</span>
+          </LegendContent>
+        )}
+      </HelpButton>
+    </ButtonContainer>
   );
 }
 
@@ -117,7 +153,7 @@ export function LicensesDetailsSignal({ licenses }) {
   if (!licenses) return <p>???</p>;
   return (
     <Licenses>
-      {licenses.length <= 0 && <span>{t('no-license')}</span>}
+      {licenses.length <= 0 && <span>{t('common:no-license')}</span>}
       {licenses.length > 0 && (
         <span className="nb-license">{licenses.length}</span>
       )}
@@ -142,13 +178,25 @@ LicensesDetailsSignal.propTypes = {
 };
 
 export function LicensesLegendSignal() {
+  const [helpVisible, setHelpVisible] = useState(false);
+  function toggleHelp() {
+    setHelpVisible(!helpVisible);
+  }
   const { t } = useTranslation('signal');
   return (
-    <Licenses>
-      <span className="nb-license">{t('nb-license')}</span>
-      <span className="no-app">{t('no-app')}</span>
-      <span className="valide">{t('valide')}</span>
-      <span className="not-valide">{t('not-valide')}</span>
-    </Licenses>
+    <ButtonContainer>
+      <HelpButton onMouseEnter={toggleHelp} onMouseLeave={toggleHelp}>
+        <HelpCircle />
+        <span>{t('licenses')}</span>
+        {helpVisible && (
+          <LegendContent>
+            <span className="nb-license">{t('nb-license')}</span>
+            <span className="no-app">{t('no-app')}</span>
+            <span className="valide">{t('valide')}</span>
+            <span className="not-valide">{t('not-valide')}</span>
+          </LegendContent>
+        )}
+      </HelpButton>
+    </ButtonContainer>
   );
 }

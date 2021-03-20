@@ -66,7 +66,7 @@ export default function DashboardApplication() {
         { action: viewSignal },
       ],
       [
-        'signal:active',
+        t('signal:active'),
         'active',
         ({ cell: { value } }) => (
           <Switch label={t('signal:active')} value={value} disabled />
