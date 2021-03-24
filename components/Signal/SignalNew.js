@@ -1,14 +1,17 @@
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 
 import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { ALL_SIGNALS_QUERY, PAGINATION_QUERY } from './Queries';
+import {
+  ALL_SIGNALS_QUERY,
+  CREATE_SIGNALS_MUTATION,
+  PAGINATION_QUERY,
+} from './Queries';
 import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form, Block } from '../styles/Card';
 import useForm from '../../lib/useForm';
@@ -17,17 +20,9 @@ import { useUser } from '../User';
 import ActionButton from '../Buttons/ActionButton';
 import SearchUser from '../SearchUser';
 
-const CREATE_SIGNAL_MUTATION = gql`
-  mutation CREATE_SIGNAL_MUTATION($data: [SignalsCreateInput]!) {
-    createSignals(data: $data) {
-      id
-    }
-  }
-`;
-
 export default function SignalNew({ open, onClose }) {
   const [createSignal, { loading, error }] = useMutation(
-    CREATE_SIGNAL_MUTATION,
+    CREATE_SIGNALS_MUTATION,
     {
       refetchQueries: [
         {

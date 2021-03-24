@@ -15,8 +15,8 @@ export default function Nav() {
       {user ? (
         <>
           <Link href="/applications">{t('applications')}</Link>
-          <Link href="/signals">{t('signals')}</Link>
           <Link href="/licenses">{t('licenses')}</Link>
+          <Link href="/signals">{t('signals')}</Link>
           <SignOut />
         </>
       ) : (

@@ -6,11 +6,11 @@ import ValidityDate from '../Tables/ValidityDate';
 
 export default function LicenseTable({ licenses, actionButtons }) {
   const { t } = useTranslation('license');
-
   const columns = useColumns(
     [
       ['id', 'id', 'hidden'],
       [t('application'), 'application.name'],
+      [t('signal'), 'signal.name'],
       [
         t('validity'),
         'validity',

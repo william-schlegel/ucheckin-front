@@ -1,9 +1,9 @@
 import { useUser } from '../components/User';
-import MyProfile from '../components/Profile/Profile';
+import MyCompte from '../components/Profile/Compte';
 import Loading from '../components/Loading';
 
-export default function Profile() {
+export default function Compte() {
   const user = useUser();
   if (!user) return <Loading />;
-  return <MyProfile id={user.id} />;
+  return <MyCompte id={user.id} />;
 }

@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
+import { Notify } from 'notiflix';
+import { useEffect } from 'react';
 import Header from './Header';
 import Nav from './Nav';
 
@@ -67,7 +69,16 @@ const MainScreen = styled.div`
 const Content = styled.div`
   display: flex;
 `;
+
 export default function Page({ children }) {
+  useEffect(() => {
+    Notify.Init({
+      fontSize: '20px',
+      messageMaxLength: 250,
+      width: '50ch',
+    });
+  });
+
   return (
     <MainScreen>
       <GlobalStyles />

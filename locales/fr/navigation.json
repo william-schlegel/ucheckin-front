@@ -7,5 +7,6 @@
   "application": "Application",
   "signals": "Signaux",
   "profile": "Profile",
+  "account": "Compte",
   "licenses": "Licences"
 }

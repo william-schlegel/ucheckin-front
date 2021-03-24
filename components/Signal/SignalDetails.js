@@ -33,7 +33,7 @@ export default function SignalDetails({ open, onClose, id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('signal')} <span>{data.Signal.signal}</span>
+            {t('signal')} <span>{data.Signal.name}</span>
           </FormTitle>
         </FormHeader>
         <FormBodyFull>

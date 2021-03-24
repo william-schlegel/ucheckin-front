@@ -1,4 +1,6 @@
+import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+import { useEffect } from 'react';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -18,7 +20,7 @@ export const ALL_LICENSES_QUERY = gql`
       id
       signal {
         id
-        signal
+        name
       }
       application {
         id
@@ -30,14 +32,12 @@ export const ALL_LICENSES_QUERY = gql`
         id
         name
       }
-      licenseType
+      licenseType {
+        id
+      }
       trialLicense
       purchaseDate
       purchaseInformation
-      purchaseBy {
-        id
-        name
-      }
     }
   }
 `;
@@ -58,7 +58,7 @@ export const LICENSE_QUERY = gql`
       id
       signal {
         id
-        signal
+        name
       }
       application {
         id
@@ -68,18 +68,15 @@ export const LICENSE_QUERY = gql`
       valid
       purchaseDate
       purchaseInformation
-      trialLicense {
-        id
-      }
-      purchaseBy {
-        id
-        name
-      }
+      trialLicense
+      nbArea
       owner {
         id
         name
       }
-      licenseType
+      licenseType {
+        id
+      }
     }
   }
 `;
@@ -87,16 +84,22 @@ export const LICENSE_QUERY = gql`
 export const ACTIVATE_TRIAL_MUTATION = gql`
   mutation ACTIVATE_TRIAL_MUTATION(
     $ownerId: ID!
+    $appId: ID!
+    $signalId: ID!
+    $licenseTypeId: ID!
     $dateValidite: String!
     $trialText: String
   ) {
     createLicense(
       data: {
         owner: { connect: { id: $ownerId } }
+        application: { connect: { id: $appId } }
+        signal: { connect: { id: $signalId } }
+        licenseType: { connect: { id: $licenseTypeId } }
         trialLicense: true
         validity: $dateValidite
         purchaseInformation: $trialText
-        purchaseBy: { connect: { id: $ownerId } }
+        nbArea: 1
       }
     ) {
       id
@@ -118,12 +121,15 @@ export const LICENSE_PRICE_QUERY = gql`
     ) {
       id
       default
-      ucheckInYearly
-      ucheckInMonthly
-      wiUsYearly
-      wiUsMonthly
-      validAfter
-      validUntil
+      items {
+        id
+        licenseType {
+          id
+          name
+        }
+        monthly
+        yearly
+      }
       users {
         id
         name
@@ -134,3 +140,30 @@ export const LICENSE_PRICE_QUERY = gql`
     }
   }
 `;
+
+export const UPDATE_LICENSE_MUTATION = gql`
+  mutation UPDATE_LICENSE_MUTATION($id: ID!, $newValidity: String!) {
+    updateLicense(id: $id, data: { validity: $newValidity }) {
+      id
+      validity
+    }
+  }
+`;
+
+export function useFindLicense(licenseId) {
+  const [findLicense, { data, error, loading }] = useLazyQuery(LICENSE_QUERY);
+  useEffect(() => {
+    if (licenseId)
+      findLicense({
+        variables: { id: licenseId },
+      });
+  }, [licenseId, findLicense]);
+  return {
+    license: data?.License || {
+      id: licenseId,
+      validity: new Date().toISOString(),
+    },
+    licenseError: error,
+    licenseLoading: loading,
+  };
+}

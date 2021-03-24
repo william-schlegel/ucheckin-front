@@ -20,7 +20,7 @@ const QUERY_SIGNAUX = gql`
   query QUERY_SIGNAUX {
     allSignals(first:${nbSignaux} , sortBy: creation_DESC) {
       id
-      signal
+      name
       active
       creation
       licenses {
@@ -53,7 +53,7 @@ export default function DashboardApplication() {
       ['id', 'id', 'hidden'],
       [
         t('common:signal'),
-        'signal',
+        'name',
         ({
           column: {
             options: { action },

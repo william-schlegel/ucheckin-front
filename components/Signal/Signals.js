@@ -53,7 +53,7 @@ export default function Signals() {
   const [newSignal, setNewSignal] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
   const searchFields = useRef([
-    { field: 'signal', label: t('signal'), type: 'text' },
+    { field: 'name', label: t('signal'), type: 'text' },
     { field: 'owner', label: t('common:owner'), type: 'text' },
     { field: 'active', label: t('active'), type: 'switch' },
   ]);
@@ -71,7 +71,7 @@ export default function Signals() {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    if (filters.signal) variables.signal = filters.signal;
+    if (filters.name) variables.name = filters.name;
     if (filters.owner) variables.owner = filters.owner;
     if (filters.active) variables.active = filters.active;
     if (variables.filters) variables.skip = 0;
@@ -97,7 +97,7 @@ export default function Signals() {
     ['id', 'id', 'hidden'],
     [
       t('signal'),
-      'signal',
+      'name',
       ({
         column: {
           options: { action },

@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
+import Select from 'react-select';
+
 import {
   Block,
   Form,
@@ -159,18 +161,18 @@ export default function SignalFiles({ signalId, files }) {
           <>
             <RowFull>
               <Label htmlFor="chanels">{t('chanel')}</Label>
-              <select
+              <Select
+                className="select"
                 id="chanel"
-                name="chanel"
                 value={inputs.chanel}
-                onChange={handleChange}
-              >
-                {chanelList.map((ch) => (
-                  <option key={ch} value={ch}>
-                    {getChanelName(ch)}
-                  </option>
-                ))}
-              </select>
+                onChange={(e) =>
+                  handleChange({ value: e.value, name: 'chanel' })
+                }
+                options={chanelList.map((ch) => ({
+                  value: ch,
+                  label: getChanelName(ch),
+                }))}
+              />
             </RowFull>
             <RowFull>
               <Label htmlFor="duration">{t('duration')}</Label>

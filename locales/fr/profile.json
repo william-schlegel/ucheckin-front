@@ -5,6 +5,8 @@
   "address": "Adresse",
   "zip": "Code postal",
   "city": "Ville",
+  "country": "Pays",
+  "vatNumber": "N° de TVA intracommunautaire",
   "phone": "Téléphone",
   "contact": "Contact",
   "owned-apps": "Mes applications",
@@ -14,5 +16,7 @@
   "role": "Rôle",
   "photo": "Photo de profile",
   "success": "Profile enregistré avec succès",
-  "error": "Erreur lors de l'enregistrement du profile {{error}}"
+  "error": "Erreur lors de l'enregistrement du profile {{error}}",
+  "token-created": "Nouveau token créé {{token}} et copié dans le presse-papier",
+  "token-deleted": "Token supprimé"
 }

@@ -41,11 +41,7 @@ export default function Pagination({
         ) : (
           <p>...</p>
         )}
-        {count ? (
-          <p> {t(count > 1 ? 'itemcount_plural' : 'itemcount', { count })}</p>
-        ) : (
-          <p>...</p>
-        )}
+        {count ? <p> {t('itemcount', { count })}</p> : <p>...</p>}
         <Link href={`/${pageRef}/${page + 1}`}>
           <a aria-disabled={page >= pageCount}>
             {t('next')} <ArrowRight />

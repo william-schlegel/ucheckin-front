@@ -6,6 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 // import DisplayError from '../ErrorMessage';
 import errorMessage from '../../lib/errorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
+import Loading from '../Loading';
 
 const UPDATE_PROFILE_MUTATION = gql`
   mutation UPDATE_PROFILE_MUTATION(
@@ -18,10 +19,7 @@ const UPDATE_PROFILE_MUTATION = gql`
     $city: String
     $telephone: String
     $contact: String
-    $applications: [ApplicationWhereUniqueInput]
-    $ownedApps: [ApplicationWhereUniqueInput]
     $role: RoleWhereUniqueInput
-    $tokens: [TokenWhereUniqueInput] # $photo: Upload
   ) {
     updateUser(
       id: $id
@@ -34,11 +32,7 @@ const UPDATE_PROFILE_MUTATION = gql`
         city: $city
         telephone: $telephone
         contact: $contact
-        applications: { disconnectAll: true, connect: $applications }
-        ownedApps: { disconnectAll: true, connect: $ownedApps }
         role: { connect: $role }
-        tokens: { disconnectAll: true, connect: $tokens }
-        # photo: $photo
       }
     ) {
       id
@@ -87,7 +81,7 @@ export function UpdatePhoto({ id, photo, onSuccess }) {
   return (
     <>
       <ButtonValidation disabled={loading} onClick={handleValidation} update />
-      {/* {error && <DisplayError error={error} />} */}
+      {loading && <Loading />}
     </>
   );
 }
@@ -112,10 +106,7 @@ export function UpdateProfile({ id, updatedProfile, onSuccess }) {
     city,
     telephone,
     contact,
-    applications,
-    ownedApps,
     role,
-    tokens,
   } = updatedProfile;
   const variables = {
     id,
@@ -127,10 +118,7 @@ export function UpdateProfile({ id, updatedProfile, onSuccess }) {
     city,
     telephone,
     contact,
-    applications: applications.map((a) => ({ id: a.id })),
-    ownedApps: ownedApps.map((a) => ({ id: a.id })),
     role: { id: role.id },
-    tokens: tokens.map((a) => ({ id: a.id })),
   };
 
   function handleValidation() {
@@ -164,10 +152,7 @@ UpdateProfile.propTypes = {
     city: PropTypes.string,
     telephone: PropTypes.string,
     contact: PropTypes.string,
-    applications: PropTypes.array,
-    ownedApps: PropTypes.array,
     role: PropTypes.object,
-    tokens: PropTypes.array,
     photo: PropTypes.object,
   }),
   onSuccess: PropTypes.func.isRequired,

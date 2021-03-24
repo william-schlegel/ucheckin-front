@@ -1,4 +1,6 @@
+import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+import { useEffect } from 'react';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -12,7 +14,7 @@ export const ALL_SIGNALS_QUERY = gql`
   query ALL_SIGNALS_QUERY(
     $skip: Int = 0
     $first: Int
-    $signal: String
+    $name: String
     $owner: String
     $active: Boolean
   ) {
@@ -21,14 +23,14 @@ export const ALL_SIGNALS_QUERY = gql`
       skip: $skip
       where: {
         AND: [
-          { signal_contains_i: $signal }
+          { name_contains_i: $name }
           { owner: { name_contains_i: $owner } }
           { active: $active }
         ]
       }
     ) {
       id
-      signal
+      name
       active
       owner {
         id
@@ -38,7 +40,7 @@ export const ALL_SIGNALS_QUERY = gql`
         id
         signal {
           id
-          signal
+          name
         }
         application {
           id
@@ -54,7 +56,7 @@ export const VALIDATE_SIGNAL_MUTATION = gql`
   mutation VALIDATE_SIGNAL_MUTATION($id: ID!, $value: Boolean!) {
     updateSignal(id: $id, data: { active: $value }) {
       id
-      signal
+      name
       active
     }
   }
@@ -64,7 +66,7 @@ export const SIGNAL_QUERY = gql`
   query SIGNAL_QUERY($id: ID!) {
     Signal(where: { id: $id }) {
       id
-      signal
+      name
       owner {
         id
         name
@@ -78,7 +80,7 @@ export const SIGNAL_QUERY = gql`
         }
         signal {
           id
-          signal
+          name
         }
         validity
       }
@@ -122,3 +124,39 @@ export const MUTATION_ADD_SIGNAL_FILE = gql`
     }
   }
 `;
+
+export const CREATE_SIGNAL_MUTATION = gql`
+  mutation CREATE_SIGNAL_MUTATION($ownerId: ID!) {
+    createSignal(data: { owner: { connect: { id: $ownerId } } }) {
+      id
+      name
+    }
+  }
+`;
+
+export const CREATE_SIGNALS_MUTATION = gql`
+  mutation CREATE_SIGNALS_MUTATION($data: [SignalsCreateInput]!) {
+    createSignals(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
+export function useFindSignal(signalId) {
+  const [findSignal, { data, error, loading }] = useLazyQuery(SIGNAL_QUERY);
+  useEffect(() => {
+    if (signalId)
+      findSignal({
+        variables: { id: signalId },
+      });
+  }, [signalId, findSignal]);
+  return {
+    signal: data?.Signal || {
+      id: signalId,
+      name: '',
+    },
+    signalError: error,
+    signalLoading: loading,
+  };
+}

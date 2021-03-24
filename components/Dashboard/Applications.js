@@ -23,15 +23,16 @@ const QUERY_APPLICATIONS = gql`
     allApplications(first:${nbApp} , sortBy: creation_DESC) {
       id
       name
-      licenseType
-      validity
+      licenseType {
+        id
+      }
       creation
       licenses {
         id
         validity
         signal {
           id
-          signal
+          name
         }
       }
       owner {
@@ -71,7 +72,7 @@ export default function DashboardApplication() {
       ],
       [
         t('common:license-model'),
-        'licenseType',
+        'licenseType.id',
         ({ cell: { value } }) => <LicenseType license={value} />,
       ],
       [

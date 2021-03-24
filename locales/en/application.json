@@ -10,7 +10,7 @@
   "new-application": "New application",
   "date-expiration": "Expiration date",
   "nb-license": "Number of licenses",
-  "no-signal": "Without any associated signal",
   "valide": "Valid licenses",
-  "not-valide": "Invalid licenses (expired)"
+  "not-valide": "Invalid licenses (expired)",
+  "add-license": "Add one or several licenses to the application"
 }

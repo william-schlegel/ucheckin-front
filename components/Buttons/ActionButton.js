@@ -20,6 +20,10 @@ import {
   PlusCircle,
   MinusCircle,
   CreditCard,
+  Volume2,
+  VolumeX,
+  Volume,
+  Clock,
 } from 'react-feather';
 import styled from 'styled-components';
 
@@ -72,6 +76,10 @@ export default function ActionButton({
       {type === 'minus-circle' && <MinusCircle size={size} />}
       {type === 'credit-card' && <CreditCard size={size} />}
       {(type === 'clone' || type === 'repeat') && <Repeat size={size} />}
+      {type === 'signal' && <Volume size={size} />}
+      {type === 'add-license' && <Volume2 size={size} />}
+      {type === 'delete-signal' && <VolumeX size={size} />}
+      {type === 'extend' && <Clock size={size} />}
     </IconButtonStyles>
   );
 }
@@ -99,6 +107,10 @@ ActionButton.propTypes = {
     'plus-circle',
     'minus-circle',
     'credit-card',
+    'add-license',
+    'delete-signal',
+    'signal',
+    'extend',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

@@ -18,10 +18,6 @@ const Licenses = styled.div`
     border-radius: 5px;
     margin: 0.1rem;
   }
-  .no-signal,
-  .no-app {
-    background-color: #aaa;
-  }
   .valide {
     background-color: #8f8;
   }
@@ -44,27 +40,22 @@ export function LicensesDetailsApplication({ licenses }) {
       setCount(
         licenses.reduce(
           (cnt, l) => {
-            if (!l.signal.id) {
-              cnt.withoutSignal += 1;
-            } else if (now > new Date(l.validity)) cnt.notValid += 1;
+            if (now > new Date(l.validity)) cnt.notValid += 1;
             else cnt.valid += 1;
             return cnt;
           },
-          { withoutSignal: 0, valid: 0, notValid: 0 }
+          { valid: 0, notValid: 0 }
         )
       );
     }
   }, [licenses]);
 
-  if (!licenses) return <p>???</p>;
+  if (!licenses) return <span>{t('common:no-license')}</span>;
   return (
     <Licenses>
       {licenses.length <= 0 && <span>{t('common:no-license')}</span>}
       {licenses.length > 0 && (
         <span className="nb-license">{licenses.length}</span>
-      )}
-      {count.withoutSignal > 0 && (
-        <span className="no-signal">{count.withoutSignal}</span>
       )}
       {count.valid > 0 && <span className="valide">{count.valid}</span>}
       {count.notValid > 0 && (
@@ -118,7 +109,6 @@ export function LicensesLegendApplication() {
         {helpVisible && (
           <LegendContent>
             <span className="nb-license">{t('nb-license')}</span>
-            <span className="no-signal">{t('no-signal')}</span>
             <span className="valide">{t('valide')}</span>
             <span className="not-valide">{t('not-valide')}</span>
           </LegendContent>
@@ -138,27 +128,22 @@ export function LicensesDetailsSignal({ licenses }) {
       setCount(
         licenses.reduce(
           (cnt, l) => {
-            if (!l.application.id) {
-              cnt.withoutApp += 1;
-            } else if (now > new Date(l.validity)) cnt.notValid += 1;
+            if (now > new Date(l.validity)) cnt.notValid += 1;
             else cnt.valid += 1;
             return cnt;
           },
-          { withoutApp: 0, valid: 0, notValid: 0 }
+          { valid: 0, notValid: 0 }
         )
       );
     }
   }, [licenses]);
 
-  if (!licenses) return <p>???</p>;
+  if (!licenses) return <span>{t('common:no-license')}</span>;
   return (
     <Licenses>
       {licenses.length <= 0 && <span>{t('common:no-license')}</span>}
       {licenses.length > 0 && (
         <span className="nb-license">{licenses.length}</span>
-      )}
-      {count.withoutSignal > 0 && (
-        <span className="no-app">{count.withoutApp}</span>
       )}
       {count.valid > 0 && <span className="valide">{count.valid}</span>}
       {count.notValid > 0 && (
@@ -191,7 +176,6 @@ export function LicensesLegendSignal() {
         {helpVisible && (
           <LegendContent>
             <span className="nb-license">{t('nb-license')}</span>
-            <span className="no-app">{t('no-app')}</span>
             <span className="valide">{t('valide')}</span>
             <span className="not-valide">{t('not-valide')}</span>
           </LegendContent>

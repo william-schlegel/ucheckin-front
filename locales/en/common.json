@@ -25,7 +25,7 @@
   "prev": "Prev.",
   "next": "Next",
   "itemcount": "{{count}} item only",
-  "itemcount_plural": "{{count}} items total",
+  "itemcount_other": "{{count}} items total",
   "copy": "Copy to Clipboard",
   "copied": "Element copied!",
   "search-user": "Search for user",
@@ -50,5 +50,11 @@
   "no-license": "No license",
   "license-unknown": "License unknown {{code}}",
   "ucheck-in": "Ucheck In",
-  "wi-us": "Wi-Us"
+  "wi-us": "Wi-Us",
+  "add-license": "Add a license",
+  "delete-signal": "Delete a signal",
+  "plus": "Add",
+  "extend": "Extend the license validity",
+  "vat": "VAT ({{percentage}})",
+  "taxed-amount": "Total billed including taxes"
 }

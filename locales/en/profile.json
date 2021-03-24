@@ -5,6 +5,8 @@
   "address": "Address",
   "zip": "Zip code",
   "city": "City",
+  "country": "Country",
+  "vatNumber": "VAT number",
   "phone": "Phone",
   "contact": "Contact",
   "owned-apps": "My applications",
@@ -14,5 +16,7 @@
   "role": "Role",
   "photo": "Avatar",
   "success": "Profile saved with success",
-  "error": "Error while saving the profile {{error}}"
+  "error": "Error while saving the profile {{error}}",
+  "token-created": "New token created {{token}} and copied in clipboard",
+  "token-deleted": "Token deleted"
 }

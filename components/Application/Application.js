@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
-import { useClipboard } from 'use-clipboard-copy';
 import Router from 'next/router';
+import Select from 'react-select';
 
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
@@ -24,15 +24,18 @@ import { useUser } from '../User';
 import useForm from '../../lib/useForm';
 import Badge from '../styles/Badge';
 import SearchUser from '../SearchUser';
-import DatePicker, { formatDate } from '../DatePicker';
 import ApplicationDelete from './ApplicationDelete';
 import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonNew from '../Buttons/ButtonNew';
 import { useLicenseName } from '../Tables/LicenseType';
 import LicenseTable from '../License/LicenseTable';
 import { QUERY_APPLICATION } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
+import LicenseNew from './LicenseNew';
+import LicenseUpdate from '../License/LicenseUpdate';
+import ApiKey from '../Tables/ApiKey';
 
 export default function Application({ id }) {
   const { loading, error, data } = useQuery(QUERY_APPLICATION, {
@@ -40,16 +43,12 @@ export default function Application({ id }) {
   });
   const [editOwner, setEditOwner] = useState(false);
   const [editUsers, setEditUsers] = useState(false);
-  const [showDate, setShowDate] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
 
   const { t } = useTranslation('application');
-  const getLicenseName = useLicenseName();
-  const clipboard = useClipboard({
-    copiedTimeout: 1000,
-  });
+  const { findLicenseName, licenseTypesOptions } = useLicenseName();
   const user = useUser();
   const initialValues = useRef({
     name: '',
@@ -57,10 +56,15 @@ export default function Application({ id }) {
     owner: {},
     users: [],
     licenseType: '',
-    validity: new Date().toISOString(),
   });
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
+  const [showAddLicense, setShowAddLicense] = useState(false);
+  const [showUpdateLicense, setShowUpdateLicense] = useState(false);
+  const [selectedLicense, setSelectedLicense] = useState({});
+
+  console.log(`licenseTypesOptions`, licenseTypesOptions);
+  console.log(`inputs.licenseType`, inputs.licenseType);
 
   useEffect(() => {
     if (data && user) {
@@ -78,8 +82,7 @@ export default function Application({ id }) {
         apiKey: AppData.apiKey,
         owner: { key: AppData.owner.id, value: AppData.owner.name },
         users: AppData.users.map((u) => ({ key: u.id, value: u.name })),
-        licenseType: AppData.licenseType,
-        validity: AppData.validity,
+        licenseType: AppData.licenseType.id,
       });
     }
   }, [setInputs, data]);
@@ -89,15 +92,22 @@ export default function Application({ id }) {
     setInputs({ ...inputs, users });
   }
 
-  function handleDateChange(dt) {
-    const isoDate = new Date(dt).toISOString();
-    handleChange({
-      name: 'validity',
-      value: isoDate,
-      type: 'date',
+  function AddLicense() {
+    console.log(`inputs`, inputs);
+    if (!inputs.licenseType) return;
+    setShowAddLicense(true);
+  }
+
+  function updateLicense(licenseId) {
+    const license = data.Application.licenses.find((l) => l.id === licenseId);
+    console.log(`license`, license);
+    setSelectedLicense({
+      licenseId,
+      appId: id,
+      signalId: license.signal.id,
+      ownerId: data.Application.owner.id,
     });
-    setShowDate(false);
-    // setInputs({ ...inputs, validity: isoDate });
+    setShowUpdateLicense(true);
   }
 
   if (loading) return <Loading />;
@@ -109,6 +119,24 @@ export default function Application({ id }) {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      {id && inputs.owner.key && (
+        <LicenseNew
+          open={showAddLicense}
+          onClose={() => setShowAddLicense(false)}
+          appId={id}
+          ownerId={inputs.owner.key}
+        />
+      )}
+      {selectedLicense.licenseId && (
+        <LicenseUpdate
+          open={showUpdateLicense}
+          onClose={() => setShowUpdateLicense(false)}
+          licenseId={selectedLicense.licenseId}
+          appId={selectedLicense.appId}
+          ownerId={selectedLicense.ownerId}
+          signalId={selectedLicense.signalId}
+        />
+      )}
       <Form>
         <FormHeader>
           <FormTitle>
@@ -144,12 +172,7 @@ export default function Application({ id }) {
           <Row>
             <Label>{t('api-key')}</Label>
             <Block>
-              <span>{inputs.apiKey}</span>
-              <ActionButton
-                type="copy"
-                cb={() => clipboard.copy(inputs.apiKey)}
-              />
-              {clipboard.copied && <span>{t('common:copied')}</span>}
+              <ApiKey apiKey={inputs.apiKey} showCopied />
             </Block>
           </Row>
           <Row>
@@ -204,47 +227,34 @@ export default function Application({ id }) {
           {user.role.canManageApplication ? (
             <Row>
               <Label htmlFor="licenseType">{t('common:license-model')}</Label>
-              <select
-                required
-                type="text"
-                id="licenseType"
-                name="licenseType"
+              <Select
+                className="basic-single select"
+                // isClearable
+                // id="licenseType"
                 value={inputs.licenseType}
-                onChange={handleChange}
-              >
-                {['NONE', 'UCHECKIN', 'WIUS'].map((l) => (
-                  <option key={l} value={l}>
-                    {getLicenseName(l)}
-                  </option>
-                ))}
-              </select>
+                onChange={(e) =>
+                  handleChange({
+                    type: 'select',
+                    value: e.value,
+                    name: 'licenseType',
+                  })
+                }
+                options={licenseTypesOptions}
+              />
             </Row>
           ) : (
             <RowReadOnly>
               <Label>{t('common:license-model')}</Label>
-              <span>{getLicenseName(inputs.licenseType)}</span>
-            </RowReadOnly>
-          )}
-          {inputs.licenseType === 'WIUS' && (
-            <RowReadOnly>
-              <Label>{t('date-expiration')}</Label>
-              <Block>
-                <span>{formatDate(inputs.validity)}</span>
-                {user.role.canManageApplication && (
-                  <ActionButton type="date" cb={() => setShowDate(!showDate)} />
-                )}
-                {user.role.canManageApplication && showDate && (
-                  <DatePicker
-                    ISOStringValue={inputs.validity}
-                    onChange={handleDateChange}
-                  />
-                )}
-              </Block>
+              <span>{findLicenseName(inputs.licenseType.id)}</span>
             </RowReadOnly>
           )}
           <RowFull>
             <Label>{t('licenses')}</Label>
-            <LicenseTable licenses={data.Application.licenses} />
+            <LicenseTable
+              licenses={data.Application.licenses}
+              actionButtons={[{ type: 'extend', action: updateLicense }]}
+            />
+            <ButtonNew label={t('add-license')} onClick={AddLicense} />
           </RowFull>
         </FormBody>
         <FormFooter>

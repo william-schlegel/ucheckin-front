@@ -1,11 +1,12 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
-import { useClipboard } from 'use-clipboard-copy';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import { Notify } from 'notiflix';
+import Select from 'react-select';
+import countryList from 'react-select-country-list';
 
 import styled from 'styled-components';
 import DisplayError from '../ErrorMessage';
@@ -26,11 +27,8 @@ import { useUser } from '../User';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import ButtonNew from '../Buttons/ButtonNew';
 import { useHelp, Help, HelpButton } from '../Help';
-import Table, { useColumns } from '../Tables/Table';
 import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
-import LicenseType from '../Tables/LicenseType';
 
 export const QUERY_PROFILE = gql`
   query QUERY_PROFILE($id: ID!) {
@@ -46,24 +44,6 @@ export const QUERY_PROFILE = gql`
       contact
       photo {
         publicUrlTransformed(transformation: { width: "200", height: "200" })
-      }
-      applications {
-        id
-        name
-        licenseType
-      }
-      ownedApps {
-        id
-        name
-        licenseType
-      }
-      role {
-        id
-        name
-      }
-      tokens {
-        id
-        token
       }
       role {
         id
@@ -86,6 +66,7 @@ export default function Profile({ id }) {
   const { t } = useTranslation('profile');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const user = useUser();
+  const countries = useMemo(() => countryList().getData(), []);
   const initialValues = useRef({
     name: '',
     email: '',
@@ -93,35 +74,16 @@ export default function Profile({ id }) {
     address: '',
     zipCode: '',
     city: '',
+    country: '',
+    vatNumber: '',
     telephone: '',
     contact: '',
-    ownedApps: [],
-    applications: [],
-    tokens: [],
     role: '',
     photo: {},
   });
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
-  const columns = useColumns([
-    ['id', 'id', 'hidden'],
-    [t('common:name'), 'name'],
-    [
-      t('common:license-model'),
-      'licenseType',
-      ({ cell: { value } }) => <LicenseType license={value} />,
-    ],
-  ]);
-  const columnsToken = useColumns([
-    ['id', 'id', 'hidden'],
-    [t('token'), 'token'],
-  ]);
-  const clipboard = useClipboard({
-    copiedTimeout: 1000,
-  });
-
-  const router = useRouter();
 
   useEffect(() => {
     if (data && user) {
@@ -139,36 +101,15 @@ export default function Profile({ id }) {
         address: UserData.address,
         zipCode: UserData.zipCode,
         city: UserData.city,
+        country: UserData.country,
+        vatNumber: UserData.vatNumber,
         telephone: UserData.telephone,
         contact: UserData.contact,
-        ownedApps: UserData.ownedApps,
-        applications: UserData.applications,
-        tokens: UserData.tokens,
         role: UserData.role,
         photo: UserData.photo,
       });
     }
   }, [setInputs, data]);
-
-  function editApplication(appId) {
-    router.push(`/application/${appId}`);
-  }
-
-  function addToken() {
-    console.log('add token');
-  }
-
-  function deleteToken(idDel) {
-    console.log('delete token', idDel);
-  }
-
-  function copyToken(idCopy) {
-    console.log('id', idCopy);
-    console.log('inputs.tokens', inputs.tokens);
-    const token = inputs.tokens.find((tk) => tk.id === id);
-    console.log('token', token);
-    clipboard.copy(token.token);
-  }
 
   function handlePhotoFile(e) {
     setPhotoFile(e.target.files[0]);
@@ -261,6 +202,26 @@ export default function Profile({ id }) {
                 />
               </Row>
               <Row>
+                <Label htmlFor="country">{t('country')}</Label>
+                <Select
+                  id="country"
+                  name="country"
+                  options={countries}
+                  value={inputs.country}
+                  onChange={handleChange}
+                />
+              </Row>
+              <Row>
+                <Label htmlFor="vatNumber">{t('vatNumber')}</Label>
+                <input
+                  type="text"
+                  id="vatNumber"
+                  name="vatNumber"
+                  value={inputs.vatNumber}
+                  onChange={handleChange}
+                />
+              </Row>
+              <Row>
                 <Label htmlFor="telephone">{t('phone')}</Label>
                 <input
                   type="text"
@@ -317,24 +278,6 @@ export default function Profile({ id }) {
               </RowReadOnly>
             </>
           )}
-          <Row>
-            <Label>{t('owned-apps')}</Label>
-            <Table
-              columns={columns}
-              data={inputs.ownedApps}
-              loading={loading}
-              actionButtons={[{ type: 'edit', action: editApplication }]}
-            />
-          </Row>
-          <Row>
-            <Label>{t('invited-apps')}</Label>
-            <Table
-              columns={columns}
-              data={inputs.applications}
-              loading={loading}
-              actionButtons={[{ type: 'view', action: editApplication }]}
-            />
-          </Row>
           <RowFull>
             <Label htmlFor="photo">{t('photo')}</Label>
             <Block>
@@ -362,27 +305,6 @@ export default function Profile({ id }) {
             <Label>{t('role')}</Label>
             <span>{inputs.role.name}</span>
           </RowReadOnly>
-
-          <Row>
-            <Label>{t('tokens')}</Label>
-            <Table
-              columns={columnsToken}
-              data={inputs.tokens}
-              loading={loading}
-              actionButtons={
-                canEdit
-                  ? [
-                      { type: 'copy', action: copyToken },
-                      { type: 'trash', action: deleteToken },
-                    ]
-                  : []
-              }
-            />
-            {clipboard.copied && <div>{t('common:copied')}</div>}
-            <Block>
-              <ButtonNew onClick={addToken} />
-            </Block>
-          </Row>
         </FormBody>
         <FormFooter>
           {canEdit && id && (
@@ -390,14 +312,10 @@ export default function Profile({ id }) {
               id={id}
               updatedProfile={inputs}
               onSuccess={() => {
-                Notify.Success(t('success'), {
-                  position: 'center-bottom',
-                  fontSize: '20px',
-                });
+                Notify.Success(t('success'));
               }}
             />
           )}
-          {/* {canEdit && id && <ApplicationDelete id={id} />} */}
           <ButtonCancel onClick={() => Router.back()} />
         </FormFooter>
       </Form>
@@ -406,5 +324,5 @@ export default function Profile({ id }) {
 }
 
 Profile.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.string.isRequired,
 };

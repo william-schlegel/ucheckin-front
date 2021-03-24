@@ -26,6 +26,12 @@ const Box = styled.div`
 export const PaginationStyles = styled(Box)`
   grid-template-columns: repeat(4, auto);
   margin-right: 1rem;
+  align-items: center;
+  a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 `;
 
 export const SearchFilterStyles = styled(Box)`

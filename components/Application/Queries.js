@@ -1,4 +1,6 @@
+import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+import { useEffect } from 'react';
 
 export const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
@@ -13,8 +15,11 @@ export const QUERY_APPLICATION = gql`
         id
         name
       }
-      licenseType
-      validity
+      licenseType {
+        id
+        name
+        perArea
+      }
       licenses {
         id
         validity
@@ -24,8 +29,9 @@ export const QUERY_APPLICATION = gql`
         }
         signal {
           id
-          signal
+          name
         }
+        nbArea
       }
     }
   }
@@ -45,8 +51,9 @@ export const ALL_APPLICATIONS_QUERY = gql`
       id
       name
       apiKey
-      licenseType
-      validity
+      licenseType {
+        id
+      }
       owner {
         id
         name
@@ -59,9 +66,10 @@ export const ALL_APPLICATIONS_QUERY = gql`
         id
         signal {
           id
-          signal
+          name
         }
         validity
+        nbArea
       }
     }
   }
@@ -83,3 +91,46 @@ export const DELETE_APPLICATION_MUTATION = gql`
     }
   }
 `;
+
+export const ALL_SIGNAL_OWNER = gql`
+  query ALL_SIGNAL_OWNER($ownerId: ID!) {
+    allSignals(
+      where: {
+        owner: { id: $ownerId }
+        licenses_every: { signal_is_null: true }
+      }
+    ) {
+      id
+      name
+      licenses {
+        id
+        application {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export function useFindApplication(appId) {
+  const [findApp, { data, error, loading }] = useLazyQuery(QUERY_APPLICATION);
+  useEffect(() => {
+    if (appId)
+      findApp({
+        variables: { id: appId },
+      });
+  }, [appId, findApp]);
+  return {
+    application: data?.Application || {
+      id: appId,
+      name: '',
+      apiKey: '',
+      licenseType: '',
+      validity: new Date().toISOString(),
+      licenses: [],
+    },
+    applicationError: error,
+    applicationLoading: loading,
+  };
+}

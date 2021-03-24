@@ -139,6 +139,9 @@ export default function Header() {
               <button type="button" onClick={() => router.push('/profile')}>
                 {t('profile')}
               </button>
+              <button type="button" onClick={() => router.push('/compte')}>
+                {t('account')}
+              </button>
               <Signout />
             </div>
           )}

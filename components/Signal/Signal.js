@@ -37,7 +37,7 @@ export default function Signal({ id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('signal')} <span>{data.Signal.signal}</span>
+            {t('signal')} <span>{data.Signal.name}</span>
             <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
         </FormHeader>

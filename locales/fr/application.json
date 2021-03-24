@@ -10,7 +10,7 @@
   "licenses": "Licences attachées à l'application",
   "new-application": "Nouvelle application",
   "nb-license": "Nombre de licences",
-  "no-signal": "Sans signal associé",
   "valide": "Licenses valides",
-  "not-valide": "Licenses non valides (expirées)"
+  "not-valide": "Licenses non valides (expirées)",
+  "add-license": "Ajouter une ou des licences à l'application"
 }

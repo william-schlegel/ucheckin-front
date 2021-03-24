@@ -43,15 +43,16 @@ export function usePrice(ownerId) {
     LICENSE_PRICE_QUERY
   );
   const [price, setPrice] = useState({});
+  const [licenseTypeId, setLicenseTypeId] = useState('');
 
   useEffect(() => {
     const dayDate = new Date().toISOString();
     if (ownerId) {
       loadPrice({
-        variables: { owner: ownerId, dayDate },
+        variables: { owner: ownerId, licenseTypeId, dayDate },
       });
     }
-  }, [ownerId, loadPrice]);
+  }, [ownerId, loadPrice, licenseTypeId]);
 
   useEffect(() => {
     if (data?.prices) {
@@ -59,24 +60,30 @@ export function usePrice(ownerId) {
       const owner = data.prices.filter(
         (p) => p.owner.id === ownerId && !p.default
       );
+      // if there is a special price for a user
       if (owner.length > 0) {
         setPrice(owner[0]);
+        // else default price
       } else if (def.length > 0) {
         setPrice(def[0]);
       }
     }
   }, [data, ownerId]);
 
-  return { loading, error, price };
+  return { loading, error, price, licenseTypeId, setLicenseTypeId };
 }
 
-export default function LicensePrice({ owner }) {
-  const { loading, error, price } = usePrice(owner);
+export default function LicensePrice({ owner, licenseTypeId }) {
+  const { loading, error, price, setLicenseTypeId } = usePrice(owner);
   const { t, lang } = useTranslation('license');
+
+  useEffect(() => {
+    if (licenseTypeId) setLicenseTypeId(licenseTypeId);
+  }, [licenseTypeId, setLicenseTypeId]);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
-  if (!price) return <p>No data</p>;
+  if (!price.id) return <p>No data</p>;
   return (
     <>
       <TableStyled>
@@ -90,16 +97,15 @@ export default function LicensePrice({ owner }) {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{t('common:ucheck-in')}</td>
-            <td>{formatMoney(price.ucheckInMonthly, lang)}</td>
-            <td>{formatMoney(price.ucheckInYearly, lang)}</td>
-          </tr>
-          <tr>
-            <td>{t('common:wi-us')}</td>
-            <td>{formatMoney(price.wiUsMonthly, lang)}</td>
-            <td>{formatMoney(price.wiUsMonthly, lang)}</td>
-          </tr>
+          {price?.items
+            .filter((p) => p.licenseType.id === licenseTypeId)
+            .map((p) => (
+              <tr key={p.id}>
+                <td>{t(`common:${p.licenseType.name}`)}</td>
+                <td>{formatMoney(p.monthly, lang)}</td>
+                <td>{formatMoney(p.yearly, lang)}</td>
+              </tr>
+            ))}
         </tbody>
       </TableStyled>
     </>
@@ -108,4 +114,5 @@ export default function LicensePrice({ owner }) {
 
 LicensePrice.propTypes = {
   owner: PropTypes.string.isRequired,
+  licenseTypeId: PropTypes.string,
 };

@@ -15,6 +15,7 @@ export const Row = styled.div`
   align-items: center;
   margin: 0.5rem;
   flex-direction: column;
+  align-self: flex-end;
 `;
 
 export const RowFull = styled(Row)`
@@ -91,6 +92,10 @@ export const FormBody = styled.div`
     grid-template-columns: auto;
   }
   grid-gap: 1rem;
+  .select {
+    font-size: 1.25rem;
+    width: 100%;
+  }
   input,
   textarea,
   select {

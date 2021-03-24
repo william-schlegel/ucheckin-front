@@ -25,7 +25,7 @@
   "prev": "Préc.",
   "next": "Suiv.",
   "itemcount": "{{count}} élément seulement",
-  "itemcount_plural": "{{count}} éléments au total",
+  "itemcount_other": "{{count}} éléments au total",
   "copy": "Copier dans le presse-papier",
   "copied": "Elément copié !",
   "search-user": "Rechercher un utilisateur",
@@ -50,5 +50,11 @@
   "no-license": "Pas de licence",
   "license-unknown": "Licence inconnue {{code}}",
   "ucheck-in": "Ucheck In",
-  "wi-us": "Wi-Us"
+  "wi-us": "Wi-Us",
+  "add-license": "Ajouter une licence",
+  "delete-signal": "Supprimer un signal",
+  "plus": "Ajouter",
+  "extend": "Prolonger la licence",
+  "vat": "TVA  ({{percentage}})",
+  "taxed-amount": "Total facturé TTC"
 }

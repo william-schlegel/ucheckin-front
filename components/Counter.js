@@ -6,7 +6,7 @@ import { Label } from './styles/Card';
 
 const CounterStyled = styled.div`
   display: grid;
-  grid-template-columns: minmax(100px, 25%) 1fr;
+  grid-template-columns: minmax(100px, 40%) 1fr;
   margin-right: auto;
   align-items: center;
   width: 100%;
@@ -22,7 +22,7 @@ const CounterStyled = styled.div`
   }
 `;
 
-export default function Counter({ label, name, input, handleChange }) {
+export default function Counter({ label, name, input, handleChange, min = 0 }) {
   const { t } = useTranslation('license');
   return (
     <CounterStyled>
@@ -31,9 +31,9 @@ export default function Counter({ label, name, input, handleChange }) {
         <ActionButton
           type="minus-circle"
           cb={() =>
-            input > 0
+            input > min
               ? handleChange({ type: 'number', name, value: input - 1 })
-              : 0
+              : min
           }
           label={t('minus')}
         />
@@ -59,4 +59,5 @@ Counter.propTypes = {
   name: PropTypes.string.isRequired,
   input: PropTypes.number.isRequired,
   handleChange: PropTypes.func.isRequired,
+  min: PropTypes.number,
 };
