@@ -26,21 +26,12 @@ import {
   LicensesLegendSignal,
 } from '../Tables/LicensesDetails';
 import { useHelp, Help, HelpButton } from '../Help';
-// TODO: server side query
-// import { initializeApollo, addApolloState } from '../../lib/apolloClient';
 
 export default function Signals() {
   const router = useRouter();
   const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
     PAGINATION_QUERY
   );
-  // const [
-  //   updateValidity,
-  //   { error: errorUpdate, loading: lodingUpdate, data: dataUpdate },
-  // ] = useMutation(VALIDATE_SIGNAL_MUTATION, {
-  //   refetchQueries: [ALL_SIGNALS_QUERY],
-  // });
-
   const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
 
   const page = parseInt(router.query.page) || 1;
@@ -89,7 +80,6 @@ export default function Signals() {
   }
 
   function validateSignal(id, value) {
-    console.log('validate id', id, value);
     updateValidity({ variables: { id, value: !value } });
   }
 
@@ -200,29 +190,3 @@ export default function Signals() {
     </>
   );
 }
-
-// export async function getServerSideProps(context) {
-//   console.log('context', context);
-//   const apolloClient = initializeApollo();
-
-//   await apolloClient.query({
-//     query: ALL_SIGNALS_QUERY,
-//     variables: {
-//       skip: 0,
-//       first: perPage,
-//     },
-//   });
-
-//   return addApolloState(apolloClient, {
-//     props: {},
-//   });
-
-// const { error, loading, data } = useQuery(ALL_SIGNALS_QUERY, {
-//   variables: {
-//     skip: 0,
-//     first: perPage,
-//   },
-// });
-
-// return { props: { error, loading, data } };
-// }

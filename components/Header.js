@@ -127,7 +127,6 @@ export default function Header() {
   }, [showUserMenu]);
 
   useOnClickOutside(refMenu, () => setShowUserMenu(false));
-  console.log(`user`, user);
   return (
     <HeaderStyles>
       <div className="bar">

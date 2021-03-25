@@ -98,11 +98,9 @@ function PaymentForm({ amount, onSuccess, onError }) {
       token: paymentMethod.id,
       amount,
     };
-    console.log(`variables`, variables);
     const charge = await checkout({
       variables,
     });
-    console.log(`charge`, charge);
     setLoading(false);
     nProgress.done();
     onSuccess();

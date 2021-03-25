@@ -22,7 +22,6 @@ import {
 import ActionButton from '../Buttons/ActionButton';
 import { useUser } from '../User';
 import useForm from '../../lib/useForm';
-import Badge from '../styles/Badge';
 import SearchUser from '../SearchUser';
 import ApplicationDelete from './ApplicationDelete';
 import ApplicationUpdate from './ApplicationUpdate';
@@ -42,7 +41,6 @@ export default function Application({ id }) {
     variables: { id },
   });
   const [editOwner, setEditOwner] = useState(false);
-  const [editUsers, setEditUsers] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
@@ -77,27 +75,20 @@ export default function Application({ id }) {
       setInputs({
         name: AppData.name,
         apiKey: AppData.apiKey,
-        owner: { key: AppData.owner.id, value: AppData.owner.name },
-        users: AppData.users.map((u) => ({ key: u.id, value: u.name })),
+        owner: { value: AppData.owner.id, label: AppData.owner.name },
+        users: AppData.users.map((u) => ({ value: u.id, label: u.name })),
         licenseType: AppData.licenseType.id,
       });
     }
   }, [setInputs, data]);
 
-  function removeUser(idUser) {
-    const users = inputs.users.filter((u) => u.key !== idUser);
-    setInputs({ ...inputs, users });
-  }
-
   function AddLicense() {
-    console.log(`inputs`, inputs);
     if (!inputs.licenseType) return;
     setShowAddLicense(true);
   }
 
   function updateLicense(licenseId) {
     const license = data.Application.licenses.find((l) => l.id === licenseId);
-    console.log(`license`, license);
     setSelectedLicense({
       licenseId,
       appId: id,
@@ -107,10 +98,7 @@ export default function Application({ id }) {
     setShowUpdateLicense(true);
   }
 
-  console.log(`inputs.licenseType`, inputs.licenseType);
-  console.log(`licenseTypesOptions`, licenseTypesOptions);
-
-  if (loading) return <Loading />;
+  if (loading || !user) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
     <>
@@ -119,12 +107,12 @@ export default function Application({ id }) {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
-      {id && inputs.owner.key && (
+      {id && inputs.owner.value && (
         <LicenseNew
           open={showAddLicense}
           onClose={() => setShowAddLicense(false)}
           appId={id}
-          ownerId={inputs.owner.key}
+          ownerId={inputs.owner.value}
         />
       )}
       {selectedLicense.licenseId && (
@@ -176,7 +164,7 @@ export default function Application({ id }) {
           <Row>
             <Label>{t('common:owner')}</Label>
             <Block>
-              <span>{inputs.owner.value}</span>
+              <span>{inputs.owner.label}</span>
               {user.role.canManageApplication && (
                 <ActionButton type="edit" cb={() => setEditOwner(!editOwner)} />
               )}
@@ -191,54 +179,34 @@ export default function Application({ id }) {
             </Block>
           </Row>
           <Row>
-            <Label>{t('common:users')}</Label>
+            <Label htmlFor="users">{t('common:users')}</Label>
             <Block>
-              {inputs.users.map((u) => (
-                <Badge key={u.key}>
-                  <span>{u.value}</span>
-                  {canEdit && (
-                    <ActionButton
-                      type="delete"
-                      size={20}
-                      cb={() => removeUser(u.key)}
-                    />
-                  )}
-                </Badge>
-              ))}
-              {canEdit && (
-                <ActionButton type="edit" cb={() => setEditUsers(!editUsers)} />
-              )}
+              <SearchUser
+                id="users"
+                name="users"
+                value={inputs.users}
+                onChange={handleChange}
+                multiple
+              />
             </Block>
-            {canEdit && editUsers && (
-              <>
-                <span>&nbsp;</span>
-                <SearchUser
-                  required
-                  name="users"
-                  value={inputs.users}
-                  onChange={handleChange}
-                  multiple
-                />
-              </>
-            )}
           </Row>
           {user.role.canManageApplication ? (
             <Row>
               <Label htmlFor="licenseType">{t('common:license-model')}</Label>
-              <Select
-                className="select"
-                isClearable
-                // id="licenseType"
-                value={inputs.licenseType}
-                onChange={(e) =>
-                  handleChange({
-                    type: 'select',
-                    value: e.value,
-                    name: 'licenseType',
-                  })
-                }
-                options={licenseTypesOptions}
-              />
+              {inputs.licenseType.length && (
+                <Select
+                  className="select"
+                  defaultValue={inputs.licenseType}
+                  onChange={(e) =>
+                    handleChange({
+                      type: 'select',
+                      value: e.value,
+                      name: 'licenseType',
+                    })
+                  }
+                  options={licenseTypesOptions}
+                />
+              )}
             </Row>
           ) : (
             <RowReadOnly>

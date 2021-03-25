@@ -166,12 +166,10 @@ export default function Compte({ id }) {
   }
 
   function addToken() {
-    console.log('add token');
     addTokenMutation();
   }
 
   function deleteToken(idDel) {
-    console.log('delete token', idDel);
     deleteTokenMutation({
       variables: { id: idDel },
     });

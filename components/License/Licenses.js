@@ -119,7 +119,6 @@ export default function Licenses() {
         res: [...resA],
       });
       const resU = aggregateLicenses(licenses);
-      console.log(`resU`, resU);
       dispatch({ type: 'used', res: resU });
     },
   });
@@ -151,7 +150,6 @@ export default function Licenses() {
   }, [filters, page, findLicenses]);
 
   function viewLicense(id) {
-    console.log(`viewLicense id`, id);
     if (id) setShowLicense(id);
   }
 
@@ -184,7 +182,6 @@ export default function Licenses() {
 
   function extendLicense(licenseId) {
     const license = state.licenses.find((l) => l.id === licenseId);
-    console.log(`license`, license);
     setSelectedLicense({
       licenseId,
       appId: license.appId,

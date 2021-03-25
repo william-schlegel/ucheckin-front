@@ -60,7 +60,6 @@ export default function Prices() {
   }, [filters, page, findPrices]);
 
   function viewPrice(id) {
-    console.log(`viewLicense price id`, id);
     if (id) setShowPrice(id);
   }
 

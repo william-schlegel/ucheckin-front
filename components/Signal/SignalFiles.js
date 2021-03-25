@@ -53,14 +53,11 @@ export default function SignalFiles({ signalId, files }) {
 
   function handleSaveFile() {
     createFile({ variables: { signal: signalId, ...inputs } });
-    console.log('save file', data);
     setNewFile(false);
   }
 
   function playFile(id) {
-    console.log(`playFile`, id);
     const actual = files.find((f) => f.id === id);
-    console.log(`playFile`, { actual });
     if (actual) {
       setActualFile(actual);
       setPlaying(true);
@@ -84,7 +81,6 @@ export default function SignalFiles({ signalId, files }) {
     setShowDetails(true);
   }
 
-  console.log(`files`, files);
   return (
     <Form>
       <FormHeader>

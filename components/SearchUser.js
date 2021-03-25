@@ -43,7 +43,9 @@ export default function SearchUser({
 
 SearchUser.propTypes = {
   name: PropTypes.string.isRequired,
-  value: PropTypes.shape({ key: PropTypes.string, value: PropTypes.string }),
+  value: PropTypes.arrayOf(
+    PropTypes.shape({ value: PropTypes.string, label: PropTypes.string })
+  ),
   onChange: PropTypes.func.isRequired,
   multiple: PropTypes.bool,
   required: PropTypes.bool,
