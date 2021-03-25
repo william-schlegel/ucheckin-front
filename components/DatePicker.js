@@ -18,6 +18,16 @@ export default function DatePicker({ ISOStringValue, onChange }) {
   );
 }
 
+export function dateNow() {
+  return new Date().toISOString();
+}
+
+export function dateInMonth(nbMonth = 1) {
+  const oneMonthLater = new Date();
+  oneMonthLater.setMonth(oneMonthLater.getMonth() + nbMonth);
+  return oneMonthLater.toISOString();
+}
+
 export function formatDate(dt, locale) {
   const options = { day: '2-digit', month: 'long', year: 'numeric' };
   const formatter = Intl.DateTimeFormat(locale, options);

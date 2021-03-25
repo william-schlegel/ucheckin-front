@@ -7,12 +7,24 @@ const CURRENT_USER_QUERY = gql`
         id
         email
         name
+        photo {
+          publicUrlTransformed(transformation: { width: "100", height: "100" })
+        }
+        country
         role {
+          canSeeOtherUsers
           canManageUsers
           canManageRoles
-          canSeeOtherUsers
           canManageApplication
           canManageSignal
+          canManageLicense
+          canBuyLicense
+          canManagePrice
+          canCreatePrice
+          canSeeOrder
+          canManageVAT
+          canManageLicenseType
+          canManageEvent
         }
       }
     }

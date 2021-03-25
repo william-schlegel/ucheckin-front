@@ -7,8 +7,10 @@ import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import formatMoney from '../../lib/formatMoney';
 import { LICENSE_PRICE_QUERY } from './Queries';
+import { dateNow } from '../DatePicker';
+import NoData from '../Tables/NoData';
 
-const TableStyled = styled.table`
+export const TableStyled = styled.table`
   width: 100%;
   background-color: var(--white);
   /* border: solid 1px var(--pink); */
@@ -46,7 +48,7 @@ export function usePrice(ownerId) {
   const [licenseTypeId, setLicenseTypeId] = useState('');
 
   useEffect(() => {
-    const dayDate = new Date().toISOString();
+    const dayDate = dateNow();
     if (ownerId) {
       loadPrice({
         variables: { owner: ownerId, licenseTypeId, dayDate },
@@ -56,10 +58,13 @@ export function usePrice(ownerId) {
 
   useEffect(() => {
     if (data?.prices) {
+      // console.log(`data.prices`, data.prices);
+
       const def = data.prices.filter((p) => p.default);
       const owner = data.prices.filter(
         (p) => p.owner.id === ownerId && !p.default
       );
+      // console.log({ def, owner });
       // if there is a special price for a user
       if (owner.length > 0) {
         setPrice(owner[0]);
@@ -83,7 +88,9 @@ export default function LicensePrice({ owner, licenseTypeId }) {
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
-  if (!price.id) return <p>No data</p>;
+  if (!price.id) return <NoData />;
+
+  // console.log({ price, licenseTypeId });
   return (
     <>
       <TableStyled>

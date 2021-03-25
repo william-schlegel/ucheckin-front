@@ -10,7 +10,7 @@ export const ButtonStyled = styled.button`
   border-radius: 5px;
   padding: 0.5rem 1rem;
   margin: 0;
-  margin-right: 1rem;
+  /* margin-right: 1rem; */
   display: flex;
   gap: 1rem;
   border: solid 1px var(--color);
@@ -59,20 +59,20 @@ export const ValidationButtonStyled = styled(ButtonStyled)`
   --bg-color: var(--update-color);
 `;
 
-export const NewButtonStyled = styled(ButtonStyled)`
+export const BlueButtonStyled = styled(ButtonStyled)`
   --hover-color: white;
   --color: white;
   --bg-hover-color: var(--pink);
   --bg-color: var(--blue);
 `;
 
-export const PaymentButtonStyled = styled(ButtonStyled)`
+export const PinkButtonStyled = styled(ButtonStyled)`
   --hover-color: white;
   --color: white;
   --bg-hover-color: var(--blue);
   --bg-color: var(--pink);
 `;
 
-export const NewButtonStyledBlock = styled(NewButtonStyled)`
+export const NewButtonStyledBlock = styled(BlueButtonStyled)`
   width: 100%;
 `;

@@ -39,5 +39,18 @@
   "license-details": "Details of the license",
   "nb-area-validity": "Ucheck-In license, valid on {{count}} area",
   "nb-area-validity_other": "Ucheck-In license, valid on {{count}} areas",
-  "new-validity": "New validity end for the license"
+  "new-validity": "New validity end for the license",
+  "license-prices": "Licenses prices",
+  "default": "Default tarif",
+  "users": "Users",
+  "valid-after": "Valid after",
+  "valid-until": "Valid until",
+  "created-by": "Created by",
+  "created-the": "Created the",
+  "apply-to": "This price applies to these customers",
+  "price": "Price",
+  "price-brut": "Brut price",
+  "observations": "Observations",
+  "price-details": "Price details",
+  "new-price": "New price"
 }

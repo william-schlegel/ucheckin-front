@@ -1,10 +1,40 @@
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { formatDate } from '../DatePicker';
 
-export default function ValidityDate({ value }) {
-  return <span>{formatDate(value)}</span>;
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
+const TOLERANCE = 5;
+
+export default function ValidityDate({ value, after }) {
+  const now = new Date();
+  const limit = new Date(value);
+  const tolerance = new Date(value);
+  tolerance.setDate(tolerance.getDate() - TOLERANCE);
+  let color = 'inherit';
+  if (after) {
+    if (now < limit) color = now > tolerance ? 'orange' : 'red';
+  } else {
+    if (now > tolerance) color = 'orange';
+    if (now > limit) color = 'red';
+  }
+  return (
+    <Container>
+      <span style={{ color }}>{formatDate(value)}</span>
+    </Container>
+  );
 }
+
+ValidityDate.defaultProps = {
+  after: false,
+};
 
 ValidityDate.propTypes = {
   value: PropTypes.string,
+  after: PropTypes.bool,
 };

@@ -1,8 +1,11 @@
 {
-  "user-name-taken": "This user name is already taken",
-  "email-taken": "Thie Email is already taken",
-  "not-found": "User not found",
-  "invalid-email": "Invalid email",
-  "error-password": "Password must contain at least one letter and one number",
-  "password-8": "Password must contain at least 8 characters"
+  "signin-account": "Sing into your account",
+  "signin": "Sign in",
+  "email": "Your email address",
+  "password": "Your password",
+  "signup": "Create an account",
+  "name": "Your name",
+  "company": "Your company",
+  "reset-password": "Reset your password",
+  "request-reset": "Request for reset"
 }

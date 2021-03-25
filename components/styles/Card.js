@@ -15,7 +15,8 @@ export const Row = styled.div`
   align-items: center;
   margin: 0.5rem;
   flex-direction: column;
-  align-self: flex-end;
+  height: 100%;
+  justify-content: space-between;
 `;
 
 export const RowFull = styled(Row)`
@@ -25,6 +26,10 @@ export const RowFull = styled(Row)`
 export const RowReadOnly = styled(Row)`
   width: 100%;
   flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  height: fit-content;
+  flex-grow: 0;
   label {
     display: inline-block;
     width: auto;
@@ -41,15 +46,6 @@ export const Block = styled.div`
   width: 100%;
   margin: 0;
   gap: 1rem;
-  /* & > * {
-    margin: 0 1rem !important;
-    &:first-child {
-      margin-left: 0 !important;
-    }
-    &:last-child {
-      margin-right: 0 !important;
-    }
-  } */
 `;
 
 export const BlockShort = styled(Block)`
@@ -108,6 +104,9 @@ export const FormBody = styled.div`
       border-color: var(--blue);
     }
   }
+  input[type='number'] {
+    text-align: right;
+  }
 `;
 
 export const Input = styled.input`
@@ -131,6 +130,8 @@ export const FormFooter = styled.div`
   border-top: 1px solid var(--lightGray);
   margin: 1rem 0;
   padding-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 `;
 
 export const FormHeader = styled.div`
@@ -186,13 +187,19 @@ export const FormWithBar = styled(Form)`
 `;
 
 export const H1 = styled.h1`
+  margin-block-start: 0.3rem;
+  margin-block-end: 0.3rem;
   color: var(--pink);
 `;
 export const H2 = styled.h2`
+  margin-block-start: 0.25rem;
+  margin-block-end: 0.25rem;
   color: var(--pink);
 `;
 
 export const H3 = styled.h3`
+  margin-block-start: 0.15rem;
+  margin-block-end: 0.15rem;
   color: var(--pink);
 `;
 

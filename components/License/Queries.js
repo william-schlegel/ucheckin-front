@@ -1,6 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
+import { dateNow } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
@@ -38,6 +39,7 @@ export const ALL_LICENSES_QUERY = gql`
       trialLicense
       purchaseDate
       purchaseInformation
+      nbArea
     }
   }
 `;
@@ -161,7 +163,7 @@ export function useFindLicense(licenseId) {
   return {
     license: data?.License || {
       id: licenseId,
-      validity: new Date().toISOString(),
+      validity: dateNow(),
     },
     licenseError: error,
     licenseLoading: loading,

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { NewButtonStyled, NewButtonStyledBlock } from '../styles/Button';
+import { BlueButtonStyled, NewButtonStyledBlock } from '../styles/Button';
 
 export default function Button({ action, label, value, block }) {
   if (block)
@@ -9,7 +9,7 @@ export default function Button({ action, label, value, block }) {
       </NewButtonStyledBlock>
     );
   return (
-    <NewButtonStyled onClick={() => action(value)}> {label} </NewButtonStyled>
+    <BlueButtonStyled onClick={() => action(value)}> {label} </BlueButtonStyled>
   );
 }
 

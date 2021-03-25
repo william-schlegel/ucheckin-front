@@ -19,6 +19,8 @@ import ValidityDate from '../Tables/ValidityDate';
 import { Form, FormBodyFull, FormHeader, FormTitle } from '../styles/Card';
 import { formatDate } from '../DatePicker';
 import LicenseType from '../Tables/LicenseType';
+import Number from '../Tables/Number';
+import LicenseUpdate from './LicenseUpdate';
 
 // calculate number of free & number of valid licenses
 function licensesAnalysis(licenses) {
@@ -57,8 +59,11 @@ function aggregateLicenses(licenses) {
   const dataUsed = Array.from(used).map((l) => ({
     id: l[1].item.id,
     signal: l[1].item.signal.name,
+    signalId: l[1].item.signal.id,
     application: l[1].item.application.name,
+    appId: l[1].item.application.id,
     owner: l[1].item.owner.name,
+    ownerId: l[1].item.owner.id,
     valid: l[1].item.valid,
     validity: l[1].item.validity,
     licenseType: l[1].item.licenseType.id,
@@ -119,6 +124,8 @@ export default function Licenses() {
     },
   });
   const [showLicense, setShowLicense] = useState('');
+  const [selectedLicense, setSelectedLicense] = useState({});
+  const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('license');
   const searchFields = useRef([
     { field: 'owner', label: t('common:owner'), type: 'text' },
@@ -168,15 +175,23 @@ export default function Licenses() {
       'validity',
       ({ cell: { value } }) => <ValidityDate value={value} />,
     ],
-    [t('count'), 'count'],
+    [t('count'), 'count', ({ cell: { value } }) => <Number value={value} />],
   ]);
 
   function handleCloseShowLicense() {
     setShowLicense('');
   }
 
-  function extendLicense(id) {
-    console.log('extend license', id);
+  function extendLicense(licenseId) {
+    const license = state.licenses.find((l) => l.id === licenseId);
+    console.log(`license`, license);
+    setSelectedLicense({
+      licenseId,
+      appId: license.appId,
+      signalId: license.signalId,
+      ownerId: license.ownerId,
+    });
+    setShowUpdateLicense(true);
   }
 
   if (loading) return <Loading />;
@@ -198,7 +213,16 @@ export default function Licenses() {
           id={showLicense}
         />
       )}
-      {/* <LicenseUpdate open={updateLicense} onClose={handleCloseUpdateLicense} /> */}
+      {selectedLicense.licenseId && (
+        <LicenseUpdate
+          open={showUpdateLicense}
+          onClose={() => setShowUpdateLicense(false)}
+          licenseId={selectedLicense.licenseId}
+          appId={selectedLicense.appId}
+          ownerId={selectedLicense.ownerId}
+          signalId={selectedLicense.signalId}
+        />
+      )}
       <EntetePage>
         <h3>{t('licenses')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />

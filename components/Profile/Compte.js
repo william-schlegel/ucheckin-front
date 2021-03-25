@@ -28,6 +28,7 @@ import ButtonNew from '../Buttons/ButtonNew';
 import { useHelp, Help, HelpButton } from '../Help';
 import Table, { useColumns } from '../Tables/Table';
 import LicenseType from '../Tables/LicenseType';
+import ApiKey from '../Tables/ApiKey';
 
 export const QUERY_COMPTE = gql`
   query QUERY_COMPTE($id: ID!) {
@@ -38,12 +39,18 @@ export const QUERY_COMPTE = gql`
       applications {
         id
         name
-        licenseType
+        licenseType {
+          id
+          name
+        }
       }
       ownedApps {
         id
         name
-        licenseType
+        licenseType {
+          id
+          name
+        }
       }
       tokens {
         id
@@ -93,13 +100,13 @@ export default function Compte({ id }) {
     [t('common:name'), 'name'],
     [
       t('common:license-model'),
-      'licenseType',
+      'licenseType.id',
       ({ cell: { value } }) => <LicenseType license={value} />,
     ],
   ]);
   const columnsToken = useColumns([
     ['id', 'id', 'hidden'],
-    [t('token'), 'token'],
+    [t('token'), 'token', ({ cell: { value } }) => <ApiKey apiKey={value} />],
   ]);
   const { loading, error, data } = useQuery(QUERY_COMPTE, {
     variables: { id },
@@ -170,10 +177,10 @@ export default function Compte({ id }) {
     });
   }
 
-  function copyToken(idCopy) {
-    const token = inputs.tokens.find((tk) => tk.id === idCopy);
-    clipboard.copy(token.token);
-  }
+  // function copyToken(idCopy) {
+  //   const token = inputs.tokens.find((tk) => tk.id === idCopy);
+  //   clipboard.copy(token.token);
+  // }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
@@ -230,7 +237,7 @@ export default function Compte({ id }) {
               actionButtons={
                 canEdit
                   ? [
-                      { type: 'copy', action: copyToken },
+                      // { type: 'copy', action: copyToken },
                       { type: 'trash', action: deleteToken },
                     ]
                   : []

@@ -22,7 +22,7 @@ export default function ApiKey({ apiKey, showCopied }) {
   const obfuscatedKey = [
     apiKey.slice(0, lenKey / 4),
     apiKey.slice((lenKey * 3) / 4),
-  ].join('...');
+  ].join('  ......  ');
 
   useEffect(() => {
     if (copied) {

@@ -7,7 +7,7 @@ const DrawerStyled = styled.div`
   top: 0;
   right: 0;
   width: 40%;
-  z-index: 200;
+  z-index: 201;
   box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.5);
   transform: translateX(100%);
   transition: transform 0.3s ease-out;
@@ -40,6 +40,8 @@ export const DrawerFooter = styled.div`
   border-top: 1px solid var(--lightGray);
   padding-top: 0.5rem;
   margin-top: 1rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 `;
 
 export const DrawerBody = styled.div`

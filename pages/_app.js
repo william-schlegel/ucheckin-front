@@ -1,6 +1,7 @@
 import { ApolloProvider } from '@apollo/client';
 import NProgress from 'nprogress';
 import Router from 'next/router';
+import PropTypes from 'prop-types';
 
 import Page from '../components/Page';
 import '../components/styles/nprogress.css';
@@ -15,14 +16,18 @@ Router.events.on('routeChangeError', () => NProgress.done());
 function MyApp({ Component, pageProps, apollo }) {
   return (
     <ApolloProvider client={apollo}>
-      {/* <CartStateProvider> */}
       <Page>
         <Component {...pageProps} />
       </Page>
-      {/* </CartStateProvider> */}
     </ApolloProvider>
   );
 }
+
+MyApp.propTypes = {
+  Component: PropTypes.any,
+  pageProps: PropTypes.object,
+  apollo: PropTypes.object,
+};
 
 MyApp.getInitialProps = async function ({ Component, ctx }) {
   let pageProps = {};

@@ -7,6 +7,9 @@ const NavStyles = styled.ul`
   flex-direction: column;
   font-size: 1.25rem;
   border-right: var(--lightGray) solid 1px;
+  li {
+    list-style: none;
+  }
   a,
   button {
     padding: 1rem 3rem;

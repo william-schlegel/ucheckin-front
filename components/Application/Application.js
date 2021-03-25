@@ -63,9 +63,6 @@ export default function Application({ id }) {
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState({});
 
-  console.log(`licenseTypesOptions`, licenseTypesOptions);
-  console.log(`inputs.licenseType`, inputs.licenseType);
-
   useEffect(() => {
     if (data && user) {
       setCanEdit(
@@ -109,6 +106,9 @@ export default function Application({ id }) {
     });
     setShowUpdateLicense(true);
   }
+
+  console.log(`inputs.licenseType`, inputs.licenseType);
+  console.log(`licenseTypesOptions`, licenseTypesOptions);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
@@ -169,12 +169,10 @@ export default function Application({ id }) {
               <span>{inputs.name}</span>
             </RowReadOnly>
           )}
-          <Row>
+          <RowReadOnly>
             <Label>{t('api-key')}</Label>
-            <Block>
-              <ApiKey apiKey={inputs.apiKey} showCopied />
-            </Block>
-          </Row>
+            <ApiKey apiKey={inputs.apiKey} showCopied />
+          </RowReadOnly>
           <Row>
             <Label>{t('common:owner')}</Label>
             <Block>
@@ -228,8 +226,8 @@ export default function Application({ id }) {
             <Row>
               <Label htmlFor="licenseType">{t('common:license-model')}</Label>
               <Select
-                className="basic-single select"
-                // isClearable
+                className="select"
+                isClearable
                 // id="licenseType"
                 value={inputs.licenseType}
                 onChange={(e) =>
@@ -245,7 +243,7 @@ export default function Application({ id }) {
           ) : (
             <RowReadOnly>
               <Label>{t('common:license-model')}</Label>
-              <span>{findLicenseName(inputs.licenseType.id)}</span>
+              <span>{findLicenseName(inputs.licenseType)}</span>
             </RowReadOnly>
           )}
           <RowFull>

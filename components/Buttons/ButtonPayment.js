@@ -15,10 +15,15 @@ import { useMutation } from '@apollo/client';
 import styled from 'styled-components';
 import { CreditCard } from 'react-feather';
 import { IconButtonStyles } from './ActionButton';
-import { PaymentButtonStyled } from '../styles/Button';
+import { PinkButtonStyled } from '../styles/Button';
 import Loading from '../Loading';
 
 const stripeLib = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
+
+const PaymentStyled = styled.div`
+  display: block;
+  width: 100%;
+`;
 
 export default function ButtonPayment({
   disabled,
@@ -27,7 +32,7 @@ export default function ButtonPayment({
   onError,
 }) {
   return (
-    <div style={{ display: 'block', width: '100%', marginBottom: '0.5rem' }}>
+    <PaymentStyled>
       {!disabled && (
         <Elements stripe={stripeLib}>
           <PaymentForm
@@ -37,7 +42,7 @@ export default function ButtonPayment({
           />
         </Elements>
       )}
-    </div>
+    </PaymentStyled>
   );
 }
 
@@ -109,12 +114,12 @@ function PaymentForm({ amount, onSuccess, onError }) {
       {graphQLError && <p style={{ fontSize: 12 }}>{graphQLError.message}</p>}
       <CardElement />
       {loading && <Loading />}
-      <PaymentButtonStyled type="button" onClick={proceedPayment}>
+      <PinkButtonStyled type="button" onClick={proceedPayment}>
         <IconButtonStyles>
           <CreditCard size={24} />
         </IconButtonStyles>
         {t('payment')}
-      </PaymentButtonStyled>
+      </PinkButtonStyled>
     </CheckoutFormStyles>
   );
 }

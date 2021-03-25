@@ -14,6 +14,7 @@ import { CREATE_SIGNAL_MUTATION } from '../Signal/Queries';
 import DisplayError from '../ErrorMessage';
 import { perPage } from '../../config';
 import { useFindApplication } from '../Application/Queries';
+import { dateInMonth } from '../DatePicker';
 
 export default function ButtonFreeTrial({
   ownerId,
@@ -34,8 +35,6 @@ export default function ButtonFreeTrial({
 
   // trial license is active for 3 months. If the license is per area (like ucheckin) it creates a signal
   async function activateTrial() {
-    const nowPlus3Months = new Date();
-    nowPlus3Months.setMonth(nowPlus3Months.getMonth() + 3);
     let signalId;
     if (application.licenseType.perArea) {
       const newSignal = await createSignal({ variables: { ownerId } });
@@ -56,7 +55,7 @@ export default function ButtonFreeTrial({
         appId,
         signalId,
         licenseTypeId: application.licenseType.id,
-        dateValidite: nowPlus3Months.toISOString(),
+        dateValidite: dateInMonth(3),
         trialText: t('trial-text'),
       },
       refetchQueries: [

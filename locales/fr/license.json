@@ -41,5 +41,18 @@
   "license-details": "Détails de la licence",
   "nb-area-validity": "Licence Ucheck-In, valide sur {{count}} lieu",
   "nb-area-validity_other": "Licence Ucheck-In, valide sur {{count}} lieux",
-  "new-validity": "Nouvelle fin de validité de la licence"
+  "new-validity": "Nouvelle fin de validité de la licence",
+  "license-prices": "Tarifs des licenses",
+  "default": "Tarif par défaut",
+  "users": "Utilisateurs",
+  "valid-after": "Valide à partir de",
+  "valid-until": "Valide jusqu'au",
+  "created-by": "Tarif créé par",
+  "created-the": "Tarif créé le",
+  "apply-to": "Ce tarif s'applique aux clients suivants",
+  "price": "Tarif",
+  "price-brut": "Tarif HT",
+  "observations": "Observations",
+  "price-details": "Détails du tarif",
+  "new-price": "Nouveau tarif"
 }

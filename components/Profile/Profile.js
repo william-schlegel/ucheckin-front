@@ -204,6 +204,7 @@ export default function Profile({ id }) {
               <Row>
                 <Label htmlFor="country">{t('country')}</Label>
                 <Select
+                  className="select"
                   id="country"
                   name="country"
                   options={countries}

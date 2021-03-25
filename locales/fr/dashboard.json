@@ -1,5 +1,7 @@
 {
   "dashboard": "Tableau de bord",
   "applications": "{{count}} dernières applications crées",
-  "signals": "{{count}} derniers signaux créés"
+  "signals": "{{count}} derniers signaux créés",
+  "users": "{{count}} derniers utilisateurs enregistrés",
+  "licenses": "{{count}} licences proches de l'expiration"
 }

@@ -2,6 +2,7 @@
   "name": "Name",
   "email": "EMail",
   "owner": "Owner",
+  "user": "User",
   "users": "Users",
   "status": "Status",
   "action": "Action",
@@ -56,5 +57,6 @@
   "plus": "Add",
   "extend": "Extend the license validity",
   "vat": "VAT ({{percentage}})",
-  "taxed-amount": "Total billed including taxes"
+  "taxed-amount": "Total billed including taxes",
+  "no-data": "No data"
 }

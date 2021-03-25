@@ -8,7 +8,8 @@ import setLanguage from 'next-translate/setLanguage';
 import { useRouter } from 'next/dist/client/router';
 
 import useOnClickOutside from '../lib/useOnClickOutside';
-import Signout from './SignOut';
+import Signout from './Registration/SignOut';
+import { useUser } from './User';
 
 const Logo = styled.h1`
   font-size: 3rem;
@@ -44,14 +45,27 @@ const HeaderStyles = styled.header`
     display: flex;
     justify-content: flex-end;
     align-items: stretch;
+    .button-label,
     button {
-      margin: 3px 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 0.8rem;
+      margin: 3px 0.5rem;
       padding: 0 1rem;
       background-color: transparent;
       border: transparent none;
       &:hover {
         background-color: var(--pink);
       }
+    }
+    img.avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50px;
+      margin-top: 5px;
     }
     .user-menu {
       position: absolute;
@@ -63,13 +77,14 @@ const HeaderStyles = styled.header`
       list-style: none;
       margin: 0.25rem;
       padding: 0;
+      justify-content: start;
       button {
         color: var(--blue);
         font-size: 1rem;
         display: block;
         width: 100%;
         padding: 0.5rem 2rem;
-        text-align: left;
+        align-items: start;
         white-space: nowrap;
         font-weight: 900;
         margin: 0;
@@ -94,6 +109,7 @@ export default function Header() {
   const refMenu = useRef();
   const { t } = useTranslation('navigation');
   const router = useRouter();
+  const user = useUser();
 
   const toggleTheme = useCallback(() => {
     setDarkTheme(!darkTheme);
@@ -111,7 +127,7 @@ export default function Header() {
   }, [showUserMenu]);
 
   useOnClickOutside(refMenu, () => setShowUserMenu(false));
-
+  console.log(`user`, user);
   return (
     <HeaderStyles>
       <div className="bar">
@@ -131,19 +147,36 @@ export default function Header() {
               aria-label="France"
             />
           </button>
-          <button type="button" onClick={toggleUserMenu}>
-            <User />
-          </button>
-          {showUserMenu && (
-            <div ref={refMenu} className="user-menu">
-              <button type="button" onClick={() => router.push('/profile')}>
-                {t('profile')}
+          {user?.id && (
+            <>
+              <button
+                type="button"
+                className="button-label"
+                onClick={toggleUserMenu}
+              >
+                {user?.photo?.publicUrlTransformed ? (
+                  <img
+                    className="avatar"
+                    src={user.photo.publicUrlTransformed}
+                    alt={user.name}
+                  />
+                ) : (
+                  <User />
+                )}
+                <span>{user.name}</span>
               </button>
-              <button type="button" onClick={() => router.push('/compte')}>
-                {t('account')}
-              </button>
-              <Signout />
-            </div>
+              {showUserMenu && (
+                <div ref={refMenu} className="user-menu">
+                  <button type="button" onClick={() => router.push('/profile')}>
+                    {t('profile')}
+                  </button>
+                  <button type="button" onClick={() => router.push('/compte')}>
+                    {t('account')}
+                  </button>
+                  <Signout />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

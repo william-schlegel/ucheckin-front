@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import formatMoney, { formatPrct } from '../lib/formatMoney';
-import { H2, Label, RowReadOnly } from './styles/Card';
+import { H2, Label, Row, RowReadOnly } from './styles/Card';
 
 const TotalStyled = styled.div`
   display: flex;
@@ -52,8 +52,12 @@ export default function Total({ value, nbLicense, nbSignal, vat }) {
   const { t } = useTranslation('license');
   return (
     <>
-      {nbLicense > 0 && <div>{t('total-license', { count: nbLicense })}</div>}
-      {nbSignal > 0 && <div>{t('total-signal', { count: nbSignal })}</div>}
+      <Row>
+        {nbLicense > 0 && (
+          <span>{t('total-license', { count: nbLicense })}</span>
+        )}
+        {nbSignal > 0 && <span>{t('total-signal', { count: nbSignal })}</span>}
+      </Row>
       <TotalStyled>
         <RowReadOnly>
           <Label>{t('total')}</Label>

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const LICENSE_TYPE_QUERY = gql`
+export const LICENSE_TYPE_QUERY = gql`
   query LICENSE_TYPE_QUERY {
     licenseTypes: allLicenseTypes {
       id

@@ -1,37 +1,10 @@
-import useTranslation from 'next-translate/useTranslation';
-import DashboardApplication from '../components/Dashboard/Applications';
-import DashboardSignal from '../components/Dashboard/Signals';
-import { useHelp, Help, HelpButton } from '../components/Help';
-import {
-  FormHeader,
-  FormTitle,
-  FormBody,
-  Block,
-} from '../components/styles/Card';
+import Dashboard from '../components/Dashboard/Dashboard';
+import SignIn from '../components/Registration/SignIn';
+import { useUser } from '../components/User';
 
-export default function Dashboard() {
-  const { t } = useTranslation('dashboard');
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('main');
+export default function Index() {
+  const user = useUser();
 
-  return (
-    <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
-      <FormHeader>
-        <FormTitle>
-          <Block>
-            <span>{t('dashboard')}</span>
-            <HelpButton showHelp={toggleHelpVisibility} />
-          </Block>
-        </FormTitle>
-      </FormHeader>
-      <FormBody>
-        <DashboardApplication />
-        <DashboardSignal />
-      </FormBody>
-    </>
-  );
+  if (!user?.id) return <SignIn />;
+  return <Dashboard />;
 }

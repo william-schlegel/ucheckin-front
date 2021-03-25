@@ -14,11 +14,11 @@ import {
 import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
 
-const nbSignaux = 5;
+const nbSignals = 5;
 
-const QUERY_SIGNAUX = gql`
-  query QUERY_SIGNAUX {
-    allSignals(first:${nbSignaux} , sortBy: creation_DESC) {
+const QUERY_SIGNALS = gql`
+  query QUERY_SIGNALS {
+    allSignals(first:${nbSignals} , sortBy: creation_DESC) {
       id
       name
       active
@@ -39,9 +39,9 @@ const QUERY_SIGNAUX = gql`
   }
 `;
 
-export default function DashboardApplication() {
+export default function DashboardSignal() {
   const { t } = useTranslation('dashboard');
-  const { error, loading, data } = useQuery(QUERY_SIGNAUX);
+  const { error, loading, data } = useQuery(QUERY_SIGNALS);
   const router = useRouter();
 
   function viewSignal(signalId) {
@@ -86,7 +86,7 @@ export default function DashboardApplication() {
   if (error) return <DisplayError error={error} />;
   return (
     <Card>
-      <h2>{t('signals', { count: nbSignaux })}</h2>
+      <h2>{t('signals', { count: nbSignals })}</h2>
       <Table columns={columns} data={data.allSignals} />
       <LicensesLegendSignal />
     </Card>

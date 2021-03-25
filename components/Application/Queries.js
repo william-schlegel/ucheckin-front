@@ -1,6 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
+import { dateNow } from '../DatePicker';
 
 export const QUERY_APPLICATION = gql`
   query QUERY_APPLICATION($id: ID!) {
@@ -127,7 +128,7 @@ export function useFindApplication(appId) {
       name: '',
       apiKey: '',
       licenseType: '',
-      validity: new Date().toISOString(),
+      validity: dateNow(),
       licenses: [],
     },
     applicationError: error,

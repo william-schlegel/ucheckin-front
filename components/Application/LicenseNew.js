@@ -24,9 +24,11 @@ import {
 import useForm from '../../lib/useForm';
 import LicensePrice, { usePrice } from '../License/LicensePrice';
 import Total from '../TotalCount';
-import { useFindApplication } from './Queries';
-import { useFindUser } from '../SearchUser';
+import { QUERY_APPLICATION, useFindApplication } from './Queries';
+import useFindUser from '../../lib/useFindUser';
 import ButtonFreeTrial from '../Buttons/ButtonFreeTrial';
+import { dateInMonth } from '../DatePicker';
+import useVat from '../../lib/useVat';
 
 const CREATE_LICENSE_MUTATION = gql`
   mutation CREATE_LICENSE_MUTATION($data: [LicensesCreateInput]!) {
@@ -38,20 +40,23 @@ const CREATE_LICENSE_MUTATION = gql`
 
 export default function LicenseNew({ open, onClose, appId, ownerId }) {
   const [createLicense, { loading, error }] = useMutation(
-    CREATE_LICENSE_MUTATION
+    CREATE_LICENSE_MUTATION,
+    {
+      refetchQueries: [{ query: QUERY_APPLICATION, variables: { id: appId } }],
+    }
   );
   const { user, userError } = useFindUser(ownerId);
   const { application, applicationError } = useFindApplication(appId);
   const [total, setTotal] = useState(0);
-  const [vat, setVat] = useState(0.2);
+  const { vat } = useVat(ownerId);
   const { t } = useTranslation('license');
   const initialValues = useRef({
-    MonthLicense: 0,
-    YearLicense: 0,
-    MonthArea: 1,
-    YearArea: 1,
+    monthLicense: 0,
+    yearLicense: 0,
+    monthArea: 1,
+    yearArea: 1,
   });
-  const { inputs, handleChange } = useForm(initialValues.current);
+  const { inputs, handleChange, resetForm } = useForm(initialValues.current);
   const [trial, setTrial] = useState(false);
   const { price, licenseTypeId, setLicenseTypeId } = usePrice(ownerId);
 
@@ -62,10 +67,10 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }, [application, setTrial, setLicenseTypeId]);
 
   function handleSuccess() {
-    // TODO: handle payment before creating licenses
     const purchaseInformation = 'Purchase informations';
-    const { MonthLicense, YearLicense, MonthArea, YearArea } = inputs;
+    const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
     const licenses = [];
+
     function createNLicenses(number, nbArea, validity) {
       for (let s = 0; s < number; s += 1)
         licenses.push({
@@ -75,17 +80,17 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
             nbArea,
             validity,
             purchaseInformation,
+            application: { connect: { id: appId } },
+            signal: { create: { owner: { connect: { id: ownerId } } } },
           },
         });
       const variables = { data: licenses };
       createLicense({ variables }).catch((err) => alert(err.message));
     }
-    const oneMonthFromNow = new Date();
-    oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
-    const oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-    createNLicenses(MonthLicense, MonthArea, oneMonthFromNow.toISOString());
-    createNLicenses(YearLicense, YearArea, oneYearFromNow.toISOString());
+
+    createNLicenses(monthLicense, monthArea, dateInMonth(1));
+    createNLicenses(yearLicense, yearArea, dateInMonth(12));
+    resetForm();
     onClose();
   }
 
@@ -94,20 +99,21 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }
 
   useEffect(() => {
-    const { MonthLicense, YearLicense, MonthArea, YearArea } = inputs;
+    const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
     if (price?.items) {
       const myPrice = price.items.filter(
         (p) => p.licenseType.id === licenseTypeId
       )[0];
-
-      const tot =
-        parseInt(MonthLicense || 0) *
-          parseInt(MonthArea || 1) *
-          parseFloat(myPrice.monthly) +
-        parseInt(YearLicense || 0) *
-          parseInt(YearArea || 1) *
-          parseFloat(myPrice.yearly);
-      setTotal(tot);
+      if (myPrice) {
+        const tot =
+          parseInt(monthLicense || 0) *
+            parseInt(monthArea || 1) *
+            parseFloat(myPrice.monthly) +
+          parseInt(yearLicense || 0) *
+            parseInt(yearArea || 1) *
+            parseFloat(myPrice.yearly);
+        setTotal(tot);
+      }
     }
   }, [inputs, price, licenseTypeId]);
 
@@ -138,47 +144,51 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           <FormBody>
             <Row>
               <H3>{t('nb-signal')}</H3>
-              <Counter
-                label={t('by-month')}
-                name="MonthLicense"
-                input={inputs.MonthLicense}
-                handleChange={handleChange}
-              />
-              <Counter
-                label={t('by-year')}
-                name="YearLicense"
-                input={inputs.YearLicense}
-                handleChange={handleChange}
-              />
+              <div>
+                <Counter
+                  label={t('by-month')}
+                  name="monthLicense"
+                  input={inputs.monthLicense}
+                  handleChange={handleChange}
+                />
+                <Counter
+                  label={t('by-year')}
+                  name="yearLicense"
+                  input={inputs.yearLicense}
+                  handleChange={handleChange}
+                />
+              </div>
             </Row>
             {application.licenseType.perArea && (
               <Row>
                 <H3>{t('nb-area')}</H3>
-                <Counter
-                  label=""
-                  name="MonthArea"
-                  input={inputs.MonthArea}
-                  handleChange={handleChange}
-                  min={1}
-                />
-                <Counter
-                  label=""
-                  name="YearArea"
-                  input={inputs.YearArea}
-                  handleChange={handleChange}
-                  min={1}
-                />
+                <div>
+                  <Counter
+                    label=""
+                    name="monthArea"
+                    input={inputs.monthArea}
+                    handleChange={handleChange}
+                    min={1}
+                  />
+                  <Counter
+                    label=""
+                    name="yearArea"
+                    input={inputs.yearArea}
+                    handleChange={handleChange}
+                    min={1}
+                  />
+                </div>
               </Row>
             )}
           </FormBody>
           <Total
             value={total}
             nbLicense={
-              inputs.MonthLicense * inputs.MonthArea +
-              inputs.YearLicense * inputs.YearArea
+              inputs.monthLicense * inputs.monthArea +
+              inputs.yearLicense * inputs.yearArea
             }
-            nbSignal={inputs.MonthLicense + inputs.YearLicense}
-            vat={vat}
+            nbSignal={inputs.monthLicense + inputs.yearLicense}
+            vat={vat.value}
           />
         </FormBodyFull>
       </Form>
@@ -187,13 +197,17 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           disabled={loading || !total}
           onSuccess={handleSuccess}
           onError={handleError}
-          amount={total * (1 + vat)}
+          amount={total * (1 + vat.value)}
         />
+        {trial && (
+          <ButtonFreeTrial
+            ownerId={ownerId}
+            appId={appId}
+            onSuccess={onClose}
+          />
+        )}
+        <ButtonCancel onClick={onClose} />
       </DrawerFooter>
-      {trial && (
-        <ButtonFreeTrial ownerId={ownerId} appId={appId} onSuccess={onClose} />
-      )}
-      <ButtonCancel onClick={onClose} />
       {error && <DisplayError error={error} />}
     </Drawer>
   );
