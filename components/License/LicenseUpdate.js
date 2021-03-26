@@ -28,6 +28,7 @@ import useFindUser from '../../lib/useFindUser';
 import { useFindSignal } from '../Signal/Queries';
 import { dateNow, formatDate } from '../DatePicker';
 import useVat from '../../lib/useVat';
+import { CREATE_ORDER_MUTATION } from '../Order/Queries';
 
 export default function LicenseUpdate({
   open,
@@ -39,6 +40,9 @@ export default function LicenseUpdate({
 }) {
   const [updateLicense, { loading, error }] = useMutation(
     UPDATE_LICENSE_MUTATION
+  );
+  const [createOrder, { error: orderError }] = useMutation(
+    CREATE_ORDER_MUTATION
   );
   const { license } = useFindLicense(licenseId);
 
@@ -63,12 +67,47 @@ export default function LicenseUpdate({
   }
 
   function handleSuccess() {
+    // create order
+    const { monthLicense, yearLicense } = inputs;
+    const myPrice = price.items.filter(
+      (p) => p.licenseType.id === license.licenseType.id
+    )[0];
+    console.log(`myPrice`, myPrice);
+
+    const orderItems = [];
+    if (monthLicense)
+      orderItems.push({
+        licenseType: { connect: { id: license.licenseType.id } },
+        nbArea: license.nbArea,
+        unitPrice: myPrice.monthly,
+        quantity: monthLicense,
+      });
+    if (yearLicense)
+      orderItems.push({
+        licenseType: { connect: { id: license.licenseType.id } },
+        nbArea: license.nbArea,
+        unitPrice: myPrice.yearly,
+        quantity: yearLicense,
+      });
+    const orderData = {
+      user: { connect: { id: ownerId } },
+      totalBrut: total.toString(),
+      vatValue: vat.value.toString(),
+      orderDate: dateNow(),
+      items: { create: orderItems },
+    };
+    console.log(`orderData`, orderData);
+    createOrder({ variables: { data: orderData } });
+
+    console.log(`newValidity`, newValidity);
+    // update validity
     updateLicense({
       variables: {
         id: licenseId,
         newValidity,
       },
     });
+
     closeAndClear();
   }
 
@@ -111,6 +150,8 @@ export default function LicenseUpdate({
 
   return (
     <Drawer onClose={closeAndClear} open={open} title={t('update-license')}>
+      {error && <DisplayError error={error} />}
+      {orderError && <DisplayError error={orderError} />}
       <Form>
         <FormBody>
           <RowReadOnly>

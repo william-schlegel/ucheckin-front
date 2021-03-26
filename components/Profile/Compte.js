@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useClipboard } from 'use-clipboard-copy';
 import Router, { useRouter } from 'next/router';
-import { Notify } from 'notiflix';
+import { Notify, Confirm } from 'notiflix';
 
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
@@ -119,9 +119,6 @@ export default function Compte({ id }) {
     refetchQueries: [{ query: QUERY_COMPTE, variables: { id } }],
     onCompleted: (tokenData) => {
       const newToken = tokenData.createToken.token;
-      // const tokens = [...inputs.tokens];
-      // tokens.push(tokenData.createToken);
-      // setInputs({ ...inputs, tokens: [...inputs.tokens] });
       clipboard.copy(newToken);
       Notify.Success(t('token-created', { token: newToken }));
     },
@@ -170,9 +167,16 @@ export default function Compte({ id }) {
   }
 
   function deleteToken(idDel) {
-    deleteTokenMutation({
-      variables: { id: idDel },
-    });
+    Confirm.Show(
+      t('confirm-delete'),
+      t('you-confirm'),
+      t('yes-delete'),
+      t('no-delete'),
+      () =>
+        deleteTokenMutation({
+          variables: { id: idDel },
+        })
+    );
   }
 
   // function copyToken(idCopy) {

@@ -24,7 +24,7 @@ const PgBar = styled.div`
   border: 1px solid var(--gray);
   .pgbar-progress {
     width: ${(props) => props.value}%;
-    background-color: var(--pink);
+    background-color: var(--secondary);
     height: 100%;
   }
 `;

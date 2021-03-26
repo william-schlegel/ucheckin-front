@@ -27,7 +27,7 @@ const Modal = styled.div`
     align-items: center;
     h2 {
       display: inline;
-      color: var(--blue);
+      color: var(--primary);
     }
     a {
       margin-left: 2rem;

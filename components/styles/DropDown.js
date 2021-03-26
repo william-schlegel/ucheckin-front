@@ -42,7 +42,7 @@ const SearchStyles = styled.div`
     width: 100%;
     &:focus {
       outline: 0;
-      border-color: var(--blue);
+      border-color: var(--primary);
     }
     &.loading {
       animation: ${glow} 0.5s ease-in-out infinite alternate;

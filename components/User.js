@@ -22,6 +22,7 @@ const CURRENT_USER_QUERY = gql`
           canManagePrice
           canCreatePrice
           canSeeOrder
+          canManageOrder
           canManageVAT
           canManageLicenseType
           canManageEvent

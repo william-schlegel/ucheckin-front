@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import formatMoney from '../../lib/formatMoney';
+import { formatMoney } from '../../lib/formatNumber';
 import { LICENSE_PRICE_QUERY } from './Queries';
 import { dateNow } from '../DatePicker';
 import NoData from '../Tables/NoData';
@@ -13,19 +13,19 @@ import NoData from '../Tables/NoData';
 export const TableStyled = styled.table`
   width: 100%;
   background-color: var(--white);
-  /* border: solid 1px var(--pink); */
+  /* border: solid 1px var(--secondary); */
   border-spacing: 0;
   thead {
-    color: var(--blue);
+    color: var(--primary);
     font-size: 1.25rem;
   }
   th,
   td {
-    border-bottom: solid 1px var(--pink);
-    border-right: solid 1px var(--pink);
+    border-bottom: solid 1px var(--secondary);
+    border-right: solid 1px var(--secondary);
     padding: 10px 5px;
     .default {
-      color: var(--pink);
+      color: var(--secondary);
     }
   }
   tbody > tr {
@@ -34,7 +34,7 @@ export const TableStyled = styled.table`
     }
     & > td:first-child {
       text-align: left;
-      color: var(--blue);
+      color: var(--primary);
       font-size: 1.25rem;
     }
   }

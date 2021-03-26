@@ -6,6 +6,7 @@ import { FormHeader, FormTitle, FormBody, Block, H2 } from '../styles/Card';
 import DashboardUser from './Users';
 import { useUser } from '../User';
 import DashboardLicense from './Licenses';
+import DashboardOrder from './Orders';
 
 export default function Dashboard() {
   const { t } = useTranslation('dashboard');
@@ -31,6 +32,7 @@ export default function Dashboard() {
         <DashboardApplication />
         <DashboardSignal />
         <DashboardLicense />
+        {user?.role.canManageOrder && <DashboardOrder />}
       </FormBody>
     </>
   );

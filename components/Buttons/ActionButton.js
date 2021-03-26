@@ -28,8 +28,8 @@ import {
 import styled from 'styled-components';
 
 export const IconButtonStyles = styled.a.attrs((props) => ({
-  color: props.color || 'var(--blue)',
-  hoverColor: props.hoverColor || 'var(--pink)',
+  color: props.color || 'var(--primary)',
+  hoverColor: props.hoverColor || 'var(--secondary)',
 }))`
   display: flex;
   align-items: center;

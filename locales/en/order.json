@@ -1,0 +1,21 @@
+{
+  "orders": "Orders",
+  "order": "Order",
+  "user": "Customer",
+  "canceled": "Canceled",
+  "order-date": "Order date",
+  "total-brut": "Total (brut)",
+  "vat-value": "VAT",
+  "total-net": "Total (net)",
+  "number": "Number",
+  "company": "Company",
+  "address": "Address",
+  "zip-code": "Zip code",
+  "city": "City",
+  "country": "Country",
+  "license-type": "Product",
+  "quantity": "Quantity",
+  "nb-area": "Number of areas",
+  "unit-price": "Unit price",
+  "order-details": "Order details"
+}

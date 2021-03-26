@@ -4,7 +4,7 @@ module.exports = {
   debug: true,
   pages: {
     '*': ['common', 'navigation'],
-    '/': ['dashboard', 'signal', 'license', 'application', 'user'],
+    '/': ['dashboard', 'signal', 'license', 'application', 'user', 'order'],
     'rgx:^/application': ['application', 'license'],
     'rgx:^/signal': ['signal', 'license'],
     'rgx:^/profile': ['profile', 'license'],
@@ -12,5 +12,6 @@ module.exports = {
     'rgx:^/compte': ['profile', 'license'],
     'rgx:^/license': ['license'],
     'rgx:^/price': ['license'],
+    'rgx:^/order': ['order'],
   },
 };

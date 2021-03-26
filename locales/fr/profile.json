@@ -18,5 +18,9 @@
   "success": "Profile enregistré avec succès",
   "error": "Erreur lors de l'enregistrement du profile {{error}}",
   "token-created": "Nouveau token créé {{token}} et copié dans le presse-papier",
-  "token-deleted": "Token supprimé"
+  "token-deleted": "Token supprimé",
+  "confirm-delete": "Confirmation de suppression",
+  "you-confirm": "Voulez-vous vraiment supprimer ce token ?",
+  "yes-delete": "Oui",
+  "no-delete": "Non"
 }

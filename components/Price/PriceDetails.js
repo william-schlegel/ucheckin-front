@@ -20,13 +20,13 @@ import {
 import { PRICE_QUERY } from './Queries';
 import { formatDate } from '../DatePicker';
 import { TableStyled } from '../License/LicensePrice';
-import formatMoney from '../../lib/formatMoney';
+import {formatMoney} from '../../lib/formatNumber';
 import LicenseType from '../Tables/LicenseType';
 import Badges from '../Tables/Badges';
 
 const DefaultStyled = styled.div`
   display: block;
-  background-color: var(--pink);
+  background-color: var(--secondary);
   border-radius: 100px;
   color: white;
   width: 100%;

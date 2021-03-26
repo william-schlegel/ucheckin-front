@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 
 import Counter from '../Counter';
@@ -27,16 +26,10 @@ import Total from '../TotalCount';
 import { QUERY_APPLICATION, useFindApplication } from './Queries';
 import useFindUser from '../../lib/useFindUser';
 import ButtonFreeTrial from '../Buttons/ButtonFreeTrial';
-import { dateInMonth } from '../DatePicker';
+import { dateInMonth, dateNow } from '../DatePicker';
 import useVat from '../../lib/useVat';
-
-const CREATE_LICENSE_MUTATION = gql`
-  mutation CREATE_LICENSE_MUTATION($data: [LicensesCreateInput]!) {
-    createLicenses(data: $data) {
-      id
-    }
-  }
-`;
+import { CREATE_LICENSE_MUTATION } from '../License/Queries';
+import { CREATE_ORDER_MUTATION } from '../Order/Queries';
 
 export default function LicenseNew({ open, onClose, appId, ownerId }) {
   const [createLicense, { loading, error }] = useMutation(
@@ -44,6 +37,9 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
     {
       refetchQueries: [{ query: QUERY_APPLICATION, variables: { id: appId } }],
     }
+  );
+  const [createOrder, { error: orderError }] = useMutation(
+    CREATE_ORDER_MUTATION
   );
   const { user, userError } = useFindUser(ownerId);
   const { application, applicationError } = useFindApplication(appId);
@@ -69,10 +65,10 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   function handleSuccess() {
     const purchaseInformation = 'Purchase informations';
     const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
-    const licenses = [];
 
     function createNLicenses(number, nbArea, validity) {
-      for (let s = 0; s < number; s += 1)
+      const licenses = [];
+      for (let s = 0; s < number; s += 1) {
         licenses.push({
           data: {
             owner: { connect: { id: ownerId } },
@@ -84,12 +80,42 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
             signal: { create: { owner: { connect: { id: ownerId } } } },
           },
         });
+      }
       const variables = { data: licenses };
       createLicense({ variables }).catch((err) => alert(err.message));
     }
 
     createNLicenses(monthLicense, monthArea, dateInMonth(1));
     createNLicenses(yearLicense, yearArea, dateInMonth(12));
+
+    // create order
+    const myPrice = price.items.filter(
+      (p) => p.licenseType.id === licenseTypeId
+    )[0];
+
+    const orderItems = [];
+    if (monthLicense)
+      orderItems.push({
+        licenseType: { connect: { id: licenseTypeId } },
+        nbArea: monthArea,
+        unitPrice: myPrice.monthly,
+        quantity: monthLicense,
+      });
+    if (yearLicense)
+      orderItems.push({
+        licenseType: { connect: { id: licenseTypeId } },
+        nbArea: yearArea,
+        unitPrice: myPrice.yearly,
+        quantity: yearLicense,
+      });
+    const orderData = {
+      user: { connect: { id: ownerId } },
+      totalBrut: total.toString(),
+      vatValue: vat.value.toString(),
+      orderDate: dateNow(),
+      items: { create: orderItems },
+    };
+    createOrder({ variables: { data: orderData } });
     resetForm();
     onClose();
   }
@@ -118,6 +144,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }, [inputs, price, licenseTypeId]);
 
   if (userError) return <DisplayError error={userError} />;
+  if (orderError) return <DisplayError error={orderError} />;
   if (applicationError) return <DisplayError error={applicationError} />;
   return (
     <Drawer onClose={onClose} open={open} title={t('new-license')}>

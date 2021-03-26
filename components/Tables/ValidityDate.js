@@ -11,17 +11,19 @@ const Container = styled.div`
 
 const TOLERANCE = 5;
 
-export default function ValidityDate({ value, after }) {
+export default function ValidityDate({ value, after, noColor }) {
   const now = new Date();
   const limit = new Date(value);
   const tolerance = new Date(value);
   tolerance.setDate(tolerance.getDate() - TOLERANCE);
   let color = 'inherit';
-  if (after) {
-    if (now < limit) color = now > tolerance ? 'orange' : 'red';
-  } else {
-    if (now > tolerance) color = 'orange';
-    if (now > limit) color = 'red';
+  if (!noColor) {
+    if (after) {
+      if (now < limit) color = now > tolerance ? 'orange' : 'red';
+    } else {
+      if (now > tolerance) color = 'orange';
+      if (now > limit) color = 'red';
+    }
   }
   return (
     <Container>

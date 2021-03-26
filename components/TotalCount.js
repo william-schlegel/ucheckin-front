@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import formatMoney, { formatPrct } from '../lib/formatMoney';
+import { formatMoney, formatPrct } from '../lib/formatNumber';
 import { H2, Label, Row, RowReadOnly } from './styles/Card';
 
 const TotalStyled = styled.div`
@@ -12,11 +12,11 @@ const TotalStyled = styled.div`
   align-items: baseline;
   border-top: 1px solid var(--gray);
   .label {
-    color: var(--blue);
+    color: var(--primary);
   }
   span {
     font-size: 2.5rem;
-    color: var(--pink);
+    color: var(--secondary);
     margin-left: auto;
     &.vat {
       font-size: 1.5rem;
@@ -60,7 +60,7 @@ export default function Total({ value, nbLicense, nbSignal, vat }) {
       </Row>
       <TotalStyled>
         <RowReadOnly>
-          <Label>{t('total')}</Label>
+          <Label>{t('common:net-amount')}</Label>
           <span className="vat">{formatMoney(value)}</span>
         </RowReadOnly>
         <RowReadOnly>

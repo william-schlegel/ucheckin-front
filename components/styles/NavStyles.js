@@ -27,7 +27,7 @@ const NavStyles = styled.ul`
     }
     &:after {
       height: 2px;
-      background: var(--pink);
+      background: var(--secondary);
       content: '';
       width: 0;
       position: absolute;

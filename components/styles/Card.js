@@ -8,6 +8,7 @@ export const Card = styled.div`
   /* font-size: 1.5rem; */
   line-height: 1.5;
   font-weight: 600;
+  margin-bottom: 0.5rem;
 `;
 
 export const Row = styled.div`
@@ -30,6 +31,8 @@ export const RowReadOnly = styled(Row)`
   justify-content: start;
   height: fit-content;
   flex-grow: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   label {
     display: inline-block;
     width: auto;
@@ -54,7 +57,7 @@ export const BlockShort = styled(Block)`
 
 export const Label = styled.label`
   font-weight: 500;
-  color: var(--blue);
+  color: var(--primary);
   width: 100%;
   font-size: 1.25rem;
   &[required] {
@@ -87,7 +90,7 @@ export const FormBody = styled.div`
   @media (max-width: 1000px) {
     grid-template-columns: auto;
   }
-  grid-gap: 1rem;
+  grid-gap: 0.5rem 1rem;
   .select {
     font-size: 1.25rem;
     width: 100%;
@@ -101,7 +104,7 @@ export const FormBody = styled.div`
     width: 100%;
     &:focus {
       outline: 0;
-      border-color: var(--blue);
+      border-color: var(--primary);
     }
   }
   input[type='number'] {
@@ -116,7 +119,7 @@ export const Input = styled.input`
   width: 100%;
   &:focus {
     outline: 0;
-    border-color: var(--blue);
+    border-color: var(--primary);
   }
 `;
 
@@ -142,17 +145,18 @@ export const FormHeader = styled.div`
   margin: 1rem 0;
   padding-bottom: 1rem;
   font-size: 1.5rem;
-  color: var(--blue);
+  color: var(--primary);
   justify-content: space-between;
 `;
 
 export const FormTitle = styled.div`
   display: flex;
   align-items: center;
+  width: 100%;
   span {
     margin-left: 1rem;
     margin-right: 1rem;
-    color: var(--pink);
+    color: var(--secondary);
   }
 `;
 
@@ -175,9 +179,9 @@ export const FormWithBar = styled(Form)`
     display: block;
     background-image: linear-gradient(
       to right,
-      var(--blue) 0%,
-      var(--pink) 50%,
-      var(--blue) 100%
+      var(--primary) 0%,
+      var(--secondary) 50%,
+      var(--primary) 100%
     );
     &[aria-busy='true']::before {
       background-size: 50% auto;
@@ -189,20 +193,20 @@ export const FormWithBar = styled(Form)`
 export const H1 = styled.h1`
   margin-block-start: 0.3rem;
   margin-block-end: 0.3rem;
-  color: var(--pink);
+  color: var(--secondary);
 `;
 export const H2 = styled.h2`
   margin-block-start: 0.25rem;
   margin-block-end: 0.25rem;
-  color: var(--pink);
+  color: var(--secondary);
 `;
 
 export const H3 = styled.h3`
   margin-block-start: 0.15rem;
   margin-block-end: 0.15rem;
-  color: var(--pink);
+  color: var(--secondary);
 `;
 
 export const H4 = styled.h4`
-  color: var(--pink);
+  color: var(--secondary);
 `;

@@ -96,8 +96,9 @@ function PaymentForm({ amount, onSuccess, onError }) {
     }
     const variables = {
       token: paymentMethod.id,
-      amount,
+      amount: amount * 100, // in cents
     };
+    console.log(`variables`, variables);
     const charge = await checkout({
       variables,
     });

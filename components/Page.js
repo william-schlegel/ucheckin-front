@@ -8,8 +8,8 @@ import Nav from './Nav';
 const GlobalStyles = createGlobalStyle`
   html {
     --green: #20C05C;
-    --blue: #3c64a4;
-    --pink: #E63586;
+    --primary: #3c64a4;
+    --secondary: #E63586;
     --black: #101010;
     --lightBlack: #282828;
     --grey: #3A3A3A;
@@ -47,7 +47,7 @@ const GlobalStyles = createGlobalStyle`
     text-decoration: none;
     text-decoration-line: none;
     text-decoration-style: none;
-    color: var(--blue);
+    color: var(--primary);
   }
   a:hover {
     text-decoration: underline;

@@ -13,6 +13,9 @@ const rotating = keyframes`
 `;
 
 const SpinnerContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   place-items: center;
   width: 100%;

@@ -25,7 +25,7 @@ export const DrawerHeader = styled.div`
   margin-bottom: 1rem;
   h3 {
     display: inline;
-    color: var(--pink);
+    color: var(--secondary);
     font-weight: 500;
     font-size: 2rem;
     margin: 0;

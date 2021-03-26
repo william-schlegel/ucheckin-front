@@ -3,5 +3,6 @@
   "applications": "Last {{count}} application created",
   "signals": "Last {{count}} signals created",
   "users": "Last {{count}} users registred",
-  "licenses": "{{count}} licenses about to expire"
+  "licenses": "{{count}} licenses about to expire",
+  "orders": "{{count}} last orders"
 }

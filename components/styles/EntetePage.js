@@ -6,7 +6,7 @@ const EntetePage = styled.div`
   gap: 1.5rem;
   h3 {
     display: inline-block;
-    color: var(--pink);
+    color: var(--secondary);
     font-weight: 500;
     font-size: 2rem;
   }

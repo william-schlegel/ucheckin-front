@@ -50,7 +50,7 @@ export const Wrapper = styled.div`
         align-items: center;
         h2 {
           display: inline;
-          color: var(--blue);
+          color: var(--primary);
         }
         a {
           margin-left: 2rem;
@@ -62,11 +62,11 @@ export const Wrapper = styled.div`
         a {
           padding: 0 1rem;
           margin: 0 1rem;
-          border: 1px solid var(--blue);
+          border: 1px solid var(--primary);
           text-decoration: none;
           &:hover {
-            color: var(--pink);
-            border: 1px solid var(--pink);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
           }
         }
       }

@@ -44,16 +44,6 @@ export const ALL_LICENSES_QUERY = gql`
   }
 `;
 
-export const VALIDATE_LICENSE_MUTATION = gql`
-  mutation VALIDATE_LICENSE_MUTATION($id: ID!, $newDate: String!) {
-    updateLicense(id: $id, data: { validity: $newDate }) {
-      id
-      license
-      valid
-    }
-  }
-`;
-
 export const LICENSE_QUERY = gql`
   query LICENSE_QUERY($id: ID!) {
     License(where: { id: $id }) {
@@ -148,6 +138,14 @@ export const UPDATE_LICENSE_MUTATION = gql`
     updateLicense(id: $id, data: { validity: $newValidity }) {
       id
       validity
+    }
+  }
+`;
+
+export const CREATE_LICENSE_MUTATION = gql`
+  mutation CREATE_LICENSE_MUTATION($data: [LicensesCreateInput]!) {
+    createLicenses(data: $data) {
+      id
     }
   }
 `;

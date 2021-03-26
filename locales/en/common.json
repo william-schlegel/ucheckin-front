@@ -57,6 +57,7 @@
   "plus": "Add",
   "extend": "Extend the license validity",
   "vat": "VAT ({{percentage}})",
+  "net-amount": "Net total",
   "taxed-amount": "Total billed including taxes",
   "no-data": "No data"
 }

@@ -58,7 +58,7 @@ const HeaderStyles = styled.header`
       background-color: transparent;
       border: transparent none;
       &:hover {
-        background-color: var(--pink);
+        background-color: var(--secondary);
       }
     }
     img.avatar {
@@ -79,7 +79,7 @@ const HeaderStyles = styled.header`
       padding: 0;
       justify-content: start;
       button {
-        color: var(--blue);
+        color: var(--primary);
         font-size: 1rem;
         display: block;
         width: 100%;
@@ -90,7 +90,7 @@ const HeaderStyles = styled.header`
         margin: 0;
         cursor: pointer;
         &:hover {
-          background-color: var(--pink);
+          background-color: var(--secondary);
         }
       }
     }
@@ -172,6 +172,14 @@ export default function Header() {
                   <button type="button" onClick={() => router.push('/compte')}>
                     {t('account')}
                   </button>
+                  {(user.role.canManageOrder || user.role.canSeeOrder) && (
+                    <button
+                      type="button"
+                      onClick={() => router.push('/orders')}
+                    >
+                      {t('orders')}
+                    </button>
+                  )}
                   <Signout />
                 </div>
               )}

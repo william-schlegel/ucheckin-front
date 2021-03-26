@@ -18,5 +18,9 @@
   "success": "Profile saved with success",
   "error": "Error while saving the profile {{error}}",
   "token-created": "New token created {{token}} and copied in clipboard",
-  "token-deleted": "Token deleted"
+  "token-deleted": "Token deleted",
+  "confirm-delete": "Confirm deletion",
+  "you-confirm": "Do you really want to delete this token?",
+  "yes-delete": "Yes",
+  "no-delete": "No"
 }

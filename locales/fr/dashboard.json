@@ -3,5 +3,6 @@
   "applications": "{{count}} dernières applications crées",
   "signals": "{{count}} derniers signaux créés",
   "users": "{{count}} derniers utilisateurs enregistrés",
-  "licenses": "{{count}} licences proches de l'expiration"
+  "licenses": "{{count}} licences proches de l'expiration",
+  "orders": "{{count}} dernières commandes"
 }

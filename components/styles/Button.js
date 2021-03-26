@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const ButtonStyled = styled.button`
-  --color: var(--blue);
-  --hover-color: var(--pink);
+  --color: var(--primary);
+  --hover-color: var(--secondary);
   --bg-color: transparent;
   --bg-hover-color: transparent;
   font-size: 1rem;
@@ -62,15 +62,15 @@ export const ValidationButtonStyled = styled(ButtonStyled)`
 export const BlueButtonStyled = styled(ButtonStyled)`
   --hover-color: white;
   --color: white;
-  --bg-hover-color: var(--pink);
-  --bg-color: var(--blue);
+  --bg-hover-color: var(--secondary);
+  --bg-color: var(--primary);
 `;
 
 export const PinkButtonStyled = styled(ButtonStyled)`
   --hover-color: white;
   --color: white;
-  --bg-hover-color: var(--blue);
-  --bg-color: var(--pink);
+  --bg-hover-color: var(--primary);
+  --bg-color: var(--secondary);
 `;
 
 export const NewButtonStyledBlock = styled(BlueButtonStyled)`
