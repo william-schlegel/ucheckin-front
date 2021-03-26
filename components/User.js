@@ -8,10 +8,11 @@ const CURRENT_USER_QUERY = gql`
         email
         name
         photo {
-          publicUrlTransformed(transformation: { width: "100", height: "100" })
+          publicUrlTransformed(transformation: { width: "200", height: "200" })
         }
         country
         role {
+          id
           canSeeOtherUsers
           canManageUsers
           canManageRoles

@@ -19,7 +19,7 @@ const QUERY_USERS = gql`
       company
       email
       photo {
-        publicUrlTransformed(transformation: { width: "100", height: "100" })
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
     }
   }

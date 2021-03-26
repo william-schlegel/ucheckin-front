@@ -23,7 +23,6 @@ const Logo = styled.h1`
   gap: 1rem;
   a {
     color: white;
-    text-decoration: none;
     text-transform: uppercase;
   }
   img {
@@ -33,6 +32,7 @@ const Logo = styled.h1`
 `;
 
 const HeaderStyles = styled.header`
+  width: 100%;
   .bar {
     border-bottom: 1px solid var(--green);
     display: grid;
@@ -56,7 +56,9 @@ const HeaderStyles = styled.header`
       margin: 3px 0.5rem;
       padding: 0 1rem;
       background-color: transparent;
+      border-radius: 5px;
       border: transparent none;
+      transition: background-color 300ms ease-in-out;
       &:hover {
         background-color: var(--secondary);
       }
@@ -78,6 +80,7 @@ const HeaderStyles = styled.header`
       margin: 0.25rem;
       padding: 0;
       justify-content: start;
+      transition: background-color 300ms ease-in-out;
       button {
         color: var(--primary);
         font-size: 1rem;
@@ -88,9 +91,11 @@ const HeaderStyles = styled.header`
         white-space: nowrap;
         font-weight: 900;
         margin: 0;
+        border-radius: 0;
         cursor: pointer;
         &:hover {
           background-color: var(--secondary);
+          color: white;
         }
       }
     }

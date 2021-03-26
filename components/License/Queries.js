@@ -17,6 +17,7 @@ export const ALL_LICENSES_QUERY = gql`
       first: $first
       skip: $skip
       where: { owner: { id: $ownerId } }
+      sortBy: validity_ASC
     ) {
       id
       signal {

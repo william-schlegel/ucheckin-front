@@ -1,4 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
+import styled from 'styled-components';
+
 import DashboardApplication from './Applications';
 import DashboardSignal from './Signals';
 import { useHelp, Help, HelpButton } from '../Help';
@@ -7,6 +9,21 @@ import DashboardUser from './Users';
 import { useUser } from '../User';
 import DashboardLicense from './Licenses';
 import DashboardOrder from './Orders';
+
+const DashboardStyled = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 0 400px;
+  gap: 1rem;
+  & > * {
+    min-width: 30%;
+  }
+  h2 {
+    margin: 0;
+    margin-bottom: 1rem;
+    color: var(--secondary);
+  }
+`;
 
 export default function Dashboard() {
   const { t } = useTranslation('dashboard');
@@ -27,13 +44,13 @@ export default function Dashboard() {
           </Block>
         </FormTitle>
       </FormHeader>
-      <FormBody>
+      <DashboardStyled>
         {user?.role.canManageUsers && <DashboardUser />}
         <DashboardApplication />
         <DashboardSignal />
         <DashboardLicense />
         {user?.role.canManageOrder && <DashboardOrder />}
-      </FormBody>
+      </DashboardStyled>
     </>
   );
 }

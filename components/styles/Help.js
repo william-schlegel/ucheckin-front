@@ -63,7 +63,6 @@ export const Wrapper = styled.div`
           padding: 0 1rem;
           margin: 0 1rem;
           border: 1px solid var(--primary);
-          text-decoration: none;
           &:hover {
             color: var(--secondary);
             border: 1px solid var(--secondary);

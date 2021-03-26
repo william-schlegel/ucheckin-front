@@ -15,7 +15,7 @@ import { useMutation } from '@apollo/client';
 import styled from 'styled-components';
 import { CreditCard } from 'react-feather';
 import { IconButtonStyles } from './ActionButton';
-import { PinkButtonStyled } from '../styles/Button';
+import { SecondaryButtonStyled } from '../styles/Button';
 import Loading from '../Loading';
 
 const stripeLib = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
@@ -113,12 +113,12 @@ function PaymentForm({ amount, onSuccess, onError }) {
       {graphQLError && <p style={{ fontSize: 12 }}>{graphQLError.message}</p>}
       <CardElement />
       {loading && <Loading />}
-      <PinkButtonStyled type="button" onClick={proceedPayment}>
+      <SecondaryButtonStyled type="button" onClick={proceedPayment}>
         <IconButtonStyles>
           <CreditCard size={24} />
         </IconButtonStyles>
         {t('payment')}
-      </PinkButtonStyled>
+      </SecondaryButtonStyled>
     </CheckoutFormStyles>
   );
 }

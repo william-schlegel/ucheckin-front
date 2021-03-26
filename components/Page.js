@@ -26,9 +26,10 @@ const GlobalStyles = createGlobalStyle`
     --update-color-hover: #292;
     --cancel-color: #e1e1e1;
     --cancel-color-hover: #828282;
+    --break-menu: 800px;
 
     box-sizing: border-box;
-    font-size: 15px;
+    font-size: 16px;
   }
   *, *:before, *:after {
     box-sizing: inherit;
@@ -39,18 +40,18 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     font-size: 1rem;
     line-height:2;
+    min-height: 100%;
   }
   input, textarea, select {
     font-family: --apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
   a {
     text-decoration: none;
-    text-decoration-line: none;
-    text-decoration-style: none;
     color: var(--primary);
+    transition: transform 300ms ease-in-out;
   }
   a:hover {
-    text-decoration: underline;
+    transform: scale(1.1);
   }
 `;
 
@@ -60,14 +61,21 @@ const InnerStyles = styled.div`
   max-width: 1920px;
   margin: 0 auto 0 0;
   padding: 2rem;
+  align-self: stretch;
 `;
 
 const MainScreen = styled.div`
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* flex: 1 1 100%; */
+  min-height: 100vh;
 `;
 
 const Content = styled.div`
+  flex: 1 0 auto;
   display: flex;
+  flex-direction: row;
+  /* height: 100%; */
 `;
 
 export default function Page({ children }) {

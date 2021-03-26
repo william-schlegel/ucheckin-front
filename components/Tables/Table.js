@@ -91,7 +91,7 @@ export default function Table({
               {row.cells.map((cell) => {
                 if (cell.column.customRender) {
                   // console.log(`cell`, cell);
-                  // console.log(`row`, row);
+                  console.log(`row`, row);
                   return (
                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                   );

@@ -18,9 +18,9 @@ import useForm from '../../lib/useForm';
 import { CURRENT_USER_QUERY } from '../User';
 import Error from '../ErrorMessage';
 import {
-  BlueButtonStyled,
+  PrimaryButtonStyled,
   ButtonStyled,
-  PinkButtonStyled,
+  SecondaryButtonStyled,
 } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
 import SignUp from './SignUp';
@@ -115,18 +115,18 @@ export default function SignInForm() {
           </Row>
         </FormBodyFull>
         <FormFooter>
-          <PinkButtonStyled type="submit">
+          <SecondaryButtonStyled type="submit">
             <IconButtonStyles>
               <LogIn size={24} />
             </IconButtonStyles>
             {t('signin')}
-          </PinkButtonStyled>
-          <BlueButtonStyled type="button" onClick={() => setShowSignup(true)}>
+          </SecondaryButtonStyled>
+          <PrimaryButtonStyled type="button" onClick={() => setShowSignup(true)}>
             <IconButtonStyles>
               <UserPlus size={24} />
             </IconButtonStyles>
             {t('signup')}
-          </BlueButtonStyled>
+          </PrimaryButtonStyled>
           <ButtonStyled type="button" onClick={() => setShowReset(true)}>
             <IconButtonStyles>
               <XCircle size={24} />

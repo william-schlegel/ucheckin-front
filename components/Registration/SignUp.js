@@ -9,7 +9,7 @@ import { Form, FormBodyFull, Row, FormFooter, Label } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import Error from '../ErrorMessage';
 import Drawer from '../Drawer';
-import { BlueButtonStyled } from '../styles/Button';
+import { PrimaryButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
 import { CURRENT_USER_QUERY } from '../User';
 
@@ -121,12 +121,12 @@ export default function SignUp({ open, onClose }) {
           </Row>
         </FormBodyFull>
         <FormFooter>
-          <BlueButtonStyled type="submit">
+          <PrimaryButtonStyled type="submit">
             <IconButtonStyles>
               <UserPlus size={24} />
             </IconButtonStyles>
             {t('signup')}
-          </BlueButtonStyled>
+          </PrimaryButtonStyled>
         </FormFooter>
       </Form>
     </Drawer>

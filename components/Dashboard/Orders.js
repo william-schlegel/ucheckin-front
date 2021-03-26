@@ -24,6 +24,7 @@ const QUERY_ORDERS = gql`
         name
       }
       totalBrut
+      canceled
     }
   }
 `;
@@ -40,6 +41,7 @@ export default function DashboardOrder() {
   const columns = useColumns(
     [
       ['id', 'id', 'hidden'],
+      ['canceled', 'canceled', 'hidden'],
       [
         t('order:number'),
         'number',
@@ -49,9 +51,17 @@ export default function DashboardOrder() {
           },
           cell: { value },
           row: {
-            values: { id },
+            values: { id, canceled },
           },
-        }) => <Button action={action} label={value} value={id} block />,
+        }) => (
+          <Button
+            action={action}
+            label={value}
+            value={id}
+            block
+            secondary={canceled}
+          />
+        ),
         { action: viewOrder },
       ],
       [t('order:user'), 'user.name'],

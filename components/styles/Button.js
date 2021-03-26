@@ -59,20 +59,24 @@ export const ValidationButtonStyled = styled(ButtonStyled)`
   --bg-color: var(--update-color);
 `;
 
-export const BlueButtonStyled = styled(ButtonStyled)`
+export const PrimaryButtonStyled = styled(ButtonStyled)`
   --hover-color: white;
   --color: white;
   --bg-hover-color: var(--secondary);
   --bg-color: var(--primary);
 `;
 
-export const PinkButtonStyled = styled(ButtonStyled)`
+export const SecondaryButtonStyled = styled(ButtonStyled)`
   --hover-color: white;
   --color: white;
   --bg-hover-color: var(--primary);
   --bg-color: var(--secondary);
 `;
 
-export const NewButtonStyledBlock = styled(BlueButtonStyled)`
+export const NewButtonStyledBlock = styled(PrimaryButtonStyled)`
+  width: 100%;
+`;
+
+export const NewButtonStyledBlockSecondary = styled(SecondaryButtonStyled)`
   width: 100%;
 `;

@@ -1,15 +1,32 @@
 import PropTypes from 'prop-types';
-import { BlueButtonStyled, NewButtonStyledBlock } from '../styles/Button';
+import {
+  PrimaryButtonStyled,
+  NewButtonStyledBlock,
+  SecondaryButtonStyled,
+  NewButtonStyledBlockSecondary,
+} from '../styles/Button';
 
-export default function Button({ action, label, value, block }) {
+export default function Button({ action, label, value, block, secondary }) {
   if (block)
-    return (
+    return secondary ? (
+      <NewButtonStyledBlockSecondary onClick={() => action(value)}>
+        {label}
+      </NewButtonStyledBlockSecondary>
+    ) : (
       <NewButtonStyledBlock onClick={() => action(value)}>
         {label}
       </NewButtonStyledBlock>
     );
-  return (
-    <BlueButtonStyled onClick={() => action(value)}> {label} </BlueButtonStyled>
+  return secondary ? (
+    <SecondaryButtonStyled onClick={() => action(value)}>
+      {' '}
+      {label}{' '}
+    </SecondaryButtonStyled>
+  ) : (
+    <PrimaryButtonStyled onClick={() => action(value)}>
+      {' '}
+      {label}{' '}
+    </PrimaryButtonStyled>
   );
 }
 
@@ -18,4 +35,5 @@ Button.propTypes = {
   value: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   block: PropTypes.bool,
+  secondary: PropTypes.bool,
 };

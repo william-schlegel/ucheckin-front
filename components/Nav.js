@@ -4,6 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import SignOut from './Registration/SignOut';
 import NavStyles from './styles/NavStyles';
 import { useUser } from './User';
+import Footer from './Footer';
 
 export default function Nav() {
   const user = useUser();
@@ -32,7 +33,10 @@ export default function Nav() {
           </li>
         )}
         <li>
-          <SignOut />
+          <div>
+            <SignOut />
+            <Footer />
+          </div>
         </li>
       </NavStyles>
     );

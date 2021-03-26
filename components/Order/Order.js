@@ -20,16 +20,17 @@ import Table, { useColumns } from '../Tables/Table';
 import Number from '../Tables/Number';
 import LicenseType from '../Tables/LicenseType';
 import Total from '../TotalCount';
+import ButtonBack from '../Buttons/ButtonBack';
 
 const Canceled = styled.span`
-  margin: 0 0 0 auto !important;
+  margin: 0 1rem 0 auto !important;
   background-color: red;
   padding: 0.5rem 2rem;
   color: yellow !important;
   border-radius: 3px;
 `;
 
-export default function Order({ id }) {
+export default function Order({ id, backButton }) {
   const { loading, data } = useQuery(ORDER_QUERY, {
     variables: { id },
   });
@@ -69,6 +70,9 @@ export default function Order({ id }) {
           {t('order')} <span>{data.Order.number}</span>
           {data.Order.canceled && <Canceled>{t('canceled')}</Canceled>}
         </FormTitle>
+        {backButton && (
+          <ButtonBack route="/orders" label={t('navigation:orders')} />
+        )}
       </FormHeader>
       <FormBody>
         <RowReadOnly>
@@ -116,4 +120,5 @@ export default function Order({ id }) {
 
 Order.propTypes = {
   id: PropTypes.string.isRequired,
+  backButton: PropTypes.bool,
 };
