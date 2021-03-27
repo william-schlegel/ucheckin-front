@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 
-import SignOut from './Registration/SignOut';
+import SignOut from './User/SignOut';
 import NavStyles from './styles/NavStyles';
-import { useUser } from './User';
+import { useUser } from './User/Queries';
 import Footer from './Footer';
 
 export default function Nav() {
@@ -22,14 +22,19 @@ export default function Nav() {
         <li>
           <Link href="/signals">{t('signals')}</Link>
         </li>
-        {user.role.canManagePrice && (
+        {user.role?.canManagePrice && (
           <li>
             <Link href="/prices">{t('prices')}</Link>
           </li>
         )}
-        {user.role.canManageOrder && (
+        {user.role?.canManageOrder && (
           <li>
             <Link href="/orders">{t('orders')}</Link>
+          </li>
+        )}
+        {(user.role?.canSeeOtherUsers || user.role?.canManageUsers) && (
+          <li>
+            <Link href="/users">{t('users')}</Link>
           </li>
         )}
         <li>

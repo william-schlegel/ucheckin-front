@@ -13,7 +13,7 @@ import { useMutation } from '@apollo/client';
 import { Router, useRouter } from 'next/dist/client/router';
 import SickButton from './styles/SickButton';
 import { useCart } from '../lib/cartState';
-import { CURRENT_USER_QUERY } from './User';
+import { CURRENT_USER_QUERY } from './User/Queries';
 
 const CheckoutFormStyles = styled.form`
   box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.04);

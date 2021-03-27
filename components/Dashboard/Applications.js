@@ -14,7 +14,7 @@ import {
 } from '../Tables/LicensesDetails';
 import LicenseType from '../Tables/LicenseType';
 import Table, { useColumns } from '../Tables/Table';
-import { useUser } from '../User';
+import { useUser } from '../User/Queries';
 
 const nbApp = 5;
 
@@ -89,7 +89,7 @@ export default function DashboardApplication() {
 
   useEffect(() => {
     if (user) {
-      if (user.role.canManageApplication) columns[4].options = '';
+      if (user.role?.canManageApplication) columns[4].options = '';
     }
   }, [user, columns]);
 

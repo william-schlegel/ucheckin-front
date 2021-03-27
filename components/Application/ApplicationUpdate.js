@@ -10,16 +10,16 @@ const UPDATE_APPLICATION_MUTATION = gql`
     $id: ID!
     $name: String!
     $apiKey: String!
-    $ownerId: String!
+    $ownerId: ID!
     $users: [UserWhereUniqueInput!]!
-    $licenseTypeId: String
+    $licenseTypeId: ID!
   ) {
     updateApplication(
       id: $id
       data: {
         name: $name
         apiKey: $apiKey
-        owner: { connect: { id: $owner } }
+        owner: { connect: { id: $ownerId } }
         users: { disconnectAll: true, connect: $users }
         licenseType: { connect: { id: $licenseTypeId } }
       }
@@ -41,8 +41,8 @@ export default function UpdateApplication({ id, updatedApp, onSuccess }) {
   const variables = {
     name,
     apiKey,
-    ownerId: owner.key,
-    users: users.map((u) => ({ id: u.key })),
+    ownerId: owner.id,
+    users: users.map((u) => ({ id: u.id })),
     licenseTypeId: licenseType.id,
     id,
   };

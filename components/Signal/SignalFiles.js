@@ -160,7 +160,9 @@ export default function SignalFiles({ signalId, files }) {
               <Select
                 className="select"
                 id="chanel"
-                value={inputs.chanel}
+                value={() =>
+                  chanelList.find((ch) => ch.value === inputs.chanel)
+                }
                 onChange={(e) =>
                   handleChange({ value: e.value, name: 'chanel' })
                 }

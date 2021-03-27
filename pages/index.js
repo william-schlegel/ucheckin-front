@@ -1,6 +1,6 @@
 import Dashboard from '../components/Dashboard/Dashboard';
-import SignIn from '../components/Registration/SignIn';
-import { useUser } from '../components/User';
+import SignIn from '../components/User/SignIn';
+import { useUser } from '../components/User/Queries';
 
 export default function Index() {
   const user = useUser();

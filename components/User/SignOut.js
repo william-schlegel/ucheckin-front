@@ -1,15 +1,8 @@
 import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
 
-import { CURRENT_USER_QUERY } from '../User';
-
-const SIGN_OUT_MUTATION = gql`
-  mutation {
-    endSession
-  }
-`;
+import { CURRENT_USER_QUERY, SIGN_OUT_MUTATION } from './Queries';
 
 export default function SignOut() {
   const [signout] = useMutation(SIGN_OUT_MUTATION, {

@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
@@ -7,55 +6,17 @@ import useTranslation from 'next-translate/useTranslation';
 import errorMessage from '../../lib/errorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import Loading from '../Loading';
-
-const UPDATE_PROFILE_MUTATION = gql`
-  mutation UPDATE_PROFILE_MUTATION(
-    $id: ID!
-    $email: String!
-    $name: String!
-    $company: String
-    $address: String
-    $zipCode: String
-    $city: String
-    $telephone: String
-    $contact: String
-    $role: RoleWhereUniqueInput
-  ) {
-    updateUser(
-      id: $id
-      data: {
-        email: $email
-        name: $name
-        company: $company
-        address: $address
-        zipCode: $zipCode
-        city: $city
-        telephone: $telephone
-        contact: $contact
-        role: { connect: $role }
-      }
-    ) {
-      id
-    }
-  }
-`;
-
-const UPDATE_PROFILE_PHOTO_MUTATION = gql`
-  mutation UPDATE_PROFILE_PHOTO_MUTATION($id: ID!, $photo: Upload) {
-    updateUser(id: $id, data: { photo: $photo }) {
-      id
-      photo {
-        publicUrlTransformed(transformation: { width: "200", height: "200" })
-      }
-    }
-  }
-`;
+import {
+  UPDATE_PROFILE_MUTATION,
+  UPDATE_PROFILE_PHOTO_MUTATION,
+} from './Queries';
 
 function update(cache, payload) {
   cache.evict(cache.identify(payload.data.updateUser));
 }
 
 export function UpdatePhoto({ id, photo, onSuccess }) {
+  const { t } = useTranslation('common');
   const [updatePhoto, { loading, error }] = useMutation(
     UPDATE_PROFILE_PHOTO_MUTATION,
     {
@@ -93,33 +54,11 @@ UpdatePhoto.propTypes = {
 };
 
 export function UpdateProfile({ id, updatedProfile, onSuccess }) {
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation('user');
   const [updateProfile, { loading, error }] = useMutation(
     UPDATE_PROFILE_MUTATION
   );
-  const {
-    email,
-    name,
-    company,
-    address,
-    zipCode,
-    city,
-    telephone,
-    contact,
-    role,
-  } = updatedProfile;
-  const variables = {
-    id,
-    email,
-    name,
-    company,
-    address,
-    zipCode,
-    city,
-    telephone,
-    contact,
-    role: { id: role.id },
-  };
+  const variables = { id, ...updatedProfile };
 
   function handleValidation() {
     updateProfile({
@@ -150,10 +89,10 @@ UpdateProfile.propTypes = {
     address: PropTypes.string,
     zipCode: PropTypes.string,
     city: PropTypes.string,
+    country: PropTypes.string,
     telephone: PropTypes.string,
     contact: PropTypes.string,
-    role: PropTypes.object,
-    photo: PropTypes.object,
+    role: PropTypes.string,
   }),
   onSuccess: PropTypes.func.isRequired,
 };

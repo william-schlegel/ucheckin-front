@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useClipboard } from 'use-clipboard-copy';
 import Router, { useRouter } from 'next/router';
@@ -20,7 +19,12 @@ import {
   Block,
   RowReadOnly,
 } from '../styles/Card';
-import { useUser } from '../User';
+import {
+  useUser,
+  ADD_TOKEN_MUTATION,
+  DELETE_TOKEN_MUTATION,
+  QUERY_ACCOUNT,
+} from './Queries';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
@@ -30,55 +34,8 @@ import Table, { useColumns } from '../Tables/Table';
 import LicenseType from '../Tables/LicenseType';
 import ApiKey from '../Tables/ApiKey';
 
-export const QUERY_COMPTE = gql`
-  query QUERY_COMPTE($id: ID!) {
-    User(where: { id: $id }) {
-      id
-      name
-      company
-      applications {
-        id
-        name
-        licenseType {
-          id
-          name
-        }
-      }
-      ownedApps {
-        id
-        name
-        licenseType {
-          id
-          name
-        }
-      }
-      tokens {
-        id
-        token
-      }
-    }
-  }
-`;
-
-const ADD_TOKEN_MUTATION = gql`
-  mutation ADD_TOKEN_MUTATION($ownerId: ID!) {
-    createToken(data: { owner: { connect: { id: $ownerId } } }) {
-      id
-      token
-    }
-  }
-`;
-
-const DELETE_TOKEN_MUTATION = gql`
-  mutation DELETE_TOKEN_MUTATION($id: ID!) {
-    deleteToken(id: $id) {
-      id
-    }
-  }
-`;
-
-export default function Compte({ id }) {
-  const { t } = useTranslation('profile');
+export default function Account({ id, initialData }) {
+  const { t } = useTranslation('user');
   const clipboard = useClipboard({
     copiedTimeout: 1000,
   });
@@ -86,13 +43,7 @@ export default function Compte({ id }) {
 
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const user = useUser();
-  const initialValues = useRef({
-    name: '',
-    company: '',
-    ownedApps: [],
-    applications: [],
-    tokens: [],
-  });
+  const initialValues = useRef(initialData);
   const { inputs, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
   const columns = useColumns([
@@ -108,7 +59,7 @@ export default function Compte({ id }) {
     ['id', 'id', 'hidden'],
     [t('token'), 'token', ({ cell: { value } }) => <ApiKey apiKey={value} />],
   ]);
-  const { loading, error, data } = useQuery(QUERY_COMPTE, {
+  const { loading, error, data } = useQuery(QUERY_ACCOUNT, {
     variables: { id },
   });
   const [
@@ -116,7 +67,7 @@ export default function Compte({ id }) {
     { loading: tokenLoading, error: tokenError },
   ] = useMutation(ADD_TOKEN_MUTATION, {
     variables: { ownerId: id },
-    refetchQueries: [{ query: QUERY_COMPTE, variables: { id } }],
+    refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
     onCompleted: (tokenData) => {
       const newToken = tokenData.createToken.token;
       clipboard.copy(newToken);
@@ -126,7 +77,7 @@ export default function Compte({ id }) {
   const [deleteTokenMutation, { error: deleteTokenError }] = useMutation(
     DELETE_TOKEN_MUTATION,
     {
-      refetchQueries: [{ query: QUERY_COMPTE, variables: { id } }],
+      refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
       onCompleted: () => {
         Notify.Success(t('token-deleted'));
       },
@@ -141,20 +92,14 @@ export default function Compte({ id }) {
 
   useEffect(() => {
     if (data && user) {
-      setCanEdit(user.role.canManageUsers || data.User.id === user.id);
+      setCanEdit(user.role?.canManageUsers || data.User.id === user.id);
     }
   }, [data, user]);
 
   useEffect(() => {
     if (data) {
       const { User: UserData } = data;
-      setInputs({
-        name: UserData.name,
-        company: UserData.company,
-        ownedApps: UserData.ownedApps,
-        applications: UserData.applications,
-        tokens: UserData.tokens,
-      });
+      setInputs(UserData);
     }
   }, [setInputs, data]);
 
@@ -178,11 +123,6 @@ export default function Compte({ id }) {
         })
     );
   }
-
-  // function copyToken(idCopy) {
-  //   const token = inputs.tokens.find((tk) => tk.id === idCopy);
-  //   clipboard.copy(token.token);
-  // }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
@@ -237,12 +177,7 @@ export default function Compte({ id }) {
               data={inputs.tokens}
               loading={loading}
               actionButtons={
-                canEdit
-                  ? [
-                      // { type: 'copy', action: copyToken },
-                      { type: 'trash', action: deleteToken },
-                    ]
-                  : []
+                canEdit ? [{ type: 'trash', action: deleteToken }] : []
               }
             />
             <Block>
@@ -259,6 +194,7 @@ export default function Compte({ id }) {
   );
 }
 
-Compte.propTypes = {
+Account.propTypes = {
   id: PropTypes.string.isRequired,
+  initialData: PropTypes.object,
 };

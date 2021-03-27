@@ -8,8 +8,8 @@ import setLanguage from 'next-translate/setLanguage';
 import { useRouter } from 'next/dist/client/router';
 
 import useOnClickOutside from '../lib/useOnClickOutside';
-import Signout from './Registration/SignOut';
-import { useUser } from './User';
+import Signout from './User/SignOut';
+import { useUser } from './User/Queries';
 
 const Logo = styled.h1`
   font-size: 3rem;
@@ -131,6 +131,23 @@ export default function Header() {
     setShowUserMenu(!showUserMenu);
   }, [showUserMenu]);
 
+  function showMyProfile() {
+    router.push({
+      pathname: `/user/[id]`,
+      query: {
+        id: user.id,
+      },
+    });
+  }
+  function showMyAccount() {
+    router.push({
+      pathname: `/account/[id]`,
+      query: {
+        id: user.id,
+      },
+    });
+  }
+
   useOnClickOutside(refMenu, () => setShowUserMenu(false));
   return (
     <HeaderStyles>
@@ -171,13 +188,13 @@ export default function Header() {
               </button>
               {showUserMenu && (
                 <div ref={refMenu} className="user-menu">
-                  <button type="button" onClick={() => router.push('/profile')}>
+                  <button type="button" onClick={showMyProfile}>
                     {t('profile')}
                   </button>
-                  <button type="button" onClick={() => router.push('/compte')}>
+                  <button type="button" onClick={showMyAccount}>
                     {t('account')}
                   </button>
-                  {(user.role.canManageOrder || user.role.canSeeOrder) && (
+                  {(user.role?.canManageOrder || user.role?.canSeeOrder) && (
                     <button
                       type="button"
                       onClick={() => router.push('/orders')}

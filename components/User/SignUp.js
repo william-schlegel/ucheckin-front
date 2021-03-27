@@ -1,6 +1,5 @@
 import useTranslation from 'next-translate/useTranslation';
 import { useRef } from 'react';
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 
@@ -11,30 +10,7 @@ import Error from '../ErrorMessage';
 import Drawer from '../Drawer';
 import { PrimaryButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
-import { CURRENT_USER_QUERY } from '../User';
-
-const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
-    $email: String!
-    $name: String!
-    $password: String!
-    $company: String!
-  ) {
-    createUser(
-      data: {
-        email: $email
-        name: $name
-        password: $password
-        company: $company
-      }
-    ) {
-      id
-      email
-      name
-      company
-    }
-  }
-`;
+import { CURRENT_USER_QUERY, SIGNUP_MUTATION } from './Queries';
 
 export default function SignUp({ open, onClose }) {
   const { t } = useTranslation('user');
@@ -45,28 +21,20 @@ export default function SignUp({ open, onClose }) {
     company: '',
   });
   const { inputs, handleChange, resetForm } = useForm(initialState.current);
-  const [signup, { data, error }] = useMutation(SIGNUP_MUTATION, {
+  const [signup, { error }] = useMutation(SIGNUP_MUTATION, {
     variables: inputs,
-    // refectch the currently logged in user
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
   async function handleSubmit(e) {
     e.preventDefault(); // stop the form from submitting
     await signup().catch(console.error);
     resetForm();
-    // Send the email and password to the graphqlAPI
   }
   return (
     <Drawer onClose={onClose} open={open} title={t('signup')}>
       <Form method="POST" onSubmit={handleSubmit}>
         <Error error={error} />
         <FormBodyFull>
-          {data?.createUser && (
-            <p>
-              Signed up with {data.createUser.email} - Please Go Head and Sign
-              in!
-            </p>
-          )}
           <Row>
             <Label htmlFor="name" required>
               {t('name')}

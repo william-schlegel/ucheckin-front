@@ -16,7 +16,7 @@ import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form, Block } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
-import { useUser } from '../User';
+import { useUser } from '../User/Queries';
 import ActionButton from '../Buttons/ActionButton';
 import SearchUser from '../SearchUser';
 

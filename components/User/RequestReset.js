@@ -11,7 +11,7 @@ import Error from '../ErrorMessage';
 import Drawer from '../Drawer';
 import { ButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
-import { CURRENT_USER_QUERY } from '../User';
+import { CURRENT_USER_QUERY } from './Queries';
 
 const REQUEST_RESET_MUTATION = gql`
   mutation REQUEST_RESET_MUTATION($email: String!) {

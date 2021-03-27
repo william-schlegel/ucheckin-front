@@ -35,6 +35,13 @@ export const QUERY_APPLICATION = gql`
         nbArea
       }
     }
+    licenseTypes: allLicenseTypes {
+      id
+      name
+      logo {
+        publicUrlTransformed(transformation: { width: "100", height: "100" })
+      }
+    }
   }
 `;
 

@@ -1,14 +1,12 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { Notify } from 'notiflix';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
 
-import styled from 'styled-components';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import {
@@ -23,91 +21,41 @@ import {
   Block,
   RowReadOnly,
 } from '../styles/Card';
-import { useUser } from '../User';
+import { useUser, QUERY_PROFILE, useRole } from './Queries';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { useHelp, Help, HelpButton } from '../Help';
 import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
+import { PrimaryButtonStyled } from '../styles/Button';
 
-export const QUERY_PROFILE = gql`
-  query QUERY_PROFILE($id: ID!) {
-    User(where: { id: $id }) {
-      id
-      email
-      name
-      company
-      address
-      zipCode
-      city
-      telephone
-      contact
-      photo {
-        publicUrlTransformed(transformation: { width: "200", height: "200" })
-      }
-      role {
-        id
-        name
-      }
-    }
-  }
-`;
+import Avatar from '../Tables/Avatar';
 
-const Avatar = styled.img`
-  width: 150px;
-  height: auto;
-  border-radius: 75px;
-`;
-
-export default function Profile({ id }) {
+export default function Profile({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_PROFILE, {
     variables: { id },
   });
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation('user');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const user = useUser();
   const countries = useMemo(() => countryList().getData(), []);
-  const initialValues = useRef({
-    name: '',
-    email: '',
-    company: '',
-    address: '',
-    zipCode: '',
-    city: '',
-    country: '',
-    vatNumber: '',
-    telephone: '',
-    contact: '',
-    role: '',
-    photo: {},
-  });
+  const initialValues = useRef(initialData);
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
+  const router = useRouter();
+  const roles = useRole();
 
   useEffect(() => {
     if (data && user) {
-      setCanEdit(user.role.canManageUsers || data.User.id === user.id);
+      setCanEdit(user.role?.canManageUsers || data.User.id === user.id);
     }
   }, [data, user]);
 
   useEffect(() => {
     if (data) {
       const { User: UserData } = data;
-      setInputs({
-        name: UserData.name,
-        email: UserData.email,
-        company: UserData.company,
-        address: UserData.address,
-        zipCode: UserData.zipCode,
-        city: UserData.city,
-        country: UserData.country,
-        vatNumber: UserData.vatNumber,
-        telephone: UserData.telephone,
-        contact: UserData.contact,
-        role: UserData.role,
-        photo: UserData.photo,
-      });
+      setInputs({ ...UserData, role: UserData.role.id });
     }
   }, [setInputs, data]);
 
@@ -115,8 +63,20 @@ export default function Profile({ id }) {
     setPhotoFile(e.target.files[0]);
   }
 
-  if (loading) return <Loading />;
+  function getCountry(ct) {
+    return countries.find((c) => c.value === ct);
+  }
+  function showMyAccount(e) {
+    e.preventDefault();
+    router.push({
+      pathname: `/account/[id]`,
+      query: { id },
+    });
+  }
+
+  if (loading || !roles.length) return <Loading />;
   if (error) return <DisplayError error={error} />;
+  console.log(`roles`, roles);
   return (
     <>
       <Help
@@ -129,6 +89,9 @@ export default function Profile({ id }) {
           <FormTitle>
             {t('profile')} <span>{inputs.name}</span>
             <HelpButton showHelp={toggleHelpVisibility} />
+            <PrimaryButtonStyled role="button" onClick={showMyAccount}>
+              {t('account-detail')}
+            </PrimaryButtonStyled>
           </FormTitle>
           <ButtonBack route="/" label={t('navigation:home')} />
         </FormHeader>
@@ -162,9 +125,12 @@ export default function Profile({ id }) {
                 />
               </Row>
               <Row>
-                <Label htmlFor="company">{t('company')}</Label>
+                <Label htmlFor="company" required>
+                  {t('company')}
+                </Label>
                 <input
                   type="text"
+                  required
                   id="company"
                   name="company"
                   value={inputs.company}
@@ -177,7 +143,7 @@ export default function Profile({ id }) {
                   rows="3"
                   id="address"
                   name="address"
-                  value={inputs.address}
+                  value={inputs.address || ''}
                   onChange={handleChange}
                 />
               </Row>
@@ -187,7 +153,7 @@ export default function Profile({ id }) {
                   type="text"
                   id="zipCode"
                   name="zipCode"
-                  value={inputs.zipCode}
+                  value={inputs.zipCode || ''}
                   onChange={handleChange}
                 />
               </Row>
@@ -197,7 +163,7 @@ export default function Profile({ id }) {
                   type="text"
                   id="city"
                   name="city"
-                  value={inputs.city}
+                  value={inputs.city || ''}
                   onChange={handleChange}
                 />
               </Row>
@@ -206,10 +172,11 @@ export default function Profile({ id }) {
                 <Select
                   className="select"
                   id="country"
-                  name="country"
                   options={countries}
-                  value={inputs.country}
-                  onChange={handleChange}
+                  value={getCountry(inputs.country)}
+                  onChange={(e) =>
+                    handleChange({ name: 'country', value: e.value })
+                  }
                 />
               </Row>
               <Row>
@@ -218,7 +185,7 @@ export default function Profile({ id }) {
                   type="text"
                   id="vatNumber"
                   name="vatNumber"
-                  value={inputs.vatNumber}
+                  value={inputs.vatNumber || ''}
                   onChange={handleChange}
                 />
               </Row>
@@ -228,7 +195,7 @@ export default function Profile({ id }) {
                   type="text"
                   id="telephone"
                   name="telephone"
-                  value={inputs.telephone}
+                  value={inputs.telephone || ''}
                   onChange={handleChange}
                 />
               </Row>
@@ -238,7 +205,7 @@ export default function Profile({ id }) {
                   type="text"
                   id="contact"
                   name="contact"
-                  value={inputs.contact}
+                  value={inputs.contact || ''}
                   onChange={handleChange}
                 />
               </Row>
@@ -301,11 +268,25 @@ export default function Profile({ id }) {
               />
             </Block>
           </RowFull>
-
-          <RowReadOnly>
-            <Label>{t('role')}</Label>
-            <span>{inputs.role.name}</span>
-          </RowReadOnly>
+          {user?.role?.canManageUsers ? (
+            <Row>
+              <Label htmlFor="role" required>
+                {t('role')}
+              </Label>
+              <Select
+                className="select"
+                id="role"
+                value={roles.find((r) => r.value === inputs.role)}
+                options={roles}
+                onChange={(e) => handleChange({ name: 'role', value: e.value })}
+              />
+            </Row>
+          ) : (
+            <RowReadOnly>
+              <Label>{t('role')}</Label>
+              <span>{inputs.role?.label}</span>
+            </RowReadOnly>
+          )}
         </FormBody>
         <FormFooter>
           {canEdit && id && (
@@ -326,4 +307,5 @@ export default function Profile({ id }) {
 
 Profile.propTypes = {
   id: PropTypes.string.isRequired,
+  initialData: PropTypes.object,
 };

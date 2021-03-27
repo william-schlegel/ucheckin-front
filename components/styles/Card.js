@@ -153,9 +153,8 @@ export const FormTitle = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  gap: 1rem;
   span {
-    margin-left: 1rem;
-    margin-right: 1rem;
     color: var(--secondary);
   }
 `;

@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import DashboardApplication from './Applications';
 import DashboardSignal from './Signals';
 import { useHelp, Help, HelpButton } from '../Help';
-import { FormHeader, FormTitle, FormBody, Block, H2 } from '../styles/Card';
+import { FormHeader, FormTitle, Block, H2 } from '../styles/Card';
 import DashboardUser from './Users';
-import { useUser } from '../User';
+import { useUser } from '../User/Queries';
 import DashboardLicense from './Licenses';
 import DashboardOrder from './Orders';
 
@@ -45,11 +45,11 @@ export default function Dashboard() {
         </FormTitle>
       </FormHeader>
       <DashboardStyled>
-        {user?.role.canManageUsers && <DashboardUser />}
+        {user.role?.canManageUsers && <DashboardUser />}
         <DashboardApplication />
         <DashboardSignal />
         <DashboardLicense />
-        {user?.role.canManageOrder && <DashboardOrder />}
+        {user.role?.canManageOrder && <DashboardOrder />}
       </DashboardStyled>
     </>
   );

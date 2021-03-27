@@ -9,5 +9,7 @@
   "profile": "Profile",
   "account": "Account",
   "licenses": "Licenses",
-  "prices": "Prices"
+  "prices": "Prices",
+  "orders": "Orders",
+  "users": "Users"
 }

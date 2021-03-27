@@ -1,0 +1,273 @@
+import gql from 'graphql-tag';
+import { useQuery } from '@apollo/client';
+import { useEffect, useState } from 'react';
+
+export const PAGINATION_QUERY = gql`
+  query PAGINATION_QUERY {
+    count: _allUsersMeta {
+      count
+    }
+  }
+`;
+
+export const ALL_USERS_QUERY = gql`
+  query ALL_USERS_QUERY(
+    $skip: Int = 0
+    $first: Int
+    $email: String
+    $name: String
+  ) {
+    allUsers(
+      first: $first
+      skip: $skip
+      where: { AND: [{ name_contains_i: $name }, { email_contains_i: $email }] }
+    ) {
+      id
+      name
+      email
+      role {
+        id
+        name
+      }
+      company
+      photo {
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
+      }
+    }
+  }
+`;
+
+export const QUERY_ACCOUNT = gql`
+  query QUERY_ACCOUNT($id: ID!) {
+    User(where: { id: $id }) {
+      id
+      name
+      company
+      applications {
+        id
+        name
+        licenseType {
+          id
+          name
+        }
+      }
+      ownedApps {
+        id
+        name
+        licenseType {
+          id
+          name
+        }
+      }
+      tokens {
+        id
+        token
+      }
+    }
+  }
+`;
+
+export const ADD_TOKEN_MUTATION = gql`
+  mutation ADD_TOKEN_MUTATION($ownerId: ID!) {
+    createToken(data: { owner: { connect: { id: $ownerId } } }) {
+      id
+      token
+    }
+  }
+`;
+
+export const DELETE_TOKEN_MUTATION = gql`
+  mutation DELETE_TOKEN_MUTATION($id: ID!) {
+    deleteToken(id: $id) {
+      id
+    }
+  }
+`;
+
+export const QUERY_PROFILE = gql`
+  query QUERY_PROFILE($id: ID!) {
+    User(where: { id: $id }) {
+      id
+      email
+      name
+      company
+      address
+      zipCode
+      city
+      country
+      telephone
+      contact
+      photo {
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
+      }
+      role {
+        id
+        name
+        canManageUsers
+      }
+    }
+  }
+`;
+
+export const CREATE_USER_MUTATION = gql`
+  mutation CUserUSER_MUTATION($ownerId: ID!) {
+    createUser(data: { owner: { connect: { id: $ownerId } } }) {
+      id
+      name
+    }
+  }
+`;
+
+export const SIGNUP_MUTATION = gql`
+  mutation SIGNUP_MUTATION(
+    $email: String!
+    $name: String!
+    $password: String!
+    $company: String!
+  ) {
+    createUser(
+      data: {
+        email: $email
+        name: $name
+        password: $password
+        company: $company
+      }
+    ) {
+      id
+      email
+      name
+      company
+    }
+  }
+`;
+
+export const SIGN_OUT_MUTATION = gql`
+  mutation {
+    endSession
+  }
+`;
+
+export const CURRENT_USER_QUERY = gql`
+  query {
+    authenticatedItem {
+      ... on User {
+        id
+        email
+        name
+        photo {
+          publicUrlTransformed(transformation: { width: "200", height: "200" })
+        }
+        country
+        role {
+          id
+          canSeeOtherUsers
+          canManageUsers
+          canManageRoles
+          canManageApplication
+          canManageSignal
+          canManageLicense
+          canBuyLicense
+          canManagePrice
+          canCreatePrice
+          canSeeOrder
+          canManageOrder
+          canManageVAT
+          canManageLicenseType
+          canManageEvent
+        }
+      }
+    }
+  }
+`;
+
+export const SIGNIN_MUTATION = gql`
+  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
+    authenticateUserWithPassword(email: $email, password: $password) {
+      ... on UserAuthenticationWithPasswordSuccess {
+        item {
+          id
+          email
+          name
+        }
+      }
+      ... on UserAuthenticationWithPasswordFailure {
+        code
+        message
+      }
+    }
+  }
+`;
+
+export const UPDATE_PROFILE_MUTATION = gql`
+  mutation UPDATE_PROFILE_MUTATION(
+    $id: ID!
+    $email: String!
+    $name: String!
+    $company: String
+    $address: String
+    $zipCode: String
+    $city: String
+    $telephone: String
+    $contact: String
+    $role: ID!
+  ) {
+    updateUser(
+      id: $id
+      data: {
+        email: $email
+        name: $name
+        company: $company
+        address: $address
+        zipCode: $zipCode
+        city: $city
+        telephone: $telephone
+        contact: $contact
+        role: { connect: { id: $role } }
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_PROFILE_PHOTO_MUTATION = gql`
+  mutation UPDATE_PROFILE_PHOTO_MUTATION($id: ID!, $photo: Upload) {
+    updateUser(id: $id, data: { photo: $photo }) {
+      id
+      photo {
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
+      }
+    }
+  }
+`;
+
+const ROLE_QUERY = gql`
+  query ROLE_QUERY {
+    allRoles {
+      id
+      name
+    }
+  }
+`;
+
+export function useUser() {
+  const { data } = useQuery(CURRENT_USER_QUERY);
+  const items = data?.authenticatedItem;
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    if (items) setUser(items);
+  }, [items]);
+
+  return user;
+}
+
+export function useRole() {
+  const { data } = useQuery(ROLE_QUERY);
+  const items = data?.allRoles;
+  const [roles, setRoles] = useState([]);
+  useEffect(() => {
+    if (items) setRoles(items.map((r) => ({ value: r.id, label: r.name })));
+  }, [items]);
+
+  return roles;
+}

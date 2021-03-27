@@ -22,7 +22,7 @@ import {
   CANCEL_ORDER_MUTATION,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
-import { useUser } from '../User';
+import { useUser } from '../User/Queries';
 
 export default function Orders() {
   const router = useRouter();

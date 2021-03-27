@@ -33,7 +33,7 @@ export default function SearchUser({
         isMulti={multiple}
         name={name}
         options={users.map((u) => ({ value: u.id, label: u.name }))}
-        onChange={(us) => onChange({ type: 'search-users', name, value: us })}
+        onChange={(us) => onChange({ name, value: us })}
         className="basic-multi-select"
         classNamePrefix="select"
       />

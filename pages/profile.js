@@ -1,9 +1,0 @@
-import { useUser } from '../components/User';
-import MyProfile from '../components/Profile/Profile';
-import Loading from '../components/Loading';
-
-export default function Profile() {
-  const user = useUser();
-  if (!user) return <Loading />;
-  return <MyProfile id={user.id} />;
-}

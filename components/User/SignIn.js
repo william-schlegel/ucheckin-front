@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react';
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
-// import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
 import { LogIn, UserPlus, XCircle } from 'react-feather';
 
@@ -15,7 +13,7 @@ import {
   Label,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
-import { CURRENT_USER_QUERY } from '../User';
+import { CURRENT_USER_QUERY, SIGNIN_MUTATION } from './Queries';
 import Error from '../ErrorMessage';
 import {
   PrimaryButtonStyled,
@@ -25,30 +23,6 @@ import {
 import { IconButtonStyles } from '../Buttons/ActionButton';
 import SignUp from './SignUp';
 import RequestReset from './RequestReset';
-
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticateUserWithPassword(email: $email, password: $password) {
-      ... on UserAuthenticationWithPasswordSuccess {
-        item {
-          id
-          email
-          name
-        }
-      }
-      ... on UserAuthenticationWithPasswordFailure {
-        code
-        message
-      }
-    }
-  }
-`;
-
-// const SigninContainer = styled.div`
-//   height: 100%;
-//   max-width: 500px;
-//   margin: auto;
-// `;
 
 export default function SignInForm() {
   const { t } = useTranslation('user');
@@ -121,7 +95,10 @@ export default function SignInForm() {
             </IconButtonStyles>
             {t('signin')}
           </SecondaryButtonStyled>
-          <PrimaryButtonStyled type="button" onClick={() => setShowSignup(true)}>
+          <PrimaryButtonStyled
+            type="button"
+            onClick={() => setShowSignup(true)}
+          >
             <IconButtonStyles>
               <UserPlus size={24} />
             </IconButtonStyles>
