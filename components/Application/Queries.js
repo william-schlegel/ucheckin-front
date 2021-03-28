@@ -121,6 +121,30 @@ export const ALL_SIGNAL_OWNER = gql`
   }
 `;
 
+export const UPDATE_APPLICATION_MUTATION = gql`
+  mutation UPDATE_APPLICATION_MUTATION(
+    $id: ID!
+    $name: String!
+    $apiKey: String!
+    $ownerId: ID!
+    $users: [UserWhereUniqueInput!]!
+    $licenseTypeId: ID!
+  ) {
+    updateApplication(
+      id: $id
+      data: {
+        name: $name
+        apiKey: $apiKey
+        owner: { connect: { id: $ownerId } }
+        users: { disconnectAll: true, connect: $users }
+        licenseType: { connect: { id: $licenseTypeId } }
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 export function useFindApplication(appId) {
   const [findApp, { data, error, loading }] = useLazyQuery(QUERY_APPLICATION);
   useEffect(() => {

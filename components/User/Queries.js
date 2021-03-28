@@ -166,7 +166,6 @@ export const CURRENT_USER_QUERY = gql`
           canManageApplication
           canManageSignal
           canManageLicense
-          canBuyLicense
           canManagePrice
           canCreatePrice
           canSeeOrder

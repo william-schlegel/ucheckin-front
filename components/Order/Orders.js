@@ -125,7 +125,7 @@ export default function Orders() {
   }
 
   const actionButtons = [{ type: 'view', action: viewOrder }];
-  if (user?.role.canManageOrder) {
+  if (user?.role?.canManageOrder) {
     actionButtons.push({ type: 'trash', action: cancelOrder });
   }
 

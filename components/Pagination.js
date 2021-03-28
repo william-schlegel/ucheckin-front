@@ -9,6 +9,7 @@ import DisplayError from './ErrorMessage';
 import { perPage } from '../config';
 import { ButtonStyled } from './styles/Button';
 import ActionButton from './Buttons/ActionButton';
+import Loading from './Loading';
 
 const PaginationBlock = styled.div`
   display: flex;
@@ -25,7 +26,7 @@ export default function Pagination({
 }) {
   const { t } = useTranslation('common');
 
-  if (loading) return 'Loading...';
+  if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   const pageCount = Math.ceil(count / perPage);
   return (

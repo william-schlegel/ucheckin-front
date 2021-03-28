@@ -83,6 +83,7 @@ export const SIGNAL_QUERY = gql`
           name
         }
         validity
+        nbArea
       }
       files {
         id

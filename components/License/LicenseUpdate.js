@@ -166,12 +166,14 @@ export default function LicenseUpdate({
               <span>{application.name}</span>
             </Block>
           </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('signal')}</Label>
-            <Block>
-              <span>{signal.name}</span>
-            </Block>
-          </RowReadOnly>
+          {signalId && (
+            <RowReadOnly>
+              <Label>{t('signal')}</Label>
+              <Block>
+                <span>{signal.name}</span>
+              </Block>
+            </RowReadOnly>
+          )}{' '}
         </FormBody>
         <FormBodyFull>
           <Row>
@@ -229,5 +231,5 @@ LicenseUpdate.propTypes = {
   licenseId: PropTypes.string.isRequired,
   appId: PropTypes.string.isRequired,
   ownerId: PropTypes.string.isRequired,
-  signalId: PropTypes.string.isRequired,
+  signalId: PropTypes.string,
 };

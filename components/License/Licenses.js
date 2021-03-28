@@ -3,6 +3,7 @@ import { useQuery, useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
+import { Gift } from 'react-feather';
 
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
@@ -17,9 +18,7 @@ import { PAGINATION_QUERY, ALL_LICENSES_QUERY } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import ValidityDate from '../Tables/ValidityDate';
 import { Form, FormBodyFull, FormHeader, FormTitle } from '../styles/Card';
-import { formatDate } from '../DatePicker';
 import LicenseType from '../Tables/LicenseType';
-import Number from '../Tables/Number';
 import LicenseUpdate from './LicenseUpdate';
 
 // calculate number of free & number of valid licenses
@@ -33,49 +32,50 @@ function licensesAnalysis(licenses) {
 }
 
 // aggregate licenses
-function aggregateLicenses(licenses) {
-  if (!licenses) return [[], []];
-  const used = new Map();
+// function aggregateLicenses(licenses) {
+//   if (!licenses) return [[], []];
+//   const used = new Map();
 
-  function compare(map, key, item) {
-    if (map.has(key)) {
-      const lic = map.get(key);
-      if (
-        lic.validity === item.validity &&
-        lic.owner.id === item.owner.id &&
-        lic.licenseType.id === item.licenseType.id
-      ) {
-        lic.count += 1;
-        map.set(key, lic);
-        return;
-      }
-    }
-    map.set(key, { item, count: 1 });
-  }
+//   function compare(map, key, item) {
+//     if (map.has(key)) {
+//       const lic = map.get(key);
+//       if (
+//         lic.validity === item.validity &&
+//         lic.owner.id === item.owner.id &&
+//         lic.licenseType.id === item.licenseType.id
+//       ) {
+//         lic.count += 1;
+//         map.set(key, lic);
+//         return;
+//       }
+//     }
+//     map.set(key, { item, count: 1 });
+//   }
 
-  licenses.forEach((l) => {
-    compare(used, l.signal, l);
-  });
-  const dataUsed = Array.from(used).map((l) => ({
-    id: l[1].item.id,
-    signal: l[1].item.signal.name,
-    signalId: l[1].item.signal.id,
-    application: l[1].item.application.name,
-    appId: l[1].item.application.id,
-    owner: l[1].item.owner.name,
-    ownerId: l[1].item.owner.id,
-    valid: l[1].item.valid,
-    validity: l[1].item.validity,
-    licenseType: l[1].item.licenseType.id,
-    purchaseInfo: {
-      dt: formatDate(l[1].item.purchaseDate),
-      info: l[1].item.purchaseInformation,
-    },
-    count: l[1].count,
-  }));
+//   licenses.forEach((l) => {
+//     compare(used, l.signal, l);
+//   });
+//   const dataUsed = Array.from(used).map((l) => ({
+//     id: l[1].item.id,
+//     signal: l[1].item.signal?.name,
+//     signalId: l[1].item.signal?.id,
+//     application: l[1].item.application.name,
+//     appId: l[1].item.application.id,
+//     owner: l[1].item.owner.name,
+//     ownerId: l[1].item.owner.id,
+//     valid: l[1].item.valid,
+//     validity: l[1].item.validity,
+//     licenseType: l[1].item.licenseType.id,
+//     trialLicense: l[1].item.trialLicense,
+//     purchaseInfo: {
+//       dt: formatDate(l[1].item.purchaseDate),
+//       info: l[1].item.purchaseInformation,
+//     },
+//     count: l[1].count,
+//   }));
 
-  return dataUsed;
-}
+//   return dataUsed;
+// }
 
 function reducer(state, action) {
   switch (action.type) {
@@ -118,8 +118,9 @@ export default function Licenses() {
         type: 'analysis',
         res: [...resA],
       });
-      const resU = aggregateLicenses(licenses);
-      dispatch({ type: 'used', res: resU });
+      // const resU = aggregateLicenses(licenses);
+      // dispatch({ type: 'used', res: resU });
+      dispatch({ type: 'used', res: licenses });
     },
   });
   const [showLicense, setShowLicense] = useState('');
@@ -155,6 +156,23 @@ export default function Licenses() {
 
   const columns = useColumns([
     ['id', 'id', 'hidden'],
+    [
+      t('trial'),
+      'trialLicense',
+      ({ cell: { value } }) =>
+        value ? (
+          <div
+            style={{
+              width: '100%',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--secondary)',
+            }}
+          >
+            <Gift />
+          </div>
+        ) : null,
+    ],
     [t('associated-signal'), 'signal'],
     [t('associated-application'), 'application'],
     [t('common:owner'), 'owner'],
@@ -173,7 +191,7 @@ export default function Licenses() {
       'validity',
       ({ cell: { value } }) => <ValidityDate value={value} />,
     ],
-    [t('count'), 'count', ({ cell: { value } }) => <Number value={value} />],
+    // [t('count'), 'count', ({ cell: { value } }) => <Number value={value} />],
   ]);
 
   function handleCloseShowLicense() {
@@ -184,9 +202,9 @@ export default function Licenses() {
     const license = state.licenses.find((l) => l.id === licenseId);
     setSelectedLicense({
       licenseId,
-      appId: license.appId,
-      signalId: license.signalId,
-      ownerId: license.ownerId,
+      appId: license.application.id,
+      signalId: license.signal?.id,
+      ownerId: license.owner.id,
     });
     setShowUpdateLicense(true);
   }
@@ -261,7 +279,16 @@ export default function Licenses() {
               />
               <Table
                 columns={columns}
-                data={state.licenses}
+                data={state.licenses.map((l) => ({
+                  id: l.id,
+                  trialLicense: l.trialLicense,
+                  signal: l.signal?.name,
+                  application: l.application.name,
+                  owner: l.owner.name,
+                  licenseType: l.licenseType.id,
+                  valid: l.valid,
+                  validity: l.validity,
+                }))}
                 error={error}
                 loading={loading}
                 actionButtons={[

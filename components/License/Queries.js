@@ -74,11 +74,10 @@ export const LICENSE_QUERY = gql`
   }
 `;
 
-export const ACTIVATE_TRIAL_MUTATION = gql`
+export const ACTIVATE_TRIAL_MUTATION_WITH_SIGNAL = gql`
   mutation ACTIVATE_TRIAL_MUTATION(
     $ownerId: ID!
     $appId: ID!
-    $signalId: ID!
     $licenseTypeId: ID!
     $dateValidite: String!
     $trialText: String
@@ -87,7 +86,31 @@ export const ACTIVATE_TRIAL_MUTATION = gql`
       data: {
         owner: { connect: { id: $ownerId } }
         application: { connect: { id: $appId } }
-        signal: { connect: { id: $signalId } }
+        signal: { create: { owner: { id: $ownerId } } }
+        licenseType: { connect: { id: $licenseTypeId } }
+        trialLicense: true
+        validity: $dateValidite
+        purchaseInformation: $trialText
+        nbArea: 1
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+export const ACTIVATE_TRIAL_MUTATION_WITHOUT_SIGNAL = gql`
+  mutation ACTIVATE_TRIAL_MUTATION(
+    $ownerId: ID!
+    $appId: ID!
+    $licenseTypeId: ID!
+    $dateValidite: String!
+    $trialText: String
+  ) {
+    createLicense(
+      data: {
+        owner: { connect: { id: $ownerId } }
+        application: { connect: { id: $appId } }
         licenseType: { connect: { id: $licenseTypeId } }
         trialLicense: true
         validity: $dateValidite

@@ -66,7 +66,8 @@ export default function DashboardLicense() {
           row: {
             values: { 'signal.id': id },
           },
-        }) => <Button action={action} label={value} value={id} block />,
+        }) =>
+          id ? <Button action={action} label={value} value={id} block /> : null,
         { action: viewSignal },
       ],
       [

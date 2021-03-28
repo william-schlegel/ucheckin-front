@@ -68,8 +68,8 @@ export function LicensesDetailsApplication({ licenses }) {
 LicensesDetailsApplication.propTypes = {
   licenses: PropTypes.arrayOf(
     PropTypes.shape({
-      signal: PropTypes.object.isRequired,
-      validity: PropTypes.string.isRequired,
+      signal: PropTypes.object,
+      validity: PropTypes.string,
     })
   ),
 };

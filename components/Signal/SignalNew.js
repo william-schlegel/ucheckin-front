@@ -37,7 +37,7 @@ export default function SignalNew({ open, onClose }) {
   const { t } = useTranslation('signal');
   const initialValues = useRef({
     number: 1,
-    owner: { key: user?.id, value: user?.name },
+    owner: { key: user.id, value: user.name },
   });
   const { inputs, handleChange } = useForm(initialValues.current);
   const [editOwner, setEditOwner] = useState(false);
@@ -45,7 +45,7 @@ export default function SignalNew({ open, onClose }) {
 
   function handleSubmit() {
     const { number, owner } = inputs;
-    const max = user?.role.canManageSignal ? 100 : 10;
+    const max = user.role?.canManageSignal ? 100 : 10;
     if (number < 1 || number > max) {
       setErrorNumber(t('error-number', { max }));
       return;
@@ -80,10 +80,10 @@ export default function SignalNew({ open, onClose }) {
             <Label>{t('common:owner')}</Label>
             <Block>
               <span>{inputs.owner.value}</span>
-              {user?.role.canManageApplication && (
+              {user?.role?.canManageApplication && (
                 <ActionButton type="edit" cb={() => setEditOwner(!editOwner)} />
               )}
-              {user?.role.canManageSignal && editOwner && (
+              {user?.role?.canManageSignal && editOwner && (
                 <SearchUser
                   required
                   name="owner"

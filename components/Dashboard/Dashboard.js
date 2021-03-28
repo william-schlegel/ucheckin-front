@@ -49,7 +49,7 @@ export default function Dashboard() {
         <DashboardApplication />
         <DashboardSignal />
         <DashboardLicense />
-        {user.role?.canManageOrder && <DashboardOrder />}
+        <DashboardOrder />
       </DashboardStyled>
     </>
   );

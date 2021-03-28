@@ -57,25 +57,24 @@ export default function Application({ id, initialData }) {
     value: lt.id,
     label: t(`common:${lt.name}`),
   }));
-  console.log(`licenseTypesOptions`, licenseTypesOptions);
-  console.log(`inputs.licenseType.id`, inputs.licenseType.id);
+  const { role: userRole, id: userId } = user;
+  const appOwnerId = data?.Application?.owner?.id;
+
   useEffect(() => {
-    if (data && user) {
-      setCanEdit(
-        user.role?.canManageApplication || data.Application.owner === user.id
-      );
+    if (data && userRole) {
+      setCanEdit(userRole?.canManageApplication || appOwnerId === userId);
     }
-  }, [data, user]);
+  }, [data, userRole, userId, appOwnerId]);
 
   useEffect(() => {
     if (data) {
       const { Application: AppData } = data;
-      setInputs(AppData);
+      setInputs({ ...AppData, licenseType: AppData.licenseType?.id });
     }
   }, [setInputs, data]);
 
   function AddLicense() {
-    if (!inputs.licenseType.id) return;
+    if (!inputs.licenseType) return;
     setShowAddLicense(true);
   }
 
@@ -157,10 +156,10 @@ export default function Application({ id, initialData }) {
             <Label>{t('common:owner')}</Label>
             <Block>
               <span>{inputs.owner.name}</span>
-              {user.role.canManageApplication && (
+              {user.role?.canManageApplication && (
                 <ActionButton type="edit" cb={() => setEditOwner(!editOwner)} />
               )}
-              {user.role.canManageApplication && editOwner && (
+              {user.role?.canManageApplication && editOwner && (
                 <SearchUser
                   required
                   name="owner.id"
@@ -185,19 +184,18 @@ export default function Application({ id, initialData }) {
               />
             </Block>
           </Row>
-          {user.role.canManageApplication ? (
+          {canEdit ? (
             <Row>
               <Label htmlFor="licenseType">{t('common:license-model')}</Label>
               <Select
                 className="select"
-                value={{
-                  value: inputs.licenseType.id,
-                  label: inputs.licenseType.name,
-                }}
+                value={licenseTypesOptions.find(
+                  (lt) => lt.value === inputs.licenseType
+                )}
                 onChange={(e) =>
                   handleChange({
                     value: e.value,
-                    name: 'licenseType.id',
+                    name: 'licenseType',
                   })
                 }
                 options={licenseTypesOptions}
@@ -206,7 +204,7 @@ export default function Application({ id, initialData }) {
           ) : (
             <RowReadOnly>
               <Label>{t('common:license-model')}</Label>
-              <span>{findLicenseName(inputs.licenseType.id)}</span>
+              <span>{findLicenseName(inputs.licenseType)}</span>
             </RowReadOnly>
           )}
           <RowFull>

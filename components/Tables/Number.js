@@ -10,6 +10,7 @@ const NumberStyle = styled.div`
 `;
 
 export default function Number({ value, money, percentage }) {
+  if (!value) return null;
   let displayValue = value.toString();
   if (money) displayValue = formatMoney(value);
   if (percentage) displayValue = formatPrct(value);
@@ -21,7 +22,7 @@ export default function Number({ value, money, percentage }) {
 }
 
 Number.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   money: PropTypes.bool,
   percentage: PropTypes.bool,
 };

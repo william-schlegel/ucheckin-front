@@ -19,5 +19,8 @@ Application.getInitialProps = async (ctx) => {
     query: QUERY_APPLICATION,
     variables: { id },
   });
-  return { id, initialData };
+  return {
+    id,
+    initialData: { ...initialData, licenseType: initialData.licenseType?.id },
+  };
 };

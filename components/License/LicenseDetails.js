@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 
+import { Gift } from 'react-feather';
 import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonCancel from '../Buttons/ButtonCancel';
@@ -13,11 +14,12 @@ import {
   FormHeader,
   FormTitle,
   Label,
-  RowFull,
   RowReadOnly,
 } from '../styles/Card';
-import LicenseTable from './LicenseTable';
 import { LICENSE_QUERY } from './Queries';
+import ValidityDate from '../Tables/ValidityDate';
+import LicenseType from '../Tables/LicenseType';
+import { formatDate } from '../DatePicker';
 
 export default function LicenseDetails({ open, onClose, id }) {
   const { loading, error, data } = useQuery(LICENSE_QUERY, {
@@ -36,14 +38,48 @@ export default function LicenseDetails({ open, onClose, id }) {
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
+          {data.License.trialLicense && (
+            <RowReadOnly>
+              <div style={{ marginRight: '1rem' }}>
+                <Gift size={30} color="var(--secondary)" />
+              </div>
+              <span>{t('trial')}</span>
+            </RowReadOnly>
+          )}
           <RowReadOnly>
             <Label>{t('common:owner')}</Label>
             <span>{data.License.owner.name}</span>
           </RowReadOnly>
-          <RowFull>
-            <Label>{t('license:licenses')}</Label>
-            <LicenseTable licenses={data.License.licenses} />
-          </RowFull>
+          <RowReadOnly>
+            <Label>{t('signal')}</Label>
+            <span>{data.License.signal?.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('application')}</Label>
+            <span>{data.License.application.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('validity')}</Label>
+            <ValidityDate value={data.License.validity} />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('common:info')}</Label>
+            <span>
+              {t('purchase-info', {
+                name: data.License.owner.name,
+                dt: formatDate(data.License.purchaseDate),
+                info: data.License.purchaseInformation,
+              })}
+            </span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('nb-area')}</Label>
+            <span>{data.License.nbArea}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('common:license-model')}</Label>
+            <LicenseType license={data.License.licenseType.id} />
+          </RowReadOnly>
         </FormBodyFull>
       </Form>
       <DrawerFooter>

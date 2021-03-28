@@ -4,30 +4,7 @@ import PropTypes from 'prop-types';
 
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
-
-const UPDATE_APPLICATION_MUTATION = gql`
-  mutation UPDATE_APPLICATION_MUTATION(
-    $id: ID!
-    $name: String!
-    $apiKey: String!
-    $ownerId: ID!
-    $users: [UserWhereUniqueInput!]!
-    $licenseTypeId: ID!
-  ) {
-    updateApplication(
-      id: $id
-      data: {
-        name: $name
-        apiKey: $apiKey
-        owner: { connect: { id: $ownerId } }
-        users: { disconnectAll: true, connect: $users }
-        licenseType: { connect: { id: $licenseTypeId } }
-      }
-    ) {
-      id
-    }
-  }
-`;
+import { UPDATE_APPLICATION_MUTATION } from './Queries';
 
 function update(cache, payload) {
   cache.evict(cache.identify(payload.data.updateApplication));
@@ -43,7 +20,7 @@ export default function UpdateApplication({ id, updatedApp, onSuccess }) {
     apiKey,
     ownerId: owner.id,
     users: users.map((u) => ({ id: u.id })),
-    licenseTypeId: licenseType.id,
+    licenseTypeId: licenseType,
     id,
   };
 

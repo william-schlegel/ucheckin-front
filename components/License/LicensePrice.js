@@ -24,7 +24,7 @@ export const TableStyled = styled.table`
     border-bottom: solid 1px var(--secondary);
     border-right: solid 1px var(--secondary);
     padding: 10px 5px;
-    .default {
+    &.default {
       color: var(--secondary);
     }
   }
@@ -49,12 +49,13 @@ export function usePrice(ownerId) {
 
   useEffect(() => {
     const dayDate = dateNow();
+    console.log(`dayDate`, dayDate);
     if (ownerId) {
       loadPrice({
-        variables: { owner: ownerId, licenseTypeId, dayDate },
+        variables: { owner: ownerId, dayDate },
       });
     }
-  }, [ownerId, loadPrice, licenseTypeId]);
+  }, [ownerId, loadPrice]);
 
   useEffect(() => {
     if (data?.prices) {

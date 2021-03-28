@@ -55,6 +55,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   const { inputs, handleChange, resetForm } = useForm(initialValues.current);
   const [trial, setTrial] = useState(false);
   const { price, licenseTypeId, setLicenseTypeId } = usePrice(ownerId);
+  const perArea = application.licenseType?.perArea;
 
   useEffect(() => {
     const okTrial = application?.licenses.length === 0;
@@ -167,10 +168,10 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
               <LicensePrice owner={user.id} licenseTypeId={licenseTypeId} />
             )}
           </Row>
-          <H2>{t(application.licenseType.name || 'common:unknown')}</H2>
+          <H2>{t(application.licenseType?.name || 'common:unknown')}</H2>
           <FormBody>
             <Row>
-              <H3>{t('nb-signal')}</H3>
+              <H3>{t(perArea ? 'nb-signal' : 'nb-license')}</H3>
               <div>
                 <Counter
                   label={t('by-month')}
@@ -186,7 +187,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
                 />
               </div>
             </Row>
-            {application.licenseType.perArea && (
+            {perArea && (
               <Row>
                 <H3>{t('nb-area')}</H3>
                 <div>
@@ -214,7 +215,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
               inputs.monthLicense * inputs.monthArea +
               inputs.yearLicense * inputs.yearArea
             }
-            nbSignal={inputs.monthLicense + inputs.yearLicense}
+            nbSignal={perArea ? inputs.monthLicense + inputs.yearLicense : 0}
             vat={vat.value}
           />
         </FormBodyFull>

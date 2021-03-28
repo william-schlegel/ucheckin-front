@@ -59,5 +59,6 @@
   "net-amount": "Total HT",
   "vat": "TVA  ({{percentage}})",
   "taxed-amount": "Total facturé TTC",
-  "no-data": "Pas de données"
+  "no-data": "Pas de données",
+  "info": "Information"
 }
