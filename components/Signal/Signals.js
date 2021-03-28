@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { useEffect, useState } from 'react';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 
-import SearchField, { useSearch } from '../SearchField';
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
@@ -26,50 +25,44 @@ import {
   LicensesLegendSignal,
 } from '../Tables/LicensesDetails';
 import { useHelp, Help, HelpButton } from '../Help';
+import SearchField, { useFilter } from '../SearchField';
+import { useUser } from '../User/Queries';
 
 export default function Signals() {
   const router = useRouter();
-  const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
-    PAGINATION_QUERY
+  const [
+    queryPagination,
+    { error: errorPage, loading: loadingPage, data: dataPage },
+  ] = useLazyQuery(PAGINATION_QUERY);
+  const [querySignals, { error, loading, data }] = useLazyQuery(
+    ALL_SIGNALS_QUERY
   );
   const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
 
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('signal');
-  const [findSignals, { error, loading, data }] = useLazyQuery(
-    ALL_SIGNALS_QUERY
-  );
   const [showSignal, setShowSignal] = useState('');
   const [newSignal, setNewSignal] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
-  const searchFields = useRef([
-    { field: 'name', label: t('signal'), type: 'text' },
-    { field: 'owner', label: t('common:owner'), type: 'text' },
+  const user = useUser();
+
+  const searchFields = [
+    { field: 'name_contains_i', label: t('signal'), type: 'text' },
+    { field: 'owner.name_contains_i', label: t('common:owner'), type: 'text' },
     { field: 'active', label: t('active'), type: 'switch' },
-  ]);
-  const {
-    filters,
-    setFilters,
-    handleChange,
-    showFilter,
-    setShowFilter,
-    resetFilters,
-  } = useSearch(searchFields.current);
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
 
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    if (filters.name) variables.name = filters.name;
-    if (filters.owner) variables.owner = filters.owner;
-    if (filters.active) variables.active = filters.active;
-    if (variables.filters) variables.skip = 0;
-    findSignals({
-      variables,
-    });
-  }, [filters, page, findSignals]);
+    if (filters) variables.where = filters;
+    queryPagination({ variables: filters });
+    querySignals({ variables });
+  }, [filters, queryPagination, querySignals, page]);
 
   function viewSignal(id) {
     if (id) setShowSignal(id);
@@ -169,15 +162,11 @@ export default function Signals() {
         setShowFilter={setShowFilter}
       />
       <SearchField
-        fields={searchFields.current}
-        setShowFilter={setShowFilter}
+        fields={searchFields}
         showFilter={showFilter}
-        filters={filters}
-        setFilters={setFilters}
-        handleChange={handleChange}
-        query={ALL_SIGNALS_QUERY}
-        loading={loading}
-        resetFilters={resetFilters}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
+        isAdmin={user.role?.canManageSignal}
       />
       <Table
         columns={columns}

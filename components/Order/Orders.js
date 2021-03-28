@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { useEffect, useState } from 'react';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import { Confirm, Report } from 'notiflix';
 import useTranslation from 'next-translate/useTranslation';
 
-import SearchField, { useSearch } from '../SearchField';
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
@@ -22,12 +21,19 @@ import {
   CANCEL_ORDER_MUTATION,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
+import SearchField, { useFilter } from '../SearchField';
 import { useUser } from '../User/Queries';
 
 export default function Orders() {
   const router = useRouter();
-  const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
-    PAGINATION_QUERY
+  const user = useUser();
+
+  const [
+    queryPagination,
+    { error: errorPage, loading: loadingPage, data: dataPage },
+  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryOrders, { error, loading, data }] = useLazyQuery(
+    ALL_ORDERS_QUERY
   );
   const [cancelOrderMutation, { error: errorCancel }] = useMutation(
     CANCEL_ORDER_MUTATION,
@@ -38,36 +44,24 @@ export default function Orders() {
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('order');
-  const [findOrders, { error, loading, data }] = useLazyQuery(ALL_ORDERS_QUERY);
   const [showOrder, setShowOrder] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('order');
-  const searchFields = useRef([
-    { field: 'user', label: t('user'), type: 'text' },
-    { field: 'canceled', label: t('canceled'), type: 'switch' },
-  ]);
-  const user = useUser();
 
-  const {
-    filters,
-    setFilters,
-    handleChange,
-    showFilter,
-    setShowFilter,
-    resetFilters,
-  } = useSearch(searchFields.current);
+  const searchFields = [
+    { field: 'owner.name_contains_i', label: t('user'), type: 'text' },
+    { field: 'canceled', label: t('canceled'), type: 'switch' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
 
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    if (filters.user) variables.user = filters.user;
-    if (filters.canceled) variables.canceled = filters.canceled;
-    if (variables.filters) variables.skip = 0;
-    findOrders({
-      variables,
-    });
-  }, [filters, page, findOrders]);
+    if (filters) variables.where = filters;
+    queryPagination({ variables: filters });
+    queryOrders({ variables });
+  }, [filters, queryPagination, queryOrders, page]);
 
   function viewOrder(id) {
     if (id) setShowOrder(id);
@@ -76,7 +70,7 @@ export default function Orders() {
   const columns = useColumns([
     ['id', 'id', 'hidden'],
     [t('number'), 'number'],
-    [t('user'), 'user.name'],
+    [t('user'), 'owner.name'],
     [
       t('order-date'),
       'orderDate',
@@ -163,15 +157,11 @@ export default function Orders() {
         setShowFilter={setShowFilter}
       />
       <SearchField
-        fields={searchFields.current}
-        setShowFilter={setShowFilter}
+        fields={searchFields}
         showFilter={showFilter}
-        filters={filters}
-        setFilters={setFilters}
-        handleChange={handleChange}
-        query={ALL_ORDERS_QUERY}
-        loading={loading}
-        resetFilters={resetFilters}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
+        isAdmin={user.role?.canManageOrder}
       />
       <Table
         columns={columns}

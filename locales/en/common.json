@@ -60,5 +60,7 @@
   "net-amount": "Net total",
   "taxed-amount": "Total billed including taxes",
   "no-data": "No data",
-  "info": "Information"
+  "info": "Information",
+  "only-my-account": "Only the data from my account",
+  "start-search": "Search now"
 }

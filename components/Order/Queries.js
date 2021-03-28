@@ -4,24 +4,24 @@ import { useEffect } from 'react';
 import { dateNow } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    count: _allOrdersMeta {
+  query PAGINATION_QUERY($where: OrderWhereInput) {
+    count: _allOrdersMeta(where: $where) {
       count
     }
   }
 `;
 
 export const ALL_ORDERS_QUERY = gql`
-  query ALL_ORDERS_QUERY($skip: Int = 0, $first: Int, $ownerId: ID) {
+  query ALL_ORDERS_QUERY($skip: Int = 0, $first: Int, $where: OrderWhereInput) {
     allOrders(
       first: $first
       skip: $skip
-      where: { user: { id: $ownerId } }
+      where: $where
       sortBy: orderDate_DESC
     ) {
       id
       number
-      user {
+      owner {
         id
         name
       }
@@ -49,7 +49,7 @@ export const ORDER_QUERY = gql`
     Order(where: { id: $id }) {
       id
       number
-      user {
+      owner {
         id
         name
         company

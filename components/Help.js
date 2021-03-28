@@ -30,7 +30,7 @@ const QUERY_HELP = gql`
  */
 export function Help({ visible, handleClose, contents = [] }) {
   const [step, setStep] = useState(0);
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const nbStep = contents.length;
   const [label, setLabel] = useState();
   const [element, setElement] = useState();
@@ -52,9 +52,14 @@ export function Help({ visible, handleClose, contents = [] }) {
         : `${t('next')} (${contents[step + 1]?.title})`
     );
     if (element && step < contents.length) {
-      element.innerHTML = contents[step].content;
+      const { content } = contents[step];
+
+      element.innerHTML = content.replace(
+        /<a href="\//gi,
+        `<a href="/${lang}/`
+      );
     }
-  }, [step, contents, setLabel, nbStep, element, t]);
+  }, [step, contents, setLabel, nbStep, element, t, lang]);
 
   function handleClick() {
     if (step < nbStep - 1) {

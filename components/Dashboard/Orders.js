@@ -19,7 +19,7 @@ const QUERY_ORDERS = gql`
       id
       number
       orderDate
-      user {
+      owner {
         id
         name
       }
@@ -64,7 +64,7 @@ export default function DashboardOrder() {
         ),
         { action: viewOrder },
       ],
-      [t('order:user'), 'user.name'],
+      [t('order:user'), 'owner.name'],
       [
         t('order:order-date'),
         'orderDate',

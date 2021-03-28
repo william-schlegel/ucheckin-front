@@ -4,19 +4,23 @@ import { useEffect } from 'react';
 import { dateNow } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    count: _allLicensesMeta {
+  query PAGINATION_QUERY($where: LicenseWhereInput) {
+    count: _allLicensesMeta(where: $where) {
       count
     }
   }
 `;
 
 export const ALL_LICENSES_QUERY = gql`
-  query ALL_LICENSES_QUERY($skip: Int = 0, $first: Int, $ownerId: ID) {
+  query ALL_LICENSES_QUERY(
+    $skip: Int = 0
+    $first: Int
+    $where: LicenseWhereInput
+  ) {
     allLicenses(
       first: $first
       skip: $skip
-      where: { owner: { id: $ownerId } }
+      where: $where
       sortBy: validity_ASC
     ) {
       id

@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { useEffect } from 'react';
 
 export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    count: _allSignalsMeta {
+  query PAGINATION_QUERY($where: SignalWhereInput) {
+    count: _allSignalsMeta(where: $where) {
       count
     }
   }
@@ -14,21 +14,9 @@ export const ALL_SIGNALS_QUERY = gql`
   query ALL_SIGNALS_QUERY(
     $skip: Int = 0
     $first: Int
-    $name: String
-    $owner: String
-    $active: Boolean
+    $where: SignalWhereInput
   ) {
-    allSignals(
-      first: $first
-      skip: $skip
-      where: {
-        AND: [
-          { name_contains_i: $name }
-          { owner: { name_contains_i: $owner } }
-          { active: $active }
-        ]
-      }
-    ) {
+    allSignals(first: $first, skip: $skip, where: $where) {
       id
       name
       active

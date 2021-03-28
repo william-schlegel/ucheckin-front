@@ -14,6 +14,9 @@ export default function Nav() {
     return (
       <NavStyles>
         <li>
+          <Link href="/sdk">{t('sdk')}</Link>
+        </li>
+        <li>
           <Link href="/applications">{t('applications')}</Link>
         </li>
         <li>
@@ -27,11 +30,9 @@ export default function Nav() {
             <Link href="/prices">{t('prices')}</Link>
           </li>
         )}
-        {/* {user.role?.canManageOrder && ( */}
         <li>
           <Link href="/orders">{t('orders')}</Link>
         </li>
-        {/* )} */}
         {(user.role?.canSeeOtherUsers || user.role?.canManageUsers) && (
           <li>
             <Link href="/users">{t('users')}</Link>

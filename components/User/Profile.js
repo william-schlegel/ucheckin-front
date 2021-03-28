@@ -76,7 +76,6 @@ export default function Profile({ id, initialData }) {
 
   if (loading || !roles.length) return <Loading />;
   if (error) return <DisplayError error={error} />;
-  console.log(`roles`, roles);
   return (
     <>
       <Help
@@ -133,7 +132,7 @@ export default function Profile({ id, initialData }) {
                   required
                   id="company"
                   name="company"
-                  value={inputs.company}
+                  value={inputs.company || ''}
                   onChange={handleChange}
                 />
               </Row>

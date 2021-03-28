@@ -5,6 +5,7 @@ module.exports = {
   pages: {
     '*': ['common', 'navigation'],
     '/': ['dashboard', 'signal', 'license', 'application', 'user', 'order'],
+    'rgx:^/sdk': ['sdk'],
     'rgx:^/application': ['application', 'license'],
     'rgx:^/signal': ['signal', 'license'],
     'rgx:^/profile': ['user', 'license'],

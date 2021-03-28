@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useEffect, useState } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 
-import SearchField, { useSearch } from '../SearchField';
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
@@ -16,44 +15,37 @@ import Signup from './SignUp';
 import { PAGINATION_QUERY, ALL_USERS_QUERY } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import Avatar from '../Tables/Avatar';
+import SearchField, { useFilter } from '../SearchField';
 
 export default function Users() {
   const router = useRouter();
-  const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
-    PAGINATION_QUERY
-  );
+
+  const [
+    queryPagination,
+    { error: errorPage, loading: loadingPage, data: dataPage },
+  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryUsers, { error, loading, data }] = useLazyQuery(ALL_USERS_QUERY);
 
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('user');
-  const [findUsers, { error, loading, data }] = useLazyQuery(ALL_USERS_QUERY);
   const [newUser, setNewUser] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('user');
-  const searchFields = useRef([
-    { field: 'name', label: t('user'), type: 'text' },
-    { field: 'email', label: t('common:email'), type: 'text' },
-  ]);
-  const {
-    filters,
-    setFilters,
-    handleChange,
-    showFilter,
-    setShowFilter,
-    resetFilters,
-  } = useSearch(searchFields.current);
+  const searchFields = [
+    { field: 'name_contains_i', label: t('user'), type: 'text' },
+    { field: 'email_contains_i', label: t('common:email'), type: 'text' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
 
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    if (filters.name) variables.name = filters.name;
-    if (filters.email) variables.email = filters.email;
-    if (variables.filters) variables.skip = 0;
-    findUsers({
-      variables,
-    });
-  }, [filters, page, findUsers]);
+    if (filters) variables.where = filters;
+    queryPagination({ variables: filters });
+    queryUsers({ variables });
+  }, [filters, queryPagination, queryUsers, page]);
 
   function editUser(id) {
     if (id) router.push(`/user/${id}`);
@@ -108,15 +100,10 @@ export default function Users() {
         setShowFilter={setShowFilter}
       />
       <SearchField
-        fields={searchFields.current}
-        setShowFilter={setShowFilter}
+        fields={searchFields}
         showFilter={showFilter}
-        filters={filters}
-        setFilters={setFilters}
-        handleChange={handleChange}
-        query={ALL_USERS_QUERY}
-        loading={loading}
-        resetFilters={resetFilters}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
       />
       <Table
         columns={columns}

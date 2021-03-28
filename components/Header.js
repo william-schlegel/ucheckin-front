@@ -62,6 +62,10 @@ const HeaderStyles = styled.header`
       &:hover {
         background-color: var(--secondary);
       }
+      &:focus {
+        border: none;
+        outline: none;
+      }
     }
     img.avatar {
       width: 50px;
@@ -194,14 +198,6 @@ export default function Header() {
                   <button type="button" onClick={showMyAccount}>
                     {t('account')}
                   </button>
-                  {(user.role?.canManageOrder || user.role?.canSeeOrder) && (
-                    <button
-                      type="button"
-                      onClick={() => router.push('/orders')}
-                    >
-                      {t('orders')}
-                    </button>
-                  )}
                   <Signout />
                 </div>
               )}

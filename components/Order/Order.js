@@ -81,27 +81,27 @@ export default function Order({ id, backButton }) {
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('user')}</Label>
-          <span>{data.Order.user.name}</span>
+          <span>{data.Order.owner.name}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('company')}</Label>
-          <span>{data.Order.user.company}</span>
+          <span>{data.Order.owner.company}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('address')}</Label>
-          <span>{data.Order.user.address}</span>
+          <span>{data.Order.owner.address}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('zip-code')}</Label>
-          <span>{data.Order.user.zipCode}</span>
+          <span>{data.Order.owner.zipCode}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('city')}</Label>
-          <span>{data.Order.user.city}</span>
+          <span>{data.Order.owner.city}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('country')}</Label>
-          <span>{data.Order.user.country}</span>
+          <span>{data.Order.owner.country}</span>
         </RowReadOnly>
       </FormBody>
       <FormBodyFull>

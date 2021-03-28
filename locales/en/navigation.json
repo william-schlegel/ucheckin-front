@@ -11,5 +11,6 @@
   "licenses": "Licenses",
   "prices": "Prices",
   "orders": "Orders",
-  "users": "Users"
+  "users": "Users",
+  "sdk": "SDK"
 }

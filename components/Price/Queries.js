@@ -3,19 +3,19 @@ import gql from 'graphql-tag';
 import { useEffect } from 'react';
 
 export const PAGINATION_PRICE_QUERY = gql`
-  query PAGINATION_PRICE_QUERY {
-    count: _allLicensePricesMeta {
+  query PAGINATION_PRICE_QUERY($where: LicensePriceWhereInput) {
+    count: _allLicensePricesMeta(where: $where) {
       count
     }
   }
 `;
 export const ALL_PRICES_QUERY = gql`
-  query ALL_LICENSES_PRICES_QUERY($skip: Int = 0, $first: Int, $ownerId: ID) {
-    allLicensePrices(
-      first: $first
-      skip: $skip
-      where: { owner: { id: $ownerId } }
-    ) {
+  query ALL_LICENSES_PRICES_QUERY(
+    $skip: Int = 0
+    $first: Int
+    $where: LicensePriceWhereInput
+  ) {
+    allLicensePrices(first: $first, skip: $skip, where: $where) {
       id
       users {
         id

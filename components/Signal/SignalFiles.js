@@ -8,6 +8,7 @@ import {
   Block,
   Form,
   FormBodyFull,
+  FormFooter,
   FormHeader,
   FormTitle,
   Label,
@@ -25,7 +26,7 @@ import AudioPlayer from '../Audio/AudioPlayer';
 
 export default function SignalFiles({ signalId, files }) {
   const { t } = useTranslation('signal');
-  const { chanelList, getChanelName } = useChanel();
+  const { chanelOptions, getChanelName } = useChanel();
   const [newFile, setNewFile] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -160,16 +161,11 @@ export default function SignalFiles({ signalId, files }) {
               <Select
                 className="select"
                 id="chanel"
-                value={() =>
-                  chanelList.find((ch) => ch.value === inputs.chanel)
-                }
+                value={chanelOptions.find((ch) => ch.value === inputs.chanel)}
                 onChange={(e) =>
                   handleChange({ value: e.value, name: 'chanel' })
                 }
-                options={chanelList.map((ch) => ({
-                  value: ch,
-                  label: getChanelName(ch),
-                }))}
+                options={chanelOptions}
               />
             </RowFull>
             <RowFull>
@@ -186,10 +182,10 @@ export default function SignalFiles({ signalId, files }) {
                 <span>{t('seconds')}</span>
               </Block>
             </RowFull>
-            <Block>
+            <FormFooter>
               <ValidationButton onClick={handleSaveFile} />
               <CancelButton onClick={() => setNewFile(false)} />
-            </Block>
+            </FormFooter>
           </>
         )}
       </FormBodyFull>

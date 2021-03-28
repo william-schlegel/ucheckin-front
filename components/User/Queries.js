@@ -3,25 +3,16 @@ import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 
 export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    count: _allUsersMeta {
+  query PAGINATION_QUERY($where: UserWhereInput) {
+    count: _allUsersMeta(where: $where) {
       count
     }
   }
 `;
 
 export const ALL_USERS_QUERY = gql`
-  query ALL_USERS_QUERY(
-    $skip: Int = 0
-    $first: Int
-    $email: String
-    $name: String
-  ) {
-    allUsers(
-      first: $first
-      skip: $skip
-      where: { AND: [{ name_contains_i: $name }, { email_contains_i: $email }] }
-    ) {
+  query ALL_USERS_QUERY($skip: Int = 0, $first: Int, $where: UserWhereInput) {
+    allUsers(first: $first, skip: $skip, where: $where) {
       id
       name
       email

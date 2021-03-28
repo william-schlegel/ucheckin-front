@@ -1,5 +1,5 @@
-import { useEffect, useReducer, useRef, useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useEffect, useReducer, useState } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
@@ -13,13 +13,14 @@ import DisplayError from '../ErrorMessage';
 import EntetePage from '../styles/EntetePage';
 import LicenseDetails from './LicenseDetails';
 import Switch from '../Tables/Switch';
-import SearchField, { useSearch } from '../SearchField';
+import SearchField, { useFilter } from '../SearchField';
 import { PAGINATION_QUERY, ALL_LICENSES_QUERY } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import ValidityDate from '../Tables/ValidityDate';
-import { Form, FormBodyFull, FormHeader, FormTitle } from '../styles/Card';
+import { FormHeader, FormTitle } from '../styles/Card';
 import LicenseType from '../Tables/LicenseType';
 import LicenseUpdate from './LicenseUpdate';
+import { useUser } from '../User/Queries';
 
 // calculate number of free & number of valid licenses
 function licensesAnalysis(licenses) {
@@ -30,52 +31,6 @@ function licensesAnalysis(licenses) {
   }, 0);
   return [licenses.length, nbValid];
 }
-
-// aggregate licenses
-// function aggregateLicenses(licenses) {
-//   if (!licenses) return [[], []];
-//   const used = new Map();
-
-//   function compare(map, key, item) {
-//     if (map.has(key)) {
-//       const lic = map.get(key);
-//       if (
-//         lic.validity === item.validity &&
-//         lic.owner.id === item.owner.id &&
-//         lic.licenseType.id === item.licenseType.id
-//       ) {
-//         lic.count += 1;
-//         map.set(key, lic);
-//         return;
-//       }
-//     }
-//     map.set(key, { item, count: 1 });
-//   }
-
-//   licenses.forEach((l) => {
-//     compare(used, l.signal, l);
-//   });
-//   const dataUsed = Array.from(used).map((l) => ({
-//     id: l[1].item.id,
-//     signal: l[1].item.signal?.name,
-//     signalId: l[1].item.signal?.id,
-//     application: l[1].item.application.name,
-//     appId: l[1].item.application.id,
-//     owner: l[1].item.owner.name,
-//     ownerId: l[1].item.owner.id,
-//     valid: l[1].item.valid,
-//     validity: l[1].item.validity,
-//     licenseType: l[1].item.licenseType.id,
-//     trialLicense: l[1].item.trialLicense,
-//     purchaseInfo: {
-//       dt: formatDate(l[1].item.purchaseDate),
-//       info: l[1].item.purchaseInformation,
-//     },
-//     count: l[1].count,
-//   }));
-
-//   return dataUsed;
-// }
 
 function reducer(state, action) {
   switch (action.type) {
@@ -90,6 +45,11 @@ function reducer(state, action) {
         ...state,
         licenses: action.res,
       };
+    case 'pagination':
+      return {
+        ...state,
+        count: action.count,
+      };
     default:
       return state;
   }
@@ -97,19 +57,26 @@ function reducer(state, action) {
 
 export default function Licenses() {
   const router = useRouter();
-  const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
-    PAGINATION_QUERY
-  );
-  const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
-  const { t } = useTranslation('license');
   const [state, dispatch] = useReducer(reducer, {
     validLicense: 0,
     totalLicenses: 0,
     licenses: [],
+    count: 1,
   });
+  const page = parseInt(router.query.page) || 1;
+  const { t } = useTranslation('license');
+  const user = useUser();
 
-  const [findLicenses, { error, loading }] = useLazyQuery(ALL_LICENSES_QUERY, {
+  const [
+    queryPagination,
+    { error: errorPage, loading: loadingPage },
+  ] = useLazyQuery(PAGINATION_QUERY, {
+    onCompleted: (dataP) => {
+      console.log(`dataP`, dataP);
+      dispatch({ type: 'pagination', count: dataP.count.count });
+    },
+  });
+  const [queryLicenses, { error, loading }] = useLazyQuery(ALL_LICENSES_QUERY, {
     ssr: false,
     onCompleted: (dataLic) => {
       const licenses = dataLic?.allLicenses || [];
@@ -118,8 +85,6 @@ export default function Licenses() {
         type: 'analysis',
         res: [...resA],
       });
-      // const resU = aggregateLicenses(licenses);
-      // dispatch({ type: 'used', res: resU });
       dispatch({ type: 'used', res: licenses });
     },
   });
@@ -127,33 +92,25 @@ export default function Licenses() {
   const [selectedLicense, setSelectedLicense] = useState({});
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('license');
-  const searchFields = useRef([
-    { field: 'owner', label: t('common:owner'), type: 'text' },
-  ]);
-  const {
-    filters,
-    setFilters,
-    handleChange,
-    showFilter,
-    setShowFilter,
-    resetFilters,
-  } = useSearch(searchFields.current);
+  const searchFields = [
+    { field: 'owner.name_contains_i', label: t('common:owner'), type: 'text' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
 
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    if (filters.owner) variables.owner = filters.owner;
-    findLicenses({
-      variables,
-    });
-  }, [filters, page, findLicenses]);
+    console.log(`filters`, filters);
+    if (filters) variables.where = filters;
+    queryPagination({ variables: filters });
+    queryLicenses({ variables });
+  }, [filters, queryPagination, queryLicenses, page]);
 
   function viewLicense(id) {
     if (id) setShowLicense(id);
   }
-
   const columns = useColumns([
     ['id', 'id', 'hidden'],
     [
@@ -242,64 +199,52 @@ export default function Licenses() {
         <h3>{t('licenses')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />
       </EntetePage>
-      <Form>
-        <FormHeader>
-          <FormTitle>
-            {t('available-licenses')}
-            <span>
-              {t('license-info', { count: state.totalLicenses })}&nbsp;
-              {t('license-valid', {
-                count: state.validLicense,
-              })}
-            </span>
-          </FormTitle>
-        </FormHeader>
-        <FormBodyFull>
-          {state.licenses.length > 0 && (
-            <>
-              <Pagination
-                page={page}
-                error={errorPage}
-                loading={loadingPage}
-                count={count}
-                pageRef="licenses"
-                withFilter
-                setShowFilter={setShowFilter}
-              />
-              <SearchField
-                fields={searchFields.current}
-                setShowFilter={setShowFilter}
-                showFilter={showFilter}
-                filters={filters}
-                setFilters={setFilters}
-                handleChange={handleChange}
-                query={ALL_LICENSES_QUERY}
-                loading={loading}
-                resetFilters={resetFilters}
-              />
-              <Table
-                columns={columns}
-                data={state.licenses.map((l) => ({
-                  id: l.id,
-                  trialLicense: l.trialLicense,
-                  signal: l.signal?.name,
-                  application: l.application.name,
-                  owner: l.owner.name,
-                  licenseType: l.licenseType.id,
-                  valid: l.valid,
-                  validity: l.validity,
-                }))}
-                error={error}
-                loading={loading}
-                actionButtons={[
-                  { type: 'view', action: viewLicense },
-                  { type: 'extend', action: extendLicense },
-                ]}
-              />
-            </>
-          )}
-        </FormBodyFull>
-      </Form>
+      <FormHeader>
+        <FormTitle>
+          {t('available-licenses')}
+          <span>
+            {t('license-info', { count: state.totalLicenses })}&nbsp;
+            {t('license-valid', {
+              count: state.validLicense,
+            })}
+          </span>
+        </FormTitle>
+      </FormHeader>
+      <Pagination
+        page={page}
+        error={errorPage}
+        loading={loadingPage}
+        count={state.count}
+        pageRef="licenses"
+        withFilter
+        setShowFilter={setShowFilter}
+      />
+      <SearchField
+        fields={searchFields}
+        showFilter={showFilter}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
+        isAdmin={user.role?.canManageLicense}
+      />
+      <Table
+        columns={columns}
+        data={state.licenses.map((l) => ({
+          id: l.id,
+          trialLicense: l.trialLicense,
+          signal: l.signal?.name,
+          application: l.application.name,
+          owner: l.owner.name,
+          licenseType: l.licenseType.id,
+          valid: l.valid,
+          validity: l.validity,
+        }))}
+        error={error}
+        loading={loading}
+        actionButtons={[
+          { type: 'view', action: viewLicense },
+          { type: 'extend', action: extendLicense },
+        ]}
+      />
     </>
   );
 }

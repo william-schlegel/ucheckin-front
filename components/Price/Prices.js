@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { useEffect, useState } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
@@ -13,51 +13,49 @@ import DisplayError from '../ErrorMessage';
 import EntetePage from '../styles/EntetePage';
 import PriceDetails from './PriceDetails';
 import PriceNew from './PriceNew';
-import SearchField, { useSearch } from '../SearchField';
+import SearchField, { useFilter } from '../SearchField';
 import { PAGINATION_PRICE_QUERY, ALL_PRICES_QUERY } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import ValidityDate from '../Tables/ValidityDate';
 import Badges from '../Tables/Badges';
 import ButtonNew from '../Buttons/ButtonNew';
+import { useUser } from '../User/Queries';
 
 export default function Prices() {
   const router = useRouter();
-  const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
-    PAGINATION_PRICE_QUERY
+  const user = useUser();
+
+  const [
+    queryPagination,
+    { error: errorPage, loading: loadingPage, data: dataPage },
+  ] = useLazyQuery(PAGINATION_PRICE_QUERY);
+  const [queryPrices, { error, loading, data }] = useLazyQuery(
+    ALL_PRICES_QUERY
   );
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('license');
 
-  const [findPrices, { error, loading, data }] = useLazyQuery(ALL_PRICES_QUERY);
   const [showPrice, setShowPrice] = useState('');
   const [newPrice, setNewPrice] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'license-price'
   );
-  const searchFields = useRef([
-    { field: 'owner', label: t('common:owner'), type: 'text' },
-    { field: 'user', label: t('common:user'), type: 'text' },
-  ]);
-  const {
-    filters,
-    setFilters,
-    handleChange,
-    showFilter,
-    setShowFilter,
-    resetFilters,
-  } = useSearch(searchFields.current);
+
+  const searchFields = [
+    { field: 'owner.name_contains_i', label: t('common:owner'), type: 'text' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
 
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    if (filters.owner) variables.owner = filters.owner;
-    findPrices({
-      variables,
-    });
-  }, [filters, page, findPrices]);
+    if (filters) variables.where = filters;
+    queryPagination({ variables: filters });
+    queryPrices({ variables });
+  }, [filters, queryPagination, queryPrices, page]);
 
   function viewPrice(id) {
     if (id) setShowPrice(id);
@@ -134,15 +132,11 @@ export default function Prices() {
         setShowFilter={setShowFilter}
       />
       <SearchField
-        fields={searchFields.current}
-        setShowFilter={setShowFilter}
+        fields={searchFields}
         showFilter={showFilter}
-        filters={filters}
-        setFilters={setFilters}
-        handleChange={handleChange}
-        query={ALL_PRICES_QUERY}
-        loading={loading}
-        resetFilters={resetFilters}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
+        isAdmin={user.role?.canManagePrice}
       />
       <Table
         columns={columns}

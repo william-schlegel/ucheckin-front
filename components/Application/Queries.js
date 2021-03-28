@@ -46,16 +46,20 @@ export const QUERY_APPLICATION = gql`
 `;
 
 export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    count: _allApplicationsMeta {
+  query PAGINATION_QUERY($where: ApplicationWhereInput) {
+    count: _allApplicationsMeta(where: $where) {
       count
     }
   }
 `;
 
 export const ALL_APPLICATIONS_QUERY = gql`
-  query ALL_APPLICATIONS_QUERY($skip: Int = 0, $first: Int) {
-    allApplications(first: $first, skip: $skip) {
+  query ALL_APPLICATIONS_QUERY(
+    $skip: Int = 0
+    $first: Int
+    $where: ApplicationWhereInput
+  ) {
+    allApplications(first: $first, skip: $skip, where: $where) {
       id
       name
       apiKey

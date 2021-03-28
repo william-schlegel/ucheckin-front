@@ -60,5 +60,7 @@
   "vat": "TVA  ({{percentage}})",
   "taxed-amount": "Total facturé TTC",
   "no-data": "Pas de données",
-  "info": "Information"
+  "info": "Information",
+  "only-my-account": "Uniquement les enregistrements de mon compte",
+  "start-search": "Chercher"
 }

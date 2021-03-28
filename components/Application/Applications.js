@@ -1,9 +1,9 @@
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
@@ -23,26 +23,44 @@ import { PAGINATION_QUERY, ALL_APPLICATIONS_QUERY } from './Queries';
 import { Help, HelpButton, useHelp } from '../Help';
 import LicenseNew from './LicenseNew';
 import ApiKey from '../Tables/ApiKey';
+import SearchField, { useFilter } from '../SearchField';
+import { useUser } from '../User/Queries';
 
 export default function Applications() {
   const router = useRouter();
-  const { error: errorPage, loading: loadingPage, data: dataPage } = useQuery(
-    PAGINATION_QUERY
+  const user = useUser();
+  const [
+    queryPagination,
+    { error: errorPage, loading: loadingPage, data: dataPage },
+  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryApplications, { data, error, loading }] = useLazyQuery(
+    ALL_APPLICATIONS_QUERY
   );
+
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('application');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
-  const { data, error, loading } = useQuery(ALL_APPLICATIONS_QUERY, {
-    variables: {
-      skip: (page - 1) * perPage,
-      first: perPage,
-    },
-  });
   const [showAddLicense, setShowAddLicense] = useState(false);
   const [dataAddLicense, setDataAddLicense] = useState({});
+
+  const searchFields = [
+    { field: 'name_contains_i', label: t('common:name'), type: 'text' },
+    { field: 'owner_contains_i', label: t('common:owner'), type: 'text' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+
+  useEffect(() => {
+    const variables = {
+      skip: (page - 1) * perPage,
+      first: perPage,
+    };
+    if (filters) variables.where = filters;
+    queryPagination({ variables: filters });
+    queryApplications({ variables });
+  }, [filters, queryPagination, queryApplications, page]);
 
   function editApplication(id) {
     router.push(`/application/${id}`);
@@ -99,7 +117,7 @@ export default function Applications() {
     setNewApp(false);
   }
 
-  if (loading) return <Loading />;
+  if (loading || !data) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
     <>
@@ -135,6 +153,15 @@ export default function Applications() {
         loading={loadingPage}
         count={count}
         pageRef="applications"
+        withFilter
+        setShowFilter={setShowFilter}
+      />
+      <SearchField
+        fields={searchFields}
+        showFilter={showFilter}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
+        isAdmin={user.role?.canManageApplication}
       />
       <Table
         columns={columns}
