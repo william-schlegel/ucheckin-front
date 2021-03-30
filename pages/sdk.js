@@ -90,9 +90,9 @@ function SdkBlock({ sdkData }) {
   const { t } = useTranslation('sdk');
 
   useEffect(() => {
-    const el = document.getElementById('sdk-content-container');
+    const el = document.getElementById(`sdk-content-container${sdkData.id}`);
     if (el && content) el.innerHTML = content;
-  }, [content]);
+  }, [content, sdkData]);
 
   return (
     <SdkBlockStyled>
@@ -107,7 +107,7 @@ function SdkBlock({ sdkData }) {
           />
         )}
         <div className="content">
-          <div id="sdk-content-container" />
+          <div id={`sdk-content-container${sdkData.id}`} />
           <div>
             <a
               href={sdkData.link}

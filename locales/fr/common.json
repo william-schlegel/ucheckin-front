@@ -55,6 +55,7 @@
   "add-license": "Ajouter une licence",
   "delete-signal": "Supprimer un signal",
   "plus": "Ajouter",
+  "minus": "Soustraire",
   "extend": "Prolonger la licence",
   "net-amount": "Total HT",
   "vat": "TVA  ({{percentage}})",

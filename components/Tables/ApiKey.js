@@ -17,7 +17,7 @@ export default function ApiKey({ apiKey, showCopied }) {
     copiedTimeout: 1000,
   });
   const { copied } = clipboard;
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const lenKey = apiKey.length;
   const obfuscatedKey = [
     apiKey.slice(0, lenKey / 4),
@@ -26,7 +26,7 @@ export default function ApiKey({ apiKey, showCopied }) {
 
   useEffect(() => {
     if (copied) {
-      Notify.Success(t('common:copied'));
+      Notify.Success(t('copied'));
     }
   }, [copied, t]);
 
@@ -38,7 +38,7 @@ export default function ApiKey({ apiKey, showCopied }) {
     <ApiKeyStyled>
       <span>{obfuscatedKey}</span>
       <ActionButton type="copy" cb={copyApiKey} />
-      {copied && showCopied && <span>{t('common:copied')}</span>}
+      {copied && showCopied && <span>{t('copied')}</span>}
     </ApiKeyStyled>
   );
 }

@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import DisplayError from '../ErrorMessage';
@@ -49,7 +48,7 @@ UpdateApplication.propTypes = {
     apiKey: PropTypes.string,
     owner: PropTypes.object,
     users: PropTypes.array,
-    licenseType: PropTypes.string,
+    licenseType: PropTypes.object,
   }),
   onSuccess: PropTypes.func.isRequired,
 };

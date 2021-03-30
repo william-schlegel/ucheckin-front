@@ -55,6 +55,7 @@
   "add-license": "Add a license",
   "delete-signal": "Delete a signal",
   "plus": "Add",
+  "minus": "Subtract",
   "extend": "Extend the license validity",
   "vat": "VAT ({{percentage}})",
   "net-amount": "Net total",

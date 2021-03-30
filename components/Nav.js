@@ -39,6 +39,9 @@ export default function Nav() {
           </li>
         )}
         <li>
+          <Link href="/notifications">{t('notifications')}</Link>
+        </li>
+        <li>
           <div>
             <SignOut />
             <Footer />

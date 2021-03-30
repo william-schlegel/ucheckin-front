@@ -10,6 +10,7 @@ import ActionButton from './Buttons/ActionButton';
 import { BlockShort, Input, LabelShort } from './styles/Card';
 import { useUser } from './User/Queries';
 import { SecondaryButtonStyled } from './styles/Button';
+import transformField from '../lib/transformField';
 
 const SwitchContainer = styled.div`
   display: flex;
@@ -158,12 +159,6 @@ export function useFilter() {
   const [filters, setFilters] = useState();
 
   function handleNewFilter(newFilters) {
-    function transformField(fld) {
-      const nm = fld.field.split('.');
-      const ret = nm.reverse().reduce((prev, n) => ({ [n]: prev }), fld.value);
-      return ret;
-    }
-
     if (!newFilters.length) {
       setFilters(null);
       return;

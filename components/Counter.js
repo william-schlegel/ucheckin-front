@@ -22,18 +22,38 @@ const CounterStyled = styled.div`
   }
 `;
 
-export default function Counter({ label, name, input, handleChange, min = 0 }) {
-  const { t } = useTranslation('license');
-  return (
-    <CounterStyled>
+const CounterFullStyled = styled(CounterStyled)`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
+export default function Counter({
+  label,
+  name,
+  input,
+  handleChange,
+  min = 0,
+  max,
+  fullWidth,
+}) {
+  const { t } = useTranslation('common');
+
+  function checkValue(value) {
+    console.log(`value`, value);
+    if (value < min) return min;
+    if (max && value > max) return max;
+    return value;
+  }
+
+  const CounterContent = () => (
+    <>
       <Label htmlFor={name}>{label}</Label>
       <div className="counter">
         <ActionButton
           type="minus-circle"
           cb={() =>
-            input > min
-              ? handleChange({ type: 'number', name, value: input - 1 })
-              : min
+            handleChange({ type: 'number', name, value: checkValue(input - 1) })
           }
           label={t('minus')}
         />
@@ -42,14 +62,34 @@ export default function Counter({ label, name, input, handleChange, min = 0 }) {
           id={name}
           name={name}
           value={input}
-          onChange={handleChange}
+          onChange={(e) =>
+            handleChange({
+              type: 'number',
+              name,
+              value: checkValue(e.target.value),
+            })
+          }
         />
         <ActionButton
           type="plus-circle"
-          cb={() => handleChange({ type: 'number', name, value: input + 1 })}
+          cb={() =>
+            handleChange({ type: 'number', name, value: checkValue(input + 1) })
+          }
           label={t('plus')}
         />
       </div>
+    </>
+  );
+
+  if (fullWidth)
+    return (
+      <CounterFullStyled>
+        <CounterContent />
+      </CounterFullStyled>
+    );
+  return (
+    <CounterStyled>
+      <CounterContent />
     </CounterStyled>
   );
 }
@@ -60,4 +100,6 @@ Counter.propTypes = {
   input: PropTypes.number.isRequired,
   handleChange: PropTypes.func.isRequired,
   min: PropTypes.number,
+  max: PropTypes.number,
+  fullWidth: PropTypes.bool,
 };

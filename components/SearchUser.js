@@ -14,39 +14,59 @@ const ALL_USER_QUERY = gql`
   }
 `;
 
-export default function SearchUser({
-  name,
-  value,
-  onChange,
-  multiple,
-  required,
-}) {
+export function SearchUser({ name, value, onChange, required }) {
   const { loading, data } = useQuery(ALL_USER_QUERY);
   const users = data?.allUsers || [];
+  const userList = users.map((u) => ({ value: u.id, label: u.name }));
 
   if (loading) return <Loading />;
   return (
-    <div style={{ width: '100%' }}>
-      <Select
-        required={required}
-        defaultValue={value}
-        isMulti={multiple}
-        name={name}
-        options={users.map((u) => ({ value: u.id, label: u.name }))}
-        onChange={(us) => onChange({ name, value: us })}
-        className="basic-multi-select"
-        classNamePrefix="select"
-      />
-    </div>
+    <Select
+      className="select"
+      required={required}
+      value={userList.find((u) => u.value === value)}
+      name={name}
+      options={userList}
+      onChange={(us) => onChange({ name, value: us.value })}
+      // className="basic-multi-select"
+      // classNamePrefix="select"
+    />
   );
 }
 
 SearchUser.propTypes = {
   name: PropTypes.string.isRequired,
-  value: PropTypes.arrayOf(
-    PropTypes.shape({ value: PropTypes.string, label: PropTypes.string })
-  ),
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  multiple: PropTypes.bool,
+  required: PropTypes.bool,
+};
+
+export function SearchUsers({ name, value, onChange, required }) {
+  const { loading, data } = useQuery(ALL_USER_QUERY);
+  const users = data?.allUsers || [];
+  const userList = users.map((u) => ({ value: u.id, label: u.name }));
+
+  if (loading) return <Loading />;
+  return (
+    <Select
+      className="select"
+      required={required}
+      value={value.map((v) => userList.find((u) => u.value === v))}
+      name={name}
+      isMulti
+      options={userList}
+      onChange={(us) =>
+        onChange({ name, value: us.map((u) => ({ id: u.value })) })
+      }
+      // className="basic-multi-select"
+      // classNamePrefix="select"
+    />
+  );
+}
+
+SearchUsers.propTypes = {
+  name: PropTypes.string.isRequired,
+  value: PropTypes.arrayOf(PropTypes.string),
+  onChange: PropTypes.func.isRequired,
   required: PropTypes.bool,
 };

@@ -19,9 +19,8 @@ import {
   RowReadOnly,
   RowFull,
 } from '../styles/Card';
-import ActionButton from '../Buttons/ActionButton';
 import useForm from '../../lib/useForm';
-import SearchUser from '../SearchUser';
+import { SearchUser, SearchUsers } from '../SearchUser';
 import ApplicationDelete from './ApplicationDelete';
 import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
@@ -40,41 +39,36 @@ export default function Application({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_APPLICATION, {
     variables: { id },
   });
-  const [editOwner, setEditOwner] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
   const user = useUser();
   const { t } = useTranslation('application');
-  const { findLicenseName } = useLicenseName();
+  const { findLicenseName, licenseTypesOptions } = useLicenseName();
   const initialValues = useRef(initialData.data.Application);
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
   const [showAddLicense, setShowAddLicense] = useState(false);
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState({});
-  const licenseTypesOptions = initialData.data.licenseTypes.map((lt) => ({
-    value: lt.id,
-    label: t(`common:${lt.name}`),
-  }));
+
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.Application?.owner?.id;
 
   useEffect(() => {
-    if (data && userRole) {
+    if (userRole) {
       setCanEdit(userRole?.canManageApplication || appOwnerId === userId);
     }
-  }, [data, userRole, userId, appOwnerId]);
+  }, [userRole, userId, appOwnerId]);
 
   useEffect(() => {
     if (data) {
-      const { Application: AppData } = data;
-      setInputs({ ...AppData, licenseType: AppData.licenseType?.id });
+      setInputs(data.Application);
     }
   }, [setInputs, data]);
 
   function AddLicense() {
-    if (!inputs.licenseType) return;
+    if (!inputs?.licenseType?.id) return;
     setShowAddLicense(true);
   }
 
@@ -91,6 +85,7 @@ export default function Application({ id, initialData }) {
 
   if (loading || !user) return <Loading />;
   if (error) return <DisplayError error={error} />;
+
   return (
     <>
       <Help
@@ -152,35 +147,33 @@ export default function Application({ id, initialData }) {
             <Label>{t('api-key')}</Label>
             <ApiKey apiKey={inputs.apiKey} showCopied />
           </RowReadOnly>
-          <Row>
-            <Label>{t('common:owner')}</Label>
-            <Block>
-              <span>{inputs.owner.name}</span>
-              {user.role?.canManageApplication && (
-                <ActionButton type="edit" cb={() => setEditOwner(!editOwner)} />
-              )}
-              {user.role?.canManageApplication && editOwner && (
+          {user.role?.canManageApplication ? (
+            <Row>
+              <Label>{t('common:owner')}</Label>
+              <Block>
                 <SearchUser
                   required
                   name="owner.id"
                   value={inputs.owner.id}
                   onChange={handleChange}
                 />
-              )}
-            </Block>
-          </Row>
+              </Block>
+            </Row>
+          ) : (
+            <RowReadOnly>
+              <Label>{t('common:owner')}</Label>
+              <span>{inputs.owner.name}</span>
+            </RowReadOnly>
+          )}
+
           <Row>
             <Label htmlFor="users">{t('common:users')}</Label>
             <Block>
-              <SearchUser
+              <SearchUsers
                 id="users"
                 name="users"
-                value={inputs.users.map((u) => ({
-                  value: u.id,
-                  label: u.name,
-                }))}
+                value={inputs.users.map((u) => u.id)}
                 onChange={handleChange}
-                multiple
               />
             </Block>
           </Row>
@@ -190,12 +183,12 @@ export default function Application({ id, initialData }) {
               <Select
                 className="select"
                 value={licenseTypesOptions.find(
-                  (lt) => lt.value === inputs.licenseType
+                  (lt) => lt.value === inputs.licenseType?.id
                 )}
                 onChange={(e) =>
                   handleChange({
                     value: e.value,
-                    name: 'licenseType',
+                    name: 'licenseType.id',
                   })
                 }
                 options={licenseTypesOptions}
@@ -204,7 +197,7 @@ export default function Application({ id, initialData }) {
           ) : (
             <RowReadOnly>
               <Label>{t('common:license-model')}</Label>
-              <span>{findLicenseName(inputs.licenseType)}</span>
+              <span>{findLicenseName(inputs.licenseType?.id)}</span>
             </RowReadOnly>
           )}
           <RowFull>

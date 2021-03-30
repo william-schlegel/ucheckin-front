@@ -22,7 +22,7 @@ import {
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
 import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
-import SearchUser from '../SearchUser';
+import { SearchUsers } from '../SearchUser';
 import { TableStyled } from '../License/LicensePrice';
 import LicenseType, { LICENSE_TYPE_QUERY } from '../Tables/LicenseType';
 import Loading from '../Loading';
@@ -129,12 +129,11 @@ export default function PriceNew({ open, onClose }) {
                 {t('users')}
               </Label>
               <Block>
-                <SearchUser
+                <SearchUsers
                   id="users"
                   name="users"
                   required
                   onChange={handleChange}
-                  multiple
                 />
               </Block>
             </Row>

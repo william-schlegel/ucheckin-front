@@ -18,7 +18,7 @@ import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
 import { useUser } from '../User/Queries';
 import ActionButton from '../Buttons/ActionButton';
-import SearchUser from '../SearchUser';
+import { SearchUser } from '../SearchUser';
 
 export default function SignalNew({ open, onClose }) {
   const [createSignal, { loading, error }] = useMutation(
