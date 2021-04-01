@@ -93,6 +93,7 @@ export default function SignalFiles({ signalId, files }) {
           <Table
             columns={columns}
             data={files}
+            withPagination
             actionButtons={[
               { type: 'play', action: playFile },
               { type: 'download', action: downloadFile },

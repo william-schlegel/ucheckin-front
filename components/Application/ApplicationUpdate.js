@@ -13,13 +13,14 @@ export default function UpdateApplication({ id, updatedApp, onSuccess }) {
   const [updateApplication, { loading, error }] = useMutation(
     UPDATE_APPLICATION_MUTATION
   );
-  const { name, apiKey, owner, users, licenseType } = updatedApp;
+
+  const { name, apiKey, owner, invitations, licenseTypes } = updatedApp;
   const variables = {
     name,
     apiKey,
-    ownerId: owner.id,
-    users: users.map((u) => ({ id: u.id })),
-    licenseTypeId: licenseType,
+    owner: { id: owner.id },
+    invitations: invitations.map((l) => ({ id: l.id })),
+    licenseTypes,
     id,
   };
 
@@ -47,8 +48,8 @@ UpdateApplication.propTypes = {
     name: PropTypes.string,
     apiKey: PropTypes.string,
     owner: PropTypes.object,
-    users: PropTypes.array,
-    licenseType: PropTypes.object,
+    invitations: PropTypes.array,
+    licenseTypes: PropTypes.array,
   }),
   onSuccess: PropTypes.func.isRequired,
 };

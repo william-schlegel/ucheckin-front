@@ -31,8 +31,8 @@ export const RowReadOnly = styled(Row)`
   justify-content: start;
   height: fit-content;
   flex-grow: 0;
-  margin-top: 0;
-  margin-bottom: 0;
+  /* margin-top: 0;
+  margin-bottom: 0; */
   label {
     display: inline-block;
     width: auto;

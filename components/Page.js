@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Notify } from 'notiflix';
+import { Notify, Report, Confirm } from 'notiflix';
 import { useEffect } from 'react';
 import Header from './Header';
 import Nav from './Nav';
@@ -83,6 +83,14 @@ export default function Page({ children }) {
     Notify.Init({
       fontSize: '20px',
       messageMaxLength: 250,
+      width: '50ch',
+      borderRadius: '5px',
+    });
+    Report.Init({
+      borderRadius: '5px',
+    });
+    Confirm.Init({
+      borderRadius: '5px',
       width: '50ch',
     });
   });

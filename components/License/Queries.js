@@ -146,6 +146,7 @@ export const LICENSE_PRICE_QUERY = gql`
         licenseType {
           id
           name
+          perArea
         }
         monthly
         yearly

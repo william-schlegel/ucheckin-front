@@ -12,7 +12,7 @@ import {
   LicensesDetailsApplication,
   LicensesLegendApplication,
 } from '../Tables/LicensesDetails';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseTypes } from '../Tables/LicenseType';
 import Table, { useColumns } from '../Tables/Table';
 import { useUser } from '../User/Queries';
 
@@ -23,7 +23,7 @@ const QUERY_APPLICATIONS = gql`
     allApplications(first:${nbApp} , sortBy: creation_DESC) {
       id
       name
-      licenseType {
+      licenseTypes {
         id
       }
       creation
@@ -72,8 +72,8 @@ export default function DashboardApplication() {
       ],
       [
         t('common:license-model'),
-        'licenseType.id',
-        ({ cell: { value } }) => <LicenseType license={value} />,
+        'licenseTypes',
+        ({ cell: { value } }) => <LicenseTypes licenses={value} />,
       ],
       [
         t('license:licenses'),

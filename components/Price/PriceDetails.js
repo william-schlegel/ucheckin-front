@@ -21,7 +21,7 @@ import { PRICE_QUERY } from './Queries';
 import { formatDate } from '../DatePicker';
 import { TableStyled } from '../License/LicensePrice';
 import {formatMoney} from '../../lib/formatNumber';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseType } from '../Tables/LicenseType';
 import Badges from '../Tables/Badges';
 
 const DefaultStyled = styled.div`

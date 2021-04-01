@@ -18,7 +18,7 @@ import { PAGINATION_QUERY, ALL_LICENSES_QUERY } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import ValidityDate from '../Tables/ValidityDate';
 import { FormHeader, FormTitle } from '../styles/Card';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseType } from '../Tables/LicenseType';
 import LicenseUpdate from './LicenseUpdate';
 import { useUser } from '../User/Queries';
 

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import ViewApplication from '../../components/Application/Application';
-import { QUERY_APPLICATION } from '../../components/Application/Queries';
+import { APPLICATION_QUERY } from '../../components/Application/Queries';
 
 export default function Application({ id, initialData }) {
   return <ViewApplication id={id} initialData={initialData} />;
@@ -16,11 +16,11 @@ Application.getInitialProps = async (ctx) => {
   const { id } = ctx.query;
   console.log(`id`, id);
   const initialData = await apolloClient.query({
-    query: QUERY_APPLICATION,
+    query: APPLICATION_QUERY,
     variables: { id },
   });
   return {
     id,
-    initialData: { ...initialData, licenseType: initialData.licenseType?.id },
+    initialData,
   };
 };

@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { useEffect } from 'react';
 import { dateNow } from '../DatePicker';
 
-export const QUERY_APPLICATION = gql`
-  query QUERY_APPLICATION($id: ID!) {
+export const APPLICATION_QUERY = gql`
+  query APPLICATION_QUERY($id: ID!) {
     Application(where: { id: $id }) {
       name
       apiKey
@@ -12,11 +12,13 @@ export const QUERY_APPLICATION = gql`
         id
         name
       }
-      users {
+      invitations {
         id
-        name
+        email
+        status
+        updated
       }
-      licenseType {
+      licenseTypes {
         id
         name
         perArea
@@ -24,6 +26,9 @@ export const QUERY_APPLICATION = gql`
       licenses {
         id
         validity
+        licenseType {
+          id
+        }
         application {
           id
           name
@@ -33,13 +38,6 @@ export const QUERY_APPLICATION = gql`
           name
         }
         nbArea
-      }
-    }
-    licenseTypes: allLicenseTypes {
-      id
-      name
-      logo {
-        publicUrlTransformed(transformation: { width: "100", height: "100" })
       }
     }
   }
@@ -63,7 +61,7 @@ export const ALL_APPLICATIONS_QUERY = gql`
       id
       name
       apiKey
-      licenseType {
+      licenseTypes {
         id
       }
       owner {
@@ -130,18 +128,38 @@ export const UPDATE_APPLICATION_MUTATION = gql`
     $id: ID!
     $name: String!
     $apiKey: String!
-    $ownerId: ID!
-    $users: [UserWhereUniqueInput!]!
-    $licenseTypeId: ID!
+    $owner: UserWhereUniqueInput
+    $invitations: [InvitationWhereUniqueInput]
+    $licenseTypes: [LicenseTypeWhereUniqueInput]
   ) {
     updateApplication(
       id: $id
       data: {
         name: $name
         apiKey: $apiKey
-        owner: { connect: { id: $ownerId } }
-        users: { disconnectAll: true, connect: $users }
-        licenseType: { connect: { id: $licenseTypeId } }
+        owner: { connect: $owner }
+        invitations: { disconnectAll: true, connect: $invitations }
+        licenseTypes: { disconnectAll: true, connect: $licenseTypes }
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+export const CREATE_INVITATION_MUTATION = gql`
+  mutation CREATE_INVITATION_MUTATION(
+    $appId: ID!
+    $email: String!
+    $status: String!
+    $user: UserRelateToOneInput
+  ) {
+    createInvitation(
+      data: {
+        email: $email
+        application: { connect: { id: $appId } }
+        status: $status
+        user: $user
       }
     ) {
       id
@@ -150,7 +168,7 @@ export const UPDATE_APPLICATION_MUTATION = gql`
 `;
 
 export function useFindApplication(appId) {
-  const [findApp, { data, error, loading }] = useLazyQuery(QUERY_APPLICATION);
+  const [findApp, { data, error, loading }] = useLazyQuery(APPLICATION_QUERY);
   useEffect(() => {
     if (appId)
       findApp({
@@ -162,7 +180,7 @@ export function useFindApplication(appId) {
       id: appId,
       name: '',
       apiKey: '',
-      licenseType: '',
+      licenseTypes: [],
       validity: dateNow(),
       licenses: [],
     },

@@ -63,5 +63,6 @@
   "no-data": "No data",
   "info": "Information",
   "only-my-account": "Only the data from my account",
-  "start-search": "Search now"
+  "start-search": "Search now",
+  "pagination": "Page {{page}} of {{pageCount}}"
 }

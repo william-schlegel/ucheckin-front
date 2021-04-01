@@ -37,7 +37,7 @@ export const QUERY_ACCOUNT = gql`
       applications {
         id
         name
-        licenseType {
+        licenseTypes {
           id
           name
         }
@@ -45,7 +45,7 @@ export const QUERY_ACCOUNT = gql`
       ownedApps {
         id
         name
-        licenseType {
+        licenseTypes {
           id
           name
         }

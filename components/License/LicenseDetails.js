@@ -18,7 +18,7 @@ import {
 } from '../styles/Card';
 import { LICENSE_QUERY } from './Queries';
 import ValidityDate from '../Tables/ValidityDate';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseType } from '../Tables/LicenseType';
 import { formatDate } from '../DatePicker';
 
 export default function LicenseDetails({ open, onClose, id }) {

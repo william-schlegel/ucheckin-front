@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
@@ -45,11 +45,15 @@ export function usePrice(ownerId) {
     LICENSE_PRICE_QUERY
   );
   const [price, setPrice] = useState({});
-  const [licenseTypeId, setLicenseTypeId] = useState('');
+  const licenseTypeIds = useRef([]);
+
+  function setLicenseTypeIds(newLicenses) {
+    if (newLicenses && Array.isArray(newLicenses))
+      licenseTypeIds.current = [...newLicenses];
+  }
 
   useEffect(() => {
     const dayDate = dateNow();
-    console.log(`dayDate`, dayDate);
     if (ownerId) {
       loadPrice({
         variables: { owner: ownerId, dayDate },
@@ -76,16 +80,22 @@ export function usePrice(ownerId) {
     }
   }, [data, ownerId]);
 
-  return { loading, error, price, licenseTypeId, setLicenseTypeId };
+  return {
+    loading,
+    error,
+    price,
+    licenseTypeIds: licenseTypeIds.current,
+    setLicenseTypeIds,
+  };
 }
 
-export default function LicensePrice({ owner, licenseTypeId }) {
-  const { loading, error, price, setLicenseTypeId } = usePrice(owner);
+export default function LicensePrice({ owner, licenseTypeIds }) {
+  const { loading, error, price, setLicenseTypeIds } = usePrice(owner);
   const { t, lang } = useTranslation('license');
 
   useEffect(() => {
-    if (licenseTypeId) setLicenseTypeId(licenseTypeId);
-  }, [licenseTypeId, setLicenseTypeId]);
+    if (licenseTypeIds) setLicenseTypeIds(licenseTypeIds);
+  }, [licenseTypeIds, setLicenseTypeIds]);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
@@ -105,15 +115,17 @@ export default function LicensePrice({ owner, licenseTypeId }) {
           </tr>
         </thead>
         <tbody>
-          {price?.items
-            .filter((p) => p.licenseType.id === licenseTypeId)
-            .map((p) => (
-              <tr key={p.id}>
-                <td>{t(`common:${p.licenseType.name}`)}</td>
-                <td>{formatMoney(p.monthly, lang)}</td>
-                <td>{formatMoney(p.yearly, lang)}</td>
-              </tr>
-            ))}
+          {licenseTypeIds.map((lt) =>
+            price?.items
+              .filter((p) => p.licenseType.id === lt.id)
+              .map((p) => (
+                <tr key={p.id}>
+                  <td>{t(`common:${p.licenseType.name}`)}</td>
+                  <td>{formatMoney(p.monthly, lang)}</td>
+                  <td>{formatMoney(p.yearly, lang)}</td>
+                </tr>
+              ))
+          )}
         </tbody>
       </TableStyled>
     </>
@@ -122,5 +134,5 @@ export default function LicensePrice({ owner, licenseTypeId }) {
 
 LicensePrice.propTypes = {
   owner: PropTypes.string.isRequired,
-  licenseTypeId: PropTypes.string,
+  licenseTypeIds: PropTypes.array,
 };

@@ -18,7 +18,7 @@ import { ORDER_QUERY } from './Queries';
 import ValidityDate from '../Tables/ValidityDate';
 import Table, { useColumns } from '../Tables/Table';
 import Number from '../Tables/Number';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseType } from '../Tables/LicenseType';
 import Total from '../TotalCount';
 import ButtonBack from '../Buttons/ButtonBack';
 

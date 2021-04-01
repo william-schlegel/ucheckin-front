@@ -24,7 +24,7 @@ import { perPage } from '../../config';
 import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
 import { SearchUsers } from '../SearchUser';
 import { TableStyled } from '../License/LicensePrice';
-import LicenseType, { LICENSE_TYPE_QUERY } from '../Tables/LicenseType';
+import { LicenseType, LICENSE_TYPE_QUERY } from '../Tables/LicenseType';
 import Loading from '../Loading';
 
 export default function PriceNew({ open, onClose }) {
@@ -132,6 +132,7 @@ export default function PriceNew({ open, onClose }) {
                 <SearchUsers
                   id="users"
                   name="users"
+                  value={inputs.users.map((u) => u.id)}
                   required
                   onChange={handleChange}
                 />

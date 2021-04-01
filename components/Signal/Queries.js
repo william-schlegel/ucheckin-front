@@ -26,6 +26,9 @@ export const ALL_SIGNALS_QUERY = gql`
       }
       licenses {
         id
+        licenseType {
+          id
+        }
         signal {
           id
           name
@@ -62,6 +65,9 @@ export const SIGNAL_QUERY = gql`
       active
       licenses {
         id
+        licenseType {
+          id
+        }
         application {
           id
           name

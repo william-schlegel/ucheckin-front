@@ -7,6 +7,7 @@
   "status": "Statut",
   "action": "Action",
   "actions": "Actions",
+  "license-type": "Type de Licence",
   "license": "Licence",
   "new": "Nouveau",
   "delete": "Supprimer",
@@ -63,5 +64,6 @@
   "no-data": "Pas de données",
   "info": "Information",
   "only-my-account": "Uniquement les enregistrements de mon compte",
-  "start-search": "Chercher"
+  "start-search": "Chercher",
+  "pagination": "Page {{page}} sur {{pageCount}}"
 }

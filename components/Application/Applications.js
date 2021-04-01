@@ -17,7 +17,7 @@ import {
   LicensesLegendApplication,
 } from '../Tables/LicensesDetails';
 import Badges from '../Tables/Badges';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseTypes } from '../Tables/LicenseType';
 import Button from '../Tables/Button';
 import { PAGINATION_QUERY, ALL_APPLICATIONS_QUERY } from './Queries';
 import { Help, HelpButton, useHelp } from '../Help';
@@ -68,7 +68,7 @@ export default function Applications() {
 
   function AddLicense(id) {
     const app = data.allApplications.find((a) => a.id === id);
-    if (!app.licenseType) return;
+    if (!app.licenseTypes?.length) return;
     setDataAddLicense({ appId: app.id, ownerId: app.owner.id });
     setShowAddLicense(true);
   }
@@ -96,8 +96,8 @@ export default function Applications() {
     ],
     [
       t('common:license-model'),
-      'licenseType.id',
-      ({ cell: { value } }) => <LicenseType license={value} />,
+      'licenseTypes',
+      ({ cell: { value } }) => <LicenseTypes licenses={value} />,
     ],
     [
       t('licenses'),

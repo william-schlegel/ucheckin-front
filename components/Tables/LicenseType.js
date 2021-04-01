@@ -69,9 +69,26 @@ const LicenseStyled = styled.div`
   }
 `;
 
-export default function LicenseType({ license }) {
+const LicensesStyled = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: start;
+  margin: 0;
+  gap: 5px;
+  > * {
+    border: 1px solid var(--lightGray);
+    padding: 5px;
+    border-radius: 5px;
+    margin: 0;
+  }
+`;
+
+export function LicenseType({ license }) {
   const { findLicenseName, findLicenseType } = useLicenseName();
   const [lt, setLt] = useState({});
+
   useEffect(() => {
     setLt(findLicenseType(license));
   }, [license, findLicenseType, setLt]);
@@ -89,4 +106,19 @@ export default function LicenseType({ license }) {
 
 LicenseType.propTypes = {
   license: PropTypes.string,
+};
+
+export function LicenseTypes({ licenses }) {
+  console.log(`licenses`, licenses);
+  return (
+    <LicensesStyled>
+      {licenses.map((license) => (
+        <LicenseType key={license.id} license={license.id} />
+      ))}
+    </LicensesStyled>
+  );
+}
+
+LicenseTypes.propTypes = {
+  licenses: PropTypes.array,
 };

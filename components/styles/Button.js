@@ -32,7 +32,8 @@ export const ButtonStyled = styled.button`
     }
     cursor: pointer;
   }
-  :disabled {
+  :disabled,
+  [aria-disabled='true'] {
     opacity: 0.5;
     cursor: not-allowed;
   }

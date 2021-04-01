@@ -31,7 +31,7 @@ import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
 import { useHelp, Help, HelpButton } from '../Help';
 import Table, { useColumns } from '../Tables/Table';
-import LicenseType from '../Tables/LicenseType';
+import { LicenseTypes } from '../Tables/LicenseType';
 import ApiKey from '../Tables/ApiKey';
 
 export default function Account({ id, initialData }) {
@@ -51,8 +51,8 @@ export default function Account({ id, initialData }) {
     [t('common:name'), 'name'],
     [
       t('common:license-model'),
-      'licenseType.id',
-      ({ cell: { value } }) => <LicenseType license={value} />,
+      'licenseTypes',
+      ({ cell: { value } }) => <LicenseTypes licenses={value} />,
     ],
   ]);
   const columnsToken = useColumns([
@@ -159,6 +159,7 @@ export default function Account({ id, initialData }) {
               data={inputs.ownedApps}
               loading={loading}
               actionButtons={[{ type: 'edit', action: editApplication }]}
+              withPagination
             />
           </Row>
           <Row>
@@ -168,6 +169,7 @@ export default function Account({ id, initialData }) {
               data={inputs.applications}
               loading={loading}
               actionButtons={[{ type: 'view', action: editApplication }]}
+              withPagination
             />
           </Row>
           <Row>
@@ -179,6 +181,7 @@ export default function Account({ id, initialData }) {
               actionButtons={
                 canEdit ? [{ type: 'trash', action: deleteToken }] : []
               }
+              withPagination
             />
             <Block>
               <ButtonNew onClick={addToken} disabled={tokenLoading} />

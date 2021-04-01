@@ -4,7 +4,6 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { Notify } from 'notiflix';
 
-import Spinner from '../Spinner';
 import { ButtonStyled } from '../styles/Button';
 import {
   ACTIVATE_TRIAL_MUTATION_WITHOUT_SIGNAL,
@@ -15,6 +14,7 @@ import DisplayError from '../ErrorMessage';
 import { perPage } from '../../config';
 import { useFindApplication } from '../Application/Queries';
 import { dateInMonth } from '../DatePicker';
+import Loading from '../Loading';
 
 export default function ButtonFreeTrial({
   ownerId,
@@ -76,7 +76,7 @@ export default function ButtonFreeTrial({
         <Gift />
         <span>{t('activate-trial')}</span>
       </ButtonStyled>
-      {(loadingTrialWith || loadingTrialWithout) && <Spinner size={24} />}
+      {(loadingTrialWith || loadingTrialWithout) && <Loading />}
       {errorTrialWith ||
         (errorTrialWithout && (
           <div>

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import Router from 'next/router';
 import Select from 'react-select';
@@ -20,37 +20,60 @@ import {
   RowFull,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
-import { SearchUser, SearchUsers } from '../SearchUser';
-import ApplicationDelete from './ApplicationDelete';
+import { SearchUser } from '../SearchUser';
 import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
-import { useLicenseName } from '../Tables/LicenseType';
+import ButtonDelete from '../Buttons/ButtonDelete';
+import { LicenseTypes, useLicenseName } from '../Tables/LicenseType';
 import LicenseTable from '../License/LicenseTable';
-import { QUERY_APPLICATION } from './Queries';
+import {
+  ALL_APPLICATIONS_QUERY,
+  DELETE_APPLICATION_MUTATION,
+  APPLICATION_QUERY,
+} from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import LicenseNew from './LicenseNew';
 import LicenseUpdate from '../License/LicenseUpdate';
 import ApiKey from '../Tables/ApiKey';
 import { useUser } from '../User/Queries';
+import { perPage } from '../../config';
+import InvitationTable from './InvitationTable';
+import InvitationNew from './InvitationNew';
 
 export default function Application({ id, initialData }) {
-  const { loading, error, data } = useQuery(QUERY_APPLICATION, {
+  const { loading, error, data } = useQuery(APPLICATION_QUERY, {
     variables: { id },
+  });
+  const [
+    deleteApplication,
+    { loading: loadingDelete, error: errorDelete },
+  ] = useMutation(DELETE_APPLICATION_MUTATION, {
+    variables: { id },
+    refetchQueries: [
+      {
+        query: ALL_APPLICATIONS_QUERY,
+        variables: { skip: 0, first: perPage },
+      },
+    ],
+    onCompleted: () => {
+      Router.push('/applications');
+    },
   });
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
   const user = useUser();
   const { t } = useTranslation('application');
-  const { findLicenseName, licenseTypesOptions } = useLicenseName();
+  const { licenseTypesOptions } = useLicenseName();
   const initialValues = useRef(initialData.data.Application);
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
   const [showAddLicense, setShowAddLicense] = useState(false);
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState({});
+  const [showAddInvit, setShowAddInvit] = useState(false);
 
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.Application?.owner?.id;
@@ -68,7 +91,7 @@ export default function Application({ id, initialData }) {
   }, [setInputs, data]);
 
   function AddLicense() {
-    if (!inputs?.licenseType?.id) return;
+    if (!inputs?.licenseTypes.length) return;
     setShowAddLicense(true);
   }
 
@@ -83,8 +106,31 @@ export default function Application({ id, initialData }) {
     setShowUpdateLicense(true);
   }
 
+  function handleDeleteApplication() {
+    deleteApplication({ variables: { id } });
+  }
+
+  function handleCloseNewInvitation(newUser) {
+    if (newUser) {
+      const existingUser = inputs.invitations.find(
+        (i) => i.email === newUser.email
+      );
+
+      if (!existingUser) {
+        const invitations = [...inputs.invitations];
+        invitations.push(newUser);
+        console.log(`invitations`, invitations);
+        setInputs({ ...inputs, invitations });
+      }
+    }
+    setShowAddInvit(false);
+  }
+
   if (loading || !user) return <Loading />;
   if (error) return <DisplayError error={error} />;
+  if (errorDelete) return <DisplayError error={errorDelete} />;
+
+  // console.log(`inputs`, inputs);
 
   return (
     <>
@@ -109,6 +155,13 @@ export default function Application({ id, initialData }) {
           appId={selectedLicense.appId}
           ownerId={selectedLicense.ownerId}
           signalId={selectedLicense.signalId}
+        />
+      )}
+      {id && (
+        <InvitationNew
+          appId={id}
+          open={showAddInvit}
+          onClose={handleCloseNewInvitation}
         />
       )}
       <Form>
@@ -166,47 +219,52 @@ export default function Application({ id, initialData }) {
             </RowReadOnly>
           )}
 
-          <Row>
-            <Label htmlFor="users">{t('common:users')}</Label>
-            <Block>
-              <SearchUsers
-                id="users"
-                name="users"
-                value={inputs.users.map((u) => u.id)}
-                onChange={handleChange}
-              />
-            </Block>
-          </Row>
           {canEdit ? (
             <Row>
-              <Label htmlFor="licenseType">{t('common:license-model')}</Label>
+              <Label htmlFor="licenseTypes" required>
+                {t('common:license-model')}
+              </Label>
               <Select
                 className="select"
-                value={licenseTypesOptions.find(
-                  (lt) => lt.value === inputs.licenseType?.id
+                required
+                value={inputs.licenseTypes.map((lid) =>
+                  licenseTypesOptions.find((lt) => lt.value === lid.id)
                 )}
-                onChange={(e) =>
+                onChange={(e) => {
+                  console.log(`e`, e);
                   handleChange({
-                    value: e.value,
-                    name: 'licenseType.id',
-                  })
-                }
+                    value: e.map((lt) => ({ id: lt.value })),
+                    name: 'licenseTypes',
+                  });
+                }}
                 options={licenseTypesOptions}
+                isMulti
               />
             </Row>
           ) : (
             <RowReadOnly>
               <Label>{t('common:license-model')}</Label>
-              <span>{findLicenseName(inputs.licenseType?.id)}</span>
+              <LicenseTypes licenses={inputs.licenseTypes} />
             </RowReadOnly>
           )}
+          <Row>
+            <Label>{t('invitations')}</Label>
+            <InvitationTable invitations={inputs.invitations} />
+            {canEdit && (
+              <Block>
+                <ButtonNew onClick={() => setShowAddInvit(true)} />
+              </Block>
+            )}
+          </Row>
           <RowFull>
             <Label>{t('licenses')}</Label>
             <LicenseTable
               licenses={data.Application.licenses}
               actionButtons={[{ type: 'extend', action: updateLicense }]}
             />
-            <ButtonNew label={t('add-license')} onClick={AddLicense} />
+            <Block>
+              <ButtonNew label={t('add-license')} onClick={AddLicense} />
+            </Block>
           </RowFull>
         </FormBody>
         <FormFooter>
@@ -217,7 +275,12 @@ export default function Application({ id, initialData }) {
               onSuccess={() => Router.push('/applications')}
             />
           )}
-          {canEdit && id && <ApplicationDelete id={id} />}
+          {canEdit && id && (
+            <ButtonDelete
+              disabled={loadingDelete}
+              onClick={handleDeleteApplication}
+            />
+          )}
           <ButtonCancel onClick={() => Router.back()} />
         </FormFooter>
       </Form>

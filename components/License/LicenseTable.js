@@ -1,5 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { LicenseType } from '../Tables/LicenseType';
 import Number from '../Tables/Number';
 
 import Table, { useColumns } from '../Tables/Table';
@@ -11,6 +12,11 @@ export default function LicenseTable({ licenses, actionButtons }) {
     [
       ['id', 'id', 'hidden'],
       [t('application'), 'application.name'],
+      [
+        t('common:license-type'),
+        'licenseType.id',
+        ({ cell: { value } }) => <LicenseType license={value} />,
+      ],
       [t('signal'), 'signal.name'],
       [
         t('nb-area'),
@@ -28,7 +34,12 @@ export default function LicenseTable({ licenses, actionButtons }) {
 
   return (
     <>
-      <Table columns={columns} data={licenses} actionButtons={actionButtons} />
+      <Table
+        columns={columns}
+        data={licenses}
+        actionButtons={actionButtons}
+        withPagination
+      />
     </>
   );
 }

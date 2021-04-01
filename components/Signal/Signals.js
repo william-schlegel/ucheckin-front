@@ -10,9 +10,7 @@ import { perPage } from '../../config';
 import Loading from '../Loading';
 import DisplayError from '../ErrorMessage';
 import EntetePage from '../styles/EntetePage';
-import ButtonNew from '../Buttons/ButtonNew';
 import SignalDetails from './SignalDetails';
-import SignalNew from './SignalNew';
 import Button from '../Tables/Button';
 import Switch from '../Tables/Switch';
 import {
@@ -43,7 +41,6 @@ export default function Signals() {
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('signal');
   const [showSignal, setShowSignal] = useState('');
-  const [newSignal, setNewSignal] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
   const user = useUser();
 
@@ -119,9 +116,6 @@ export default function Signals() {
   function handleCloseShowSignal() {
     setShowSignal('');
   }
-  function handleCloseNewSignal() {
-    setNewSignal(false);
-  }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
@@ -142,15 +136,9 @@ export default function Signals() {
           id={showSignal}
         />
       )}
-      <SignalNew open={newSignal} onClose={handleCloseNewSignal} />
       <EntetePage>
         <h3>{t('signals')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />
-        <ButtonNew
-          onClick={() => {
-            setNewSignal(true);
-          }}
-        />
       </EntetePage>
       <Pagination
         page={page}
