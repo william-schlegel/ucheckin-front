@@ -4,10 +4,24 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import DisplayError from '../ErrorMessage';
+import Loading from '../Loading';
+
+export const ALL_LICENSE_TYPE_QUERY = gql`
+  query ALL_LICENSE_TYPE_QUERY {
+    allLicenseTypes {
+      id
+      name
+      logo {
+        publicUrlTransformed(transformation: { width: "100", height: "100" })
+      }
+    }
+  }
+`;
 
 export const LICENSE_TYPE_QUERY = gql`
-  query LICENSE_TYPE_QUERY {
-    licenseTypes: allLicenseTypes {
+  query LICENSE_TYPE_QUERY($id: ID!) {
+    LicenseType(where: { id: $id }) {
       id
       name
       logo {
@@ -19,32 +33,29 @@ export const LICENSE_TYPE_QUERY = gql`
 
 export function useLicenseName() {
   const { t } = useTranslation('common');
-  const { data } = useQuery(LICENSE_TYPE_QUERY);
+  const { data, loading, error } = useQuery(ALL_LICENSE_TYPE_QUERY);
   const [licenseTypes, setLicenseTypes] = useState([]);
   const [licenseTypesOptions, setLicenseTypesOptions] = useState([]);
-  const dataLt = data?.licenseTypes.length;
 
   useEffect(() => {
-    if (data) {
-      setLicenseTypes(data.licenseTypes);
+    // console.log('useLicenseName - useEffect');
+    if (!loading && !error && data) {
+      setLicenseTypes(data.allLicenseTypes);
       setLicenseTypesOptions(
-        data.licenseTypes.map((l) => ({ value: l.id, label: t(l.name) }))
+        data.allLicenseTypes.map((l) => ({ value: l.id, label: t(l.name) }))
       );
     }
-  }, [dataLt]);
+  }, [loading, error]);
 
   function findLicenseType(licenseId) {
-    if (!data) return;
-    const lt = data.licenseTypes.find((l) => l.id === licenseId);
-    if (!data || !licenseId) return;
-    if (!lt) return '';
-    return lt;
+    const lt = licenseTypes.find((l) => l.id === licenseId);
+    return lt || '';
   }
 
   function findLicenseName(licenseId) {
+    if (!licenseId) return t('no-license');
     const lt = findLicenseType(licenseId);
     if (lt === '') return t('license-unknown', { licenseId });
-    if (!data || !licenseId) return t('no-license');
     return t(lt.name);
   }
   return {
@@ -86,20 +97,25 @@ const LicensesStyled = styled.div`
 `;
 
 export function LicenseType({ license }) {
-  const { findLicenseName, findLicenseType } = useLicenseName();
-  const [lt, setLt] = useState({});
+  const { data, loading, error } = useQuery(LICENSE_TYPE_QUERY, {
+    variables: { id: license },
+  });
+  const { t } = useTranslation('common');
 
-  useEffect(() => {
-    setLt(findLicenseType(license));
-  }, [license, findLicenseType, setLt]);
-
+  if (loading) return <Loading />;
+  if (error) return <DisplayError errpr={error} />;
+  if (!data) return null;
   return (
     <LicenseStyled>
       <img
-        src={!lt?.logo ? '/images/UNKNOWN.png' : lt.logo.publicUrlTransformed}
+        src={
+          !data.LicenseType?.logo
+            ? '/images/UNKNOWN.png'
+            : data.LicenseType.logo.publicUrlTransformed
+        }
         alt=""
       />
-      {findLicenseName(license)}
+      {t(data.LicenseType.name)}
     </LicenseStyled>
   );
 }
@@ -109,7 +125,6 @@ LicenseType.propTypes = {
 };
 
 export function LicenseTypes({ licenses }) {
-  console.log(`licenses`, licenses);
   return (
     <LicensesStyled>
       {licenses.map((license) => (

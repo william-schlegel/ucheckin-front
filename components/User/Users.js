@@ -47,8 +47,12 @@ export default function Users() {
     queryUsers({ variables });
   }, [filters, queryPagination, queryUsers, page]);
 
-  function editUser(id) {
+  function userProfile(id) {
     if (id) router.push(`/user/${id}`);
+  }
+
+  function userAccount(id) {
+    if (id) router.push(`/account/${id}`);
   }
 
   const columns = useColumns([
@@ -110,7 +114,10 @@ export default function Users() {
         data={data?.allUsers}
         error={error}
         loading={loading}
-        actionButtons={[{ type: 'edit', action: editUser }]}
+        actionButtons={[
+          { type: 'user-profile', action: userProfile },
+          { type: 'user-account', action: userAccount },
+        ]}
       />
     </>
   );

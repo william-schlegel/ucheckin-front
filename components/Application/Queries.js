@@ -1,7 +1,6 @@
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import { useEffect } from 'react';
-import { dateNow } from '../DatePicker';
+import { dateDay } from '../DatePicker';
 
 export const APPLICATION_QUERY = gql`
   query APPLICATION_QUERY($id: ID!) {
@@ -168,20 +167,18 @@ export const CREATE_INVITATION_MUTATION = gql`
 `;
 
 export function useFindApplication(appId) {
-  const [findApp, { data, error, loading }] = useLazyQuery(APPLICATION_QUERY);
-  useEffect(() => {
-    if (appId)
-      findApp({
-        variables: { id: appId },
-      });
-  }, [appId, findApp]);
+  const { data, error, loading } = useQuery(APPLICATION_QUERY, {
+    variables: { id: appId },
+  });
+  // console.log(`useFindApplication - data`, data);
+
   return {
     application: data?.Application || {
       id: appId,
       name: '',
       apiKey: '',
       licenseTypes: [],
-      validity: dateNow(),
+      validity: dateDay(),
       licenses: [],
     },
     applicationError: error,

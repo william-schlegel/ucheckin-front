@@ -21,5 +21,9 @@
   "sent": "Envoyée",
   "pending": "En attente",
   "accepted": "Acceptée",
-  "account-created": "Compte créé"
+  "account-created": "Compte créé",
+  "help-invite": "Vous pouvez inviter d'autres utilisateurs sur une application. Une fois leur compte créé, ils pourront gérer pour vous les contenus (notifications) associés à cette application.",
+  "can-modify-app": "L'invité peut modifier l'application",
+  "can-manage-content": "L'invité peut gérer les contenus associés à l'application",
+  "can-buy-licenses": "L'invité peut acheter ou renouveler des licenses"
 }

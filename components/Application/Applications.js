@@ -21,7 +21,7 @@ import { LicenseTypes } from '../Tables/LicenseType';
 import Button from '../Tables/Button';
 import { PAGINATION_QUERY, ALL_APPLICATIONS_QUERY } from './Queries';
 import { Help, HelpButton, useHelp } from '../Help';
-import LicenseNew from './LicenseNew';
+import LicenseNew from '../License/LicenseNew';
 import ApiKey from '../Tables/ApiKey';
 import SearchField, { useFilter } from '../SearchField';
 import { useUser } from '../User/Queries';

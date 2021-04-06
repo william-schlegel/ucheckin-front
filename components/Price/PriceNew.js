@@ -1,9 +1,9 @@
 import { useRef } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-
 import SwitchComponent from 'react-switch';
+
 import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -21,11 +21,10 @@ import {
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
-import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
+import DatePicker, { dateDay, dateInMonth } from '../DatePicker';
 import { SearchUsers } from '../SearchUser';
 import { TableStyled } from '../License/LicensePrice';
-import { LicenseType, LICENSE_TYPE_QUERY } from '../Tables/LicenseType';
-import Loading from '../Loading';
+import { LicenseType, useLicenseName } from '../Tables/LicenseType';
 
 export default function PriceNew({ open, onClose }) {
   const [createPrice, { loading, error }] = useMutation(CREATE_PRICE_MUTATION, {
@@ -36,15 +35,12 @@ export default function PriceNew({ open, onClose }) {
       },
     ],
   });
-  const { loading: loadingLT, error: errorLT, data: dataLT } = useQuery(
-    LICENSE_TYPE_QUERY
-  );
-
+  const { licenseTypes } = useLicenseName();
   const { t } = useTranslation('license');
   const initialValues = useRef({
     default: false,
     users: [],
-    validAfter: dateNow(),
+    validAfter: dateDay(),
     validUntil: dateInMonth(12),
     observation: '',
   });
@@ -62,7 +58,7 @@ export default function PriceNew({ open, onClose }) {
     }
 
     const prices = new Map();
-    dataLT.licenseTypes.forEach((lt) => {
+    licenseTypes.forEach((lt) => {
       const price = prices.get(lt.id) || { id: lt.id };
       if (inputs[`${lt.id}:monthly`])
         price.monthly = inputs[`${lt.id}:monthly`];
@@ -152,9 +148,7 @@ export default function PriceNew({ open, onClose }) {
             </Block>
           </Row>
           <Row>
-            {loadingLT && <Loading />}
-            {errorLT && <DisplayError error={errorLT} />}
-            {dataLT?.licenseTypes && (
+            {licenseTypes.length && (
               <TableStyled>
                 <thead>
                   <tr>
@@ -164,7 +158,7 @@ export default function PriceNew({ open, onClose }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {dataLT.licenseTypes.map((lt) => (
+                  {licenseTypes.map((lt) => (
                     <tr key={lt.id}>
                       <td>
                         <LicenseType license={lt.id} />

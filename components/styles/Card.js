@@ -210,3 +210,9 @@ export const H3 = styled.h3`
 export const H4 = styled.h4`
   color: var(--secondary);
 `;
+
+export const DashboardCard = styled(Card)`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2.5rem auto;
+`;

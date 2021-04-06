@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
-import { dateNow } from '../DatePicker';
+import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: LicenseWhereInput) {
@@ -78,49 +78,36 @@ export const LICENSE_QUERY = gql`
   }
 `;
 
-export const ACTIVATE_TRIAL_MUTATION_WITH_SIGNAL = gql`
-  mutation ACTIVATE_TRIAL_MUTATION(
+export const CREATE_TRIAL_LICENSE = gql`
+  mutation CREATE_TRIAL_LICENSE(
     $ownerId: ID!
     $appId: ID!
-    $licenseTypeId: ID!
-    $dateValidite: String!
     $trialText: String
   ) {
-    createLicense(
-      data: {
-        owner: { connect: { id: $ownerId } }
-        application: { connect: { id: $appId } }
-        signal: { create: { owner: { id: $ownerId } } }
-        licenseType: { connect: { id: $licenseTypeId } }
-        trialLicense: true
-        validity: $dateValidite
-        purchaseInformation: $trialText
-        nbArea: 1
-      }
-    ) {
+    createTrial(appId: $appId, ownerId: $ownerId, text: $trialText) {
       id
     }
   }
 `;
 
-export const ACTIVATE_TRIAL_MUTATION_WITHOUT_SIGNAL = gql`
-  mutation ACTIVATE_TRIAL_MUTATION(
-    $ownerId: ID!
+export const PURCHASE_LICENSE_MUTATION = gql`
+  mutation PURCHASE_LICENSE_MUTATION(
     $appId: ID!
-    $licenseTypeId: ID!
-    $dateValidite: String!
-    $trialText: String
+    $ownerId: ID!
+    $purchaseInfo: String!
+    $purchaseItems: [PurchaseLicenseItem!]!
+    $token: String!
+    $expectedAmountBrut: Float!
+    $vatId: ID
   ) {
-    createLicense(
-      data: {
-        owner: { connect: { id: $ownerId } }
-        application: { connect: { id: $appId } }
-        licenseType: { connect: { id: $licenseTypeId } }
-        trialLicense: true
-        validity: $dateValidite
-        purchaseInformation: $trialText
-        nbArea: 1
-      }
+    purchaseNewLicenses(
+      appId: $appId
+      ownerId: $ownerId
+      purchaseInfo: $purchaseInfo
+      token: $token
+      expectedAmountBrut: $expectedAmountBrut
+      vatId: $vatId
+      purchaseItems: $purchaseItems
     ) {
       id
     }
@@ -190,7 +177,7 @@ export function useFindLicense(licenseId) {
   return {
     license: data?.License || {
       id: licenseId,
-      validity: dateNow(),
+      validity: dateDay(),
     },
     licenseError: error,
     licenseLoading: loading,

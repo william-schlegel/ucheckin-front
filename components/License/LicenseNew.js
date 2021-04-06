@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -21,102 +21,79 @@ import {
   RowReadOnly,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
-import LicensePrice, { usePrice } from '../License/LicensePrice';
+import LicensePrice, { usePrice } from './LicensePrice';
 import Total from '../TotalCount';
-import { APPLICATION_QUERY, useFindApplication } from './Queries';
+import { useFindApplication } from '../Application/Queries';
 import useFindUser from '../../lib/useFindUser';
 import ButtonFreeTrial from '../Buttons/ButtonFreeTrial';
-import { dateInMonth, dateNow } from '../DatePicker';
+import { dateNow } from '../DatePicker';
 import useVat from '../../lib/useVat';
-import { CREATE_LICENSE_MUTATION } from '../License/Queries';
-import { CREATE_ORDER_MUTATION } from '../Order/Queries';
+// import { CREATE_LICENSE_MUTATION } from '../License/Queries';
+// import { CREATE_ORDER_MUTATION } from '../Order/Queries';
 import { LicenseType } from '../Tables/LicenseType';
+import { PURCHASE_LICENSE_MUTATION } from './Queries';
 
+function reducer(state, action) {
+  switch (action.type) {
+    case 'UPDATE_AMOUNT':
+      return {
+        ...state,
+        amount: action.amount,
+        licenses: action.licenses,
+        signals: action.signals,
+        paymentOk: !!(action.amount > 0),
+      };
+    case 'SET_TRIAL':
+      return {
+        ...state,
+        trial: action.trial,
+      };
+    case 'SET_DATA':
+      return {
+        ...state,
+        purchaseData: { ...action.data },
+      };
+    default:
+      return state;
+  }
+}
+
+const initialValues = {
+  monthLicense: {},
+  yearLicense: {},
+  monthArea: {},
+  yearArea: {},
+};
 export default function LicenseNew({ open, onClose, appId, ownerId }) {
-  const [createLicense, { loading, error }] = useMutation(
-    CREATE_LICENSE_MUTATION,
-    {
-      refetchQueries: [{ query: APPLICATION_QUERY, variables: { id: appId } }],
-    }
-  );
-  const [createOrder, { error: orderError }] = useMutation(
-    CREATE_ORDER_MUTATION
-  );
+  const [purchaseLicense, { error }] = useMutation(PURCHASE_LICENSE_MUTATION);
   const { user, userError } = useFindUser(ownerId);
   const { application, applicationError } = useFindApplication(appId);
-  const [total, setTotal] = useState(0);
-  const [nbSignal, setNbSignal] = useState(0);
-  const [nbLicense, setNbLicense] = useState(0);
   const { vat } = useVat(ownerId);
   const { t } = useTranslation('license');
-  const initialValues = useRef({
-    monthLicense: {},
-    yearLicense: {},
-    monthArea: {},
-    yearArea: {},
+
+  const { inputs, handleChange, resetForm } = useForm(initialValues);
+  const { price } = usePrice(ownerId);
+
+  const [state, dispatch] = useReducer(reducer, {
+    amount: 0,
+    licenses: 0,
+    signals: 0,
+    trial: false,
+    purchaseData: {},
+    paymentOk: false,
   });
-  const { inputs, handleChange, resetForm } = useForm(initialValues.current);
-  const [trial, setTrial] = useState(false);
-  const { price, licenseTypeIds, setLicenseTypeIds } = usePrice(ownerId);
 
   useEffect(() => {
-    const okTrial = application?.licenses.length === 0;
-    setTrial(okTrial);
-    setLicenseTypeIds(application?.licenseTypes);
-  }, [application, setTrial, setLicenseTypeIds]);
+    if (application) {
+      const okTrial = application.licenses.length === 0;
+      dispatch({ type: 'SET_TRIAL', trial: okTrial });
+    }
+  }, [application]);
 
-  function handleSuccess() {
-    // const purchaseInformation = 'Purchase informations';
-    // const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
-    // function createNLicenses(number, nbArea, validity) {
-    //   const licenses = [];
-    //   for (let s = 0; s < number; s += 1) {
-    //     licenses.push({
-    //       data: {
-    //         owner: { connect: { id: ownerId } },
-    //         licenseType: { connect: { id: licenseTypeId } },
-    //         nbArea,
-    //         validity,
-    //         purchaseInformation,
-    //         application: { connect: { id: appId } },
-    //         signal: { create: { owner: { connect: { id: ownerId } } } },
-    //       },
-    //     });
-    //   }
-    //   const variables = { data: licenses };
-    //   createLicense({ variables }).catch((err) => alert(err.message));
-    // }
-    // createNLicenses(monthLicense, monthArea, dateInMonth(1));
-    // createNLicenses(yearLicense, yearArea, dateInMonth(12));
-    // // create order
-    // const myPrice = price.items.filter(
-    //   (p) => p.licenseType.id === licenseTypeId
-    // )[0];
-    // const orderItems = [];
-    // if (monthLicense)
-    //   orderItems.push({
-    //     licenseType: { connect: { id: licenseTypeId } },
-    //     nbArea: monthArea,
-    //     unitPrice: myPrice.monthly,
-    //     quantity: monthLicense,
-    //   });
-    // if (yearLicense)
-    //   orderItems.push({
-    //     licenseType: { connect: { id: licenseTypeId } },
-    //     nbArea: yearArea,
-    //     unitPrice: myPrice.yearly,
-    //     quantity: yearLicense,
-    //   });
-    // const orderData = {
-    //   user: { connect: { id: ownerId } },
-    //   totalBrut: total.toString(),
-    //   vatValue: vat.value.toString(),
-    //   orderDate: dateNow(),
-    //   items: { create: orderItems },
-    // };
-    // createOrder({ variables: { data: orderData } });
-    // resetForm();
-    // onClose();
+  function handleSuccess(orderId) {
+    console.log(`orderId`, orderId);
+    resetForm();
+    onClose(orderId);
   }
 
   function handleError(error) {
@@ -124,47 +101,80 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }
 
   useEffect(() => {
+    console.log('useEffect');
     const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
+    const pData = {
+      appId,
+      ownerId,
+      purchaseInfo: t('new-licenses', { dt: dateNow() }),
+      vatId: vat.id,
+    };
+    const pItems = [];
     let tot = 0;
     let nbL = 0;
     let nbS = 0;
-    if (application?.licenseTypes) {
-      application.licenseTypes.forEach((lt) => {
-        if (price?.items) {
-          const myPrice = price.items.filter(
-            (p) => p.licenseType.id === lt.id
-          )[0];
-          if (myPrice) {
-            tot +=
-              parseInt(monthLicense[lt.id] || 0) *
-                parseInt(monthArea[lt.id] || 1) *
-                parseFloat(myPrice.monthly) +
-              parseInt(yearLicense[lt.id] || 0) *
-                parseInt(yearArea[lt.id] || 1) *
-                parseFloat(myPrice.yearly);
-          }
+    if (application?.licenseTypes && price?.items) {
+      for (const lt of application.licenseTypes) {
+        const myPrice = price.items.filter(
+          (p) => p.licenseType.id === lt.id
+        )[0];
+        if (myPrice) {
+          tot +=
+            parseInt(monthLicense[lt.id] || 0) *
+              parseInt(monthArea[lt.id] || 1) *
+              parseFloat(myPrice.monthly) +
+            parseInt(yearLicense[lt.id] || 0) *
+              parseInt(yearArea[lt.id] || 1) *
+              parseFloat(myPrice.yearly);
         }
-        nbL +=
+        const newL =
           (inputs.monthLicense[lt.id] || 0) * (inputs.monthArea[lt.id] || 1) +
           (inputs.yearLicense[lt.id] || 0) * (inputs.yearArea[lt.id] || 1);
-        nbS += lt.perArea
+        nbL += newL;
+        const nbSig = lt.perArea
           ? (inputs.monthLicense[lt.id] || 0) + (inputs.yearLicense[lt.id] || 0)
           : 0;
-      });
-      setTotal(tot);
-      setNbLicense(nbL);
-      setNbSignal(nbS);
+        nbS += nbSig;
+        if (inputs.monthLicense[lt.id]) {
+          pItems.push({
+            licenseTypeId: lt.id,
+            priceItemId: myPrice.id,
+            itemName: t(`item-name-${lt.name}-monthly`),
+            quantity: newL,
+            nbArea: inputs.monthArea[lt.id] || 0,
+            monthly: true,
+          });
+        }
+        if (inputs.yearLicense[lt.id]) {
+          pItems.push({
+            licenseTypeId: lt.id,
+            priceItemId: myPrice.id,
+            itemName: t(`item-name-${lt.name}-yearly`),
+            quantity: newL,
+            nbArea: inputs.yearArea[lt.id] || 0,
+            monthly: false,
+          });
+        }
+      }
     }
-  }, [inputs, price, licenseTypeIds, application]);
+    dispatch({
+      type: 'UPDATE_AMOUNT',
+      amount: tot,
+      licenses: nbL,
+      signals: nbS,
+    });
+    pData.expectedAmountBrut = tot;
+    pData.purchaseItems = [...pItems];
+    dispatch({ type: 'SET_DATA', data: pData });
+  }, [inputs, appId, ownerId]);
 
   if (userError) return <DisplayError error={userError} />;
-  if (orderError) return <DisplayError error={orderError} />;
   if (applicationError) return <DisplayError error={applicationError} />;
 
-  console.log(`inputs`, inputs);
+  // console.log(`inputs`, inputs);
 
   return (
-    <Drawer onClose={onClose} open={open} title={t('new-license')}>
+    <Drawer onClose={onClose} open={open} title={t('new-licenses')}>
       <Form>
         <FormBodyFull>
           <RowReadOnly>
@@ -181,12 +191,14 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           </RowReadOnly>
           <Row>
             {user?.id && (
-              <LicensePrice owner={user.id} licenseTypeIds={licenseTypeIds} />
+              <LicensePrice
+                owner={user.id}
+                licenseTypeIds={application.licenseTypes}
+              />
             )}
           </Row>
           {application.licenseTypes.map((lt) => (
             <LicenseContainer key={lt.id}>
-              {/* <H2>{t(lt?.name || 'common:unknown')}</H2> */}
               <LicenseType license={lt.id} />
               <hr />
               <FormBody>
@@ -231,29 +243,25 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
               </FormBody>
             </LicenseContainer>
           ))}
-          <Total
-            value={total}
-            nbLicense={nbLicense}
-            nbSignal={nbSignal}
-            vat={vat.value}
-          />
+          <Total value={state} vat={parseFloat(vat.value)} />
         </FormBodyFull>
       </Form>
       <DrawerFooter>
         <ButtonPayment
-          disabled={loading || !total}
+          disabled={!state.paymentOk}
           onSuccess={handleSuccess}
           onError={handleError}
-          amount={total * (1 + vat.value)}
+          purchaseFunction={purchaseLicense}
+          data={state.purchaseData}
         />
-        {trial && (
+        {state.trial && (
           <ButtonFreeTrial
             ownerId={ownerId}
             appId={appId}
-            onSuccess={onClose}
+            onSuccess={() => onClose()}
           />
         )}
-        <ButtonCancel onClick={onClose} />
+        <ButtonCancel onClick={() => onClose()} />
       </DrawerFooter>
       {error && <DisplayError error={error} />}
     </Drawer>

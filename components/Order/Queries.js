@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
-import { dateNow } from '../DatePicker';
+import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: OrderWhereInput) {
@@ -104,7 +104,7 @@ export function useFindOrder(orderId) {
   return {
     order: data?.Order || {
       id: orderId,
-      validity: dateNow(),
+      validity: dateDay(),
     },
     orderError: error,
     orderLoading: loading,

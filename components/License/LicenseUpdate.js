@@ -26,7 +26,7 @@ import Total from '../TotalCount';
 import { useFindApplication } from '../Application/Queries';
 import useFindUser from '../../lib/useFindUser';
 import { useFindSignal } from '../Signal/Queries';
-import { dateNow, formatDate } from '../DatePicker';
+import { dateDay, dateNow, formatDate } from '../DatePicker';
 import useVat from '../../lib/useVat';
 import { CREATE_ORDER_MUTATION } from '../Order/Queries';
 
@@ -49,7 +49,7 @@ export default function LicenseUpdate({
   const { user } = useFindUser(ownerId);
   const { application } = useFindApplication(appId);
   const { signal } = useFindSignal(signalId);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState({ amount: 0, licenses: 0, signals: 0 });
   const { t } = useTranslation('license');
   const initialValues = useRef({
     monthLicense: 0,
@@ -58,7 +58,7 @@ export default function LicenseUpdate({
   const { inputs, handleChange, resetForm } = useForm(initialValues.current);
   const { price } = usePrice(ownerId);
   const { vat } = useVat(ownerId);
-  const [newValidity, setNewValidity] = useState(dateNow());
+  const [newValidity, setNewValidity] = useState(dateDay());
   const validityDate = license?.validity;
 
   function closeAndClear() {
@@ -91,7 +91,7 @@ export default function LicenseUpdate({
       });
     const orderData = {
       user: { connect: { id: ownerId } },
-      totalBrut: total.toString(),
+      totalBrut: total.amount.toString(),
       vatValue: vat.value.toString(),
       orderDate: dateNow(),
       items: { create: orderItems },
@@ -136,7 +136,7 @@ export default function LicenseUpdate({
           parseInt(yearLicense || 0) *
             parseInt(license.nbArea || 1) *
             parseFloat(myPrice.yearly);
-        setTotal(tot);
+        setTotal({ amount: tot });
       }
     }
 
@@ -213,10 +213,10 @@ export default function LicenseUpdate({
       </Form>
       <DrawerFooter>
         <ButtonPayment
-          disabled={loading || !total}
+          disabled={loading || total.amount <= 0}
           onSuccess={handleSuccess}
           onError={handleError}
-          amount={total * (1 + vat.value)}
+          amount={total.amount * (1 + vat.value)}
         />
         <ButtonCancel onClick={closeAndClear} />
         {error && <DisplayError error={error} />}

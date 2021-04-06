@@ -64,5 +64,8 @@
   "info": "Information",
   "only-my-account": "Only the data from my account",
   "start-search": "Search now",
-  "pagination": "Page {{page}} of {{pageCount}}"
+  "pagination": "Page {{page}} of {{pageCount}}",
+  "user-profile": "User profile",
+  "user-account": "User account",
+  "is-required": "This field is required"
 }

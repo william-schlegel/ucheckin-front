@@ -5,7 +5,7 @@ import { useRouter } from 'next/dist/client/router';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { Card } from '../styles/Card';
+import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
@@ -103,9 +103,9 @@ export default function DashboardLicense() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <Card>
+    <DashboardCard>
       <h2>{t('licenses', { count: nbLicenses })}</h2>
       <Table columns={columns} data={data.allLicenses} />
-    </Card>
+    </DashboardCard>
   );
 }

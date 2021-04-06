@@ -14,12 +14,13 @@ const TotalStyled = styled.div`
   .label {
     color: var(--primary);
   }
-  span {
-    font-size: 2.5rem;
+  .number {
+    font-size: 1.5rem;
     color: var(--secondary);
     margin-left: auto;
-    &.vat {
-      font-size: 1.5rem;
+    margin-right: 1rem;
+    &.big {
+      font-size: 2.5rem;
     }
   }
 `;
@@ -48,43 +49,43 @@ const AnimationStyles = styled.span`
   }
 `;
 
-export default function Total({ value, nbLicense, nbSignal, vat }) {
+export default function Total({ value, vat }) {
   const { t } = useTranslation('license');
   return (
     <>
       <Row>
         <Block>
-          {nbLicense > 0 && (
-            <span>{t('total-license', { count: nbLicense })}</span>
+          {value.licenses > 0 && (
+            <span>{t('total-license', { count: value.licenses })}</span>
           )}
-          {nbSignal > 0 && (
-            <span>{t('total-signal', { count: nbSignal })}</span>
+          {value.signals > 0 && (
+            <span>{t('total-signal', { count: value.signals })}</span>
           )}
         </Block>
       </Row>
       <TotalStyled>
         <RowReadOnly>
           <Label>{t('common:net-amount')}</Label>
-          <span className="vat">{formatMoney(value)}</span>
+          <span className="number">{formatMoney(value.amount)}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('common:vat', { percentage: formatPrct(vat) })}</Label>
-          <span className="vat">{formatMoney(value * vat)}</span>
+          <span className="number">{formatMoney(value.amount * vat)}</span>
         </RowReadOnly>
         <RowReadOnly>
           <H2 className="label">{t('common:taxed-amount')}</H2>
-          <span>
+          <span className="number big">
             <AnimationStyles>
               <TransitionGroup>
                 <CSSTransition
                   unmountOnExit
                   className="count"
                   classNames="count"
-                  key={value}
+                  key={JSON.stringify(value)}
                   timeout={{ enter: 400, exit: 400 }}
                 >
                   <span className="total">
-                    {formatMoney(value * (1 + vat))}
+                    {formatMoney(value.amount * (1 + vat))}
                   </span>
                 </CSSTransition>
               </TransitionGroup>
@@ -97,8 +98,6 @@ export default function Total({ value, nbLicense, nbSignal, vat }) {
 }
 
 Total.propTypes = {
-  value: PropTypes.number,
+  value: PropTypes.object,
   vat: PropTypes.number,
-  nbLicense: PropTypes.number,
-  nbSignal: PropTypes.number,
 };

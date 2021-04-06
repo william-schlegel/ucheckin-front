@@ -59,7 +59,7 @@ const InnerStyles = styled.div`
   /* max-width: var(--maxWidth); */
   width: 100%;
   max-width: 1920px;
-  margin: 0 auto 0 0;
+  margin: 0 auto;
   padding: 2rem;
   align-self: stretch;
 `;

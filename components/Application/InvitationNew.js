@@ -2,13 +2,15 @@ import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
+import SwitchComponent from 'react-switch';
 import Drawer from '../Drawer';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { DrawerFooter } from '../styles/Drawer';
-import { FormBodyFull, Label, Row, Form } from '../styles/Card';
+import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { dateNow } from '../DatePicker';
+import FieldError from '../FieldError';
 
 export default function InvitationNew({ appId, open, onClose }) {
   const { t } = useTranslation('application');
@@ -18,17 +20,26 @@ export default function InvitationNew({ appId, open, onClose }) {
     status: 'created',
     user: null,
     updated: dateNow(),
+    canModifyApplication: false,
+    canManageContent: true,
+    canBuyLicenses: false,
   });
-  const { inputs, handleChange } = useForm(initialValues.current);
+  const {
+    inputs,
+    handleChange,
+    validate,
+    validationError,
+  } = useForm(initialValues.current, { email: 'is-required' });
 
   function handleNewInvitation() {
-    onClose(inputs);
+    if (validate()) onClose(inputs);
   }
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-invitation')}>
       <Form>
         <FormBodyFull>
+          <span>{t('help-invite')}</span>
           <Row>
             <Label htmlFor="email" required>
               {t('common:email')}
@@ -41,7 +52,35 @@ export default function InvitationNew({ appId, open, onClose }) {
               value={inputs.email}
               onChange={handleChange}
             />
+            <FieldError error={validationError.email} />
           </Row>
+          <RowReadOnly>
+            <Label>{t('can-manage-content')}</Label>
+            <SwitchComponent
+              onChange={(value) =>
+                handleChange({ name: 'canManageContent', value })
+              }
+              checked={inputs.canManageContent}
+            />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('can-modify-app')}</Label>
+            <SwitchComponent
+              onChange={(value) =>
+                handleChange({ name: 'canModifyApplication', value })
+              }
+              checked={inputs.canModifyApplication}
+            />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('can-buy-licenses')}</Label>
+            <SwitchComponent
+              onChange={(value) =>
+                handleChange({ name: 'canBuyLicenses', value })
+              }
+              checked={inputs.canBuyLicenses}
+            />
+          </RowReadOnly>
         </FormBodyFull>
       </Form>
       <DrawerFooter>

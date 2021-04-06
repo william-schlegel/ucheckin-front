@@ -5,7 +5,7 @@ import { useRouter } from 'next/dist/client/router';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { Card } from '../styles/Card';
+import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
@@ -82,9 +82,9 @@ export default function DashboardOrder() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <Card>
+    <DashboardCard>
       <h2>{t('orders', { count: nbApp })}</h2>
       <Table columns={columns} data={data.allOrders} />
-    </Card>
+    </DashboardCard>
   );
 }

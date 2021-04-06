@@ -65,5 +65,8 @@
   "info": "Information",
   "only-my-account": "Uniquement les enregistrements de mon compte",
   "start-search": "Chercher",
-  "pagination": "Page {{page}} sur {{pageCount}}"
+  "pagination": "Page {{page}} sur {{pageCount}}",
+  "user-profile": "Profile utilisateur",
+  "user-account": "Compte utilisateur",
+  "is-required": "Ce champ est requis"
 }

@@ -1,13 +1,13 @@
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import { formatMoney } from '../../lib/formatNumber';
 import { LICENSE_PRICE_QUERY } from './Queries';
-import { dateNow } from '../DatePicker';
+import { dateDay } from '../DatePicker';
 import NoData from '../Tables/NoData';
 
 export const TableStyled = styled.table`
@@ -41,25 +41,23 @@ export const TableStyled = styled.table`
 `;
 
 export function usePrice(ownerId) {
-  const [loadPrice, { loading, error, data }] = useLazyQuery(
-    LICENSE_PRICE_QUERY
-  );
+  // const [loadPrice, { loading, error, data }] = useLazyQuery(
+  //   LICENSE_PRICE_QUERY
+  // );
+  const { loading, error, data } = useQuery(LICENSE_PRICE_QUERY, {
+    variables: { owner: ownerId, dayDate: dateDay() },
+  });
   const [price, setPrice] = useState({});
-  const licenseTypeIds = useRef([]);
+  // const [licenseTypeIds, setLicenseTypeIds] = useState([]);
 
-  function setLicenseTypeIds(newLicenses) {
-    if (newLicenses && Array.isArray(newLicenses))
-      licenseTypeIds.current = [...newLicenses];
-  }
-
-  useEffect(() => {
-    const dayDate = dateNow();
-    if (ownerId) {
-      loadPrice({
-        variables: { owner: ownerId, dayDate },
-      });
-    }
-  }, [ownerId, loadPrice]);
+  // useEffect(() => {
+  //   const dayDate = dateNow();
+  //   if (ownerId) {
+  //     loadPrice({
+  //       variables: { owner: ownerId, dayDate },
+  //     });
+  //   }
+  // }, [ownerId, loadPrice]);
 
   useEffect(() => {
     if (data?.prices) {
@@ -84,18 +82,18 @@ export function usePrice(ownerId) {
     loading,
     error,
     price,
-    licenseTypeIds: licenseTypeIds.current,
-    setLicenseTypeIds,
+    // licenseTypeIds,
+    // setLicenseTypeIds,
   };
 }
 
 export default function LicensePrice({ owner, licenseTypeIds }) {
-  const { loading, error, price, setLicenseTypeIds } = usePrice(owner);
+  const { loading, error, price } = usePrice(owner);
   const { t, lang } = useTranslation('license');
 
-  useEffect(() => {
-    if (licenseTypeIds) setLicenseTypeIds(licenseTypeIds);
-  }, [licenseTypeIds, setLicenseTypeIds]);
+  // useEffect(() => {
+  //   if (licenseTypeIds) setLicenseTypeIds(licenseTypeIds);
+  // }, [licenseTypeIds, setLicenseTypeIds]);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

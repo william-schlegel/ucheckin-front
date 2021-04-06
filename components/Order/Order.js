@@ -109,9 +109,8 @@ export default function Order({ id, backButton }) {
           <Table columns={columns} data={data.Order.items} />
         </Row>
         <Total
-          totalNet={parseFloat(data.Order.totalNet)}
           vat={parseFloat(data.Order.vatValue)}
-          value={parseFloat(data.Order.totalBrut)}
+          value={{ amount: parseFloat(data.Order.totalBrut) }}
         />
       </FormBodyFull>
     </Form>

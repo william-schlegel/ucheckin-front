@@ -22,10 +22,18 @@ export function dateNow() {
   return new Date().toISOString();
 }
 
+export function dateDay() {
+  const dt = new Date();
+  return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()).toISOString();
+}
+
 export function dateInMonth(nbMonth = 1) {
-  const oneMonthLater = new Date();
-  oneMonthLater.setMonth(oneMonthLater.getMonth() + nbMonth);
-  return oneMonthLater.toISOString();
+  const dt = new Date();
+  return new Date(
+    dt.getFullYear(),
+    dt.getMonth() + nbMonth,
+    dt.getDate()
+  ).toISOString();
 }
 
 export function formatDate(dt, locale) {

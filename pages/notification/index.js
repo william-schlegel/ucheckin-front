@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { dateInMonth, dateNow } from '../../components/DatePicker';
+import { dateDay, dateInMonth } from '../../components/DatePicker';
 import ViewNotification from '../../components/Notification/Notification';
 import { CURRENT_USER_QUERY } from '../../components/User/Queries';
 
@@ -24,7 +24,7 @@ Notification.getInitialProps = async (ctx) => {
         },
         displayName: '',
         type: 'simple',
-        startDate: dateNow(),
+        startDate: dateDay(),
         endDate: dateInMonth(1),
         application: {
           id: '',

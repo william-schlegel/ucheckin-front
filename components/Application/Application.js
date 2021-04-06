@@ -21,26 +21,28 @@ import {
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { SearchUser } from '../SearchUser';
-import ApplicationUpdate from './ApplicationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
 import ButtonDelete from '../Buttons/ButtonDelete';
+import ButtonValidation from '../Buttons/ButtonValidation';
 import { LicenseTypes, useLicenseName } from '../Tables/LicenseType';
 import LicenseTable from '../License/LicenseTable';
 import {
   ALL_APPLICATIONS_QUERY,
   DELETE_APPLICATION_MUTATION,
   APPLICATION_QUERY,
+  UPDATE_APPLICATION_MUTATION,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
-import LicenseNew from './LicenseNew';
+import LicenseNew from '../License/LicenseNew';
 import LicenseUpdate from '../License/LicenseUpdate';
 import ApiKey from '../Tables/ApiKey';
 import { useUser } from '../User/Queries';
 import { perPage } from '../../config';
 import InvitationTable from './InvitationTable';
 import InvitationNew from './InvitationNew';
+import FieldError from '../FieldError';
 
 export default function Application({ id, initialData }) {
   const { loading, error, data } = useQuery(APPLICATION_QUERY, {
@@ -61,6 +63,21 @@ export default function Application({ id, initialData }) {
       Router.push('/applications');
     },
   });
+  const [
+    updateApplication,
+    { loading: loadingUpdate, error: errorUpdate },
+  ] = useMutation(UPDATE_APPLICATION_MUTATION, {
+    refetchQueries: [
+      {
+        query: ALL_APPLICATIONS_QUERY,
+        variables: { skip: 0, first: perPage },
+      },
+    ],
+    onCompleted: () => {
+      Router.push('/applications');
+    },
+  });
+
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
@@ -68,7 +85,16 @@ export default function Application({ id, initialData }) {
   const { t } = useTranslation('application');
   const { licenseTypesOptions } = useLicenseName();
   const initialValues = useRef(initialData.data.Application);
-  const { inputs, handleChange, setInputs } = useForm(initialValues.current);
+  const {
+    inputs,
+    handleChange,
+    setInputs,
+    validate,
+    validationError,
+  } = useForm(initialValues.current, {
+    name: '',
+    licenseTypes: '',
+  });
   const [canEdit, setCanEdit] = useState(false);
   const [showAddLicense, setShowAddLicense] = useState(false);
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
@@ -110,8 +136,18 @@ export default function Application({ id, initialData }) {
     deleteApplication({ variables: { id } });
   }
 
+  function handleUpdateApplication() {
+    if (!validate()) return;
+    const variables = {
+      name: inputs.name,
+      owner: { id: inputs.owner.id },
+      licenseTypes: inputs.licenseTypes,
+    };
+    updateApplication({ variables });
+  }
+
   function handleCloseNewInvitation(newUser) {
-    if (newUser) {
+    if (newUser.email) {
       const existingUser = inputs.invitations.find(
         (i) => i.email === newUser.email
       );
@@ -126,11 +162,21 @@ export default function Application({ id, initialData }) {
     setShowAddInvit(false);
   }
 
+  function handleCloseNewLicense(orderId) {
+    console.log(`orderId`, orderId);
+    setShowAddLicense(false);
+    if (orderId) {
+      Router.push(`/order/${orderId}`);
+    }
+  }
+
   if (loading || !user) return <Loading />;
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
+  if (errorUpdate) return <DisplayError error={errorUpdate} />;
 
-  // console.log(`inputs`, inputs);
+  console.log(`licenseTypesOptions`, licenseTypesOptions);
+  console.log(`inputs`, inputs);
 
   return (
     <>
@@ -142,7 +188,7 @@ export default function Application({ id, initialData }) {
       {id && inputs.owner.id && (
         <LicenseNew
           open={showAddLicense}
-          onClose={() => setShowAddLicense(false)}
+          onClose={handleCloseNewLicense}
           appId={id}
           ownerId={inputs.owner.id}
         />
@@ -189,6 +235,7 @@ export default function Application({ id, initialData }) {
                 value={inputs.name}
                 onChange={handleChange}
               />
+              <FieldError error={validationError.name} />
             </Row>
           ) : (
             <RowReadOnly>
@@ -226,7 +273,6 @@ export default function Application({ id, initialData }) {
               </Label>
               <Select
                 className="select"
-                required
                 value={inputs.licenseTypes.map((lid) =>
                   licenseTypesOptions.find((lt) => lt.value === lid.id)
                 )}
@@ -240,6 +286,7 @@ export default function Application({ id, initialData }) {
                 options={licenseTypesOptions}
                 isMulti
               />
+              <FieldError error={validationError.licenseTypes} />
             </Row>
           ) : (
             <RowReadOnly>
@@ -269,10 +316,10 @@ export default function Application({ id, initialData }) {
         </FormBody>
         <FormFooter>
           {canEdit && id && (
-            <ApplicationUpdate
-              id={id}
-              updatedApp={inputs}
-              onSuccess={() => Router.push('/applications')}
+            <ButtonValidation
+              disabled={loadingUpdate}
+              onClick={handleUpdateApplication}
+              update
             />
           )}
           {canEdit && id && (

@@ -12,5 +12,9 @@
   "nb-license": "Number of licenses",
   "valide": "Valid licenses",
   "not-valide": "Invalid licenses (expired)",
-  "add-license": "Add one or several licenses to the application"
+  "add-license": "Add one or several licenses to the application",
+  "help-invite": "You can invite other users to an application. Once their account is created, they will be able to manage for you the contents (notifications) associated with this application.",
+  "can-modify-app": "The guest can modify the application",
+  "can-manage-content": "The guest can manage the content associated with the application",
+  "can-buy-licenses": "The guest can buy or renew licenses"
 }

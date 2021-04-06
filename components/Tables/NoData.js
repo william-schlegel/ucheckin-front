@@ -5,10 +5,9 @@ const NoDataStyled = styled.div`
   display: flex;
   border: 1px solid var(--offWhite);
   width: 100%;
-  height: 100%;
-  max-height: 20vh;
   align-items: center;
   justify-content: center;
+  height: calc(100% - 1rem);
   padding: 2px 1rem;
   margin-top: 0.5rem;
   margin-bottom: 1rem;

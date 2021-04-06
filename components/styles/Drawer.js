@@ -10,10 +10,11 @@ const DrawerStyled = styled.div`
   z-index: 201;
   box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.5);
   transform: translateX(100%);
-  transition: transform 0.3s ease-out;
+  transition: transform 500ms ease-in-out;
   &.open {
     transform: translateX(0);
   }
+  overflow: auto;
 `;
 
 export const DrawerHeader = styled.div`

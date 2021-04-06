@@ -9,9 +9,7 @@ import {
   useStripe,
 } from '@stripe/react-stripe-js';
 import nProgress from 'nprogress';
-import gql from 'graphql-tag';
 
-import { useMutation } from '@apollo/client';
 import styled from 'styled-components';
 import { CreditCard } from 'react-feather';
 import { IconButtonStyles } from './ActionButton';
@@ -27,7 +25,8 @@ const PaymentStyled = styled.div`
 
 export default function ButtonPayment({
   disabled,
-  amount,
+  purchaseFunction,
+  data,
   onSuccess,
   onError,
 }) {
@@ -36,9 +35,10 @@ export default function ButtonPayment({
       {!disabled && (
         <Elements stripe={stripeLib}>
           <PaymentForm
-            amount={amount}
             onSuccess={onSuccess}
             onError={onError}
+            purchaseFunction={purchaseFunction}
+            data={data}
           />
         </Elements>
       )}
@@ -50,7 +50,8 @@ ButtonPayment.propTypes = {
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  amount: PropTypes.number,
+  purchaseFunction: PropTypes.func,
+  data: PropTypes.object,
 };
 
 const CheckoutFormStyles = styled.form`
@@ -64,22 +65,12 @@ const CheckoutFormStyles = styled.form`
   width: 100%;
 `;
 
-const CREATE_PAYMENT = gql`
-  mutation CREATE_PAYMENT($token: String!, $amount: Float!) {
-    checkout(token: $token, amount: $amount) {
-      charge
-    }
-  }
-`;
-
-function PaymentForm({ amount, onSuccess, onError }) {
+function PaymentForm({ onSuccess, onError, purchaseFunction, data }) {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
   const { t } = useTranslation('common');
-
-  const [checkout, { error: graphQLError }] = useMutation(CREATE_PAYMENT);
 
   async function proceedPayment() {
     setLoading(true);
@@ -94,23 +85,18 @@ function PaymentForm({ amount, onSuccess, onError }) {
       onError();
       return;
     }
-    const variables = {
-      token: paymentMethod.id,
-      amount: amount * 100, // in cents
-    };
-    console.log(`variables`, variables);
-    const charge = await checkout({
-      variables,
+    const order = purchaseFunction({
+      variables: { ...data, token: paymentMethod.id },
     });
+    console.log(`order`, order);
     setLoading(false);
     nProgress.done();
-    onSuccess();
+    onSuccess(order.id);
   }
 
   return (
     <CheckoutFormStyles>
       {error && <p style={{ fontSize: 12 }}>{error.message}</p>}
-      {graphQLError && <p style={{ fontSize: 12 }}>{graphQLError.message}</p>}
       <CardElement />
       {loading && <Loading />}
       <SecondaryButtonStyled type="button" onClick={proceedPayment}>
@@ -124,7 +110,8 @@ function PaymentForm({ amount, onSuccess, onError }) {
 }
 
 PaymentForm.propTypes = {
-  amount: PropTypes.number,
+  purchaseFunction: PropTypes.func,
+  data: PropTypes.object,
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
 };

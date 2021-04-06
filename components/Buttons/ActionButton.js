@@ -24,6 +24,8 @@ import {
   VolumeX,
   Volume,
   Clock,
+  UserCheck,
+  DollarSign,
 } from 'react-feather';
 import styled from 'styled-components';
 
@@ -57,29 +59,31 @@ export default function ActionButton({
       onClick={cb}
       title={label || t(type)}
     >
-      {type === 'edit' && <Edit size={size} />}
-      {type === 'check' && <Check size={size} />}
-      {type === 'copy' && <Copy size={size} />}
-      {(type === 'delete' || type === 'close') && <X size={size} />}
-      {type === 'date' && <Calendar size={size} />}
-      {type === 'back' && <ChevronLeft size={size} />}
-      {type === 'trash' && <Trash size={size} />}
-      {type === 'plus' && <Plus size={size} />}
-      {type === 'help' && <HelpCircle size={size} />}
-      {type === 'view' && <Eye size={size} />}
-      {type === 'search' && <Search size={size} />}
-      {type === 'download' && <Download size={size} />}
-      {type === 'play' && <Play size={size} />}
-      {type === 'pause' && <Pause size={size} />}
-      {type === 'stop' && <Square size={size} />}
-      {type === 'plus-circle' && <PlusCircle size={size} />}
-      {type === 'minus-circle' && <MinusCircle size={size} />}
-      {type === 'credit-card' && <CreditCard size={size} />}
-      {(type === 'clone' || type === 'repeat') && <Repeat size={size} />}
-      {type === 'signal' && <Volume size={size} />}
       {type === 'add-license' && <Volume2 size={size} />}
+      {type === 'back' && <ChevronLeft size={size} />}
+      {type === 'check' && <Check size={size} />}
+      {(type === 'clone' || type === 'repeat') && <Repeat size={size} />}
+      {type === 'copy' && <Copy size={size} />}
+      {type === 'credit-card' && <CreditCard size={size} />}
+      {type === 'date' && <Calendar size={size} />}
+      {(type === 'delete' || type === 'close') && <X size={size} />}
       {type === 'delete-signal' && <VolumeX size={size} />}
+      {type === 'download' && <Download size={size} />}
+      {type === 'edit' && <Edit size={size} />}
       {type === 'extend' && <Clock size={size} />}
+      {type === 'help' && <HelpCircle size={size} />}
+      {type === 'minus-circle' && <MinusCircle size={size} />}
+      {type === 'play' && <Play size={size} />}
+      {type === 'plus-circle' && <PlusCircle size={size} />}
+      {type === 'pause' && <Pause size={size} />}
+      {type === 'plus' && <Plus size={size} />}
+      {type === 'search' && <Search size={size} />}
+      {type === 'signal' && <Volume size={size} />}
+      {type === 'stop' && <Square size={size} />}
+      {type === 'trash' && <Trash size={size} />}
+      {type === 'user-account' && <DollarSign size={size} />}
+      {type === 'user-profile' && <UserCheck size={size} />}
+      {type === 'view' && <Eye size={size} />}
     </IconButtonStyles>
   );
 }
@@ -111,6 +115,8 @@ ActionButton.propTypes = {
     'delete-signal',
     'signal',
     'extend',
+    'user-profile',
+    'user-account',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

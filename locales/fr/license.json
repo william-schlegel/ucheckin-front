@@ -7,7 +7,7 @@
   "associated-signal": "Signal associé",
   "associated-application": "Application associée",
   "valid": "Valide",
-  "new-license": "Acheter de nouvelles licences",
+  "new-licenses": "Acheter de nouvelles licences",
   "number": "Nombre",
   "activate-trial": "Activer ma licence d'essais",
   "available-licenses": "Licences disponibles",
@@ -54,5 +54,9 @@
   "price-brut": "Tarif HT",
   "observations": "Observations",
   "price-details": "Détails du tarif",
-  "new-price": "Nouveau tarif"
+  "new-price": "Nouveau tarif",
+  "item-name-wi-us-monthly": "Nouvelle license mensuelle pour Wi-Us",
+  "item-name-wi-us-yearly": "Nouvelle license annuelle pour Wi-Us",
+  "item-name-ucheck-in-monthly": "Nouvelle license mensuelle pour UcheckIn",
+  "item-name-ucheck-in-yearly": "Nouvelle license annuelle pour UcheckIn"
 }

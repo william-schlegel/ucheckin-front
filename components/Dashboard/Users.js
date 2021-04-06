@@ -5,7 +5,7 @@ import { useRouter } from 'next/dist/client/router';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { Card } from '../styles/Card';
+import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Table, { useColumns } from '../Tables/Table';
 
@@ -60,9 +60,9 @@ export default function DashboardUser() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <Card>
+    <DashboardCard>
       <h2>{t('users', { count: nbUser })}</h2>
       <Table columns={columns} data={data.allUsers} />
-    </Card>
+    </DashboardCard>
   );
 }
