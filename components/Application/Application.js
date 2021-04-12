@@ -112,7 +112,17 @@ export default function Application({ id, initialData }) {
 
   useEffect(() => {
     if (data) {
-      setInputs(data.Application);
+      // console.log(`data.Application`, data.Application);
+      setInputs({
+        name: data.Application.name,
+        apiKey: data.Application.apiKey,
+        owner: { id: data.Application.owner.id },
+        licenseTypes: data.Application.licenseTypes.map((lt) => ({
+          id: lt.id,
+        })),
+        invitations: data.Application.invitations,
+        licenses: data.Application.licenses,
+      });
     }
   }, [setInputs, data]);
 
@@ -126,7 +136,7 @@ export default function Application({ id, initialData }) {
     setSelectedLicense({
       licenseId,
       appId: id,
-      signalId: license.signal.id,
+      signalId: license?.signal?.id,
       ownerId: data.Application.owner.id,
     });
     setShowUpdateLicense(true);
@@ -139,9 +149,12 @@ export default function Application({ id, initialData }) {
   function handleUpdateApplication() {
     if (!validate()) return;
     const variables = {
+      id,
+      apiKey: inputs.apiKey,
       name: inputs.name,
       owner: { id: inputs.owner.id },
-      licenseTypes: inputs.licenseTypes,
+      licenseTypes: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
+      invitations: inputs.invitations.filter((i) => !i.id),
     };
     updateApplication({ variables });
   }

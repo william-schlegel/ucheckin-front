@@ -65,7 +65,7 @@ export default function Notifications() {
     [
       t('type'),
       'type',
-      ({ cell: { value } }) => <NotificationType value={value} />,
+      ({ cell: { value } }) => <NotificationType notification={value} />,
     ],
     [
       t('start-date'),
@@ -83,7 +83,10 @@ export default function Notifications() {
     setShowNotification('');
   }
 
-  const actionButtons = [{ type: 'view', action: viewNotification }];
+  const actionButtons = [
+    { type: 'view', action: viewNotification },
+    { type: 'edit', action: (id) => router.push(`/notification/${id}`) },
+  ];
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

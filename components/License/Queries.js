@@ -1,6 +1,5 @@
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import { useEffect } from 'react';
 import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
@@ -73,6 +72,17 @@ export const LICENSE_QUERY = gql`
       }
       licenseType {
         id
+        name
+        perArea
+      }
+      orderItems {
+        id
+        name
+        quantity
+        nbArea
+        order {
+          orderDate
+        }
       }
     }
   }
@@ -150,10 +160,21 @@ export const LICENSE_PRICE_QUERY = gql`
 `;
 
 export const UPDATE_LICENSE_MUTATION = gql`
-  mutation UPDATE_LICENSE_MUTATION($id: ID!, $newValidity: String!) {
-    updateLicense(id: $id, data: { validity: $newValidity }) {
+  mutation UPDATE_LICENSE_MUTATION(
+    $licenseId: ID!
+    $purchaseItems: [PurchaseLicenseItem!]!
+    $token: String!
+    $expectedAmountBrut: Float!
+    $vatId: ID
+  ) {
+    extendLicense(
+      licenseId: $licenseId
+      token: $token
+      expectedAmountBrut: $expectedAmountBrut
+      vatId: $vatId
+      purchaseItems: $purchaseItems
+    ) {
       id
-      validity
     }
   }
 `;
@@ -167,17 +188,18 @@ export const CREATE_LICENSE_MUTATION = gql`
 `;
 
 export function useFindLicense(licenseId) {
-  const [findLicense, { data, error, loading }] = useLazyQuery(LICENSE_QUERY);
-  useEffect(() => {
-    if (licenseId)
-      findLicense({
-        variables: { id: licenseId },
-      });
-  }, [licenseId, findLicense]);
+  const { data, error, loading } = useQuery(LICENSE_QUERY, {
+    variables: { id: licenseId },
+  });
+
   return {
     license: data?.License || {
       id: licenseId,
       validity: dateDay(),
+      licenseType: {},
+      signal: {},
+      application: {},
+      owner: {},
     },
     licenseError: error,
     licenseLoading: loading,

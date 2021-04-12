@@ -3,13 +3,11 @@ import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
-import styled from 'styled-components';
 import Counter from '../Counter';
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonPayment from '../Buttons/ButtonPayment';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import {
   FormBodyFull,
   Label,
@@ -32,6 +30,7 @@ import useVat from '../../lib/useVat';
 // import { CREATE_ORDER_MUTATION } from '../Order/Queries';
 import { LicenseType } from '../Tables/LicenseType';
 import { PURCHASE_LICENSE_MUTATION } from './Queries';
+import { LicenseContainer } from '../styles/License';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -140,7 +139,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
             licenseTypeId: lt.id,
             priceItemId: myPrice.id,
             itemName: t(`item-name-${lt.name}-monthly`),
-            quantity: newL,
+            quantity: inputs.monthLicense[lt.id],
             nbArea: inputs.monthArea[lt.id] || 0,
             monthly: true,
           });
@@ -150,7 +149,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
             licenseTypeId: lt.id,
             priceItemId: myPrice.id,
             itemName: t(`item-name-${lt.name}-yearly`),
-            quantity: newL,
+            quantity: inputs.yearLicense[lt.id],
             nbArea: inputs.yearArea[lt.id] || 0,
             monthly: false,
           });
@@ -261,7 +260,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
             onSuccess={() => onClose()}
           />
         )}
-        <ButtonCancel onClick={() => onClose()} />
+        <ButtonCancel onClick={() => onClose(null)} />
       </DrawerFooter>
       {error && <DisplayError error={error} />}
     </Drawer>
@@ -274,8 +273,3 @@ LicenseNew.propTypes = {
   appId: PropTypes.string.isRequired,
   ownerId: PropTypes.string.isRequired,
 };
-
-const LicenseContainer = styled.div`
-  border: 1px solid var(--secondary);
-  padding: 1rem 0.5rem;
-`;

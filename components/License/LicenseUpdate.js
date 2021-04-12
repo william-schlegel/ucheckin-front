@@ -4,21 +4,20 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
 import Counter from '../Counter';
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonPayment from '../Buttons/ButtonPayment';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { useFindLicense, UPDATE_LICENSE_MUTATION } from './Queries';
-import { DrawerFooter } from '../styles/Drawer';
 import {
   FormBodyFull,
   Label,
   Row,
   Form,
   Block,
-  H2,
   RowReadOnly,
   FormBody,
+  RowFull,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import LicensePrice, { usePrice } from './LicensePrice';
@@ -26,9 +25,10 @@ import Total from '../TotalCount';
 import { useFindApplication } from '../Application/Queries';
 import useFindUser from '../../lib/useFindUser';
 import { useFindSignal } from '../Signal/Queries';
-import { dateDay, dateNow, formatDate } from '../DatePicker';
+import { dateDay, formatDate } from '../DatePicker';
 import useVat from '../../lib/useVat';
-import { CREATE_ORDER_MUTATION } from '../Order/Queries';
+import { LicenseType } from '../Tables/LicenseType';
+import Loading from '../Loading';
 
 export default function LicenseUpdate({
   open,
@@ -41,11 +41,7 @@ export default function LicenseUpdate({
   const [updateLicense, { loading, error }] = useMutation(
     UPDATE_LICENSE_MUTATION
   );
-  const [createOrder, { error: orderError }] = useMutation(
-    CREATE_ORDER_MUTATION
-  );
-  const { license } = useFindLicense(licenseId);
-
+  const { license, licenseLoading, licenseError } = useFindLicense(licenseId);
   const { user } = useFindUser(ownerId);
   const { application } = useFindApplication(appId);
   const { signal } = useFindSignal(signalId);
@@ -60,55 +56,20 @@ export default function LicenseUpdate({
   const { vat } = useVat(ownerId);
   const [newValidity, setNewValidity] = useState(dateDay());
   const validityDate = license?.validity;
+  const [purchaseData, setPurchaseDate] = useState({
+    licenseId,
+    expectedAmountBrut: 0,
+    purchaseItems: [],
+  });
 
-  function closeAndClear() {
+  function closeAndClear(orderId) {
     resetForm();
-    onClose();
+    onClose(orderId);
   }
 
-  function handleSuccess() {
-    // create order
-    const { monthLicense, yearLicense } = inputs;
-    const myPrice = price.items.filter(
-      (p) => p.licenseType.id === license.licenseType.id
-    )[0];
-    console.log(`myPrice`, myPrice);
-
-    const orderItems = [];
-    if (monthLicense)
-      orderItems.push({
-        licenseType: { connect: { id: license.licenseType.id } },
-        nbArea: license.nbArea,
-        unitPrice: myPrice.monthly,
-        quantity: monthLicense,
-      });
-    if (yearLicense)
-      orderItems.push({
-        licenseType: { connect: { id: license.licenseType.id } },
-        nbArea: license.nbArea,
-        unitPrice: myPrice.yearly,
-        quantity: yearLicense,
-      });
-    const orderData = {
-      user: { connect: { id: ownerId } },
-      totalBrut: total.amount.toString(),
-      vatValue: vat.value.toString(),
-      orderDate: dateNow(),
-      items: { create: orderItems },
-    };
-    console.log(`orderData`, orderData);
-    createOrder({ variables: { data: orderData } });
-
-    console.log(`newValidity`, newValidity);
-    // update validity
-    updateLicense({
-      variables: {
-        id: licenseId,
-        newValidity,
-      },
-    });
-
-    closeAndClear();
+  function handleSuccess(orderId) {
+    console.log(`orderId`, orderId);
+    closeAndClear(orderId);
   }
 
   function handleError(error) {
@@ -129,6 +90,7 @@ export default function LicenseUpdate({
         (p) => p.licenseType.id === license.licenseType.id
       )[0];
       if (myPrice) {
+        const pData = [];
         const tot =
           parseInt(monthLicense || 0) *
             parseInt(license.nbArea || 1) *
@@ -137,6 +99,32 @@ export default function LicenseUpdate({
             parseInt(license.nbArea || 1) *
             parseFloat(myPrice.yearly);
         setTotal({ amount: tot });
+        if (parseInt(monthLicense)) {
+          pData.push({
+            licenseTypeId: license.licenseType.id,
+            priceItemId: myPrice.id,
+            itemName: t(`item-name-${license.licenseType.name}-renew-yearly`),
+            quantity: parseInt(monthLicense),
+            nbArea: license.nbArea || 1,
+            monthly: true,
+          });
+        }
+        if (parseInt(yearLicense)) {
+          pData.push({
+            licenseTypeId: license.licenseType.id,
+            priceItemId: myPrice.id,
+            itemName: t(`item-name-${license.licenseType.name}-renew-yearly`),
+            quantity: parseInt(yearLicense),
+            nbArea: license.nbArea || 1,
+            monthly: false,
+          });
+        }
+        setPurchaseDate((prev) => ({
+          ...prev,
+          expectedAmountBrut: tot,
+          purchaseItems: pData,
+          vatId: vat.id,
+        }));
       }
     }
 
@@ -148,10 +136,14 @@ export default function LicenseUpdate({
     setNewValidity(validity.toISOString());
   }, [inputs, price, license, setNewValidity]);
 
+  if (licenseLoading) return <Loading />;
+  if (licenseError) return <DisplayError error={licenseError} />;
+
+  // console.log(`purchaseData`, purchaseData);
+
   return (
     <Drawer onClose={closeAndClear} open={open} title={t('update-license')}>
       {error && <DisplayError error={error} />}
-      {orderError && <DisplayError error={orderError} />}
       <Form>
         <FormBody>
           <RowReadOnly>
@@ -180,35 +172,39 @@ export default function LicenseUpdate({
             {user.id && (
               <LicensePrice
                 owner={user.id}
-                licenseTypeId={license?.licenseType?.id}
+                licenseTypeIds={[{ id: license.licenseType.id }]}
               />
             )}
           </Row>
-          <H2>{t(application.licenseType.name || 'common:unknown')}</H2>
-          {application.licenseType.perArea && (
-            <Row>{t('nb-area-validity', { count: license.nbArea })}</Row>
-          )}
-          <Row>
-            <Block>
+          <LicenseType license={license.licenseType.id}>
+            {license.licenseType.perArea && (
+              <span>
+                &nbsp;- {t('nb-area-validity', { count: license.nbArea })}
+              </span>
+            )}
+          </LicenseType>
+          <hr />
+          <FormBody>
+            <RowFull>
               <Counter
                 label={t('nb-month')}
                 name="monthLicense"
-                input={inputs.monthLicense}
+                input={inputs.monthLicense || 0}
                 handleChange={handleChange}
               />
               <Counter
                 label={t('nb-year')}
                 name="yearLicense"
-                input={inputs.yearLicense}
+                input={inputs.yearLicense || 0}
                 handleChange={handleChange}
               />
-            </Block>
-          </Row>
+            </RowFull>
+          </FormBody>
           <RowReadOnly>
             <Label>{t('new-validity')}</Label>
             <span>{formatDate(newValidity)}</span>
           </RowReadOnly>
-          <Total value={total} vat={vat.value} />
+          <Total value={total} vat={parseFloat(vat.value)} />
         </FormBodyFull>
       </Form>
       <DrawerFooter>
@@ -216,9 +212,10 @@ export default function LicenseUpdate({
           disabled={loading || total.amount <= 0}
           onSuccess={handleSuccess}
           onError={handleError}
-          amount={total.amount * (1 + vat.value)}
+          purchaseFunction={updateLicense}
+          data={purchaseData}
         />
-        <ButtonCancel onClick={closeAndClear} />
+        <ButtonCancel onClick={() => closeAndClear(null)} />
         {error && <DisplayError error={error} />}
       </DrawerFooter>
     </Drawer>

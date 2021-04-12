@@ -19,6 +19,10 @@ export function SearchUser({ name, value, onChange, required }) {
   const users = data?.allUsers || [];
   const userList = users.map((u) => ({ value: u.id, label: u.name }));
 
+  function handleChange(us) {
+    onChange({ name, value: us.value });
+  }
+
   if (loading) return <Loading />;
   return (
     <Select
@@ -27,7 +31,7 @@ export function SearchUser({ name, value, onChange, required }) {
       value={userList.find((u) => u.value === value)}
       name={name}
       options={userList}
-      onChange={(us) => onChange({ name, value: us.value })}
+      onChange={handleChange}
       // className="basic-multi-select"
       // classNamePrefix="select"
     />

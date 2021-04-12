@@ -54,6 +54,29 @@ export const QUERY_ACCOUNT = gql`
         id
         token
       }
+      ownedLicenses {
+        id
+        application {
+          id
+          name
+        }
+        signal {
+          id
+          name
+        }
+        validity
+        licenseType {
+          id
+        }
+      }
+      ownedNotifications {
+        id
+        name
+        signal {
+          id
+          name
+        }
+      }
     }
   }
 `;

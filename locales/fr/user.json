@@ -33,5 +33,10 @@
   "no-delete": "Non",
   "account-detail": "Détails du compte",
   "users": "Utilisateurs",
-  "user": "Utilisateur"
+  "user": "Utilisateur",
+  "licenses": "Mes licences",
+  "license-type": "Type de licence",
+  "signal": "Signal associé",
+  "application": "Application associé",
+  "validity": "Fin de validité"
 }

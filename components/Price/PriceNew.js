@@ -4,12 +4,11 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import SwitchComponent from 'react-switch';
 
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { ALL_PRICES_QUERY, CREATE_PRICE_MUTATION } from './Queries';
-import { DrawerFooter } from '../styles/Drawer';
 import {
   Label,
   Row,

@@ -7,10 +7,9 @@ import { Editor } from '@tinymce/tinymce-react';
 import SwitchComponent from 'react-switch';
 
 import styled from 'styled-components';
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import Counter from '../Counter';
@@ -25,22 +24,23 @@ export default function NotificationContent({
   open,
   onClose,
   item,
-  setItem,
+  onValidation,
   typeNotif,
 }) {
   const { t } = useTranslation('notification');
 
   const { inputs, handleChange } = useForm(item);
-  const [image, setImage] = useState({ preview: '' });
+  const [image, setImage] = useState('');
 
-  const onDrop = useCallback((acceptedFile) => {
-    const file = acceptedFile[0];
-    setImage(
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      })
-    );
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFile) => {
+      const file = acceptedFile[0];
+      const preview = URL.createObjectURL(file);
+      inputs.image = Object.assign(file, { preview });
+      setImage(preview);
+    },
+    [inputs]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -48,11 +48,27 @@ export default function NotificationContent({
     multiple: false,
   });
 
-  useEffect(() => {
-    URL.revokeObjectURL(image.preview);
-  }, [image]);
+  // useEffect(() => {
+  //   if (inputs.image.preview !== '') {
+  //     URL.revokeObjectURL(inputs.image.preview);
+  //   }
+  // }, [inputs]);
 
-  console.log(`inputs`, inputs);
+  useEffect(() => {
+    if (item.image.name && !item.image.preview) {
+      const preview = URL.createObjectURL(item.image);
+      inputs.image = Object.assign(item.image, { preview });
+      setImage(preview);
+    } else if (item.image.publicUrlTransformed)
+      setImage(item.image.publicUrlTransformed);
+  }, [inputs, item]);
+
+  function handleValidation() {
+    console.log(`handleValidation - inputs`, inputs);
+
+    onValidation(inputs);
+    onClose();
+  }
 
   return (
     <Drawer onClose={onClose} open={open} title={t('content')}>
@@ -79,7 +95,7 @@ export default function NotificationContent({
                     <input {...getInputProps()} />
                     <p>{t('image-selection')}</p>
                   </div>
-                  {image.preview && <img src={image.preview} alt="" />}
+                  {image && <img src={image} alt="" />}
                 </ImageSelection>
               </Row>
               <Row>
@@ -203,12 +219,7 @@ quota */}
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation
-          onClick={() => {
-            setItem(inputs);
-            onClose();
-          }}
-        />
+        <ButtonValidation onClick={handleValidation} />
         <ButtonCancel onClick={onClose} />
       </DrawerFooter>
     </Drawer>
@@ -219,7 +230,7 @@ NotificationContent.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   item: PropTypes.object,
-  setItem: PropTypes.func,
+  onValidation: PropTypes.func,
   typeNotif: PropTypes.string,
 };
 

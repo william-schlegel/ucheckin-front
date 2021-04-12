@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
@@ -12,7 +12,6 @@ import {
   CREATE_SIGNALS_MUTATION,
   PAGINATION_QUERY,
 } from './Queries';
-import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form, Block } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';

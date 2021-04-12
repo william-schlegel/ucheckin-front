@@ -72,9 +72,9 @@ const LicenseStyled = styled.div`
   justify-content: start;
   margin: 0 0.5rem 0 1rem;
   img {
-    width: 40px;
-    max-width: 25%;
-    height: auto;
+    height: 30px;
+    width: auto;
+    /* max-width: 25%; */
     margin-right: 1rem;
     border-radius: 100px;
   }
@@ -96,7 +96,7 @@ const LicensesStyled = styled.div`
   }
 `;
 
-export function LicenseType({ license }) {
+export function LicenseType({ license, children }) {
   const { data, loading, error } = useQuery(LICENSE_TYPE_QUERY, {
     variables: { id: license },
   });
@@ -115,13 +115,15 @@ export function LicenseType({ license }) {
         }
         alt=""
       />
-      {t(data.LicenseType.name)}
+      <span>{t(data.LicenseType.name)}</span>
+      {children}
     </LicenseStyled>
   );
 }
 
 LicenseType.propTypes = {
   license: PropTypes.string,
+  children: PropTypes.node,
 };
 
 export function LicenseTypes({ licenses }) {

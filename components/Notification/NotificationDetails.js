@@ -2,10 +2,9 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter, DrawerHeader } from '../styles/Drawer';
-import { FormTitle, H3 } from '../styles/Card';
+import { Form, FormHeader, FormTitle } from '../styles/Card';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import { NOTIFICATION_QUERY } from './Queries';
@@ -21,12 +20,13 @@ export default function NotificationDetails({ open, onClose, id }) {
   if (!data) return null;
   return (
     <Drawer onClose={onClose} open={open} title={t('notification-details')}>
-      <DrawerHeader>
-        <FormTitle>
-          <H3>{t('notification')}</H3>
-          <span>{data.allNotifications.name}</span>
-        </FormTitle>
-      </DrawerHeader>
+      <Form>
+        <FormHeader>
+          <FormTitle>
+            {t('notification')} <span>{data.Notification.name}</span>
+          </FormTitle>
+        </FormHeader>
+      </Form>
       <DrawerFooter>
         <ButtonCancel onClick={onClose} />
       </DrawerFooter>

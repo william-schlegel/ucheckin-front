@@ -3,10 +3,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 
 import { Gift } from 'react-feather';
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import Loading from '../Loading';
 import {
   Form,
@@ -14,18 +13,43 @@ import {
   FormHeader,
   FormTitle,
   Label,
+  Row,
   RowReadOnly,
 } from '../styles/Card';
 import { LICENSE_QUERY } from './Queries';
 import ValidityDate from '../Tables/ValidityDate';
+import Number from '../Tables/Number';
 import { LicenseType } from '../Tables/LicenseType';
 import { formatDate } from '../DatePicker';
+import Table, { useColumns } from '../Tables/Table';
 
 export default function LicenseDetails({ open, onClose, id }) {
   const { loading, error, data } = useQuery(LICENSE_QUERY, {
     variables: { id },
   });
   const { t } = useTranslation('license');
+  const columns = useColumns(
+    [
+      ['id', 'id', 'hidden'],
+      [
+        t('date-purchase'),
+        'order.orderDate',
+        ({ cell: { value } }) => <ValidityDate noColor value={value} />,
+      ],
+      [t('common:name'), 'name'],
+      [
+        t('quantity'),
+        'quantity',
+        ({ cell: { value } }) => <Number value={value} />,
+      ],
+      [
+        t('nb-area'),
+        'nbArea',
+        ({ cell: { value } }) => <Number value={value} />,
+      ],
+    ],
+    false
+  );
 
   if (loading) return <Loading />;
   if (!data) return null;
@@ -80,6 +104,14 @@ export default function LicenseDetails({ open, onClose, id }) {
             <Label>{t('common:license-model')}</Label>
             <LicenseType license={data.License.licenseType.id} />
           </RowReadOnly>
+          <Row>
+            <Label>{t('order-history')}</Label>
+            <Table
+              columns={columns}
+              data={data.License.orderItems}
+              withPagination
+            />
+          </Row>
         </FormBodyFull>
       </Form>
       <DrawerFooter>

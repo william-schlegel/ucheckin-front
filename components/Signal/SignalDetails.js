@@ -2,10 +2,9 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import Loading from '../Loading';
 import {
   Form,

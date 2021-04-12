@@ -33,5 +33,10 @@
   "no-delete": "No",
   "account-detail": "Account deetails",
   "users": "Users",
-  "user": "User"
+  "user": "User",
+  "licenses": "My licenses",
+  "license-type": "License type",
+  "signal": "Associated signal",
+  "application": "Associated application",
+  "validity": "End of validity"
 }

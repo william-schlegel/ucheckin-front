@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import OrderContent from './Order';
 
 export default function OrderDetails({ open, onClose, id }) {

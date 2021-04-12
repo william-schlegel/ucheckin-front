@@ -59,6 +59,7 @@ export const ORDER_QUERY = gql`
         country
       }
       items {
+        name
         id
         licenseType {
           id

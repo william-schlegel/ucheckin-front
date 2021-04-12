@@ -34,6 +34,8 @@
   "nb-year": "Additional year",
   "total-license": "You buy {{count}} licenses",
   "total-signal": "You will have access to {{count}} signals",
+  "total-license_other": "You buy {{count}} licenses",
+  "total-signal_other": "You will own {{count}} signals",
   "signal-created": "The signal {{signal}} was created",
   "update-license": "Extend validity of a license/signal",
   "license-details": "Details of the license",
@@ -52,5 +54,16 @@
   "price-brut": "Brut price",
   "observations": "Observations",
   "price-details": "Price details",
-  "new-price": "New price"
+  "new-price": "New price",
+  "item-name-wi-us-monthly": "New monthly license for Wi-Us",
+  "item-name-wi-us-yearly": "New yearly license for Wi-Us",
+  "item-name-ucheck-in-monthly": "New monthly license for UcheckIn",
+  "item-name-ucheck-in-yearly": "New yearly license for UcheckIn",
+  "item-name-wi-us-renew-monthly": "Renew monthly license for  Wi-Us",
+  "item-name-wi-us-renew-yearly": "Renew yearly license for Wi-Us",
+  "item-name-ucheck-in-renew-monthly": "Renew monthly license for UcheckIn",
+  "item-name-ucheck-in-renew-yearly": "Renew yearly license for UcheckIn",
+  "date-purchase": "Purchase date",
+  "quantity": "Quantity",
+  "order-history": "Order history"
 }

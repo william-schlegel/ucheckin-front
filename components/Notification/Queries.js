@@ -76,7 +76,9 @@ export const NOTIFICATION_QUERY = gql`
       items {
         id
         displayType
-        image
+        image {
+          publicUrlTransformed
+        }
         imageLink
         htmlContent
         videoLink
@@ -90,9 +92,72 @@ export const NOTIFICATION_QUERY = gql`
   }
 `;
 
+export const DELETE_NOTIFICATION_MUTATION = gql`
+  mutation DELETE_NOTIFICATION_MUTATION($id: ID!) {
+    deleteNotification(id: $id) {
+      id
+      name
+    }
+  }
+`;
+
+export const UPDATE_NOTIFICATION_MUTATION = gql`
+  mutation UPDATE_NOTIFICATION_MUTATION(
+    $id: ID!
+    $name: String!
+    $displayName: String!
+    $owner: ownerId!
+    $type: String!
+    $startDate: String!
+    $endDate: String!
+    $appId: ID!
+    $signalId: ID!
+    $items: NotificationItemRelateToManyInput
+  ) {
+    updateNotification(
+      id: $id
+      data: {
+        name: $name
+        displayName: $displayName
+        owner: { connect: { id: $ownerId } }
+        type: $type
+        startDate: $startDate
+        endDate: $endDate
+        application: { connect: { id: $appId } }
+        signal: { connect: { id: $signalId } }
+        items: $items
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 export const CREATE_NOTIFICATION_MUTATION = gql`
-  mutation CREATE_NOTIFICATION_MUTATION($data: NotificationCreateInput!) {
-    createNotification(data: $data) {
+  mutation CREATE_NOTIFICATION_MUTATION(
+    $name: String!
+    $displayName: String!
+    $type: String!
+    $startDate: String!
+    $endDate: String!
+    $ownerId: ID!
+    $appId: ID!
+    $signalId: ID!
+    $items: NotificationItemRelateToManyInput
+  ) {
+    createNotification(
+      data: {
+        name: $name
+        displayName: $displayName
+        owner: { connect: { id: $ownerId } }
+        type: $type
+        startDate: $startDate
+        endDate: $endDate
+        application: { connect: { id: $appId } }
+        signal: { connect: { id: $signalId } }
+        items: $items
+      }
+    ) {
       id
     }
   }

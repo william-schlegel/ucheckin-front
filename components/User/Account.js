@@ -31,8 +31,9 @@ import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
 import { useHelp, Help, HelpButton } from '../Help';
 import Table, { useColumns } from '../Tables/Table';
-import { LicenseTypes } from '../Tables/LicenseType';
+import { LicenseType, LicenseTypes } from '../Tables/LicenseType';
 import ApiKey from '../Tables/ApiKey';
+import ValidityDate from '../Tables/ValidityDate';
 
 export default function Account({ id, initialData }) {
   const { t } = useTranslation('user');
@@ -46,7 +47,7 @@ export default function Account({ id, initialData }) {
   const initialValues = useRef(initialData);
   const { inputs, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
-  const columns = useColumns([
+  const columnsApplication = useColumns([
     ['id', 'id', 'hidden'],
     [t('common:name'), 'name'],
     [
@@ -59,6 +60,25 @@ export default function Account({ id, initialData }) {
     ['id', 'id', 'hidden'],
     [t('token'), 'token', ({ cell: { value } }) => <ApiKey apiKey={value} />],
   ]);
+  const columnsLicenses = useColumns(
+    [
+      ['id', 'id', 'hidden'],
+      [
+        t('license-type'),
+        'licenseType.id',
+        ({ cell: { value } }) => <LicenseType license={value} />,
+      ],
+      [t('application'), 'application.name'],
+      [t('signal'), 'signal.name'],
+      [
+        t('validity'),
+        'validity',
+        ({ cell: { value } }) => <ValidityDate value={value} />,
+      ],
+    ],
+    false
+  );
+
   const { loading, error, data } = useQuery(QUERY_ACCOUNT, {
     variables: { id },
   });
@@ -155,7 +175,7 @@ export default function Account({ id, initialData }) {
           <Row>
             <Label>{t('owned-apps')}</Label>
             <Table
-              columns={columns}
+              columns={columnsApplication}
               data={inputs.ownedApps}
               loading={loading}
               actionButtons={[{ type: 'edit', action: editApplication }]}
@@ -165,7 +185,7 @@ export default function Account({ id, initialData }) {
           <Row>
             <Label>{t('invited-apps')}</Label>
             <Table
-              columns={columns}
+              columns={columnsApplication}
               data={inputs.applications}
               loading={loading}
               actionButtons={[{ type: 'view', action: editApplication }]}
@@ -173,7 +193,10 @@ export default function Account({ id, initialData }) {
             />
           </Row>
           <Row>
-            <Label>{t('tokens')}</Label>
+            <Block>
+              <Label>{t('tokens')}</Label>
+              <ButtonNew onClick={addToken} disabled={tokenLoading} />
+            </Block>
             <Table
               columns={columnsToken}
               data={inputs.tokens}
@@ -183,10 +206,19 @@ export default function Account({ id, initialData }) {
               }
               withPagination
             />
-            <Block>
+            {/* <Block>
               <ButtonNew onClick={addToken} disabled={tokenLoading} />
               {tokenLoading && <Loading />}
-            </Block>
+            </Block> */}
+          </Row>
+          <Row>
+            <Label>{t('licenses')}</Label>
+            <Table
+              columns={columnsLicenses}
+              data={inputs.ownedLicenses}
+              loading={loading}
+              withPagination
+            />
           </Row>
         </FormBody>
         <FormFooter>

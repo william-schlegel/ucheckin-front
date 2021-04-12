@@ -42,6 +42,7 @@ export default function Order({ id, backButton }) {
         'licenseType.id',
         ({ cell: { value } }) => <LicenseType license={value} />,
       ],
+      [t('common:name'), 'name'],
       [
         t('quantity'),
         'quantity',

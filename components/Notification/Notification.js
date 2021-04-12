@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import Router from 'next/router';
 import Select from 'react-select';
 import gql from 'graphql-tag';
-import { PlusCircle } from 'react-feather';
+import { PlusCircle, Code } from 'react-feather';
 
 import styled from 'styled-components';
 import Head from 'next/head';
@@ -26,21 +26,27 @@ import {
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { SearchUser } from '../SearchUser';
-// import NotificationDelete from './NotificationDelete';
-// import NotificationUpdate from './NotificationUpdate';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonValidation from '../Buttons/ButtonValidation';
+import ButtonDelete from '../Buttons/ButtonDelete';
 import NotificationType, {
   useNotificationName,
 } from '../Tables/NotificationType';
-import { NOTIFICATION_QUERY } from './Queries';
+import {
+  NOTIFICATION_QUERY,
+  DELETE_NOTIFICATION_MUTATION,
+  UPDATE_NOTIFICATION_MUTATION,
+  CREATE_NOTIFICATION_MUTATION,
+} from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import { useUser } from '../User/Queries';
 import DatePicker from '../DatePicker';
 import ValidityDate from '../Tables/ValidityDate';
 import Counter from '../Counter';
-import { PrimaryButtonStyled } from '../styles/Button';
 import NotificationContent from './NotificationContent';
+import ActionButton from '../Buttons/ActionButton';
+import FieldError from '../FieldError';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -73,7 +79,7 @@ const phoneList = [
 const defaultItem = {
   id: '',
   displayType: '',
-  image: '',
+  image: {},
   imageLink: '',
   htmlContent: '',
   videoLink: 'https://youtu.be/',
@@ -88,6 +94,49 @@ export default function Notification({ id, initialData }) {
   const [queryNotification, { loading, error, data }] = useLazyQuery(
     NOTIFICATION_QUERY
   );
+  const [
+    deleteNotification,
+    { loading: loadingDelete, error: errorDelete },
+  ] = useMutation(DELETE_NOTIFICATION_MUTATION, {
+    variables: { id },
+    // refetchQueries: [
+    //   {
+    //     query: ALL_APPLICATIONS_QUERY,
+    //     variables: { skip: 0, first: perPage },
+    //   },
+    // ],
+    onCompleted: () => {
+      Router.push('/notifications');
+    },
+  });
+  const [
+    updateNotification,
+    { loading: loadingUpdate, error: errorUpdate },
+  ] = useMutation(UPDATE_NOTIFICATION_MUTATION, {
+    // refetchQueries: [
+    //   {
+    //     query: ALL_APPLICATIONS_QUERY,
+    //     variables: { skip: 0, first: perPage },
+    //   },
+    // ],
+    onCompleted: () => {
+      Router.push('/notifications');
+    },
+  });
+  const [
+    createNotification,
+    { loading: loadingCreate, error: errorCreate },
+  ] = useMutation(CREATE_NOTIFICATION_MUTATION, {
+    // refetchQueries: [
+    //   {
+    //     query: ALL_APPLICATIONS_QUERY,
+    //     variables: { skip: 0, first: perPage },
+    //   },
+    // ],
+    onCompleted: () => {
+      Router.push('/notifications');
+    },
+  });
   const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
   const [querySignal, { data: dataSig }] = useLazyQuery(QUERY_SIGNAL_FROM_APP);
 
@@ -99,9 +148,15 @@ export default function Notification({ id, initialData }) {
   const { notificationTypesOptions } = useNotificationName();
   const initialValues = useRef({
     ...initialData.data.Notification,
-    nbNotif: 2,
+    nbNotif: 1,
   });
-  const { inputs, handleChange, setInputs } = useForm(initialValues.current);
+  const {
+    inputs,
+    handleChange,
+    setInputs,
+    validate,
+    validationError,
+  } = useForm(initialValues.current, { name: '', displayName: '' });
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
   const notifOwnerId = data?.Notification?.owner?.id;
@@ -161,22 +216,97 @@ export default function Notification({ id, initialData }) {
     handleChange(value);
   }
 
+  function handleChangeType(newType) {
+    handleChange({ name: 'type', value: newType.value });
+    if (newType.value === 'simple') {
+      setInputs((prev) => ({ ...prev, nbNotif: 1 }));
+    } else if (inputs.nbNotif < 2)
+      setInputs((prev) => ({ ...prev, nbNotif: 2 }));
+  }
+
   function addContent() {
-    const newItem = inputs.items[selectedItem]?.id
-      ? inputs.items[selectedItem]
-      : defaultItem;
-    setItem(newItem);
+    setItem(defaultItem);
     setShowItem(true);
+  }
+
+  function handleValidateItem(newItem) {
+    const newInputs = { ...inputs };
+    if (newItem.id) {
+      const idItem = newInputs.items.findIndex((i) => i.id === newItem.id);
+      if (idItem >= 0) {
+        newInputs.items[idItem] = newItem;
+        setInputs(newInputs);
+      }
+    } else {
+      newItem.id = `ITEM-${newInputs.items.length}`;
+      newInputs.items.push(newItem);
+      setInputs(newInputs);
+    }
+    setItem(newItem);
+  }
+
+  function handleEditNotif(idNotif) {
+    const notif = inputs.items[idNotif];
+    notif.image.preview = '';
+    setItem(notif);
+    setShowItem(true);
+  }
+
+  function handleDeleteNotif(idNotif) {
+    const newItems = [...inputs.items];
+    newItems.splice(idNotif, 1);
+
+    setItem(null);
+    setInputs((prev) => ({ ...prev, items: newItems }));
   }
 
   function handleCloseItem() {
     setShowItem(false);
   }
 
+  function handleDeleteNotification() {
+    deleteNotification({ variables: { id } });
+  }
+
+  function handleUpdateNotification() {
+    if (!validate()) return;
+    const variables = {
+      id,
+      name: inputs.name,
+      displayName: inputs.displayName,
+      type: inputs.type,
+      startDate: inputs.startDate,
+      endDate: inputs.endDate,
+      ownerId: inputs.owner.id,
+      appId: inputs.application.id,
+      signalId: inputs.signal.id,
+    };
+    updateNotification({ variables });
+  }
+
+  function handleCreateNotification() {
+    if (!validate()) return;
+    const variables = {
+      name: inputs.name,
+      displayName: inputs.displayName,
+      type: inputs.type,
+      startDate: inputs.startDate,
+      endDate: inputs.endDate,
+      ownerId: inputs.owner.id,
+      appId: inputs.application.id,
+      signalId: inputs.signal.id,
+    };
+    createNotification({ variables });
+  }
+
   if (loading || !user) return <Loading />;
   if (error) return <DisplayError error={error} />;
+  if (errorDelete) return <DisplayError error={errorDelete} />;
+  if (errorUpdate) return <DisplayError error={errorUpdate} />;
+  if (errorCreate) return <DisplayError error={errorCreate} />;
 
   console.log(`inputs`, inputs);
+  console.log(`nbNotif`, inputs.nbNotif);
   console.log(`item`, item);
 
   return (
@@ -194,7 +324,7 @@ export default function Notification({ id, initialData }) {
           open={showItem}
           onClose={handleCloseItem}
           item={item}
-          setItem={setItem}
+          onValidation={handleValidateItem}
           typeNotif={inputs.type}
         />
       )}{' '}
@@ -232,6 +362,7 @@ export default function Notification({ id, initialData }) {
                       value={inputs.name}
                       onChange={handleChange}
                     />
+                    <FieldError error={validationError.name} />
                   </Row>
                   <Row>
                     <Label htmlFor="displayName" required>
@@ -245,6 +376,7 @@ export default function Notification({ id, initialData }) {
                       value={inputs.displayName}
                       onChange={handleChange}
                     />
+                    <FieldError error={validationError.displayName} />
                   </Row>
                   <Row>
                     <Label>{t('common:owner')}</Label>
@@ -263,9 +395,7 @@ export default function Notification({ id, initialData }) {
                       value={notificationTypesOptions.find(
                         (n) => n.value === inputs.type
                       )}
-                      onChange={(n) =>
-                        handleChange({ name: 'type', value: n.value })
-                      }
+                      onChange={handleChangeType}
                       options={notificationTypesOptions}
                     />
                   </Row>
@@ -322,6 +452,7 @@ export default function Notification({ id, initialData }) {
                       }}
                       options={optionsAppUser}
                     />
+                    <FieldError error={validationError.applicationId} />
                   </Row>
                   <Row>
                     <Label required>{t('signal')}</Label>
@@ -340,6 +471,7 @@ export default function Notification({ id, initialData }) {
                       options={optionsSignals}
                     />
                   </Row>
+                  <FieldError error={validationError.signalId} />
                 </>
               ) : (
                 <>
@@ -384,13 +516,8 @@ export default function Notification({ id, initialData }) {
               )}
             </FormBody>
             <Separator />
-            {inputs.type === 'simple' ? (
-              <PrimaryButtonStyled type="button" onClick={addContent}>
-                <PlusCircle />
-                <span>{t('create-content')}</span>
-              </PrimaryButtonStyled>
-            ) : (
-              <FormBodyFull>
+            <FormBodyFull>
+              {inputs.type !== 'simple' && (
                 <Row>
                   <Counter
                     input={inputs.nbNotif}
@@ -401,18 +528,26 @@ export default function Notification({ id, initialData }) {
                     label={t('nb-notif')}
                   />
                 </Row>
-                <Row>
-                  <NotifContainer>
-                    {inputs.items.map((it, index) => (
-                      <Notif item={it} onClick={() => setSelectedItem(index)} />
-                    ))}
-                    {inputs.items.length < 10 && (
-                      <AddNotif onClick={addContent} />
-                    )}
-                  </NotifContainer>
-                </Row>
-              </FormBodyFull>
-            )}
+              )}
+              <Row>
+                <NotifContainer>
+                  {inputs.items.map((it, index) => (
+                    <Notif
+                      key={`NOTIF-${index}`}
+                      typeNotif={inputs.type}
+                      item={it}
+                      onClick={() => setSelectedItem(index)}
+                      withDetails
+                      deleteNotif={() => handleDeleteNotif(index)}
+                      editNotif={() => handleEditNotif(index)}
+                    />
+                  ))}
+                  {inputs.items.length < inputs.nbNotif && (
+                    <AddNotif onClick={addContent} />
+                  )}
+                </NotifContainer>
+              </Row>
+            </FormBodyFull>
           </div>
           <Phone>
             <div style={{ width: '100%' }}>
@@ -429,21 +564,32 @@ export default function Notification({ id, initialData }) {
                   className="place-holder"
                   style={{ width: '300px', height: `${300 * phone.ratio}px` }}
                 >
-                  <Notif item={inputs.items[selectedItem]} />
+                  <Notif item={inputs.items[selectedItem]} type={inputs.type} />
                 </div>
               </div>
             </div>
           </Phone>
         </div>
         <FormFooter>
-          {/* {canEdit && id && (
-            <NotificationUpdate
-              id={id}
-              updatedApp={inputs}
-              onSuccess={() => Router.push('/notifications')}
+          {canEdit && !id && (
+            <ButtonValidation
+              disabled={loadingCreate}
+              onClick={handleCreateNotification}
             />
           )}
-          {canEdit && id && <NotificationDelete id={id} />} */}
+          {canEdit && id && (
+            <ButtonValidation
+              disabled={loadingUpdate}
+              onClick={handleUpdateNotification}
+              update
+            />
+          )}
+          {canEdit && id && (
+            <ButtonDelete
+              disabled={loadingDelete}
+              onClick={handleDeleteNotification}
+            />
+          )}
           <ButtonCancel onClick={() => Router.back()} />
         </FormFooter>
       </Form>
@@ -456,17 +602,63 @@ Notification.propTypes = {
   initialData: PropTypes.object,
 };
 
-function Notif({ item, onClick }) {
+function Notif({
+  item,
+  typeNotif,
+  onClick,
+  withDetails,
+  deleteNotif,
+  editNotif,
+}) {
+  const [element, setElement] = useState();
+
+  useEffect(() => {
+    const el = document.getElementById('html-content-container');
+    setElement(el);
+  }, []);
+
+  useEffect(() => {
+    if (element) element.innerHTML = item.htmlContent;
+  }, [element, item]);
+
   if (!item) return null;
   return (
     <NotifStyle onClick={onClick}>
-      <div className="title">item.name</div>
-      {item?.photo?.publicUrlTransformed && (
-        <img
-          className="image"
-          src={item.photo.publicUrlTransformed}
-          alt={item.name}
-        />
+      {item.displayType === 'image' && (
+        <>
+          {item?.image?.publicUrlTransformed && (
+            <img
+              className="image"
+              src={item.image.publicUrlTransformed}
+              alt={item.name}
+            />
+          )}
+          {item?.image?.preview && (
+            <img className="image" src={item.image.preview} alt={item.name} />
+          )}
+        </>
+      )}
+      {item.displayType === 'html' && (
+        <div className="html-content">
+          {withDetails ? (
+            <div className="icon">
+              <Code size={64} />
+            </div>
+          ) : (
+            <div id="html-content-container" />
+          )}
+        </div>
+      )}
+      {withDetails && (
+        <div className="details">
+          {(typeNotif === 'random-draw' || typeNotif === 'instant-win') && (
+            <div className="prct">{item.probability}</div>
+          )}
+          <div className="actions">
+            <ActionButton type="edit" cb={editNotif} />
+            <ActionButton type="trash" cb={deleteNotif} />
+          </div>
+        </div>
       )}
     </NotifStyle>
   );
@@ -474,7 +666,11 @@ function Notif({ item, onClick }) {
 
 Notif.propTypes = {
   item: PropTypes.object,
+  typeNotif: PropTypes.string,
   onClick: PropTypes.func,
+  deleteNotif: PropTypes.func,
+  editNotif: PropTypes.func,
+  withDetails: PropTypes.bool,
 };
 
 function AddNotif({ onClick }) {
@@ -519,9 +715,33 @@ const NotifContainer = styled.div`
 `;
 
 const NotifStyle = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
+  img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+  .htmlContent {
+    padding: 3px;
+  }
+  .icon {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--lightGray);
+    margin: 3rem 0;
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+  }
 `;
 
 const Separator = styled.div`

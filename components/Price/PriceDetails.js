@@ -3,10 +3,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 import styled from 'styled-components';
 
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import Loading from '../Loading';
 import {
   Block,
@@ -20,7 +19,7 @@ import {
 import { PRICE_QUERY } from './Queries';
 import { formatDate } from '../DatePicker';
 import { TableStyled } from '../License/LicensePrice';
-import {formatMoney} from '../../lib/formatNumber';
+import { formatMoney } from '../../lib/formatNumber';
 import { LicenseType } from '../Tables/LicenseType';
 import Badges from '../Tables/Badges';
 

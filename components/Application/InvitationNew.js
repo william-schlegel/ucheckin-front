@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
 import SwitchComponent from 'react-switch';
-import Drawer from '../Drawer';
+import Drawer, { DrawerFooter } from '../Drawer';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { DrawerFooter } from '../styles/Drawer';
 import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { dateNow } from '../DatePicker';
@@ -16,7 +15,7 @@ export default function InvitationNew({ appId, open, onClose }) {
   const { t } = useTranslation('application');
   const initialValues = useRef({
     email: '',
-    appId,
+    application: { connect: { id: appId } },
     status: 'created',
     user: null,
     updated: dateNow(),

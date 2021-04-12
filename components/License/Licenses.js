@@ -155,6 +155,14 @@ export default function Licenses() {
     setShowLicense('');
   }
 
+  function handleCloseExtend(orderId) {
+    setShowUpdateLicense(false);
+    console.log(`orderId`, orderId);
+    if (orderId) {
+      router.push(`/order/${orderId}`);
+    }
+  }
+
   function extendLicense(licenseId) {
     const license = state.licenses.find((l) => l.id === licenseId);
     setSelectedLicense({
@@ -188,7 +196,7 @@ export default function Licenses() {
       {selectedLicense.licenseId && (
         <LicenseUpdate
           open={showUpdateLicense}
-          onClose={() => setShowUpdateLicense(false)}
+          onClose={handleCloseExtend}
           licenseId={selectedLicense.licenseId}
           appId={selectedLicense.appId}
           ownerId={selectedLicense.ownerId}

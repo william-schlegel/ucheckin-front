@@ -5,6 +5,7 @@ import { dateDay } from '../DatePicker';
 export const APPLICATION_QUERY = gql`
   query APPLICATION_QUERY($id: ID!) {
     Application(where: { id: $id }) {
+      id
       name
       apiKey
       owner {
@@ -128,7 +129,7 @@ export const UPDATE_APPLICATION_MUTATION = gql`
     $name: String!
     $apiKey: String!
     $owner: UserWhereUniqueInput
-    $invitations: [InvitationWhereUniqueInput]
+    $invitations: [InvitationCreateInput]
     $licenseTypes: [LicenseTypeWhereUniqueInput]
   ) {
     updateApplication(
@@ -137,7 +138,7 @@ export const UPDATE_APPLICATION_MUTATION = gql`
         name: $name
         apiKey: $apiKey
         owner: { connect: $owner }
-        invitations: { disconnectAll: true, connect: $invitations }
+        invitations: { create: $invitations }
         licenseTypes: { disconnectAll: true, connect: $licenseTypes }
       }
     ) {
