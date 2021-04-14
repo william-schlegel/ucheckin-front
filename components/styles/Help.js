@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   left: 0;
   top: 0;
   padding: 10px;
-  color: #1e1e1e;
+  color: var(--text-color);
   border-radius: 25px;
   background: transparent;
   display: flex;

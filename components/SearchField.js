@@ -27,7 +27,7 @@ export default function SearchField({
 }) {
   const { t } = useTranslation('common');
   const [admin, setAdmin] = useState(false);
-  const user = useUser();
+  const { user } = useUser();
   const [filters, setFilters] = useState([]);
 
   function closeSearch() {

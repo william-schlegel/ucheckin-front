@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
+import { Confirm } from 'notiflix';
 
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
@@ -12,7 +13,11 @@ import DisplayError from '../ErrorMessage';
 import EntetePage from '../styles/EntetePage';
 import NotificationDetails from './NotificationDetails';
 import ValidityDate from '../Tables/ValidityDate';
-import { PAGINATION_QUERY, ALL_NOTIFICATIONS_QUERY } from './Queries';
+import {
+  PAGINATION_QUERY,
+  ALL_NOTIFICATIONS_QUERY,
+  DELETE_NOTIFICATION_MUTATION,
+} from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import SearchField, { useFilter } from '../SearchField';
 import { useUser } from '../User/Queries';
@@ -21,7 +26,7 @@ import ButtonNew from '../Buttons/ButtonNew';
 
 export default function Notifications() {
   const router = useRouter();
-  const user = useUser();
+  const { user } = useUser();
 
   const [
     queryPagination,
@@ -30,6 +35,7 @@ export default function Notifications() {
   const [queryNotifications, { error, loading, data }] = useLazyQuery(
     ALL_NOTIFICATIONS_QUERY
   );
+  const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION);
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
   const { t } = useTranslation('notification');
@@ -83,9 +89,25 @@ export default function Notifications() {
     setShowNotification('');
   }
 
+  function handleDeleteNotification(id) {
+    Confirm.Show(
+      t('confirm-delete'),
+      t('you-confirm'),
+      t('yes-delete'),
+      t('no-delete'),
+      () =>
+        deleteNotification({
+          update: (cache, payload) =>
+            cache.evict(cache.identify(payload.data.deleteNotification)),
+          variables: { id },
+        })
+    );
+  }
+
   const actionButtons = [
     { type: 'view', action: viewNotification },
     { type: 'edit', action: (id) => router.push(`/notification/${id}`) },
+    { type: 'trash', action: (id) => handleDeleteNotification(id) },
   ];
 
   if (loading) return <Loading />;

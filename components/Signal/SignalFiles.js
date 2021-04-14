@@ -23,6 +23,7 @@ import ValidationButton from '../Buttons/ButtonValidation';
 import { MUTATION_ADD_SIGNAL_FILE, SIGNAL_QUERY } from './Queries';
 import CancelButton from '../Buttons/ButtonCancel';
 import AudioPlayer from '../Audio/AudioPlayer';
+import selectTheme from '../styles/selectTheme';
 
 export default function SignalFiles({ signalId, files }) {
   const { t } = useTranslation('signal');
@@ -160,6 +161,7 @@ export default function SignalFiles({ signalId, files }) {
             <RowFull>
               <Label htmlFor="chanels">{t('chanel')}</Label>
               <Select
+                theme={selectTheme}
                 className="select"
                 id="chanel"
                 value={chanelOptions.find((ch) => ch.value === inputs.chanel)}

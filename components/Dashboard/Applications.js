@@ -46,7 +46,7 @@ const QUERY_APPLICATIONS = gql`
 export default function DashboardApplication() {
   const { t } = useTranslation('dashboard');
   const { error, loading, data } = useQuery(QUERY_APPLICATIONS);
-  const user = useUser();
+  const { user } = useUser();
   const router = useRouter();
 
   function viewApp(appId) {

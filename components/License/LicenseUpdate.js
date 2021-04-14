@@ -18,6 +18,7 @@ import {
   RowReadOnly,
   FormBody,
   RowFull,
+  Separator,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import LicensePrice, { usePrice } from './LicensePrice';
@@ -183,7 +184,7 @@ export default function LicenseUpdate({
               </span>
             )}
           </LicenseType>
-          <hr />
+          <Separator />
           <FormBody>
             <RowFull>
               <Counter

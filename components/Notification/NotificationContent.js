@@ -13,6 +13,7 @@ import ButtonCancel from '../Buttons/ButtonCancel';
 import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import Counter from '../Counter';
+import selectTheme from '../styles/selectTheme';
 
 const displayTypes = [
   { value: 'image', label: 'image' },
@@ -55,7 +56,9 @@ export default function NotificationContent({
   // }, [inputs]);
 
   useEffect(() => {
-    if (item.image.name && !item.image.preview) {
+    if (item.image.preview) {
+      setImage(item.image.preview);
+    } else if (item.image.name && !item.image.preview) {
       const preview = URL.createObjectURL(item.image);
       inputs.image = Object.assign(item.image, { preview });
       setImage(preview);
@@ -79,6 +82,7 @@ export default function NotificationContent({
               {t('display-type')}
             </Label>
             <Select
+              theme={selectTheme}
               className="select"
               value={displayTypes.find((d) => d.value === inputs.displayType)}
               onChange={(d) =>

@@ -43,7 +43,7 @@ export default function Account({ id, initialData }) {
   const clipboardCopied = clipboard.copied;
 
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
-  const user = useUser();
+  const { user } = useUser();
   const initialValues = useRef(initialData);
   const { inputs, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);

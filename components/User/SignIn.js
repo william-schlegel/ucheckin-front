@@ -3,6 +3,7 @@ import { useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import { LogIn, UserPlus, XCircle } from 'react-feather';
 
+import { useRouter } from 'next/router';
 import {
   Form,
   FormHeader,
@@ -26,6 +27,7 @@ import RequestReset from './RequestReset';
 
 export default function SignInForm() {
   const { t } = useTranslation('user');
+  const router = useRouter();
   const initialState = useRef({
     email: '',
     password: '',
@@ -35,6 +37,7 @@ export default function SignInForm() {
     variables: inputs,
     // refetch the currently logged in user
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    onCompleted: () => router.push('/'),
   });
   const [showSignUp, setShowSignup] = useState(false);
   const [showReset, setShowReset] = useState(false);

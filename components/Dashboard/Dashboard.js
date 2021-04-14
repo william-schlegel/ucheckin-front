@@ -28,7 +28,7 @@ const DashboardStyled = styled.div`
 export default function Dashboard() {
   const { t } = useTranslation('dashboard');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('main');
-  const user = useUser();
+  const { user } = useUser();
   return (
     <>
       <Help

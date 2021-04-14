@@ -32,7 +32,7 @@ export default function SignalNew({ open, onClose }) {
       ],
     }
   );
-  const user = useUser();
+  const { user } = useUser();
   const { t } = useTranslation('signal');
   const initialValues = useRef({
     number: 1,

@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import Select from 'react-select';
 import Loading from './Loading';
+import selectTheme from './styles/selectTheme';
 
 const ALL_USER_QUERY = gql`
   query ALL_USER_QUERY {
@@ -26,6 +27,7 @@ export function SearchUser({ name, value, onChange, required }) {
   if (loading) return <Loading />;
   return (
     <Select
+      theme={selectTheme}
       className="select"
       required={required}
       value={userList.find((u) => u.value === value)}
@@ -53,6 +55,7 @@ export function SearchUsers({ name, value, onChange, required }) {
   if (loading) return <Loading />;
   return (
     <Select
+      theme={selectTheme}
       className="select"
       required={required}
       value={value.map((v) => userList.find((u) => u.value === v))}

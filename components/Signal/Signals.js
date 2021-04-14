@@ -42,7 +42,7 @@ export default function Signals() {
   const { t } = useTranslation('signal');
   const [showSignal, setShowSignal] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
-  const user = useUser();
+  const { user } = useUser();
 
   const searchFields = [
     { field: 'name_contains_i', label: t('signal'), type: 'text' },

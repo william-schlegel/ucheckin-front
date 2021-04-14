@@ -17,6 +17,7 @@ import {
   FormBody,
   H3,
   RowReadOnly,
+  Separator,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import LicensePrice, { usePrice } from './LicensePrice';
@@ -199,7 +200,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           {application.licenseTypes.map((lt) => (
             <LicenseContainer key={lt.id}>
               <LicenseType license={lt.id} />
-              <hr />
+              <Separator />
               <FormBody>
                 <Row>
                   <H3>{t(lt.perArea ? 'nb-signal' : 'nb-license')}</H3>

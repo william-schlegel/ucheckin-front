@@ -7,7 +7,7 @@ import { useUser } from './User/Queries';
 import Footer from './Footer';
 
 export default function Nav() {
-  const user = useUser();
+  const { user } = useUser();
   const { t } = useTranslation('navigation');
 
   if (user?.id)

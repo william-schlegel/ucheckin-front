@@ -41,6 +41,7 @@ const NotificationStyled = styled.div`
 
 export default function NotificationType({ notification }) {
   const { t } = useTranslation('notification');
+  if (!notification) return <span>...</span>;
   return <NotificationStyled>{t(notification)}</NotificationStyled>;
 }
 

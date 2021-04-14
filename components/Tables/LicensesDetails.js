@@ -9,7 +9,7 @@ const Licenses = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  color: #111;
+  color: var(--text-color);
   text-align: center;
   & > * {
     flex: 1 1 1.5rem;
@@ -20,13 +20,16 @@ const Licenses = styled.div`
   }
   .valide {
     background-color: #8f8;
+    color: #111;
   }
   .not-valide {
     background-color: #f88;
+    color: #111;
   }
   .nb-license {
     background-color: #eee;
     border: 1px solid #aaa;
+    color: #111;
   }
 `;
 

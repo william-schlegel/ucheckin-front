@@ -65,7 +65,7 @@ export default function Licenses() {
   });
   const page = parseInt(router.query.page) || 1;
   const { t } = useTranslation('license');
-  const user = useUser();
+  const { user } = useUser();
 
   const [
     queryPagination,

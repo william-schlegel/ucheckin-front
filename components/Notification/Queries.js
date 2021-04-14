@@ -106,10 +106,10 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
     $id: ID!
     $name: String!
     $displayName: String!
-    $owner: ownerId!
     $type: String!
     $startDate: String!
     $endDate: String!
+    $ownerId: ID!
     $appId: ID!
     $signalId: ID!
     $items: NotificationItemRelateToManyInput
@@ -158,6 +158,22 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
         items: $items
       }
     ) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_NOTIFICATION_ITEMS = gql`
+  mutation UPDATE_NOTIFICATION_ITEMS($data: [NotificationItemsUpdateInput]) {
+    updateNotificationItems(data: $data) {
+      id
+    }
+  }
+`;
+
+export const DELETE_NOTIFICATION_ITEM = gql`
+  mutation DELETE_NOTIFICATION_ITEM($id: ID!) {
+    deleteNotificationItem(id: $id) {
       id
     }
   }

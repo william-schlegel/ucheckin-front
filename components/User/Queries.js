@@ -172,6 +172,7 @@ export const CURRENT_USER_QUERY = gql`
           publicUrlTransformed(transformation: { width: "200", height: "200" })
         }
         country
+        theme
         role {
           id
           canSeeOtherUsers
@@ -255,6 +256,14 @@ export const UPDATE_PROFILE_PHOTO_MUTATION = gql`
   }
 `;
 
+export const UPDATE_THEME = gql`
+  mutation UPDATE_THEME($userId: ID!, $theme: String!) {
+    updateUser(id: $userId, data: { theme: $theme }) {
+      id
+    }
+  }
+`;
+
 const ROLE_QUERY = gql`
   query ROLE_QUERY {
     allRoles {
@@ -265,14 +274,17 @@ const ROLE_QUERY = gql`
 `;
 
 export function useUser() {
-  const { data } = useQuery(CURRENT_USER_QUERY);
+  const { data, error } = useQuery(CURRENT_USER_QUERY);
   const items = data?.authenticatedItem;
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (items) setUser(items);
+    setLoading(false);
   }, [items]);
 
-  return user;
+  return { user, loading, error };
 }
 
 export function useRole() {

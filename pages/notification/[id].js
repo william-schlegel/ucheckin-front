@@ -21,6 +21,20 @@ Notification.getInitialProps = async (ctx) => {
   });
   return {
     id,
-    initialData: { ...initialData, licenseType: initialData.licenseType?.id },
+    initialData,
   };
 };
+
+// : {
+//   data: {
+//     Notification: {
+//       application: {},
+//       owner: {},
+//       signal: {},
+//       items: [],
+//       type: 'simple',
+//       startDate: new Date(),
+//       endDate: new Date(),
+//     },
+//   },
+// },

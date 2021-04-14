@@ -6,6 +6,7 @@ import Flag from 'react-country-flag';
 import useTranslation from 'next-translate/useTranslation';
 import setLanguage from 'next-translate/setLanguage';
 import { useRouter } from 'next/dist/client/router';
+import PropTypes from 'prop-types';
 
 import useOnClickOutside from '../lib/useOnClickOutside';
 import Signout from './User/SignOut';
@@ -111,18 +112,17 @@ const Flags = [
   { country: 'US', lng: 'en' },
 ];
 
-export default function Header() {
-  const [darkTheme, setDarkTheme] = useState(false);
+export default function Header({ darkTheme, setDarkTheme }) {
   const [flag, setFlag] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const refMenu = useRef();
   const { t } = useTranslation('navigation');
   const router = useRouter();
-  const user = useUser();
+  const { user } = useUser();
 
   const toggleTheme = useCallback(() => {
     setDarkTheme(!darkTheme);
-  }, [darkTheme]);
+  }, [darkTheme, setDarkTheme]);
 
   const toggleFlag = useCallback(() => {
     let newFlag = flag + 1;
@@ -208,3 +208,8 @@ export default function Header() {
     </HeaderStyles>
   );
 }
+
+Header.propTypes = {
+  darkTheme: PropTypes.bool,
+  setDarkTheme: PropTypes.func,
+};

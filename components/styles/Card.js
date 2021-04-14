@@ -1,9 +1,9 @@
 import styled, { keyframes } from 'styled-components';
 
 export const Card = styled.div`
-  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05);
-  background: rgba(0, 0, 0, 0.02);
-  border: 5px solid var(--white);
+  box-shadow: var(--bs-card);
+  background: var(--bg-card);
+  border: 5px solid var(--offsetWhite);
   padding: 1rem;
   /* font-size: 1.5rem; */
   line-height: 1.5;
@@ -215,4 +215,10 @@ export const DashboardCard = styled(Card)`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2.5rem auto;
+`;
+
+export const Separator = styled.div`
+  padding-top: 1rem;
+  margin: 0.5rem 0;
+  border-bottom: 1px solid var(--lightGray);
 `;

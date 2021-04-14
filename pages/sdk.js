@@ -72,6 +72,7 @@ const SdkBlockStyled = styled.div`
     border-radius: 10px;
     margin-right: 2rem;
     align-self: center;
+    filter: drop-shadow(var(--drop-shadow));
   }
   .body {
     display: flex;

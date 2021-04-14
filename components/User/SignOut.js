@@ -12,7 +12,10 @@ export default function SignOut() {
   const { t } = useTranslation('navigation');
 
   function handleClick() {
-    signout().then(() => router.push('/'));
+    signout().then(() => {
+      router.push('/');
+      router.reload();
+    });
   }
 
   return (

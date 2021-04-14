@@ -23,7 +23,7 @@ import { useUser } from '../User/Queries';
 
 export default function Prices() {
   const router = useRouter();
-  const user = useUser();
+  const { user } = useUser();
 
   const [
     queryPagination,

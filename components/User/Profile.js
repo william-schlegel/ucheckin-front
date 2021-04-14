@@ -30,6 +30,7 @@ import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
 import { PrimaryButtonStyled } from '../styles/Button';
 
 import Avatar from '../Tables/Avatar';
+import selectTheme from '../styles/selectTheme';
 
 export default function Profile({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_PROFILE, {
@@ -37,7 +38,7 @@ export default function Profile({ id, initialData }) {
   });
   const { t } = useTranslation('user');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
-  const user = useUser();
+  const { user } = useUser();
   const countries = useMemo(() => countryList().getData(), []);
   const initialValues = useRef(initialData);
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
@@ -169,6 +170,7 @@ export default function Profile({ id, initialData }) {
               <Row>
                 <Label htmlFor="country">{t('country')}</Label>
                 <Select
+                  theme={selectTheme}
                   className="select"
                   id="country"
                   options={countries}
@@ -273,6 +275,7 @@ export default function Profile({ id, initialData }) {
                 {t('role')}
               </Label>
               <Select
+                theme={selectTheme}
                 className="select"
                 id="role"
                 value={roles.find((r) => r.value === inputs.role)}

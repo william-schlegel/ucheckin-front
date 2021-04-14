@@ -1,31 +1,77 @@
 import PropTypes from 'prop-types';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled, {
+  createGlobalStyle,
+  css,
+  ThemeProvider,
+} from 'styled-components';
 import { Notify, Report, Confirm } from 'notiflix';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import theme from 'styled-theming';
+
+import { useMutation } from '@apollo/client';
 import Header from './Header';
 import Nav from './Nav';
+import { UPDATE_THEME, useUser } from './User/Queries';
 
-const GlobalStyles = createGlobalStyle`
-  html {
-    --green: #20C05C;
+const colors = theme('mode', {
+  light: css`
+    --green: #20c05c;
     --primary: #3c64a4;
-    --secondary: #E63586;
+    --secondary: #e63586;
     --black: #101010;
     --lightBlack: #282828;
-    --grey: #3A3A3A;
+    --grey: #3a3a3a;
     --gray: var(--grey);
     --lightGrey: #e1e1e1;
     --lightGray: var(--lightGrey);
     --offWhite: #ededed;
-    --maxWidth: 80vw;
-    --background: #fefefe;
-    --bs: 0 12px 24px 0 rgba(0,0,0,0.09);
+    --background-light: #fefefe;
     --delete-color: #f22;
     --delete-color-hover: #f66;
     --update-color: #262;
     --update-color-hover: #292;
     --cancel-color: #e1e1e1;
     --cancel-color-hover: #828282;
+    --background: #fff;
+    --text-color: #111;
+    --bs: 0 12px 24px 0 rgba(0, 0, 0, 0.09);
+    --bs-card: 0 0 5px 3px rgba(0, 0, 0, 0.05);
+    --bg-card: rgba(0, 0, 0, 0.02);
+    --bs-drawer: 1px 0px 7px rgba(0, 0, 0, 0.5);
+    --drop-shadow: 0 0 5px #000;
+  `,
+  dark: css`
+    --green: #20c05c;
+    --primary: #3c64a4;
+    --secondary: #e63586;
+    --black: #101010;
+    --lightBlack: #282828;
+    --grey: #3a3a3a;
+    --gray: var(--grey);
+    --lightGrey: #919191;
+    --lightGray: var(--lightGrey);
+    --offWhite: #2d2d2d;
+    --background-light: #3e3e3e;
+    --delete-color: #f22;
+    --delete-color-hover: #f66;
+    --update-color: #262;
+    --update-color-hover: #292;
+    --cancel-color: #929292;
+    --cancel-color-hover: #626262;
+    --background: #222;
+    --text-color: #ccc;
+    --bs: 0 12px 24px 0 rgba(255, 255, 255, 0.09);
+    --bs-card: 0 0 5px 3px rgba(255, 255, 255, 0.05);
+    --bg-card: rgba(255, 255, 255, 0.02);
+    --bs-drawer: 1px 0px 7px rgba(255, 255, 255, 0.5);
+    --drop-shadow: 0 0 5px #fff;
+  `,
+});
+
+const GlobalStyles = createGlobalStyle`
+  html {
+    ${colors}
+    --maxWidth: 80vw;
     --break-menu: 800px;
 
     box-sizing: border-box;
@@ -41,6 +87,8 @@ const GlobalStyles = createGlobalStyle`
     font-size: 1rem;
     line-height:2;
     min-height: 100%;
+    background-color: var(--background);
+    color: var(--text-color);
   }
   input, textarea, select {
     font-family: --apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -52,6 +100,13 @@ const GlobalStyles = createGlobalStyle`
   }
   a:hover {
     transform: scale(1.1);
+  }
+  button {
+    color: var(--text-color);
+  }
+  input, textarea {
+    background-color: var(--background);
+    color: var(--text-color);
   }
 `;
 
@@ -94,16 +149,32 @@ export default function Page({ children }) {
       width: '50ch',
     });
   });
+  const { user } = useUser();
+  const [darkTheme, setDarkTheme] = useState(false);
+  const [updateTheme] = useMutation(UPDATE_THEME);
+
+  useEffect(() => {
+    setDarkTheme(user.theme === 'dark');
+  }, [user]);
+
+  function handleChangeTheme(dkTheme) {
+    setDarkTheme(dkTheme);
+    updateTheme({
+      variables: { userId: user.id, theme: dkTheme ? 'dark' : 'light' },
+    });
+  }
 
   return (
-    <MainScreen>
-      <GlobalStyles />
-      <Header />
-      <Content>
-        <Nav />
-        <InnerStyles>{children}</InnerStyles>
-      </Content>
-    </MainScreen>
+    <ThemeProvider theme={{ mode: darkTheme ? 'dark' : 'light' }}>
+      <MainScreen>
+        <GlobalStyles />
+        <Header darkTheme={darkTheme} setDarkTheme={handleChangeTheme} />
+        <Content>
+          <Nav />
+          <InnerStyles>{children}</InnerStyles>
+        </Content>
+      </MainScreen>
+    </ThemeProvider>
   );
 }
 

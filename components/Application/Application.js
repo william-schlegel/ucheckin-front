@@ -43,6 +43,7 @@ import { perPage } from '../../config';
 import InvitationTable from './InvitationTable';
 import InvitationNew from './InvitationNew';
 import FieldError from '../FieldError';
+import selectTheme from '../styles/selectTheme';
 
 export default function Application({ id, initialData }) {
   const { loading, error, data } = useQuery(APPLICATION_QUERY, {
@@ -81,7 +82,7 @@ export default function Application({ id, initialData }) {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
   );
-  const user = useUser();
+  const { user } = useUser();
   const { t } = useTranslation('application');
   const { licenseTypesOptions } = useLicenseName();
   const initialValues = useRef(initialData.data.Application);
@@ -168,7 +169,7 @@ export default function Application({ id, initialData }) {
       if (!existingUser) {
         const invitations = [...inputs.invitations];
         invitations.push(newUser);
-        console.log(`invitations`, invitations);
+        // console.log(`invitations`, invitations);
         setInputs({ ...inputs, invitations });
       }
     }
@@ -176,7 +177,7 @@ export default function Application({ id, initialData }) {
   }
 
   function handleCloseNewLicense(orderId) {
-    console.log(`orderId`, orderId);
+    // console.log(`orderId`, orderId);
     setShowAddLicense(false);
     if (orderId) {
       Router.push(`/order/${orderId}`);
@@ -188,8 +189,8 @@ export default function Application({ id, initialData }) {
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
 
-  console.log(`licenseTypesOptions`, licenseTypesOptions);
-  console.log(`inputs`, inputs);
+  // console.log(`licenseTypesOptions`, licenseTypesOptions);
+  // console.log(`inputs`, inputs);
 
   return (
     <>
@@ -285,12 +286,13 @@ export default function Application({ id, initialData }) {
                 {t('common:license-model')}
               </Label>
               <Select
+                theme={selectTheme}
                 className="select"
                 value={inputs.licenseTypes.map((lid) =>
                   licenseTypesOptions.find((lt) => lt.value === lid.id)
                 )}
                 onChange={(e) => {
-                  console.log(`e`, e);
+                  // console.log(`e`, e);
                   handleChange({
                     value: e.map((lt) => ({ id: lt.value })),
                     name: 'licenseTypes',
