@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import Select from 'react-select';
 import gql from 'graphql-tag';
 import { PlusCircle, Code, Youtube } from 'react-feather';
@@ -25,6 +25,7 @@ import {
   RowFull,
   FormBodyFull,
   Separator,
+  H3,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { SearchUser } from '../SearchUser';
@@ -40,7 +41,6 @@ import {
   DELETE_NOTIFICATION_MUTATION,
   UPDATE_NOTIFICATION_MUTATION,
   CREATE_NOTIFICATION_MUTATION,
-  UPDATE_NOTIFICATION_ITEMS,
   DELETE_NOTIFICATION_ITEM,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
@@ -82,7 +82,6 @@ const phoneList = [
 ];
 
 const defaultItem = {
-  id: '',
   displayType: '',
   image: {},
   imageLink: '',
@@ -97,8 +96,9 @@ const defaultItem = {
 
 const makeItem = (itm) => {
   const item = {
+    id: itm.id,
     displayType: itm.displayType,
-    image: { preview: '', ...itm.image },
+    image: itm.image,
     imageLink: itm.imageLink,
     htmlContent: itm.htmlContent,
     videoLink: itm.videoLink,
@@ -110,16 +110,16 @@ const makeItem = (itm) => {
   };
   return item;
 };
-
+// make mutable object
 const makeData = (data) => {
   const dN = data.Notification;
   const newInputs = {
-    name: dN.name,
-    displayName: dN.apiKey,
+    name: dN.name || '',
+    displayName: dN.displayName || '',
     type: dN.type,
-    owner: { id: dN.owner.id, name: dN.owner.name },
-    application: { id: dN.application.id, name: dN.application.name },
-    signal: { id: dN.signal.id, name: dN.signal.name },
+    owner: { id: dN.owner?.id, name: dN.owner?.name },
+    application: { id: dN.application?.id, name: dN.application?.name },
+    signal: { id: dN.signal?.id, name: dN.signal?.name },
     startDate: dN.startDate,
     endDate: dN.endDate,
     items: [],
@@ -131,6 +131,9 @@ const makeData = (data) => {
 };
 
 export default function Notification({ id, initialData }) {
+  const router = useRouter();
+  const [notifId, setNotifId] = useState(id);
+
   const [queryNotification, { loading, error, data }] = useLazyQuery(
     NOTIFICATION_QUERY
   );
@@ -140,7 +143,7 @@ export default function Notification({ id, initialData }) {
   ] = useMutation(DELETE_NOTIFICATION_MUTATION, {
     variables: { id },
     onCompleted: () => {
-      Router.push('/notifications');
+      router.push('/notifications');
     },
   });
   const [
@@ -148,24 +151,24 @@ export default function Notification({ id, initialData }) {
     { loading: loadingUpdate, error: errorUpdate },
   ] = useMutation(UPDATE_NOTIFICATION_MUTATION, {
     onCompleted: () => {
-      Router.push('/notifications');
+      router.push('/notifications');
     },
   });
   const [
     createNotification,
     { loading: loadingCreate, error: errorCreate },
   ] = useMutation(CREATE_NOTIFICATION_MUTATION, {
-    onCompleted: () => {
-      Router.push('/notifications');
+    onCompleted: (newItem) => {
+      if (notifId) {
+        router.push('/notifications');
+      }
+      setNotifId(newItem.id);
     },
   });
   const [deleteNotificationItem, { error: errorDeleteItem }] = useMutation(
     DELETE_NOTIFICATION_ITEM
   );
 
-  const [updateNotificationItems, { error: errorUpdateItems }] = useMutation(
-    UPDATE_NOTIFICATION_ITEMS
-  );
   const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
   const [querySignal, { data: dataSig }] = useLazyQuery(QUERY_SIGNAL_FROM_APP);
 
@@ -175,16 +178,14 @@ export default function Notification({ id, initialData }) {
   const { user } = useUser();
   const { t } = useTranslation('notification');
   const { notificationTypesOptions } = useNotificationName();
-  const initialValues = useRef({
-    ...makeData(initialData.data),
-    nbNotif: 1,
-  });
+  const initialValues = useRef(makeData(initialData.data));
   const {
     inputs,
     handleChange,
     setInputs,
     validate,
     validationError,
+    wasTouched,
   } = useForm(initialValues.current, { name: '', displayName: '' });
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
@@ -195,6 +196,7 @@ export default function Notification({ id, initialData }) {
   const [selectedItem, setSelectedItem] = useState(0);
   const [item, setItem] = useState({});
   const [showItem, setShowItem] = useState(false);
+  const [nbNotif, setNbNotif] = useState(1);
 
   useEffect(() => {
     if (userRole) {
@@ -241,37 +243,13 @@ export default function Notification({ id, initialData }) {
 
   function handleChangeType(newType) {
     handleChange({ name: 'type', value: newType.value });
-    if (newType.value === 'simple') {
-      setInputs((prev) => ({ ...prev, nbNotif: 1 }));
-    } else if (inputs.nbNotif < 2)
-      setInputs((prev) => ({ ...prev, nbNotif: 2 }));
-  }
-
-  function addContent() {
-    setItem(defaultItem);
-    setShowItem(true);
-  }
-
-  function handleValidateItem(newItem) {
-    const newInputs = { ...inputs };
-    if (newItem.id) {
-      const idItem = newInputs.items.findIndex((i) => i.id === newItem.id);
-      if (idItem >= 0) {
-        newInputs.items[idItem] = newItem;
-        setInputs(newInputs);
-      }
-    } else {
-      newItem.id = `ITEM-${newInputs.items.length}`;
-      newInputs.items.push(newItem);
-      setInputs(newInputs);
-    }
-    setItem(newItem);
+    if (newType.value === 'simple') setNbNotif(1);
+    else if (inputs.items.length < 2) setNbNotif(2);
   }
 
   function handleEditNotif(idNotif) {
     const notif = inputs.items[idNotif];
     // console.log(`handleEditNotif - inputs`, inputs);
-    notif.image.preview = '';
     setItem(notif);
     setShowItem(true);
   }
@@ -318,61 +296,58 @@ export default function Notification({ id, initialData }) {
 
   function handleUpdateNotification(e) {
     if (e) e.preventDefault();
-    if (!validate()) return;
-    const items = inputs.items
-      .filter((itm) => itm.__typename !== 'Notification')
-      .map((itm) => makeItem(itm));
-    const variables = {
-      id,
-      name: inputs.name,
-      displayName: inputs.displayName,
-      type: inputs.type,
-      startDate: inputs.startDate,
-      endDate: inputs.endDate,
-      ownerId: inputs.owner.id,
-      appId: inputs.application.id,
-      signalId: inputs.signal.id,
-    };
-    if (items.length) variables.items = { create: items };
-    updateNotification({
+    const newInputs = validate();
+    if (!newInputs) return;
+
+    if (wasTouched('owner.id'))
+      newInputs.owner = { connect: { id: newInputs.owner.id } };
+    if (wasTouched('application.id'))
+      newInputs.application = { connect: { id: newInputs.application.id } };
+    if (wasTouched('signal.id'))
+      newInputs.signal = { connect: { id: newInputs.signal.id } };
+    newInputs.id = id;
+    return updateNotification({
       update: (cache, payload) =>
         cache.evict(cache.identify(payload.data.updateNotification)),
-      variables,
+      variables: newInputs,
     });
-    const itemsToUpdate = inputs.items
-      .filter((itm) => itm.__typename === 'Notification')
-      .map((itm) => makeItem(itm));
-    if (itemsToUpdate.length)
-      updateNotificationItems({ variables: itemsToUpdate });
   }
 
   function handleCreateNotification() {
-    if (!validate()) return;
-    const items = inputs.items.map((itm) => makeItem(itm));
+    const newInputs = validate();
+    if (!newInputs) return;
+
+    if (wasTouched('owner.id'))
+      newInputs.owner = { connect: { id: newInputs.owner.id } };
+    if (wasTouched('application.id'))
+      newInputs.application = { connect: { id: newInputs.application.id } };
+    if (wasTouched('signal.id'))
+      newInputs.signal = { connect: { id: newInputs.signal.id } };
     const variables = {
-      name: inputs.name,
-      displayName: inputs.displayName,
-      type: inputs.type,
-      startDate: inputs.startDate,
-      endDate: inputs.endDate,
-      ownerId: inputs.owner.id,
-      appId: inputs.application.id,
-      signalId: inputs.signal.id,
+      data: { ...newInputs },
     };
-    if (items.length) variables.items = { create: items };
-    createNotification({
+    return createNotification({
       update: (cache, payload) =>
         cache.evict(cache.identify(payload.data.createNotification)),
       variables,
     });
   }
 
-  function handleChangeApp(appId) {
+  async function addContent() {
+    if (!notifId) await handleCreateNotification();
+    setItem(defaultItem);
+    setShowItem(true);
+  }
+
+  function handleChangeApp(app) {
+    console.log(`app`, app);
     handleChange({
       name: 'application.id',
-      value: appId,
+      value: app?.value,
     });
-    if (appId) querySignal({ variables: { appId } });
+    if (app?.value) {
+      querySignal({ variables: { appId: app.value } });
+    }
   }
 
   useEffect(() => {
@@ -382,20 +357,22 @@ export default function Notification({ id, initialData }) {
       // console.log(`newInputs`, newInputs);
       handleChangeType(newInputs.type);
       handleChangeApp(newInputs.application.id);
+      setNbNotif(newInputs.items.length || 1);
     }
   }, [setInputs, data]);
+
+  useEffect(() => {
+    // console.log(`inputs`, inputs);
+    console.log(`nbNotif`, nbNotif);
+    // console.log(`item`, item);
+  }, [nbNotif]);
 
   if (loading || !user) return <Loading />;
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
-  if (errorUpdateItems) return <DisplayError error={errorUpdateItems} />;
   if (errorCreate) return <DisplayError error={errorCreate} />;
   if (errorDeleteItem) return <DisplayError error={errorDeleteItem} />;
-
-  // console.log(`inputs`, inputs);
-  // console.log(`nbNotif`, inputs.nbNotif);
-  // console.log(`item`, item);
 
   return (
     <>
@@ -412,8 +389,7 @@ export default function Notification({ id, initialData }) {
           open={showItem}
           onClose={handleCloseItem}
           item={item}
-          onValidation={handleValidateItem}
-          typeNotif={inputs.type}
+          notifId={notifId}
         />
       )}{' '}
       <Form>
@@ -433,7 +409,7 @@ export default function Notification({ id, initialData }) {
             label={t('navigation:notifications')}
           />
         </FormHeader>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px' }}>
+        <NotificationContainer>
           <div className="content-form">
             <FormBody>
               {canEdit ? (
@@ -532,7 +508,7 @@ export default function Notification({ id, initialData }) {
                       value={optionsAppUser.find(
                         (n) => n.value === inputs.application.id
                       )}
-                      onChange={(sel) => handleChangeApp(sel.value)}
+                      onChange={(sel) => handleChangeApp(sel)}
                       options={optionsAppUser}
                     />
                     <FieldError error={validationError.applicationId} />
@@ -604,16 +580,16 @@ export default function Notification({ id, initialData }) {
               {inputs.type !== 'simple' && (
                 <Row>
                   <Counter
-                    input={inputs.nbNotif}
+                    input={nbNotif}
                     min={Math.max(inputs.items.length || 0, 2)}
                     max={10}
-                    name="nbNotif"
-                    handleChange={handleChange}
+                    handleChange={(value) => setNbNotif(value.value)}
                     label={t('nb-notif')}
                   />
                 </Row>
               )}
               <Row>
+                <H3>{t('contents')}</H3>
                 <NotifContainer>
                   {inputs.items.map((it, index) => (
                     <Notif
@@ -626,7 +602,7 @@ export default function Notification({ id, initialData }) {
                       editNotif={() => handleEditNotif(index)}
                     />
                   ))}
-                  {inputs.items.length < inputs.nbNotif && (
+                  {inputs.items.length < nbNotif && (
                     <AddNotif onClick={addContent} />
                   )}
                 </NotifContainer>
@@ -654,7 +630,7 @@ export default function Notification({ id, initialData }) {
               </div>
             </div>
           </Phone>
-        </div>
+        </NotificationContainer>
         <FormFooter>
           {canEdit && !id && (
             <ButtonValidation
@@ -675,7 +651,7 @@ export default function Notification({ id, initialData }) {
               onClick={handleDeleteNotification}
             />
           )}
-          <ButtonCancel onClick={() => Router.back()} />
+          <ButtonCancel onClick={() => router.back()} />
         </FormFooter>
       </Form>
     </>
@@ -710,19 +686,12 @@ export function Notif({
   if (!item) return null;
   return (
     <NotifStyle onClick={onClick} style={style}>
-      {item.displayType === 'image' && (
-        <>
-          {item?.image?.publicUrlTransformed && (
-            <img
-              className="image"
-              src={item.image.publicUrlTransformed}
-              alt={item.name}
-            />
-          )}
-          {item?.image?.preview && (
-            <img className="image" src={item.image.preview} alt={item.name} />
-          )}
-        </>
+      {item.displayType === 'image' && item?.image?.publicUrlTransformed && (
+        <img
+          className="image"
+          src={item.image.publicUrlTransformed}
+          alt={item.name}
+        />
       )}
       {item.displayType === 'html' && (
         <div className="html-content">
@@ -783,6 +752,14 @@ AddNotif.propTypes = {
   onClick: PropTypes.func,
 };
 
+const NotificationContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 const AddContainer = styled.div`
   display: grid;
   place-items: center;
@@ -805,9 +782,12 @@ const AddContainer = styled.div`
 
 const NotifContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   grid-gap: 20px;
   width: 100%;
+  @media (max-width: 1000px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 const NotifStyle = styled.div`
@@ -817,6 +797,7 @@ const NotifStyle = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   img {
     width: 100%;
     max-width: 100%;
@@ -862,8 +843,8 @@ const Phone = styled.div`
     width: 100%;
   }
   .phone {
-    border: 1px solid green;
     display: flex;
+    box-shadow: var(--bs-card);
     justify-content: center;
     align-items: center;
     margin: 10px;
@@ -876,8 +857,11 @@ const Phone = styled.div`
       .place-holder {
         left: 0;
         top: 0;
-        background-color: white;
+        background-color: var(--background);
       }
     }
+  }
+  @media (max-width: 1000px) {
+    display: none;
   }
 `;

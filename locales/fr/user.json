@@ -37,6 +37,7 @@
   "licenses": "Mes licences",
   "license-type": "Type de licence",
   "signal": "Signal associé",
-  "application": "Application associé",
+  "application": "Application associée",
+  "invitations": "Mes invitations",
   "validity": "Fin de validité"
 }

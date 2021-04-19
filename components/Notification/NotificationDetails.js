@@ -58,12 +58,12 @@ export default function NotificationDetails({ open, onClose, id }) {
           <RowReadOnly>
             <Block>
               <Label>{t('application')}</Label>
-              <span>{data.Notification.application.name}</span>
+              <span>{data.Notification.application?.name}</span>
               <ActionButton
                 type="view"
                 cb={() =>
                   router.push(
-                    `/application/${data.Notification.application.id}`
+                    `/application/${data.Notification.application?.id}`
                   )
                 }
                 label={t('navigation:application')}
@@ -73,10 +73,12 @@ export default function NotificationDetails({ open, onClose, id }) {
           <RowReadOnly>
             <Block>
               <Label>{t('signal')}</Label>
-              <span>{data.Notification.signal.name}</span>
+              <span>{data.Notification.signal?.name}</span>
               <ActionButton
                 type="signal"
-                cb={() => router.push(`/signal/${data.Notification.signal.id}`)}
+                cb={() =>
+                  router.push(`/signal/${data.Notification.signal?.id}`)
+                }
                 label={t('common:signal')}
               />
             </Block>

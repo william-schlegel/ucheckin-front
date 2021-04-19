@@ -1,7 +1,7 @@
 import { useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Sun, Moon, User } from 'react-feather';
+import { Sun, Moon, User, Menu } from 'react-feather';
 import Flag from 'react-country-flag';
 import useTranslation from 'next-translate/useTranslation';
 import setLanguage from 'next-translate/setLanguage';
@@ -30,16 +30,34 @@ const Logo = styled.h1`
     height: 70px;
     width: auto;
   }
+  @media (max-width: 1000px) {
+    width: 100%;
+  }
 `;
 
 const HeaderStyles = styled.header`
+  grid-area: header;
   width: 100%;
+  .nav-toggle {
+    display: none;
+  }
+  @media (max-width: 1000px) {
+    .nav-toggle {
+      color: white;
+      display: inline-block;
+    }
+  }
   .bar {
     border-bottom: 1px solid var(--green);
     display: grid;
     grid-template-columns: auto 1fr;
     justify-content: space-between;
     align-items: stretch;
+    @media (max-width: 1000px) {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
+      border: none;
+    }
   }
 
   .sub-bar {
@@ -104,6 +122,12 @@ const HeaderStyles = styled.header`
         }
       }
     }
+    @media (max-width: 1000px) {
+      justify-content: flex-start;
+      align-items: stretch;
+      justify-content: space-evenly;
+      display: ${(props) => (props.menuState ? 'flex' : 'none')};
+    }
   }
 `;
 
@@ -112,7 +136,12 @@ const Flags = [
   { country: 'US', lng: 'en' },
 ];
 
-export default function Header({ darkTheme, setDarkTheme }) {
+export default function Header({
+  darkTheme,
+  setDarkTheme,
+  menuState,
+  onClickMenu,
+}) {
   const [flag, setFlag] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const refMenu = useRef();
@@ -154,9 +183,12 @@ export default function Header({ darkTheme, setDarkTheme }) {
 
   useOnClickOutside(refMenu, () => setShowUserMenu(false));
   return (
-    <HeaderStyles>
+    <HeaderStyles menuState={menuState}>
       <div className="bar">
         <Logo>
+          <span className="nav-toggle">
+            <Menu size={48} onClick={onClickMenu} />
+          </span>
           <img src="/images/UCHECKIN.png" alt="logo" />
           <Link href="/">Ucheck In</Link>
         </Logo>
@@ -212,4 +244,6 @@ export default function Header({ darkTheme, setDarkTheme }) {
 Header.propTypes = {
   darkTheme: PropTypes.bool,
   setDarkTheme: PropTypes.func,
+  onClickMenu: PropTypes.func.isRequired,
+  menuState: PropTypes.bool,
 };

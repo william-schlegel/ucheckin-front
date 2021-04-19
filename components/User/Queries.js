@@ -34,14 +34,6 @@ export const QUERY_ACCOUNT = gql`
       id
       name
       company
-      applications {
-        id
-        name
-        licenseTypes {
-          id
-          name
-        }
-      }
       ownedApps {
         id
         name
@@ -53,6 +45,14 @@ export const QUERY_ACCOUNT = gql`
       tokens {
         id
         token
+      }
+      invitations {
+        id
+        application {
+          name
+        }
+        status
+        updated
       }
       ownedLicenses {
         id
@@ -216,15 +216,15 @@ export const SIGNIN_MUTATION = gql`
 export const UPDATE_PROFILE_MUTATION = gql`
   mutation UPDATE_PROFILE_MUTATION(
     $id: ID!
-    $email: String!
-    $name: String!
+    $email: String
+    $name: String
     $company: String
     $address: String
     $zipCode: String
     $city: String
     $telephone: String
     $contact: String
-    $role: ID!
+    $role: RoleRelateToOneInput
   ) {
     updateUser(
       id: $id
@@ -237,7 +237,7 @@ export const UPDATE_PROFILE_MUTATION = gql`
         city: $city
         telephone: $telephone
         contact: $contact
-        role: { connect: { id: $role } }
+        role: $role
       }
     ) {
       id

@@ -33,8 +33,6 @@ MyApp.getInitialProps = async function ({ Component, ctx }) {
     pageProps = await Component.getInitialProps(ctx);
   }
   pageProps.query = ctx.query;
-  // pageProps.test = 'TEST------------------------------------------------';
-  // pageProps.apolloClient = ctx.apolloClient;
   return { pageProps };
 };
 

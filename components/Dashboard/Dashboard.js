@@ -17,6 +17,9 @@ const DashboardStyled = styled.div`
   gap: 1rem;
   & > * {
     min-width: 30%;
+    @media (max-width: 1000px) {
+      width: 100%;
+    }
   }
   h2 {
     margin: 0;

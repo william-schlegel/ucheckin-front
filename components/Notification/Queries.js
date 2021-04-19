@@ -104,28 +104,26 @@ export const DELETE_NOTIFICATION_MUTATION = gql`
 export const UPDATE_NOTIFICATION_MUTATION = gql`
   mutation UPDATE_NOTIFICATION_MUTATION(
     $id: ID!
-    $name: String!
-    $displayName: String!
-    $type: String!
-    $startDate: String!
-    $endDate: String!
-    $ownerId: ID!
-    $appId: ID!
-    $signalId: ID!
-    $items: NotificationItemRelateToManyInput
+    $name: String
+    $displayName: String
+    $type: String
+    $startDate: String
+    $endDate: String
+    $owner: UserRelateToOneInput
+    $app: ApplicationRelateToOneInput
+    $signal: SignalRelateToOneInput
   ) {
     updateNotification(
       id: $id
       data: {
         name: $name
         displayName: $displayName
-        owner: { connect: { id: $ownerId } }
+        owner: $owner
         type: $type
         startDate: $startDate
         endDate: $endDate
-        application: { connect: { id: $appId } }
-        signal: { connect: { id: $signalId } }
-        items: $items
+        application: $app
+        signal: $signal
       }
     ) {
       id
@@ -136,26 +134,24 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
 export const CREATE_NOTIFICATION_MUTATION = gql`
   mutation CREATE_NOTIFICATION_MUTATION(
     $name: String!
-    $displayName: String!
-    $type: String!
-    $startDate: String!
-    $endDate: String!
-    $ownerId: ID!
-    $appId: ID!
-    $signalId: ID!
-    $items: NotificationItemRelateToManyInput
+    $displayName: String
+    $type: String
+    $startDate: String
+    $endDate: String
+    $owner: UserRelateToOneInput
+    $app: ApplicationRelateToOneInput
+    $signal: SignalRelateToOneInput
   ) {
     createNotification(
       data: {
         name: $name
         displayName: $displayName
-        owner: { connect: { id: $ownerId } }
+        owner: $owner
         type: $type
         startDate: $startDate
         endDate: $endDate
-        application: { connect: { id: $appId } }
-        signal: { connect: { id: $signalId } }
-        items: $items
+        application: $app
+        signal: $signal
       }
     ) {
       id
@@ -163,9 +159,20 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
   }
 `;
 
-export const UPDATE_NOTIFICATION_ITEMS = gql`
-  mutation UPDATE_NOTIFICATION_ITEMS($data: [NotificationItemsUpdateInput]) {
-    updateNotificationItems(data: $data) {
+export const CREATE_NOTIFICATION_ITEM = gql`
+  mutation CREATE_NOTIFICATION_ITEM($data: NotificationItemCreateInput) {
+    createNotificationItem(data: $data) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_NOTIFICATION_ITEM = gql`
+  mutation UPDATE_NOTIFICATION_ITEM(
+    $id: ID!
+    $data: NotificationItemUpdateInput
+  ) {
+    updateNotificationItem(id: $id, data: $data) {
       id
     }
   }

@@ -25,7 +25,7 @@ const colors = theme('mode', {
     --lightGrey: #e1e1e1;
     --lightGray: var(--lightGrey);
     --offWhite: #ededed;
-    --background-light: #fefefe;
+    --background-light: #f0f0f0;
     --delete-color: #f22;
     --delete-color-hover: #f66;
     --update-color: #262;
@@ -69,10 +69,13 @@ const colors = theme('mode', {
 });
 
 const GlobalStyles = createGlobalStyle`
-  html {
+  :root {
     ${colors}
-    --maxWidth: 80vw;
-    --break-menu: 800px;
+    --break-menu: 1000px;
+    --break-form: 1000px;
+  }
+
+  html {
 
     box-sizing: border-box;
     font-size: 16px;
@@ -98,8 +101,10 @@ const GlobalStyles = createGlobalStyle`
     color: var(--primary);
     transition: transform 300ms ease-in-out;
   }
-  a:hover {
-    transform: scale(1.1);
+  @media (min-width: 1000px) {
+    a:hover, button:hover {
+      transform: scale(1.1);
+    }
   }
   button {
     color: var(--text-color);
@@ -111,7 +116,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const InnerStyles = styled.div`
-  /* max-width: var(--maxWidth); */
+  grid-area: content;
   width: 100%;
   max-width: 1920px;
   margin: 0 auto;
@@ -120,17 +125,22 @@ const InnerStyles = styled.div`
 `;
 
 const MainScreen = styled.div`
-  display: flex;
-  flex-direction: column;
-  /* flex: 1 1 100%; */
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 96px 1fr;
+  grid-template-areas:
+    'header header'
+    'menu content';
   min-height: 100vh;
-`;
-
-const Content = styled.div`
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: row;
-  /* height: 100%; */
+  width: 100%;
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: ${(props) => (props.toggled ? 'auto' : '96px')} auto 1fr;
+    grid-template-areas:
+      'header'
+      'menu'
+      'content';
+  }
 `;
 
 export default function Page({ children }) {
@@ -152,6 +162,7 @@ export default function Page({ children }) {
   const { user } = useUser();
   const [darkTheme, setDarkTheme] = useState(false);
   const [updateTheme] = useMutation(UPDATE_THEME);
+  const [toggleMenu, setToggleMenu] = useState(false);
 
   useEffect(() => {
     setDarkTheme(user.theme === 'dark');
@@ -166,13 +177,16 @@ export default function Page({ children }) {
 
   return (
     <ThemeProvider theme={{ mode: darkTheme ? 'dark' : 'light' }}>
-      <MainScreen>
+      <MainScreen toggled={toggleMenu}>
         <GlobalStyles />
-        <Header darkTheme={darkTheme} setDarkTheme={handleChangeTheme} />
-        <Content>
-          <Nav />
-          <InnerStyles>{children}</InnerStyles>
-        </Content>
+        <Header
+          darkTheme={darkTheme}
+          setDarkTheme={handleChangeTheme}
+          menuState={toggleMenu}
+          onClickMenu={() => setToggleMenu((prev) => !prev)}
+        />
+        <Nav toggled={toggleMenu} />
+        <InnerStyles>{children}</InnerStyles>
       </MainScreen>
     </ThemeProvider>
   );

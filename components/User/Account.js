@@ -56,6 +56,23 @@ export default function Account({ id, initialData }) {
       ({ cell: { value } }) => <LicenseTypes licenses={value} />,
     ],
   ]);
+  const columnsInvitations = useColumns(
+    [
+      ['id', 'id', 'hidden'],
+      [t('application'), 'application.name'],
+      [
+        t('application:status'),
+        'status',
+        ({ cell: { value } }) => t(`application:${value}`),
+      ],
+      [
+        t('application:updated'),
+        'updated',
+        ({ cell: { value } }) => <ValidityDate value={value} noColor />,
+      ],
+    ],
+    false
+  );
   const columnsToken = useColumns([
     ['id', 'id', 'hidden'],
     [t('token'), 'token', ({ cell: { value } }) => <ApiKey apiKey={value} />],
@@ -183,12 +200,11 @@ export default function Account({ id, initialData }) {
             />
           </Row>
           <Row>
-            <Label>{t('invited-apps')}</Label>
+            <Label>{t('invitations')}</Label>
             <Table
-              columns={columnsApplication}
-              data={inputs.applications}
+              columns={columnsInvitations}
+              data={inputs.invitations}
               loading={loading}
-              actionButtons={[{ type: 'view', action: editApplication }]}
               withPagination
             />
           </Row>

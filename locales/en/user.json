@@ -38,5 +38,6 @@
   "license-type": "License type",
   "signal": "Associated signal",
   "application": "Associated application",
+  "invitations": "My invitations",
   "validity": "End of validity"
 }

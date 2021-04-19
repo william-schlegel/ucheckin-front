@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import Router, { useRouter } from 'next/router';
 import { Notify } from 'notiflix';
@@ -21,27 +21,49 @@ import {
   Block,
   RowReadOnly,
 } from '../styles/Card';
-import { useUser, QUERY_PROFILE, useRole } from './Queries';
+import {
+  useUser,
+  QUERY_PROFILE,
+  useRole,
+  UPDATE_PROFILE_MUTATION,
+} from './Queries';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonValidation from '../Buttons/ButtonValidation';
 import { useHelp, Help, HelpButton } from '../Help';
-import { UpdateProfile, UpdatePhoto } from './ProfileUpdate';
+import { UpdatePhoto } from './ProfileUpdate';
 import { PrimaryButtonStyled } from '../styles/Button';
 
 import Avatar from '../Tables/Avatar';
 import selectTheme from '../styles/selectTheme';
+import FieldError from '../FieldError';
+
+function update(cache, payload) {
+  cache.evict(cache.identify(payload.data.updateUser));
+}
 
 export default function Profile({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_PROFILE, {
     variables: { id },
   });
+  const [
+    updateProfile,
+    { loading: loadingUpdate, error: errorUpdate },
+  ] = useMutation(UPDATE_PROFILE_MUTATION);
   const { t } = useTranslation('user');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const { user } = useUser();
   const countries = useMemo(() => countryList().getData(), []);
-  const initialValues = useRef(initialData);
-  const { inputs, handleChange, setInputs } = useForm(initialValues.current);
+  const initialValues = useRef(initialData.data.User);
+  const {
+    inputs,
+    handleChange,
+    setInputs,
+    validate,
+    validationError,
+    wasTouched,
+  } = useForm(initialValues.current, { name: '', email: '', company: '' });
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
   const router = useRouter();
@@ -56,7 +78,7 @@ export default function Profile({ id, initialData }) {
   useEffect(() => {
     if (data) {
       const { User: UserData } = data;
-      setInputs({ ...UserData, role: UserData.role.id });
+      setInputs(UserData);
     }
   }, [setInputs, data]);
 
@@ -75,8 +97,18 @@ export default function Profile({ id, initialData }) {
     });
   }
 
+  async function handleValidation() {
+    const newInputs = validate();
+    if (!newInputs) return;
+    if (wasTouched('role.id'))
+      newInputs.role = { connect: { id: newInputs.role.id } };
+    await updateProfile({ variables: { id, ...newInputs }, update });
+    if (!errorUpdate) Notify.Success(t('success'));
+  }
+
   if (loading || !roles.length) return <Loading />;
   if (error) return <DisplayError error={error} />;
+
   return (
     <>
       <Help
@@ -110,6 +142,7 @@ export default function Profile({ id, initialData }) {
                   value={inputs.name}
                   onChange={handleChange}
                 />
+                <FieldError error={validationError.name} />
               </Row>
               <Row>
                 <Label htmlFor="email" required>
@@ -123,6 +156,7 @@ export default function Profile({ id, initialData }) {
                   value={inputs.email}
                   onChange={handleChange}
                 />
+                <FieldError error={validationError.email} />
               </Row>
               <Row>
                 <Label htmlFor="company" required>
@@ -136,6 +170,7 @@ export default function Profile({ id, initialData }) {
                   value={inputs.company || ''}
                   onChange={handleChange}
                 />
+                <FieldError error={validationError.company} />
               </Row>
               <Row>
                 <Label htmlFor="address">{t('address')}</Label>
@@ -278,26 +313,26 @@ export default function Profile({ id, initialData }) {
                 theme={selectTheme}
                 className="select"
                 id="role"
-                value={roles.find((r) => r.value === inputs.role)}
+                value={roles.find((r) => r.value === inputs.role.id)}
                 options={roles}
-                onChange={(e) => handleChange({ name: 'role', value: e.value })}
+                onChange={(e) =>
+                  handleChange({ name: 'role.id', value: e.value })
+                }
               />
             </Row>
           ) : (
             <RowReadOnly>
               <Label>{t('role')}</Label>
-              <span>{inputs.role?.label}</span>
+              <span>{inputs.role.name}</span>
             </RowReadOnly>
           )}
         </FormBody>
         <FormFooter>
           {canEdit && id && (
-            <UpdateProfile
-              id={id}
-              updatedProfile={inputs}
-              onSuccess={() => {
-                Notify.Success(t('success'));
-              }}
+            <ButtonValidation
+              disabled={loadingUpdate}
+              onClick={handleValidation}
+              update
             />
           )}
           <ButtonCancel onClick={() => Router.back()} />
@@ -308,6 +343,6 @@ export default function Profile({ id, initialData }) {
 }
 
 Profile.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   initialData: PropTypes.object,
 };

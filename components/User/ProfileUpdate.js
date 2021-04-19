@@ -58,7 +58,9 @@ export function UpdateProfile({ id, updatedProfile, onSuccess }) {
   const [updateProfile, { loading, error }] = useMutation(
     UPDATE_PROFILE_MUTATION
   );
-  const variables = { id, ...updatedProfile };
+  const variables = { id, ...updatedProfile, role: updatedProfile.role.id };
+
+  console.log(`variables`, variables);
 
   function handleValidation() {
     updateProfile({

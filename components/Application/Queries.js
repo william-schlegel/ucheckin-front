@@ -68,10 +68,6 @@ export const ALL_APPLICATIONS_QUERY = gql`
         id
         name
       }
-      users {
-        id
-        name
-      }
       licenses {
         id
         signal {
@@ -126,20 +122,18 @@ export const ALL_SIGNAL_OWNER = gql`
 export const UPDATE_APPLICATION_MUTATION = gql`
   mutation UPDATE_APPLICATION_MUTATION(
     $id: ID!
-    $name: String!
-    $apiKey: String!
-    $owner: UserWhereUniqueInput
-    $invitations: [InvitationCreateInput]
-    $licenseTypes: [LicenseTypeWhereUniqueInput]
+    $name: String
+    $apiKey: String
+    $owner: UserRelateToOneInput
+    $licenseTypes: LicenseTypeRelateToManyInput
   ) {
     updateApplication(
       id: $id
       data: {
         name: $name
         apiKey: $apiKey
-        owner: { connect: $owner }
-        invitations: { create: $invitations }
-        licenseTypes: { disconnectAll: true, connect: $licenseTypes }
+        owner: $owner
+        licenseTypes: $licenseTypes
       }
     ) {
       id
@@ -151,16 +145,70 @@ export const CREATE_INVITATION_MUTATION = gql`
   mutation CREATE_INVITATION_MUTATION(
     $appId: ID!
     $email: String!
-    $status: String!
-    $user: UserRelateToOneInput
+    $canModifyApplication: Boolean
+    $canManageContent: Boolean
+    $canBuyLicenses: Boolean
   ) {
-    createInvitation(
-      data: {
-        email: $email
-        application: { connect: { id: $appId } }
-        status: $status
-        user: $user
+    addInvitation(
+      email: $email
+      appId: $appId
+      canModifyApplication: $canModifyApplication
+      canManageContent: $canManageContent
+      canBuyLicenses: $canBuyLicenses
+    ) {
+      id
+      email
+      status
+      updated
+    }
+  }
+`;
+
+export const DELETE_INVITATION = gql`
+  mutation DELETE_INVITATION($invitationId: ID!) {
+    deleteInvitation(id: $invitationId) {
+      id
+    }
+  }
+`;
+
+export const CHECK_INVITATION_TOKEN = gql`
+  query CHECK_INVITATION_TOKEN($token: String!) {
+    allInvitations(where: { token: $token }) {
+      id
+      application {
+        id
+        name
       }
+      user {
+        id
+        name
+        email
+      }
+    }
+  }
+`;
+
+export const UPDATE_INVITATION = gql`
+  mutation UPDATE_INVITATION($token: String!, $accept: Boolean!) {
+    updateInvitationStatus(token: $token, accept: $accept) {
+      id
+    }
+  }
+`;
+
+export const CREATE_ACCOUNT_INVITATION = gql`
+  mutation CREATE_ACCOUNT_INVITATION(
+    $token: String!
+    $name: String!
+    $company: String!
+    $password: String!
+  ) {
+    createAccountInvitation(
+      token: $token
+      name: $name
+      company: $company
+      password: $password
     ) {
       id
     }

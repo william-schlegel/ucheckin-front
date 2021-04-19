@@ -23,6 +23,7 @@ import SearchField, { useFilter } from '../SearchField';
 import { useUser } from '../User/Queries';
 import NotificationType from '../Tables/NotificationType';
 import ButtonNew from '../Buttons/ButtonNew';
+import NotificationNew from './NotificationNew';
 
 export default function Notifications() {
   const router = useRouter();
@@ -49,6 +50,11 @@ export default function Notifications() {
     { field: 'displayName_contains_i', label: t('display-name'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const [newNotification, setNewNotification] = useState(false);
+
+  function handleCloseNewNotification() {
+    setNewNotification(false);
+  }
 
   useEffect(() => {
     const variables = {
@@ -122,6 +128,10 @@ export default function Notifications() {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <NotificationNew
+        open={newNotification}
+        onClose={handleCloseNewNotification}
+      />
       {showNotification && (
         <NotificationDetails
           open={!!showNotification}
@@ -132,7 +142,11 @@ export default function Notifications() {
       <EntetePage>
         <h3>{t('notifications')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />
-        <ButtonNew onClick={() => router.push('/notification')} />
+        <ButtonNew
+          onClick={() => {
+            setNewNotification(true);
+          }}
+        />
       </EntetePage>
       <Pagination
         page={page}

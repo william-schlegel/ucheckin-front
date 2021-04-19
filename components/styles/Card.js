@@ -18,6 +18,9 @@ export const Row = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
+  @media (max-width: 1000px) {
+    grid-column: 1 / span 2;
+  }
 `;
 
 export const RowFull = styled(Row)`
@@ -74,11 +77,9 @@ export const LabelShort = styled(Label)`
 `;
 
 export const Form = styled.form`
-  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05);
-  background: rgba(0, 0, 0, 0.02);
-  border: 5px solid var(--white);
+  box-shadow: var(--bs-card);
+  background: var(--bg-card);
   padding: 20px;
-  /* font-size: 1.5rem; */
   line-height: 1.5;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -87,9 +88,6 @@ export const Form = styled.form`
 export const FormBody = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  @media (max-width: 1000px) {
-    grid-template-columns: auto;
-  }
   grid-gap: 0.5rem 1rem;
   .select {
     font-size: 1.25rem;

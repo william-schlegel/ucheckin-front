@@ -21,6 +21,7 @@
   "nb-display": "Number of display (0 = no limit)",
   "delay-between-display": "delay in minutes between 2 displays (0 = no delay)",
   "content": "Notification's content",
+  "contents": "Contents for this notification",
   "probability": "Probability of drawing (in %)",
   "quota": "Global display quota",
   "default": "Default display",

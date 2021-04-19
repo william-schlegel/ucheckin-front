@@ -14,16 +14,12 @@ Profile.propTypes = {
 Profile.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const { id } = ctx.query;
-  console.log(`id`, id);
   const initialData = await apolloClient.query({
     query: QUERY_PROFILE,
     variables: { id },
   });
   return {
     id,
-    initialData: {
-      ...initialData.data.User,
-      role: initialData.data.User.role.id,
-    },
+    initialData,
   };
 };

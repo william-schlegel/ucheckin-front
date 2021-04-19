@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Select from 'react-select';
 import { useDropzone } from 'react-dropzone';
 import { Editor } from '@tinymce/tinymce-react';
 import SwitchComponent from 'react-switch';
+import { useMutation, useQuery } from '@apollo/client';
 
 import styled from 'styled-components';
 import Drawer, { DrawerFooter } from '../Drawer';
@@ -14,6 +16,9 @@ import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import Counter from '../Counter';
 import selectTheme from '../styles/selectTheme';
+import { UPDATE_NOTIFICATION_ITEM, CREATE_NOTIFICATION_ITEM } from './Queries';
+import DisplayError from '../ErrorMessage';
+import Loading from '../Loading';
 
 const displayTypes = [
   { value: 'image', label: 'image' },
@@ -21,39 +26,47 @@ const displayTypes = [
   { value: 'video', label: 'video' },
 ];
 
-export default function NotificationContent({
-  open,
-  onClose,
-  item,
-  onValidation,
-  typeNotif,
-}) {
-  const { t } = useTranslation('notification');
+const QUERY_NOTIF_PARENT = gql`
+  query QUERY_NOTIF_PARENT($id: ID) {
+    Notification(where: { id: $id }) {
+      id
+      type
+    }
+  }
+`;
 
-  const { inputs, handleChange } = useForm(item);
+export default function NotificationContent({ open, onClose, item, notifId }) {
+  const { t } = useTranslation('notification');
+  const {
+    data: notification,
+    error: errorNotification,
+    loading: loadingNotification,
+  } = useQuery(QUERY_NOTIF_PARENT, { variables: { id: notifId } });
+  const [
+    updateNotificationItem,
+    { error: errorUpdateItem },
+  ] = useMutation(UPDATE_NOTIFICATION_ITEM, { onCompleted: () => onClose() });
+  const [
+    createNotificationItem,
+    { error: errorCreateItem },
+  ] = useMutation(CREATE_NOTIFICATION_ITEM, { onCompleted: () => onClose() });
+
+  const initialValues = useRef(item);
+  const { inputs, handleChange, validate } = useForm(initialValues.current);
   const [image, setImage] = useState('');
 
-  const onDrop = useCallback(
-    (acceptedFile) => {
-      const file = acceptedFile[0];
-      const preview = URL.createObjectURL(file);
-      inputs.image = Object.assign(file, { preview });
-      setImage(preview);
-    },
-    [inputs]
-  );
+  const onDrop = (acceptedFile) => {
+    const file = acceptedFile[0];
+    const preview = URL.createObjectURL(file);
+    handleChange({ name: 'image', value: Object.assign(file) });
+    setImage(preview);
+  };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: 'image/jpeg, image/png',
     multiple: false,
   });
-
-  // useEffect(() => {
-  //   if (inputs.image.preview !== '') {
-  //     URL.revokeObjectURL(inputs.image.preview);
-  //   }
-  // }, [inputs]);
 
   useEffect(() => {
     if (item.image.preview) {
@@ -67,11 +80,21 @@ export default function NotificationContent({
   }, [inputs, item]);
 
   function handleValidation() {
-    console.log(`handleValidation - inputs`, inputs);
-
-    onValidation(inputs);
-    onClose();
+    const newInputs = validate();
+    if (newInputs) {
+      newInputs.notification = { connect: { id: notifId } };
+      if (item.id)
+        updateNotificationItem({ variables: { id: item.id, data: newInputs } });
+      else createNotificationItem({ variables: { data: newInputs } });
+    }
   }
+
+  useEffect(() => {
+    console.log(`inputs`, inputs);
+  }, [inputs]);
+
+  if (loadingNotification) return <Loading />;
+  if (errorNotification) return <DisplayError error={errorNotification} />;
 
   return (
     <Drawer onClose={onClose} open={open} title={t('content')}>
@@ -177,7 +200,8 @@ export default function NotificationContent({
               fullWidth
             />
           </Row>
-          {(typeNotif === 'random-draw' || typeNotif === 'instant-win') && (
+          {(notification.type === 'random-draw' ||
+            notification.type === 'instant-win') && (
             <Row>
               <Counter
                 input={inputs.probability}
@@ -190,7 +214,7 @@ export default function NotificationContent({
               />
             </Row>
           )}
-          {typeNotif === 'instant-win' && (
+          {notification.type === 'instant-win' && (
             <>
               <RowReadOnly>
                 <Label>{t('default')}</Label>
@@ -214,17 +238,14 @@ export default function NotificationContent({
               )}
             </>
           )}
-          {/* 
-
-
-
-defaultNotification
-quota */}
+          {/* defaultNotification quota */}
         </FormBodyFull>
       </Form>
       <DrawerFooter>
         <ButtonValidation onClick={handleValidation} />
         <ButtonCancel onClick={onClose} />
+        {errorUpdateItem && <DisplayError error={errorUpdateItem} />}
+        {errorCreateItem && <DisplayError error={errorCreateItem} />}
       </DrawerFooter>
     </Drawer>
   );
@@ -234,8 +255,7 @@ NotificationContent.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   item: PropTypes.object,
-  onValidation: PropTypes.func,
-  typeNotif: PropTypes.string,
+  notifId: PropTypes.string,
 };
 
 const ImageSelection = styled.div`

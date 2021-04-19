@@ -21,6 +21,7 @@
   "nb-display": "Nombre de fois que la notification peut être affichée (0 = pas de limite)",
   "delay-between-display": "Temps entre 2 affichages en minutes (0 = pas d'attente)",
   "content": "Contenu de la notification",
+  "contents": "Contenus définis pour cette notification",
   "probability": "Probabilité de tirage (en %)",
   "quota": "Quota global d'affichage",
   "default": "Notification par défaut",

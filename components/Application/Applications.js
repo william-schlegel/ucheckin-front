@@ -16,7 +16,6 @@ import {
   LicensesDetailsApplication,
   LicensesLegendApplication,
 } from '../Tables/LicensesDetails';
-import Badges from '../Tables/Badges';
 import { LicenseTypes } from '../Tables/LicenseType';
 import Button from '../Tables/Button';
 import { PAGINATION_QUERY, ALL_APPLICATIONS_QUERY } from './Queries';
@@ -105,11 +104,11 @@ export default function Applications() {
       ({ cell: { value } }) => <LicensesDetailsApplication licenses={value} />,
     ],
     [t('common:owner'), 'owner.name'],
-    [
-      t('common:users'),
-      'users',
-      ({ cell: { value } }) => <Badges labels={value} />,
-    ],
+    // [
+    //   t('common:users'),
+    //   'users',
+    //   ({ cell: { value } }) => <Badges labels={value} />,
+    // ],
   ]);
   const [newApp, setNewApp] = useState(false);
 

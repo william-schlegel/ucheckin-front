@@ -17,7 +17,7 @@ module.exports = {
     'rgx:^/application': ['application', 'license'],
     'rgx:^/signal': ['signal', 'license'],
     'rgx:^/profile': ['user', 'license'],
-    'rgx:^/account': ['user', 'license'],
+    'rgx:^/account': ['user', 'license', 'application'],
     'rgx:^/user': ['user', 'license'],
     'rgx:^/compte': ['user', 'license'],
     'rgx:^/license': ['license'],
@@ -25,5 +25,6 @@ module.exports = {
     'rgx:^/order': ['order'],
     'rgx:^/notification': ['notification'],
     'rgx:^/login': ['user'],
+    'rgx:^/accept-invitation': ['application'],
   },
 };

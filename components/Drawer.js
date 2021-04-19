@@ -43,6 +43,9 @@ const DrawerStyled = styled.div`
     transform: translateX(0);
   }
   overflow: auto;
+  @media (max-width: 1000px) {
+    width: 95%;
+  }
 `;
 
 const DrawerHeader = styled.div`

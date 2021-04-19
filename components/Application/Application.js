@@ -2,8 +2,10 @@ import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import Select from 'react-select';
+import { Confirm } from 'notiflix';
+import isEmpty from 'lodash.isempty';
 
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
@@ -33,6 +35,7 @@ import {
   DELETE_APPLICATION_MUTATION,
   APPLICATION_QUERY,
   UPDATE_APPLICATION_MUTATION,
+  DELETE_INVITATION,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import LicenseNew from '../License/LicenseNew';
@@ -46,6 +49,7 @@ import FieldError from '../FieldError';
 import selectTheme from '../styles/selectTheme';
 
 export default function Application({ id, initialData }) {
+  const router = useRouter();
   const { loading, error, data } = useQuery(APPLICATION_QUERY, {
     variables: { id },
   });
@@ -61,7 +65,7 @@ export default function Application({ id, initialData }) {
       },
     ],
     onCompleted: () => {
-      Router.push('/applications');
+      router.push('/applications');
     },
   });
   const [
@@ -75,7 +79,7 @@ export default function Application({ id, initialData }) {
       },
     ],
     onCompleted: () => {
-      Router.push('/applications');
+      router.push('/applications');
     },
   });
 
@@ -92,6 +96,7 @@ export default function Application({ id, initialData }) {
     setInputs,
     validate,
     validationError,
+    wasTouched,
   } = useForm(initialValues.current, {
     name: '',
     licenseTypes: '',
@@ -101,6 +106,17 @@ export default function Application({ id, initialData }) {
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState({});
   const [showAddInvit, setShowAddInvit] = useState(false);
+  const [deleteInvitation, { error: errorDI }] = useMutation(
+    DELETE_INVITATION,
+    {
+      onCompleted: (item) => {
+        const invitations = inputs.invitations.filter(
+          (i) => i.id !== item.deleteInvitation.id
+        );
+        setInputs((prev) => ({ ...prev, invitations }));
+      },
+    }
+  );
 
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.Application?.owner?.id;
@@ -117,7 +133,10 @@ export default function Application({ id, initialData }) {
       setInputs({
         name: data.Application.name,
         apiKey: data.Application.apiKey,
-        owner: { id: data.Application.owner.id },
+        owner: {
+          id: data.Application.owner.id,
+          name: data.Application.owner.name,
+        },
         licenseTypes: data.Application.licenseTypes.map((lt) => ({
           id: lt.id,
         })),
@@ -143,24 +162,47 @@ export default function Application({ id, initialData }) {
     setShowUpdateLicense(true);
   }
 
+  function delInvitation(invitationId) {
+    Confirm.Show(
+      t('confirm-delete-invitation'),
+      t('you-confirm-invitation'),
+      t('yes-delete'),
+      t('no-delete'),
+      () => deleteInvitation({ variables: { invitationId } })
+    );
+  }
+
   function handleDeleteApplication() {
     deleteApplication({ variables: { id } });
   }
 
   function handleUpdateApplication() {
-    if (!validate()) return;
+    const newInputs = validate();
+    if (!newInputs) return;
+    if (isEmpty(newInputs)) {
+      router.push('/applications');
+      return;
+    }
+    if (wasTouched('owner.id'))
+      newInputs.owner = { connect: { id: newInputs.owner.id } };
+    if (wasTouched('licenseTypes'))
+      newInputs.licenseTypes = {
+        disconnectAll: true,
+        connect: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
+      };
     const variables = {
       id,
-      apiKey: inputs.apiKey,
-      name: inputs.name,
-      owner: { id: inputs.owner.id },
-      licenseTypes: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
-      invitations: inputs.invitations.filter((i) => !i.id),
+      ...newInputs,
+      // apiKey: inputs.apiKey,
+      // name: inputs.name,
+      // owner: { id: inputs.owner.id },
+      // licenseTypes: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
     };
     updateApplication({ variables });
   }
 
   function handleCloseNewInvitation(newUser) {
+    console.log(`newUser`, newUser);
     if (newUser.email) {
       const existingUser = inputs.invitations.find(
         (i) => i.email === newUser.email
@@ -180,7 +222,7 @@ export default function Application({ id, initialData }) {
     // console.log(`orderId`, orderId);
     setShowAddLicense(false);
     if (orderId) {
-      Router.push(`/order/${orderId}`);
+      router.push(`/order/${orderId}`);
     }
   }
 
@@ -188,9 +230,10 @@ export default function Application({ id, initialData }) {
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
+  if (errorDI) return <DisplayError error={errorDI} />;
 
   // console.log(`licenseTypesOptions`, licenseTypesOptions);
-  // console.log(`inputs`, inputs);
+  console.log(`inputs`, inputs);
 
   return (
     <>
@@ -311,7 +354,10 @@ export default function Application({ id, initialData }) {
           )}
           <Row>
             <Label>{t('invitations')}</Label>
-            <InvitationTable invitations={inputs.invitations} />
+            <InvitationTable
+              invitations={inputs.invitations}
+              actionButtons={[{ type: 'trash', action: delInvitation }]}
+            />
             {canEdit && (
               <Block>
                 <ButtonNew onClick={() => setShowAddInvit(true)} />
@@ -343,7 +389,7 @@ export default function Application({ id, initialData }) {
               onClick={handleDeleteApplication}
             />
           )}
-          <ButtonCancel onClick={() => Router.back()} />
+          <ButtonCancel onClick={() => router.back()} />
         </FormFooter>
       </Form>
     </>

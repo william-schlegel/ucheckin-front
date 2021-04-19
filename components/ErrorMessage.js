@@ -6,9 +6,10 @@ import useTranslation from 'next-translate/useTranslation';
 
 const ErrorStyles = styled.div`
   padding: 2rem;
-  background: white;
+  background: var(--background-light);
+  color: var(--text-color);
   margin: 2rem 0;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--bs-card);
   border-left: 5px solid red;
   p {
     margin: 0;

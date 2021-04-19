@@ -1,24 +1,31 @@
 import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-
+import { useMutation } from '@apollo/client';
 import SwitchComponent from 'react-switch';
+
 import Drawer, { DrawerFooter } from '../Drawer';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
-import { dateNow } from '../DatePicker';
 import FieldError from '../FieldError';
+import { CREATE_INVITATION_MUTATION } from './Queries';
+import DisplayError from '../ErrorMessage';
 
 export default function InvitationNew({ appId, open, onClose }) {
   const { t } = useTranslation('application');
+  const [addInvitation, { loading, error }] = useMutation(
+    CREATE_INVITATION_MUTATION,
+    {
+      onCompleted: (item) => {
+        console.log(`item`, item);
+        onClose(item.addInvitation);
+      },
+    }
+  );
   const initialValues = useRef({
     email: '',
-    application: { connect: { id: appId } },
-    status: 'created',
-    user: null,
-    updated: dateNow(),
     canModifyApplication: false,
     canManageContent: true,
     canBuyLicenses: false,
@@ -31,7 +38,8 @@ export default function InvitationNew({ appId, open, onClose }) {
   } = useForm(initialValues.current, { email: 'is-required' });
 
   function handleNewInvitation() {
-    if (validate()) onClose(inputs);
+    if (!validate()) return;
+    addInvitation({ variables: { appId, ...inputs } });
   }
 
   return (
@@ -83,8 +91,9 @@ export default function InvitationNew({ appId, open, onClose }) {
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation onClick={handleNewInvitation} />
+        <ButtonValidation onClick={handleNewInvitation} disabled={loading} />
         <ButtonCancel onClick={onClose} />
+        {error && <DisplayError error={error} />}
       </DrawerFooter>
     </Drawer>
   );

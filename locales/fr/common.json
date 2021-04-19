@@ -68,5 +68,7 @@
   "pagination": "Page {{page}} sur {{pageCount}}",
   "user-profile": "Profile utilisateur",
   "user-account": "Compte utilisateur",
-  "is-required": "Ce champ est requis"
+  "is-required": "Ce champ est requis",
+  "company": "Société",
+  "password": "Mot de passe"
 }

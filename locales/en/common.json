@@ -67,5 +67,7 @@
   "pagination": "Page {{page}} of {{pageCount}}",
   "user-profile": "User profile",
   "user-account": "User account",
-  "is-required": "This field is required"
+  "is-required": "This field is required",
+  "company": "Company",
+  "password": "Password"
 }
