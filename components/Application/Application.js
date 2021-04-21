@@ -97,10 +97,7 @@ export default function Application({ id, initialData }) {
     validate,
     validationError,
     wasTouched,
-  } = useForm(initialValues.current, {
-    name: '',
-    licenseTypes: '',
-  });
+  } = useForm(initialValues.current, ['name', 'licenseTypes']);
   const [canEdit, setCanEdit] = useState(false);
   const [showAddLicense, setShowAddLicense] = useState(false);
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);

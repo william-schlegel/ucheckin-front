@@ -45,7 +45,7 @@ export default function NotificationNew({ open, onClose }) {
     handleChange,
     validate,
     validationError,
-  } = useForm(initialValues.current, { name: '' });
+  } = useForm(initialValues.current, ['name']);
 
   function handleValidation() {
     if (!validate()) return;

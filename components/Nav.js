@@ -43,6 +43,9 @@ export default function Nav({ toggled }) {
             <Link href="/notifications">{t('notifications')}</Link>
           </li>
           <li>
+            <Link href="/events">{t('events')}</Link>
+          </li>
+          <li>
             <div>
               <SignOut />
               <Footer />

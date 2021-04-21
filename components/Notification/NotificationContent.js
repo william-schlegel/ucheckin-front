@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Select from 'react-select';
 import { useDropzone } from 'react-dropzone';
-import { Editor } from '@tinymce/tinymce-react';
 import SwitchComponent from 'react-switch';
 import { useMutation, useQuery } from '@apollo/client';
 
-import styled from 'styled-components';
 import Drawer, { DrawerFooter } from '../Drawer';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
@@ -19,6 +17,8 @@ import selectTheme from '../styles/selectTheme';
 import { UPDATE_NOTIFICATION_ITEM, CREATE_NOTIFICATION_ITEM } from './Queries';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
+import { ImageSelection } from '../styles/ImageSelection';
+import HtmlEditor from '../HtmlEditor';
 
 const displayTypes = [
   { value: 'image', label: 'image' },
@@ -27,7 +27,7 @@ const displayTypes = [
 ];
 
 const QUERY_NOTIF_PARENT = gql`
-  query QUERY_NOTIF_PARENT($id: ID) {
+  query QUERY_NOTIF_PARENT($id: ID!) {
     Notification(where: { id: $id }) {
       id
       type
@@ -42,14 +42,18 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
     error: errorNotification,
     loading: loadingNotification,
   } = useQuery(QUERY_NOTIF_PARENT, { variables: { id: notifId } });
-  const [
-    updateNotificationItem,
-    { error: errorUpdateItem },
-  ] = useMutation(UPDATE_NOTIFICATION_ITEM, { onCompleted: () => onClose() });
-  const [
-    createNotificationItem,
-    { error: errorCreateItem },
-  ] = useMutation(CREATE_NOTIFICATION_ITEM, { onCompleted: () => onClose() });
+  const [updateNotificationItem, { error: errorUpdateItem }] = useMutation(
+    UPDATE_NOTIFICATION_ITEM,
+    {
+      onCompleted: (itm) => onClose(itm.updateNotificationItem),
+    }
+  );
+  const [createNotificationItem, { error: errorCreateItem }] = useMutation(
+    CREATE_NOTIFICATION_ITEM,
+    {
+      onCompleted: (itm) => onClose(itm.createNotificationItem),
+    }
+  );
 
   const initialValues = useRef(item);
   const { inputs, handleChange, validate } = useForm(initialValues.current);
@@ -58,7 +62,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   const onDrop = (acceptedFile) => {
     const file = acceptedFile[0];
     const preview = URL.createObjectURL(file);
-    handleChange({ name: 'image', value: Object.assign(file) });
+    handleChange({ name: 'image', value: Object.assign(file, { preview }) });
     setImage(preview);
   };
 
@@ -69,9 +73,9 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   });
 
   useEffect(() => {
-    if (item.image.preview) {
-      setImage(item.image.preview);
-    } else if (item.image.name && !item.image.preview) {
+    if (inputs.image.preview) {
+      setImage(inputs.image.preview);
+    } else if (item.image.name && !inputs.image.preview) {
       const preview = URL.createObjectURL(item.image);
       inputs.image = Object.assign(item.image, { preview });
       setImage(preview);
@@ -138,28 +142,10 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
             </>
           )}
           {inputs.displayType === 'html' && (
-            <Row style={{ width: '100%' }}>
-              <Editor
-                apiKey="oyb6nt5ajzb6jpmyqwzshct37caxfq2vza1r3pup5gsg9w25"
-                initialValue={item.htmlContent}
-                init={{
-                  height: 500,
-                  plugins: [
-                    'advlist',
-                    'anchor',
-                    'autosave',
-                    'code',
-                    'emoticons',
-                    'image',
-                    'imagetools',
-                    'lists',
-                    'media',
-                    'table',
-                  ],
-                  toolbar:
-                    'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | image imagetools media emoticons | code',
-                }}
-                onChange={(e) =>
+            <Row>
+              <HtmlEditor
+                value={item.htmlContent}
+                handleChange={(e) =>
                   handleChange({
                     name: 'htmlContent',
                     value: e.target.getContent(),
@@ -200,8 +186,8 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               fullWidth
             />
           </Row>
-          {(notification.type === 'random-draw' ||
-            notification.type === 'instant-win') && (
+          {(notification.Notification.type === 'random-draw' ||
+            notification.Notification.type === 'instant-win') && (
             <Row>
               <Counter
                 input={inputs.probability}
@@ -214,7 +200,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               />
             </Row>
           )}
-          {notification.type === 'instant-win' && (
+          {notification.Notification.type === 'instant-win' && (
             <>
               <RowReadOnly>
                 <Label>{t('default')}</Label>
@@ -257,23 +243,3 @@ NotificationContent.propTypes = {
   item: PropTypes.object,
   notifId: PropTypes.string,
 };
-
-const ImageSelection = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  .dropzone {
-    padding: 2rem;
-    text-align: center;
-    border: 3px dashed var(--lightGray);
-    border-radius: 10px;
-  }
-  img {
-    max-width: 60%;
-    max-height: 30vh;
-    height: auto;
-    width: auto;
-    margin: 1rem auto;
-    border: 1px solid var(--lightGray);
-  }
-`;

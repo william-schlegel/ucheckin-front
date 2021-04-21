@@ -22,7 +22,7 @@
   "delay-between-display": "Temps entre 2 affichages en minutes (0 = pas d'attente)",
   "content": "Contenu de la notification",
   "contents": "Contenus définis pour cette notification",
-  "probability": "Probabilité de tirage (en %)",
+  "probability": "Probabilité de tirage",
   "quota": "Quota global d'affichage",
   "default": "Notification par défaut",
   "image-selection": "Sélectionnez une image (taille conseillée: verticale 1600x900)",

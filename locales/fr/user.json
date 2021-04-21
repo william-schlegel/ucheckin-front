@@ -39,5 +39,6 @@
   "signal": "Signal associé",
   "application": "Application associée",
   "invitations": "Mes invitations",
-  "validity": "Fin de validité"
+  "validity": "Fin de validité",
+  "link-success": "La demande de réinitialisation a bien été prise en compte, vérifiez vos email pour le lien"
 }

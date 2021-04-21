@@ -110,7 +110,7 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
     $startDate: String
     $endDate: String
     $owner: UserRelateToOneInput
-    $app: ApplicationRelateToOneInput
+    $application: ApplicationRelateToOneInput
     $signal: SignalRelateToOneInput
   ) {
     updateNotification(
@@ -122,7 +122,7 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
         type: $type
         startDate: $startDate
         endDate: $endDate
-        application: $app
+        application: $application
         signal: $signal
       }
     ) {
@@ -139,7 +139,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
     $startDate: String
     $endDate: String
     $owner: UserRelateToOneInput
-    $app: ApplicationRelateToOneInput
+    $application: ApplicationRelateToOneInput
     $signal: SignalRelateToOneInput
   ) {
     createNotification(
@@ -150,7 +150,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
         type: $type
         startDate: $startDate
         endDate: $endDate
-        application: $app
+        application: $application
         signal: $signal
       }
     ) {
@@ -163,6 +163,13 @@ export const CREATE_NOTIFICATION_ITEM = gql`
   mutation CREATE_NOTIFICATION_ITEM($data: NotificationItemCreateInput) {
     createNotificationItem(data: $data) {
       id
+      displayType
+      image {
+        publicUrlTransformed
+      }
+      probability
+      defaultNotification
+      quota
     }
   }
 `;
@@ -174,6 +181,13 @@ export const UPDATE_NOTIFICATION_ITEM = gql`
   ) {
     updateNotificationItem(id: $id, data: $data) {
       id
+      displayType
+      image {
+        publicUrlTransformed
+      }
+      probability
+      defaultNotification
+      quota
     }
   }
 `;

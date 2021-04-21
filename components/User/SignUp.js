@@ -11,6 +11,7 @@ import Drawer from '../Drawer';
 import { PrimaryButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
 import { CURRENT_USER_QUERY, SIGNUP_MUTATION } from './Queries';
+import FieldError from '../FieldError';
 
 export default function SignUp({ open, onClose }) {
   const { t } = useTranslation('user');
@@ -20,13 +21,25 @@ export default function SignUp({ open, onClose }) {
     password: '',
     company: '',
   });
-  const { inputs, handleChange, resetForm } = useForm(initialState.current);
+  const {
+    inputs,
+    handleChange,
+    resetForm,
+    validate,
+    validationError,
+  } = useForm(initialState.current, [
+    'name',
+    'company',
+    { field: 'password', check: 'isPassword' },
+    { field: 'email', chack: 'isEmail' },
+  ]);
   const [signup, { error }] = useMutation(SIGNUP_MUTATION, {
     variables: inputs,
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
   async function handleSubmit(e) {
     e.preventDefault(); // stop the form from submitting
+    if (!validate()) return;
     await signup().catch(console.error);
     resetForm();
   }
@@ -47,6 +60,7 @@ export default function SignUp({ open, onClose }) {
               value={inputs.name}
               onChange={handleChange}
             />
+            <FieldError error={validationError.name} />
           </Row>
           <Row>
             <Label htmlFor="company" required>
@@ -60,6 +74,7 @@ export default function SignUp({ open, onClose }) {
               value={inputs.company}
               onChange={handleChange}
             />
+            <FieldError error={validationError.company} />
           </Row>
           <Row>
             <Label htmlFor="email" required>
@@ -73,6 +88,7 @@ export default function SignUp({ open, onClose }) {
               value={inputs.email}
               onChange={handleChange}
             />
+            <FieldError error={validationError.email} />
           </Row>
           <Row>
             <Label htmlFor="password" required>
@@ -86,6 +102,7 @@ export default function SignUp({ open, onClose }) {
               value={inputs.password}
               onChange={handleChange}
             />
+            <FieldError error={validationError.password} />
           </Row>
         </FormBodyFull>
         <FormFooter>

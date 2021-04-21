@@ -11,7 +11,6 @@ import { Confirm } from 'notiflix';
 import styled from 'styled-components';
 import Head from 'next/head';
 import DisplayError from '../ErrorMessage';
-import Loading from '../Loading';
 import {
   Block,
   Form,
@@ -37,10 +36,8 @@ import NotificationType, {
   useNotificationName,
 } from '../Tables/NotificationType';
 import {
-  NOTIFICATION_QUERY,
   DELETE_NOTIFICATION_MUTATION,
   UPDATE_NOTIFICATION_MUTATION,
-  CREATE_NOTIFICATION_MUTATION,
   DELETE_NOTIFICATION_ITEM,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
@@ -52,6 +49,8 @@ import NotificationContent from './NotificationContent';
 import ActionButton from '../Buttons/ActionButton';
 import FieldError from '../FieldError';
 import selectTheme from '../styles/selectTheme';
+import Phone from '../styles/Phone';
+import { formatPrct } from '../../lib/formatNumber';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -71,16 +70,6 @@ const QUERY_SIGNAL_FROM_APP = gql`
   }
 `;
 
-const phoneList = [
-  { value: '16:9', label: 'iphone 8,Pixel 2 (16:9)', ratio: 16 / 9 },
-  { value: '18:9', label: 'Galaxy S9, OnePlus 5T (18:9)', ratio: 18 / 9 },
-  { value: '19:9', label: 'Galaxy S10, OnePlus 6 (19:9)', ratio: 19 / 9 },
-  { value: '21:9', label: 'XPeria 10 (21:9)', ratio: 21 / 9 },
-  { value: 'X', label: 'iphone X', ratio: 2436 / 1125 },
-  { value: '12', label: 'iphone 12', ratio: 2340 / 1080 },
-  { value: '12pro', label: 'iphone 12 Pro', ratio: 2532 / 1170 },
-];
-
 const defaultItem = {
   displayType: '',
   image: {},
@@ -89,7 +78,7 @@ const defaultItem = {
   videoLink: 'https://youtu.be/',
   numberOfDisplay: 0,
   delayBetweenDisplay: 1,
-  probability: 100,
+  probability: 50,
   defaultNotification: false,
   quota: 0,
 };
@@ -132,11 +121,7 @@ const makeData = (data) => {
 
 export default function Notification({ id, initialData }) {
   const router = useRouter();
-  const [notifId, setNotifId] = useState(id);
 
-  const [queryNotification, { loading, error, data }] = useLazyQuery(
-    NOTIFICATION_QUERY
-  );
   const [
     deleteNotification,
     { loading: loadingDelete, error: errorDelete },
@@ -152,17 +137,6 @@ export default function Notification({ id, initialData }) {
   ] = useMutation(UPDATE_NOTIFICATION_MUTATION, {
     onCompleted: () => {
       router.push('/notifications');
-    },
-  });
-  const [
-    createNotification,
-    { loading: loadingCreate, error: errorCreate },
-  ] = useMutation(CREATE_NOTIFICATION_MUTATION, {
-    onCompleted: (newItem) => {
-      if (notifId) {
-        router.push('/notifications');
-      }
-      setNotifId(newItem.id);
     },
   });
   const [deleteNotificationItem, { error: errorDeleteItem }] = useMutation(
@@ -186,17 +160,22 @@ export default function Notification({ id, initialData }) {
     validate,
     validationError,
     wasTouched,
-  } = useForm(initialValues.current, { name: '', displayName: '' });
+  } = useForm(initialValues.current, [
+    'name',
+    'displayName',
+    'owner.id',
+    'application.id',
+    'signal.id',
+  ]);
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
-  const notifOwnerId = data?.Notification?.owner?.id;
+  const notifOwnerId = initialData.data?.Notification?.owner?.id;
   const [optionsAppUser, setOptionsAppUser] = useState([]);
   const [optionsSignals, setOptionsSignals] = useState([]);
-  const [phone, setPhone] = useState(phoneList[0]);
   const [selectedItem, setSelectedItem] = useState(0);
   const [item, setItem] = useState({});
   const [showItem, setShowItem] = useState(false);
-  const [nbNotif, setNbNotif] = useState(1);
+  const [nbNotif, setNbNotif] = useState(initialValues.current.items.length);
 
   useEffect(() => {
     if (userRole) {
@@ -221,18 +200,8 @@ export default function Notification({ id, initialData }) {
     }
   }, [dataSig, setOptionsSignals]);
 
-  useEffect(() => {
-    if (id) {
-      queryNotification({
-        variables: { id },
-      });
-    }
-  }, [id, queryNotification]);
-
-  useEffect(() => {
-    const uId = initialData?.data?.Notification?.owner?.id;
-    if (uId) queryAppUser({ variables: { user: uId } });
-  }, [initialData, queryAppUser]);
+  const totalPrct = () =>
+    inputs.items.reduce((tot, itm) => tot + itm.probability, 0);
 
   function handleChangeUser(value) {
     const uId = value.value;
@@ -261,7 +230,7 @@ export default function Notification({ id, initialData }) {
       t('yes-delete'),
       t('no-delete'),
       () => {
-        if (inputs.items[idNotif].__typename === 'NotificationItem') {
+        if (inputs.items[idNotif].id) {
           deleteNotificationItem({
             variables: { id: inputs.items[idNotif].id },
           });
@@ -274,7 +243,15 @@ export default function Notification({ id, initialData }) {
     );
   }
 
-  function handleCloseItem() {
+  function handleCloseItem(newItem) {
+    if (newItem.id) {
+      const idItem = inputs.items.findIndex((i) => i.id === newItem.id);
+      if (idItem >= 0) {
+        inputs.items[idItem] = makeItem(newItem);
+      } else {
+        inputs.items.push(makeItem(newItem));
+      }
+    }
     setShowItem(false);
   }
 
@@ -306,6 +283,7 @@ export default function Notification({ id, initialData }) {
     if (wasTouched('signal.id'))
       newInputs.signal = { connect: { id: newInputs.signal.id } };
     newInputs.id = id;
+    console.log(`newInputs`, newInputs);
     return updateNotification({
       update: (cache, payload) =>
         cache.evict(cache.identify(payload.data.updateNotification)),
@@ -313,28 +291,7 @@ export default function Notification({ id, initialData }) {
     });
   }
 
-  function handleCreateNotification() {
-    const newInputs = validate();
-    if (!newInputs) return;
-
-    if (wasTouched('owner.id'))
-      newInputs.owner = { connect: { id: newInputs.owner.id } };
-    if (wasTouched('application.id'))
-      newInputs.application = { connect: { id: newInputs.application.id } };
-    if (wasTouched('signal.id'))
-      newInputs.signal = { connect: { id: newInputs.signal.id } };
-    const variables = {
-      data: { ...newInputs },
-    };
-    return createNotification({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.createNotification)),
-      variables,
-    });
-  }
-
   async function addContent() {
-    if (!notifId) await handleCreateNotification();
     setItem(defaultItem);
     setShowItem(true);
   }
@@ -351,27 +308,20 @@ export default function Notification({ id, initialData }) {
   }
 
   useEffect(() => {
-    if (data) {
-      const newInputs = makeData(data);
-      setInputs(newInputs);
-      // console.log(`newInputs`, newInputs);
-      handleChangeType(newInputs.type);
-      handleChangeApp(newInputs.application.id);
-      setNbNotif(newInputs.items.length || 1);
-    }
-  }, [setInputs, data]);
+    const uId = initialData?.data?.Notification?.owner?.id;
+    if (uId) queryAppUser({ variables: { user: uId } });
+    const appId = initialData?.data?.Notification?.application?.id;
+    if (appId) querySignal({ variables: { appId } });
+  }, [initialData, queryAppUser, querySignal]);
 
-  useEffect(() => {
-    // console.log(`inputs`, inputs);
-    console.log(`nbNotif`, nbNotif);
-    // console.log(`item`, item);
-  }, [nbNotif]);
+  // useEffect(() => {
+  //   // console.log(`inputs`, inputs);
+  //   // console.log(`nbNotif`, nbNotif);
+  //   // console.log(`item`, item);
+  // }, [nbNotif]);
 
-  if (loading || !user) return <Loading />;
-  if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
-  if (errorCreate) return <DisplayError error={errorCreate} />;
   if (errorDeleteItem) return <DisplayError error={errorDeleteItem} />;
 
   return (
@@ -389,7 +339,7 @@ export default function Notification({ id, initialData }) {
           open={showItem}
           onClose={handleCloseItem}
           item={item}
-          notifId={notifId}
+          notifId={id}
         />
       )}{' '}
       <Form>
@@ -450,6 +400,7 @@ export default function Notification({ id, initialData }) {
                       value={inputs.owner.id}
                       onChange={handleChangeUser}
                     />
+                    <FieldError error={validationError['owner.id']} />
                   </Row>
                   <Row>
                     <Label>{t('type')}</Label>
@@ -511,7 +462,7 @@ export default function Notification({ id, initialData }) {
                       onChange={(sel) => handleChangeApp(sel)}
                       options={optionsAppUser}
                     />
-                    <FieldError error={validationError.applicationId} />
+                    <FieldError error={validationError['application.id']} />
                   </Row>
                   <Row>
                     <Label required>{t('signal')}</Label>
@@ -531,7 +482,7 @@ export default function Notification({ id, initialData }) {
                       options={optionsSignals}
                     />
                   </Row>
-                  <FieldError error={validationError.signalId} />
+                  <FieldError error={validationError['signal.id']} />
                 </>
               ) : (
                 <>
@@ -575,8 +526,11 @@ export default function Notification({ id, initialData }) {
                 </>
               )}
             </FormBody>
-            <Separator />
             <FormBodyFull>
+              <Separator />
+              <Row>
+                <H3>{t('contents')}</H3>
+              </Row>
               {inputs.type !== 'simple' && (
                 <Row>
                   <Counter
@@ -585,11 +539,11 @@ export default function Notification({ id, initialData }) {
                     max={10}
                     handleChange={(value) => setNbNotif(value.value)}
                     label={t('nb-notif')}
+                    name="nbNotif"
                   />
                 </Row>
               )}
               <Row>
-                <H3>{t('contents')}</H3>
                 <NotifContainer>
                   {inputs.items.map((it, index) => (
                     <Notif
@@ -600,6 +554,7 @@ export default function Notification({ id, initialData }) {
                       withDetails
                       deleteNotif={() => handleDeleteNotif(index)}
                       editNotif={() => handleEditNotif(index)}
+                      total={totalPrct()}
                     />
                   ))}
                   {inputs.items.length < nbNotif && (
@@ -609,35 +564,13 @@ export default function Notification({ id, initialData }) {
               </Row>
             </FormBodyFull>
           </div>
-          <Phone>
-            <div style={{ width: '100%' }}>
-              <Select
-                theme={selectTheme}
-                value={phone}
-                onChange={(p) => setPhone(p)}
-                options={phoneList}
-              />
-            </div>
-
-            <div className="phone">
-              <div className="content">
-                <div
-                  className="place-holder"
-                  style={{ width: '300px', height: `${300 * phone.ratio}px` }}
-                >
-                  <Notif item={inputs.items[selectedItem]} type={inputs.type} />
-                </div>
-              </div>
-            </div>
-          </Phone>
+          <div>
+            <Phone>
+              <Notif item={inputs.items[selectedItem]} type={inputs.type} />
+            </Phone>
+          </div>
         </NotificationContainer>
         <FormFooter>
-          {canEdit && !id && (
-            <ButtonValidation
-              disabled={loadingCreate}
-              onClick={handleCreateNotification}
-            />
-          )}
           {canEdit && id && (
             <ButtonValidation
               disabled={loadingUpdate}
@@ -671,6 +604,7 @@ export function Notif({
   deleteNotif,
   editNotif,
   style,
+  total,
 }) {
   const [element, setElement] = useState();
 
@@ -715,7 +649,10 @@ export function Notif({
         <div className="details">
           {(typeNotif === 'random-draw' || typeNotif === 'instant-win') && (
             <div className="prct">
-              <span>{item.probability}</span>
+              <span>
+                {item.probability} (
+                {total ? formatPrct(item.probability / total) : '-'})
+              </span>
             </div>
           )}
           <div className="actions">
@@ -736,6 +673,7 @@ Notif.propTypes = {
   editNotif: PropTypes.func,
   withDetails: PropTypes.bool,
   style: PropTypes.object,
+  total: PropTypes.number,
 };
 
 function AddNotif({ onClick }) {
@@ -764,6 +702,7 @@ const AddContainer = styled.div`
   display: grid;
   place-items: center;
   border: 1px dashed var(--lightGray);
+  border-radius: 5px;
   button {
     border: none;
     width: 100%;
@@ -798,6 +737,9 @@ const NotifStyle = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  border: 1px solid var(--lightGray);
+  padding: 3px;
+  border-radius: 5px;
   img {
     width: 100%;
     max-width: 100%;
@@ -826,42 +768,5 @@ const NotifStyle = styled.div`
     display: flex;
     color: var(--secondary);
     justify-content: center;
-    &:after {
-      content: '%';
-      margin-left: 0.2rem;
-    }
-  }
-`;
-
-const Phone = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  .content-form {
-    display: flex;
-    width: 100%;
-  }
-  .phone {
-    display: flex;
-    box-shadow: var(--bs-card);
-    justify-content: center;
-    align-items: center;
-    margin: 10px;
-    padding: 20px 5px;
-    border-radius: 20px;
-    background-color: black;
-    .content {
-      border: 1px solid black;
-      position: relative;
-      .place-holder {
-        left: 0;
-        top: 0;
-        background-color: var(--background);
-      }
-    }
-  }
-  @media (max-width: 1000px) {
-    display: none;
   }
 `;

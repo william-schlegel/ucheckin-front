@@ -39,5 +39,6 @@
   "signal": "Associated signal",
   "application": "Associated application",
   "invitations": "My invitations",
-  "validity": "End of validity"
+  "validity": "End of validity",
+  "link-success": "The reset request has been taken into account, check your email for the link"
 }

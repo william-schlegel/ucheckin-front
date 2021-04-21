@@ -26,6 +26,7 @@ import {
   Clock,
   UserCheck,
   DollarSign,
+  MapPin,
 } from 'react-feather';
 import styled from 'styled-components';
 
@@ -84,6 +85,7 @@ export default function ActionButton({
       {type === 'user-account' && <DollarSign size={size} />}
       {type === 'user-profile' && <UserCheck size={size} />}
       {type === 'view' && <Eye size={size} />}
+      {type === 'map-pin' && <MapPin size={size} />}
     </IconButtonStyles>
   );
 }
@@ -117,6 +119,7 @@ ActionButton.propTypes = {
     'extend',
     'user-profile',
     'user-account',
+    'map-pin',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

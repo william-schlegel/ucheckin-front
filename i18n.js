@@ -24,6 +24,7 @@ module.exports = {
     'rgx:^/price': ['license'],
     'rgx:^/order': ['order'],
     'rgx:^/notification': ['notification'],
+    'rgx:^/event': ['event'],
     'rgx:^/login': ['user'],
     'rgx:^/accept-invitation': ['application'],
   },

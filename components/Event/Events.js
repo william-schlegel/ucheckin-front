@@ -11,21 +11,21 @@ import { perPage } from '../../config';
 import Loading from '../Loading';
 import DisplayError from '../ErrorMessage';
 import EntetePage from '../styles/EntetePage';
-import NotificationDetails from './NotificationDetails';
+import EventDetails from './EventDetails';
 import ValidityDate from '../Tables/ValidityDate';
 import {
   PAGINATION_QUERY,
-  ALL_NOTIFICATIONS_QUERY,
-  DELETE_NOTIFICATION_MUTATION,
+  ALL_EVENTS_QUERY,
+  DELETE_EVENT_MUTATION,
 } from './Queries';
 import { useHelp, Help, HelpButton } from '../Help';
 import SearchField, { useFilter } from '../SearchField';
 import { useUser } from '../User/Queries';
-import NotificationType from '../Tables/NotificationType';
 import ButtonNew from '../Buttons/ButtonNew';
-import NotificationNew from './NotificationNew';
+import EventNew from './EventNew';
+import Image from '../Tables/Image';
 
-export default function Notifications() {
+export default function Events() {
   const router = useRouter();
   const { user } = useUser();
 
@@ -33,122 +33,123 @@ export default function Notifications() {
     queryPagination,
     { error: errorPage, loading: loadingPage, data: dataPage },
   ] = useLazyQuery(PAGINATION_QUERY);
-  const [queryNotifications, { error, loading, data }] = useLazyQuery(
-    ALL_NOTIFICATIONS_QUERY
+  const [queryEvents, { error, loading, data }] = useLazyQuery(
+    ALL_EVENTS_QUERY
   );
-  const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION);
+  const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION);
   const page = parseInt(router.query.page) || 1;
   const { count } = dataPage?.count || 1;
-  const { t } = useTranslation('notification');
-  const [showNotification, setShowNotification] = useState('');
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
-    'notification'
-  );
+  const { t } = useTranslation('event');
+  const [showEvent, setShowEvent] = useState('');
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('event');
 
   const searchFields = [
     { field: 'name_contains_i', label: t('name'), type: 'text' },
-    { field: 'displayName_contains_i', label: t('display-name'), type: 'text' },
+    { field: 'description_contains_i', label: t('description'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
-  const [newNotification, setNewNotification] = useState(false);
+  const [newEvent, setNewEvent] = useState(false);
 
-  function handleCloseNewNotification() {
-    setNewNotification(false);
+  function handleCloseNewEvent() {
+    setNewEvent(false);
   }
 
   useEffect(() => {
-    console.log(`useEffect`, page);
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
-    queryNotifications({ variables });
-    console.log('{filters, variables}', { filters, variables });
-  }, [filters, queryPagination, queryNotifications, page]);
+    queryEvents({ variables });
+  }, [filters, queryPagination, queryEvents, page]);
 
-  function viewNotification(id) {
-    if (id) setShowNotification(id);
+  function viewEvent(id) {
+    if (id) setShowEvent(id);
   }
 
   const columns = useColumns([
     ['id', 'id', 'hidden'],
     [t('name'), 'name'],
-    [t('display-name'), 'displayName'],
+    [t('description'), 'description'],
     [
-      t('type'),
-      'type',
-      ({ cell: { value } }) => <NotificationType notification={value} />,
+      t('icon'),
+      'imageHome',
+      ({ cell: { value } }) => <Image image={value} size={40} rounded />,
     ],
     [
-      t('start-date'),
-      'startDate',
-      ({ cell: { value } }) => <ValidityDate value={value} noColor />,
+      t('validity-start'),
+      'validityStart',
+      ({ cell: { value } }) => <ValidityDate value={value} after />,
     ],
     [
-      t('end-date'),
-      'endDate',
-      ({ cell: { value } }) => <ValidityDate value={value} noColor />,
+      t('validity-end'),
+      'validityEnd',
+      ({ cell: { value } }) => <ValidityDate value={value} />,
+    ],
+    [
+      t('publish-start'),
+      'publishStart',
+      ({ cell: { value } }) => <ValidityDate value={value} after />,
+    ],
+    [
+      t('publish-end'),
+      'publishEnd',
+      ({ cell: { value } }) => <ValidityDate value={value} />,
     ],
   ]);
 
-  function handleCloseShowNotification() {
-    setShowNotification('');
+  function handleCloseShowEvent() {
+    setShowEvent('');
   }
 
-  function handleDeleteNotification(id) {
+  function handleDeleteEvent(id) {
     Confirm.Show(
       t('confirm-delete'),
       t('you-confirm'),
       t('yes-delete'),
       t('no-delete'),
       () =>
-        deleteNotification({
+        deleteEvent({
           update: (cache, payload) =>
-            cache.evict(cache.identify(payload.data.deleteNotification)),
+            cache.evict(cache.identify(payload.data.deleteEvent)),
           variables: { id },
         })
     );
   }
 
   const actionButtons = [
-    { type: 'view', action: viewNotification },
-    { type: 'edit', action: (id) => router.push(`/notification/${id}`) },
-    { type: 'trash', action: (id) => handleDeleteNotification(id) },
+    { type: 'view', action: viewEvent },
+    { type: 'edit', action: (id) => router.push(`/event/${id}`) },
+    { type: 'trash', action: (id) => handleDeleteEvent(id) },
   ];
-
-  console.log(`data`, { error, loading, data });
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
     <>
       <Head>
-        <title>{t('notifications')}</title>
+        <title>{t('events')}</title>
       </Head>
       <Help
         contents={helpContent}
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
-      <NotificationNew
-        open={newNotification}
-        onClose={handleCloseNewNotification}
-      />
-      {showNotification && (
-        <NotificationDetails
-          open={!!showNotification}
-          onClose={handleCloseShowNotification}
-          id={showNotification}
+      <EventNew open={newEvent} onClose={handleCloseNewEvent} />
+      {showEvent && (
+        <EventDetails
+          open={!!showEvent}
+          onClose={handleCloseShowEvent}
+          id={showEvent}
         />
       )}
       <EntetePage>
-        <h3>{t('notifications')}</h3>
+        <h3>{t('events')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />
         <ButtonNew
           onClick={() => {
-            setNewNotification(true);
+            setNewEvent(true);
           }}
         />
       </EntetePage>
@@ -157,7 +158,7 @@ export default function Notifications() {
         error={errorPage}
         loading={loadingPage}
         count={count}
-        pageRef="notifications"
+        pageRef="events"
         withFilter
         setShowFilter={setShowFilter}
       />
@@ -166,11 +167,11 @@ export default function Notifications() {
         showFilter={showFilter}
         onClose={() => setShowFilter(false)}
         onFilterChange={handleNewFilter}
-        isAdmin={user.role?.canManageNotification}
+        isAdmin={user.role?.canManageEvent}
       />
       <Table
         columns={columns}
-        data={data?.allNotifications}
+        data={data?.allEvents}
         error={error}
         loading={loading}
         actionButtons={actionButtons}

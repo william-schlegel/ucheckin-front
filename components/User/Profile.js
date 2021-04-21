@@ -63,7 +63,11 @@ export default function Profile({ id, initialData }) {
     validate,
     validationError,
     wasTouched,
-  } = useForm(initialValues.current, { name: '', email: '', company: '' });
+  } = useForm(initialValues.current, [
+    'name',
+    { field: 'email', check: 'isEmail' },
+    'company',
+  ]);
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
   const router = useRouter();

@@ -48,14 +48,12 @@ export default function AcceptInvitation({ token }) {
   const { t } = useTranslation('application');
   const invitation = data?.allInvitations[0] || { user: {}, application: {} };
   const initialValues = useRef({ name: '', company: '', password: '' });
-  const { inputs, handleChange, validate, validationError } = useForm(
-    initialValues.current,
-    {
-      name: '',
-      company: '',
-      password: '',
-    }
-  );
+  const {
+    inputs,
+    handleChange,
+    validate,
+    validationError,
+  } = useForm(initialValues.current, ['name', 'company', 'password']);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

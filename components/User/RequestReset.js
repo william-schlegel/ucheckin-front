@@ -12,6 +12,7 @@ import Drawer from '../Drawer';
 import { ButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
 import { CURRENT_USER_QUERY } from './Queries';
+import FieldError from '../FieldError';
 
 const REQUEST_RESET_MUTATION = gql`
   mutation REQUEST_RESET_MUTATION($email: String!) {
@@ -27,20 +28,21 @@ export default function RequestReset({ open, onClose }) {
   const initialState = useRef({
     email: '',
   });
-  const { inputs, handleChange, resetForm } = useForm(initialState);
-  const [signup, { data, loading, error }] = useMutation(
-    REQUEST_RESET_MUTATION,
-    {
-      variables: inputs,
-      refetchQueries: [{ query: CURRENT_USER_QUERY }],
-    }
-  );
+  const {
+    inputs,
+    handleChange,
+    resetForm,
+    validate,
+    validationError,
+  } = useForm(initialState, [{ field: 'email', check: 'isEmail' }]);
+  const [signup, { data, error }] = useMutation(REQUEST_RESET_MUTATION, {
+    variables: inputs,
+    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+  });
   async function handleSubmit(e) {
     e.preventDefault(); // stop the form from submitting
-    console.log(inputs);
-    const res = await signup().catch(console.error);
-    console.log(res);
-    console.log({ data, loading, error });
+    if (!validate()) return;
+    await signup().catch(console.error);
     resetForm();
     // Send the email and password to the graphqlAPI
   }
@@ -50,7 +52,7 @@ export default function RequestReset({ open, onClose }) {
         <Error error={error} />
         <FormBodyFull>
           {data?.sendUserPasswordResetLink === null && (
-            <p>Success! Check your email for a link!</p>
+            <p>{t('link-success')}</p>
           )}
           <Row>
             <Label htmlFor="email" required>
@@ -64,6 +66,7 @@ export default function RequestReset({ open, onClose }) {
               value={inputs.email}
               onChange={handleChange}
             />
+            <FieldError error={validationError.email} />
           </Row>
         </FormBodyFull>
         <FormFooter>

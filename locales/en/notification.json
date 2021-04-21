@@ -22,7 +22,7 @@
   "delay-between-display": "delay in minutes between 2 displays (0 = no delay)",
   "content": "Notification's content",
   "contents": "Contents for this notification",
-  "probability": "Probability of drawing (in %)",
+  "probability": "Probability of drawing",
   "quota": "Global display quota",
   "default": "Default display",
   "simple-desc": "Cette notification apparaîtra à chaque fois que le signal sera détecté. Vous pouvez en plus gérer un nombre maximum d’affichage (0 pour pas de limite) et un délai en minutes entre deux affichages consécutifs.",

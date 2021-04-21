@@ -35,7 +35,7 @@ export default function InvitationNew({ appId, open, onClose }) {
     handleChange,
     validate,
     validationError,
-  } = useForm(initialValues.current, { email: 'is-required' });
+  } = useForm(initialValues.current, [{ field: 'email', check: 'isEmail' }]);
 
   function handleNewInvitation() {
     if (!validate()) return;

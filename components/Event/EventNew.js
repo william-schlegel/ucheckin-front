@@ -2,30 +2,30 @@ import { useRef } from 'react';
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
 
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import ButtonCancel from '../Buttons/ButtonCancel';
-import { ALL_APPLICATIONS_QUERY, CREATE_APPLICATION_MUTATION } from './Queries';
+import { ALL_EVENTS_QUERY, CREATE_EVENT_MUTATION } from './Queries';
 import { FormBodyFull, Label, Row, Form } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { perPage } from '../../config';
 import FieldError from '../FieldError';
 
-export default function ApplicationNew({ open, onClose }) {
-  const [createApplication, { loading, error }] = useMutation(
-    CREATE_APPLICATION_MUTATION,
-    {
-      refetchQueries: [
-        {
-          query: ALL_APPLICATIONS_QUERY,
-          variables: { skip: 0, first: perPage },
-        },
-      ],
-    }
-  );
-  const { t } = useTranslation('application');
+export default function EventNew({ open, onClose }) {
+  const router = useRouter();
+  const [createEvent, { loading, error }] = useMutation(CREATE_EVENT_MUTATION, {
+    refetchQueries: [
+      {
+        query: ALL_EVENTS_QUERY,
+        variables: { skip: 0, first: perPage },
+      },
+    ],
+    onCompleted: (item) => router.push(`/event/${item.id}`),
+  });
+  const { t } = useTranslation('event');
   const initialValues = useRef({
     name: '',
   });
@@ -36,8 +36,14 @@ export default function ApplicationNew({ open, onClose }) {
     validationError,
   } = useForm(initialValues.current, ['name']);
 
+  function handleValidation() {
+    if (!validate()) return;
+    createEvent({ variables: inputs }).catch((err) => alert(err.message));
+    onClose();
+  }
+
   return (
-    <Drawer onClose={onClose} open={open} title={t('new-application')}>
+    <Drawer onClose={onClose} open={open} title={t('new-event')}>
       <Form>
         <FormBodyFull>
           <Row>
@@ -57,16 +63,7 @@ export default function ApplicationNew({ open, onClose }) {
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation
-          disabled={loading}
-          onClick={() => {
-            if (!validate()) return;
-            createApplication({ variables: inputs }).catch((err) =>
-              alert(err.message)
-            );
-            onClose();
-          }}
-        />
+        <ButtonValidation disabled={loading} onClick={handleValidation} />
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}
       </DrawerFooter>
@@ -74,7 +71,7 @@ export default function ApplicationNew({ open, onClose }) {
   );
 }
 
-ApplicationNew.propTypes = {
+EventNew.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
 };

@@ -13,5 +13,6 @@
   "orders": "Orders",
   "users": "Users",
   "notifications": "Notifications",
-  "sdk": "SDK"
+  "sdk": "SDK",
+  "events": "UcheckIn events"
 }
