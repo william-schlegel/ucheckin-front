@@ -607,15 +607,18 @@ export function Notif({
   total,
 }) {
   const [element, setElement] = useState();
+  const { t } = useTranslation('notification');
 
   useEffect(() => {
     const el = document.getElementById('html-content-container');
     setElement(el);
-  }, []);
+  }, [item]);
 
   useEffect(() => {
     if (element) element.innerHTML = item.htmlContent;
   }, [element, item]);
+
+  console.log(`Notif`, { item });
 
   if (!item) return null;
   return (
@@ -649,10 +652,14 @@ export function Notif({
         <div className="details">
           {(typeNotif === 'random-draw' || typeNotif === 'instant-win') && (
             <div className="prct">
-              <span>
-                {item.probability} (
-                {total ? formatPrct(item.probability / total) : '-'})
-              </span>
+              {item.defaultNotification ? (
+                <span>{t('default')}</span>
+              ) : (
+                <span>
+                  {item.probability} (
+                  {total ? formatPrct(item.probability / total) : '-'})
+                </span>
+              )}
             </div>
           )}
           <div className="actions">
@@ -768,5 +775,6 @@ const NotifStyle = styled.div`
     display: flex;
     color: var(--secondary);
     justify-content: center;
+    text-align: center;
   }
 `;

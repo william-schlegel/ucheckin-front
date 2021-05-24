@@ -29,5 +29,6 @@
   "miliseconds": "milisecondes",
   "central-freq": "Fréquence centrale",
   "overlap": "Recouvrement",
-  "gain": "Gain"
+  "gain": "Gain",
+  "notification": "Notification associée"
 }

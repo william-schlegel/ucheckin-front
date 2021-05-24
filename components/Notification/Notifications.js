@@ -27,7 +27,6 @@ import NotificationNew from './NotificationNew';
 
 export default function Notifications() {
   const router = useRouter();
-  const { user } = useUser();
 
   const [
     queryPagination,
@@ -44,6 +43,7 @@ export default function Notifications() {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'notification'
   );
+  const { user } = useUser();
 
   const searchFields = [
     { field: 'name_contains_i', label: t('name'), type: 'text' },
@@ -52,12 +52,7 @@ export default function Notifications() {
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
   const [newNotification, setNewNotification] = useState(false);
 
-  function handleCloseNewNotification() {
-    setNewNotification(false);
-  }
-
   useEffect(() => {
-    console.log(`useEffect`, page);
     const variables = {
       skip: (page - 1) * perPage,
       first: perPage,
@@ -65,11 +60,14 @@ export default function Notifications() {
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
     queryNotifications({ variables });
-    console.log('{filters, variables}', { filters, variables });
   }, [filters, queryPagination, queryNotifications, page]);
 
   function viewNotification(id) {
     if (id) setShowNotification(id);
+  }
+
+  function handleCloseNewNotification() {
+    setNewNotification(false);
   }
 
   const columns = useColumns([
@@ -118,10 +116,11 @@ export default function Notifications() {
     { type: 'trash', action: (id) => handleDeleteNotification(id) },
   ];
 
-  console.log(`data`, { error, loading, data });
-
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
+
+  console.log(`data notifications`, data);
+
   return (
     <>
       <Head>
@@ -132,10 +131,12 @@ export default function Notifications() {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
-      <NotificationNew
-        open={newNotification}
-        onClose={handleCloseNewNotification}
-      />
+      {newNotification && (
+        <NotificationNew
+          open={newNotification}
+          onClose={handleCloseNewNotification}
+        />
+      )}
       {showNotification && (
         <NotificationDetails
           open={!!showNotification}

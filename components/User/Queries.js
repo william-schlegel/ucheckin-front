@@ -274,17 +274,27 @@ const ROLE_QUERY = gql`
 `;
 
 export function useUser() {
-  const { data, error } = useQuery(CURRENT_USER_QUERY);
-  const items = data?.authenticatedItem;
-  const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { data, error, loading } = useQuery(CURRENT_USER_QUERY);
+  // const [user, setUser] = useState({});
+  // const [authenticated, setAuthenticated] = useState(false);
 
-  useEffect(() => {
-    if (items) setUser(items);
-    setLoading(false);
-  }, [items]);
+  // console.log(`data`, data);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     if (data && !data.authenticatedItem) {
+  //       setAuthenticated(false);
+  //     }
+  //     if (data?.authenticatedItem) {
+  //       setAuthenticated(true);
+  //       setUser(data.authenticatedItem);
+  //     }
+  //   }
+  // }, [data, loading]);
 
-  return { user, loading, error };
+  const user = data?.authenticatedItem || {};
+  const authenticated = !!data?.authenticatedItem;
+
+  return { user, loading, error, authenticated };
 }
 
 export function useRole() {

@@ -73,17 +73,19 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   });
 
   useEffect(() => {
-    if (inputs.image.preview) {
+    if (inputs.image?.preview) {
       setImage(inputs.image.preview);
-    } else if (item.image.name && !inputs.image.preview) {
+    } else if (item.image?.name && !inputs.image?.preview) {
       const preview = URL.createObjectURL(item.image);
       inputs.image = Object.assign(item.image, { preview });
       setImage(preview);
-    } else if (item.image.publicUrlTransformed)
-      setImage(item.image.publicUrlTransformed);
+    } else if (item.image?.publicUrlTransformed)
+      setImage(item.image?.publicUrlTransformed);
   }, [inputs, item]);
 
   function handleValidation() {
+    if (inputs.defaultNotification)
+      handleChange({ name: 'probability', value: 0 });
     const newInputs = validate();
     if (newInputs) {
       newInputs.notification = { connect: { id: notifId } };
@@ -188,17 +190,30 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
           </Row>
           {(notification.Notification.type === 'random-draw' ||
             notification.Notification.type === 'instant-win') && (
-            <Row>
-              <Counter
-                input={inputs.probability}
-                min={1}
-                max={100}
-                name="probability"
-                handleChange={handleChange}
-                label={t('probability')}
-                fullWidth
-              />
-            </Row>
+            <>
+              <RowReadOnly>
+                <Label>{t('default')}</Label>
+                <SwitchComponent
+                  onChange={(value) =>
+                    handleChange({ name: 'defaultNotification', value })
+                  }
+                  checked={inputs.defaultNotification}
+                />
+              </RowReadOnly>
+              {!inputs.defaultNotification && (
+                <Row>
+                  <Counter
+                    input={inputs.probability}
+                    min={1}
+                    max={100}
+                    name="probability"
+                    handleChange={handleChange}
+                    label={t('probability')}
+                    fullWidth
+                  />
+                </Row>
+              )}
+            </>
           )}
           {notification.Notification.type === 'instant-win' && (
             <>

@@ -111,11 +111,22 @@ export default function Signals() {
       'licenses',
       ({ cell: { value } }) => <LicensesDetailsSignal licenses={value} />,
     ],
+    [
+      t('notification'),
+      'notification',
+      ({ cell: { value } }) =>
+        value ? (
+          <span>
+            {value.name} ({value.displayName})
+          </span>
+        ) : null,
+    ],
   ]);
 
   function handleCloseShowSignal() {
     setShowSignal('');
   }
+  console.log(`data signals`, data);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

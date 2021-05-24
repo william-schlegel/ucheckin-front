@@ -11,11 +11,9 @@ export default function SignOut() {
   const router = useRouter();
   const { t } = useTranslation('navigation');
 
-  function handleClick() {
-    signout().then(() => {
-      router.push('/');
-      router.reload();
-    });
+  async function handleClick() {
+    await signout();
+    router.push('/');
   }
 
   return (

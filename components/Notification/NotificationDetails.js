@@ -97,10 +97,10 @@ export default function NotificationDetails({ open, onClose, id }) {
           </RowReadOnly>
           <Separator />
           <NotifContainer>
-            {data.Notification.items.map((it, index) => (
+            {data.Notification.items.map((it) => (
               <Notif
                 style={{ maxWidth: '100px' }}
-                key={`NOTIF-${index}`}
+                key={it.id}
                 typeNotif={data.Notification.type}
                 item={it}
               />

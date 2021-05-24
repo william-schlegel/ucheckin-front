@@ -39,6 +39,11 @@ export const ALL_SIGNALS_QUERY = gql`
         }
         validity
       }
+      notification {
+        id
+        name
+        displayName
+      }
     }
   }
 `;

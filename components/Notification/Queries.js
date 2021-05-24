@@ -44,9 +44,9 @@ export const ALL_NOTIFICATIONS_QUERY = gql`
         id
         name
         displayType
-        image {
-          publicUrlTransformed(transformation: { width: "200", height: "200" })
-        }
+        #   image {
+        #     publicUrlTransformed(transformation: { width: "200", height: "200" })
+        #   }
       }
     }
   }
@@ -77,7 +77,7 @@ export const NOTIFICATION_QUERY = gql`
         id
         displayType
         image {
-          publicUrlTransformed
+          publicUrlTransformed(transformation: { width: "200", height: "400" })
         }
         imageLink
         htmlContent

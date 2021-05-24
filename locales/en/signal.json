@@ -29,5 +29,6 @@
   "miliseconds": "miliseconds",
   "central-freq": "Central frequency",
   "overlap": "Overlapping",
-  "gain": "Gain"
+  "gain": "Gain",
+  "notification": "Associated notification"
 }

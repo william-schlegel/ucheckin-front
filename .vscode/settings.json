@@ -16,9 +16,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
-  "prettier.disableLanguages": [
-    "javascript",
-    "javascriptreact"
-  ],
   "git.ignoreLimitWarning": true
 }

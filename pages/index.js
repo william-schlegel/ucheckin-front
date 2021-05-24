@@ -7,17 +7,16 @@ import Loading from '../components/Loading';
 import DisplayError from '../components/ErrorMessage';
 
 export default function Index() {
-  const { user, loading, error } = useUser();
+  const { user, loading, error, authenticated } = useUser();
   const router = useRouter();
-
-  console.log({ user, loading, error });
+  console.log({ authenticated, loading, user });
 
   useEffect(() => {
-    if (!loading && !user.id) router.push('/login');
-  }, [user, loading, router]);
+    if (!loading && !authenticated) router.push('/login');
+  }, [authenticated, loading, router]);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
-  if (!user?.id) return null;
+  if (!authenticated) return null;
   return <Dashboard />;
 }
