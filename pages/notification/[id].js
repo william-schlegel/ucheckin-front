@@ -14,7 +14,6 @@ Notification.propTypes = {
 Notification.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const { id } = ctx.query;
-  console.log(`id`, id);
   const initialData = await apolloClient.query({
     query: NOTIFICATION_QUERY,
     variables: { id },

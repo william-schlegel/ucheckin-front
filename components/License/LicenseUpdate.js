@@ -69,7 +69,6 @@ export default function LicenseUpdate({
   }
 
   function handleSuccess(orderId) {
-    console.log(`orderId`, orderId);
     closeAndClear(orderId);
   }
 
@@ -139,8 +138,6 @@ export default function LicenseUpdate({
 
   if (licenseLoading) return <Loading />;
   if (licenseError) return <DisplayError error={licenseError} />;
-
-  // console.log(`purchaseData`, purchaseData);
 
   return (
     <Drawer onClose={closeAndClear} open={open} title={t('update-license')}>

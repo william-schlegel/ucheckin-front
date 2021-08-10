@@ -23,7 +23,9 @@ export default function EventNew({ open, onClose }) {
         variables: { skip: 0, first: perPage },
       },
     ],
-    onCompleted: (item) => router.push(`/event/${item.id}`),
+    onCompleted: (item) => {
+      router.push(`/event/${item.createEvent.id}`);
+    },
   });
   const { t } = useTranslation('event');
   const initialValues = useRef({

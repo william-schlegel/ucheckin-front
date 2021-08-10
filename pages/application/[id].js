@@ -14,7 +14,6 @@ Application.propTypes = {
 Application.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const { id } = ctx.query;
-  console.log(`id`, id);
   const initialData = await apolloClient.query({
     query: APPLICATION_QUERY,
     variables: { id },

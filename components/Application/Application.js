@@ -133,7 +133,6 @@ export default function Application({ id, initialData }) {
 
   useEffect(() => {
     if (data) {
-      // console.log(`data.Application`, data.Application);
       setInputs({
         name: data.Application.name,
         apiKey: data.Application.apiKey,
@@ -201,7 +200,6 @@ export default function Application({ id, initialData }) {
   }
 
   function handleCloseNewInvitation(newUser) {
-    console.log(`newUser`, newUser);
     if (newUser.email) {
       const existingUser = inputs.invitations.find(
         (i) => i.email === newUser.email
@@ -210,7 +208,6 @@ export default function Application({ id, initialData }) {
       if (!existingUser) {
         const invitations = [...inputs.invitations];
         invitations.push(newUser);
-        // console.log(`invitations`, invitations);
         setInputs({ ...inputs, invitations });
       }
     }
@@ -218,7 +215,6 @@ export default function Application({ id, initialData }) {
   }
 
   function handleCloseNewLicense(orderId) {
-    // console.log(`orderId`, orderId);
     setShowAddLicense(false);
     if (orderId) {
       router.push(`/order/${orderId}`);
@@ -230,9 +226,6 @@ export default function Application({ id, initialData }) {
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
   if (errorDI) return <DisplayError error={errorDI} />;
-
-  // console.log(`licenseTypesOptions`, licenseTypesOptions);
-  console.log(`inputs`, inputs);
 
   return (
     <>
@@ -335,7 +328,6 @@ export default function Application({ id, initialData }) {
                   licenseTypesOptions.find((lt) => lt.value === lid.id)
                 )}
                 onChange={(e) => {
-                  // console.log(`e`, e);
                   handleChange({
                     value: e.map((lt) => ({ id: lt.value })),
                     name: 'licenseTypes',

@@ -95,10 +95,6 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
     }
   }
 
-  useEffect(() => {
-    console.log(`inputs`, inputs);
-  }, [inputs]);
-
   if (loadingNotification) return <Loading />;
   if (errorNotification) return <DisplayError error={errorNotification} />;
 

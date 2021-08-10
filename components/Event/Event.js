@@ -72,8 +72,6 @@ const makeData = (data) => {
 };
 
 export default function Event({ id, initialData }) {
-  console.log(`initialData`, initialData);
-
   const router = useRouter();
   const [
     deleteEvent,
@@ -201,7 +199,6 @@ export default function Event({ id, initialData }) {
       newInputs.application = { connect: { id: newInputs.application.id } };
     if (isEmpty(newInputs.imageHome)) delete newInputs.imageHome;
     if (isEmpty(newInputs.imageEvent)) delete newInputs.imageEvent;
-    console.log(`newInputs`, newInputs);
     return updateEvent({
       update: (cache, payload) =>
         cache.evict(cache.identify(payload.data.updateEvent)),
@@ -210,7 +207,6 @@ export default function Event({ id, initialData }) {
   }
 
   function handleChangeApp(app) {
-    console.log(`app`, app);
     handleChange({
       name: 'application.id',
       value: app?.value,

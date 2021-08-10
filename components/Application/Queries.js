@@ -219,7 +219,6 @@ export function useFindApplication(appId) {
   const { data, error, loading } = useQuery(APPLICATION_QUERY, {
     variables: { id: appId },
   });
-  // console.log(`useFindApplication - data`, data);
 
   return {
     application: data?.Application || {

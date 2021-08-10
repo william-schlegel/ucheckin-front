@@ -72,7 +72,6 @@ export default function Licenses() {
     { error: errorPage, loading: loadingPage },
   ] = useLazyQuery(PAGINATION_QUERY, {
     onCompleted: (dataP) => {
-      console.log(`dataP`, dataP);
       dispatch({ type: 'pagination', count: dataP.count.count });
     },
   });
@@ -102,7 +101,6 @@ export default function Licenses() {
       skip: (page - 1) * perPage,
       first: perPage,
     };
-    console.log(`filters`, filters);
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
     queryLicenses({ variables });
@@ -157,7 +155,6 @@ export default function Licenses() {
 
   function handleCloseExtend(orderId) {
     setShowUpdateLicense(false);
-    console.log(`orderId`, orderId);
     if (orderId) {
       router.push(`/order/${orderId}`);
     }

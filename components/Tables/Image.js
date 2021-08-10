@@ -16,7 +16,6 @@ const Img = styled.img`
 `;
 
 export default function Image({ image, size, ratio, border, rounded }) {
-  console.log(`image`, image);
   return (
     <ImgContainer>
       <Img

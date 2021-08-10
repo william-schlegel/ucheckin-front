@@ -91,7 +91,6 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }, [application]);
 
   function handleSuccess(orderId) {
-    console.log(`orderId`, orderId);
     resetForm();
     onClose(orderId);
   }
@@ -101,7 +100,6 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }
 
   useEffect(() => {
-    console.log('useEffect');
     const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
     const pData = {
       appId,
@@ -170,8 +168,6 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
 
   if (userError) return <DisplayError error={userError} />;
   if (applicationError) return <DisplayError error={applicationError} />;
-
-  // console.log(`inputs`, inputs);
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-licenses')}>

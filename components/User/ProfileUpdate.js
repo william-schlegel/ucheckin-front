@@ -61,8 +61,6 @@ export function UpdateProfile({ id, updatedProfile, onSuccess }) {
   );
   const variables = { id, ...updatedProfile, role: updatedProfile.role.id };
 
-  console.log(`variables`, variables);
-
   function handleValidation() {
     updateProfile({
       variables,

@@ -31,7 +31,9 @@ export default function NotificationNew({ open, onClose }) {
           variables: { skip: 0, first: perPage },
         },
       ],
-      onCompleted: (item) => router.push(`/notification/${item.id}`),
+      onCompleted: (item) => {
+        router.push(`/notification/${item.createNotification.id}`);
+      },
     }
   );
   const { t } = useTranslation('notification');

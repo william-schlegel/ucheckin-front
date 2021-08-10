@@ -175,7 +175,9 @@ export default function Notification({ id, initialData }) {
   const [selectedItem, setSelectedItem] = useState(0);
   const [item, setItem] = useState({});
   const [showItem, setShowItem] = useState(false);
-  const [nbNotif, setNbNotif] = useState(initialValues.current.items.length);
+  const [nbNotif, setNbNotif] = useState(
+    initialValues.current.items.length || 1
+  );
 
   const [confirmCB, setConfirmCB] = useState(() => {});
   const { Confirm, setIsOpen, setArgs } = useConfirm({
@@ -226,7 +228,6 @@ export default function Notification({ id, initialData }) {
 
   function handleEditNotif(idNotif) {
     const notif = inputs.items[idNotif];
-    // console.log(`handleEditNotif - inputs`, inputs);
     setItem(notif);
     setShowItem(true);
   }
@@ -282,7 +283,6 @@ export default function Notification({ id, initialData }) {
     if (wasTouched('signal.id'))
       newInputs.signal = { connect: { id: newInputs.signal.id } };
     newInputs.id = id;
-    console.log(`newInputs`, newInputs);
     return updateNotification({
       update: (cache, payload) =>
         cache.evict(cache.identify(payload.data.updateNotification)),
@@ -296,7 +296,6 @@ export default function Notification({ id, initialData }) {
   }
 
   function handleChangeApp(app) {
-    console.log(`app`, app);
     handleChange({
       name: 'application.id',
       value: app?.value,
@@ -312,12 +311,6 @@ export default function Notification({ id, initialData }) {
     const appId = initialData?.data?.Notification?.application?.id;
     if (appId) querySignal({ variables: { appId } });
   }, [initialData, queryAppUser, querySignal]);
-
-  // useEffect(() => {
-  //   // console.log(`inputs`, inputs);
-  //   // console.log(`nbNotif`, nbNotif);
-  //   // console.log(`item`, item);
-  // }, [nbNotif]);
 
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
@@ -617,8 +610,6 @@ export function Notif({
   useEffect(() => {
     if (element) element.innerHTML = item.htmlContent;
   }, [element, item]);
-
-  console.log(`Notif`, { item });
 
   if (!item) return null;
   return (

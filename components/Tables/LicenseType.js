@@ -38,7 +38,6 @@ export function useLicenseName() {
   const [licenseTypesOptions, setLicenseTypesOptions] = useState([]);
 
   useEffect(() => {
-    // console.log('useLicenseName - useEffect');
     if (!loading && !error && data) {
       setLicenseTypes(data.allLicenseTypes);
       setLicenseTypesOptions(

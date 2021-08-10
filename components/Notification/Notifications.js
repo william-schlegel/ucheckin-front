@@ -113,14 +113,17 @@ export default function Notifications() {
 
   const actionButtons = [
     { type: 'view', action: viewNotification },
-    { type: 'edit', action: (id) => router.push(`/notification/${id}`) },
+    {
+      type: 'edit',
+      action: (id) => {
+        router.push(`/notification/${id}`);
+      },
+    },
     { type: 'trash', action: (id) => handleDeleteNotification(id) },
   ];
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
-
-  console.log(`data notifications`, data);
 
   return (
     <>

@@ -19,7 +19,6 @@ export default function InvitationNew({ appId, open, onClose }) {
     CREATE_INVITATION_MUTATION,
     {
       onCompleted: (item) => {
-        console.log(`item`, item);
         onClose(item.addInvitation);
       },
     }

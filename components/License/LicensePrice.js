@@ -61,13 +61,10 @@ export function usePrice(ownerId) {
 
   useEffect(() => {
     if (data?.prices) {
-      // console.log(`data.prices`, data.prices);
-
       const def = data.prices.filter((p) => p.default);
       const owner = data.prices.filter(
         (p) => p.owner.id === ownerId && !p.default
       );
-      // console.log({ def, owner });
       // if there is a special price for a user
       if (owner.length > 0) {
         setPrice(owner[0]);

@@ -133,7 +133,6 @@ SdkBlock.propTypes = { sdkData: PropTypes.object };
 
 export async function getServerSideProps() {
   const { data } = await client.query({ query: QUERY_SDK });
-  console.log(`data`, data);
   return {
     props: {
       initialData: data.allSdks,

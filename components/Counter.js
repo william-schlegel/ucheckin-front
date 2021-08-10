@@ -40,7 +40,6 @@ export default function Counter({
   const { t } = useTranslation('common');
 
   function checkValue(value) {
-    console.log(`value`, value);
     if (value < min) return min;
     if (max && value > max) return max;
     return value;

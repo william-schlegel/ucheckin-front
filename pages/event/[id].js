@@ -14,7 +14,6 @@ Event.propTypes = {
 Event.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const { id } = ctx.query;
-  console.log(`id`, id);
   const initialData = await apolloClient.query({
     query: EVENT_QUERY,
     variables: { id },

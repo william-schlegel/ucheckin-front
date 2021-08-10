@@ -88,7 +88,6 @@ function PaymentForm({ onSuccess, onError, purchaseFunction, data }) {
     const order = purchaseFunction({
       variables: { ...data, token: paymentMethod.id },
     });
-    console.log(`order`, order);
     setLoading(false);
     nProgress.done();
     onSuccess(order.id);
