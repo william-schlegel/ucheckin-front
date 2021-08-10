@@ -83,7 +83,7 @@ export default function DashboardOrder() {
   if (error) return <DisplayError error={error} />;
   return (
     <DashboardCard>
-      <h2>{t('orders', { count: nbApp })}</h2>
+      <h2>{t('orders', { count: data.allOrders.length })}</h2>
       <Table columns={columns} data={data.allOrders} />
     </DashboardCard>
   );

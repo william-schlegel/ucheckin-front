@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import Router, { useRouter } from 'next/router';
-import { Notify } from 'notiflix';
+import { useToasts } from 'react-toast-notifications';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
 
@@ -72,6 +72,7 @@ export default function Profile({ id, initialData }) {
   const [canEdit, setCanEdit] = useState(false);
   const router = useRouter();
   const roles = useRole();
+  const { addToast } = useToasts();
 
   useEffect(() => {
     if (data && user) {
@@ -107,7 +108,8 @@ export default function Profile({ id, initialData }) {
     if (wasTouched('role.id'))
       newInputs.role = { connect: { id: newInputs.role.id } };
     await updateProfile({ variables: { id, ...newInputs }, update });
-    if (!errorUpdate) Notify.Success(t('success'));
+    if (!errorUpdate)
+      addToast(t('success'), { appearance: 'success', autoDismiss: true });
   }
 
   if (loading || !roles.length) return <Loading />;

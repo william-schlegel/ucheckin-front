@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
-import { Confirm, Report } from 'notiflix';
+import { useToasts } from 'react-toast-notifications';
 import useTranslation from 'next-translate/useTranslation';
 
 import Pagination from '../Pagination';
@@ -23,6 +23,7 @@ import {
 import { useHelp, Help, HelpButton } from '../Help';
 import SearchField, { useFilter } from '../SearchField';
 import { useUser } from '../User/Queries';
+import useConfirm from '../../lib/useConfirm';
 
 export default function Orders() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function Orders() {
   const { t } = useTranslation('order');
   const [showOrder, setShowOrder] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('order');
+  const { addToast } = useToasts();
 
   const searchFields = [
     { field: 'owner.name_contains_i', label: t('user'), type: 'text' },
@@ -97,7 +99,13 @@ export default function Orders() {
       ({ cell: { value } }) => <Switch value={value} disabled />,
     ],
   ]);
-
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-cancel'),
+    message: t('you-confirm'),
+    yesLabel: t('yes-cancel'),
+    noLabel: t('no-cancel'),
+    callback: (args) => cancelOrderMutation(args),
+  });
   function handleCloseShowOrder() {
     setShowOrder('');
   }
@@ -106,16 +114,14 @@ export default function Orders() {
     const order = data.allOrders.find((o) => o.id === id);
     if (!order) return;
     if (order.canceled) {
-      Report.Info(t('cancelation'), t('already-canceled'), t('common:ok'));
-      return;
+      addToast(t('already-canceled'), {
+        appearance: 'info',
+        autoDismiss: true,
+      });
+    } else {
+      setArgs({ variables: { id } });
+      setIsOpen(true);
     }
-    Confirm.Show(
-      t('confirm-cancel'),
-      t('you-confirm'),
-      t('yes-cancel'),
-      t('no-cancel'),
-      () => cancelOrderMutation({ variables: { id } })
-    );
   }
 
   const actionButtons = [{ type: 'view', action: viewOrder }];
@@ -136,6 +142,7 @@ export default function Orders() {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <Confirm />
       {showOrder && (
         <OrderDetails
           open={!!showOrder}

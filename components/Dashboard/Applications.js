@@ -97,7 +97,7 @@ export default function DashboardApplication() {
   if (error) return <DisplayError error={error} />;
   return (
     <DashboardCard>
-      <h2>{t('applications', { count: nbApp })}</h2>
+      <h2>{t('applications', { count: data.allApplications.length })}</h2>
       <Table columns={columns} data={data.allApplications} />
       <LicensesLegendApplication />
     </DashboardCard>

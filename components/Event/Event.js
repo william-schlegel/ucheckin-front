@@ -5,7 +5,6 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Select from 'react-select';
 import gql from 'graphql-tag';
-import { Confirm } from 'notiflix';
 import { useDropzone } from 'react-dropzone';
 
 import styled from 'styled-components';
@@ -42,6 +41,7 @@ import Phone from '../styles/Phone';
 import ActionButton from '../Buttons/ActionButton';
 import EventContent from './EventContent';
 import HtmlEditor from '../HtmlEditor';
+import useConfirm from '../../lib/useConfirm';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -152,6 +152,14 @@ export default function Event({ id, initialData }) {
     multiple: false,
   });
 
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete'),
+    message: t('you-confirm'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteEvent(args),
+  });
+
   useEffect(() => {
     if (userRole) {
       setCanEdit(userRole?.canManageApplication || eventOwnerId === userId);
@@ -174,18 +182,12 @@ export default function Event({ id, initialData }) {
 
   function handleDeleteEvent(e) {
     if (e) e.preventDefault();
-    Confirm.Show(
-      t('confirm-delete'),
-      t('you-confirm'),
-      t('yes-delete'),
-      t('no-delete'),
-      () =>
-        deleteEvent({
-          update: (cache, payload) =>
-            cache.evict(cache.identify(payload.data.deleteEvent)),
-          variables: { id },
-        })
-    );
+    setArgs({
+      update: (cache, payload) =>
+        cache.evict(cache.identify(payload.data.deleteEvent)),
+      variables: { id },
+    });
+    setIsOpen(true);
   }
 
   function handleUpdateEvent(e) {
@@ -233,6 +235,7 @@ export default function Event({ id, initialData }) {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <Confirm />
       <Form>
         <FormHeader>
           <FormTitle>

@@ -86,7 +86,7 @@ export default function DashboardSignal() {
   if (error) return <DisplayError error={error} />;
   return (
     <DashboardCard>
-      <h2>{t('signals', { count: nbSignals })}</h2>
+      <h2>{t('signals', { count: data.allSignals.length })}</h2>
       <Table columns={columns} data={data.allSignals} />
       <LicensesLegendSignal />
     </DashboardCard>

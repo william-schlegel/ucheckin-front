@@ -2,7 +2,7 @@ import { Gift } from 'react-feather';
 import { useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { Notify } from 'notiflix';
+import { useToasts } from 'react-toast-notifications';
 
 import { ButtonStyled } from '../styles/Button';
 import { CREATE_TRIAL_LICENSE } from '../License/Queries';
@@ -36,6 +36,7 @@ export default function ButtonFreeTrial({
     ],
   });
   const { t } = useTranslation('license');
+  const { addToast } = useToasts();
 
   // trial license is active for 3 months. If the license is per area (like ucheckin) it creates a signal
   async function activateTrial() {
@@ -43,7 +44,7 @@ export default function ButtonFreeTrial({
       variables: { appId, ownerId, trialText: t('trial-text') },
     });
     if (errorTrial) {
-      Notify.Failure(errorTrial.message);
+      addToast(errorTrial.message, { appearance: 'error' });
       onError();
       return;
     }

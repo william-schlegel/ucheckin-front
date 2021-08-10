@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Select from 'react-select';
 import gql from 'graphql-tag';
 import { PlusCircle, Code, Youtube } from 'react-feather';
-import { Confirm } from 'notiflix';
 
 import styled from 'styled-components';
 import Head from 'next/head';
@@ -51,6 +50,7 @@ import FieldError from '../FieldError';
 import selectTheme from '../styles/selectTheme';
 import Phone from '../styles/Phone';
 import { formatPrct } from '../../lib/formatNumber';
+import useConfirm from '../../lib/useConfirm';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -177,6 +177,14 @@ export default function Notification({ id, initialData }) {
   const [showItem, setShowItem] = useState(false);
   const [nbNotif, setNbNotif] = useState(initialValues.current.items.length);
 
+  const [confirmCB, setConfirmCB] = useState(() => {});
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete'),
+    message: t('you-confirm'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+  });
+
   useEffect(() => {
     if (userRole) {
       setCanEdit(userRole?.canManageApplication || notifOwnerId === userId);
@@ -224,23 +232,19 @@ export default function Notification({ id, initialData }) {
   }
 
   function handleDeleteNotif(idNotif) {
-    Confirm.Show(
-      t('confirm-delete'),
-      t('you-confirm-item'),
-      t('yes-delete'),
-      t('no-delete'),
-      () => {
-        if (inputs.items[idNotif].id) {
-          deleteNotificationItem({
-            variables: { id: inputs.items[idNotif].id },
-          });
-        }
-        const newItems = [...inputs.items];
-        newItems.splice(idNotif, 1);
-        setItem(null);
-        setInputs((prev) => ({ ...prev, items: newItems }));
+    setConfirmCB((idN) => {
+      if (inputs.items[idN].id) {
+        deleteNotificationItem({
+          variables: { id: inputs.items[idN].id },
+        });
       }
-    );
+      const newItems = [...inputs.items];
+      newItems.splice(idN, 1);
+      setItem(null);
+      setInputs((prev) => ({ ...prev, items: newItems }));
+    });
+    setArgs(idNotif);
+    setIsOpen(true);
   }
 
   function handleCloseItem(newItem) {
@@ -256,19 +260,14 @@ export default function Notification({ id, initialData }) {
   }
 
   function handleDeleteNotification(e) {
-    if (e) e.preventDefault();
-    Confirm.Show(
-      t('confirm-delete'),
-      t('you-confirm'),
-      t('yes-delete'),
-      t('no-delete'),
-      () =>
-        deleteNotification({
-          update: (cache, payload) =>
-            cache.evict(cache.identify(payload.data.deleteNotification)),
-          variables: { id },
-        })
-    );
+    e.preventDefault();
+    setConfirmCB(deleteNotification);
+    setArgs({
+      update: (cache, payload) =>
+        cache.evict(cache.identify(payload.data.deleteNotification)),
+      variables: { id },
+    });
+    setIsOpen(true);
   }
 
   function handleUpdateNotification(e) {
@@ -334,6 +333,7 @@ export default function Notification({ id, initialData }) {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <Confirm cb={confirmCB} />
       {showItem && (
         <NotificationContent
           open={showItem}

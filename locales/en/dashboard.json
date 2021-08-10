@@ -1,8 +1,17 @@
 {
   "dashboard": "Dashboard",
-  "applications": "Last {{count}} application created",
-  "signals": "Last {{count}} signals created",
-  "users": "Last {{count}} users registred",
-  "licenses": "{{count}} licenses about to expire",
-  "orders": "{{count}} last orders"
+  "applications_0": "No application yet",
+  "applications_1": "Last application created",
+  "applications_other": "Last {{count}} application created",
+  "signals_0": "No signal yet",
+  "signals_1": "Last signal created",
+  "signals_other": "Last {{count}} signals created",
+  "users_1": "Last user created",
+  "users_other": "Last {{count}} users registred",
+  "licenses_0": "No license yet",
+  "licenses_1": "Last license created",
+  "licenses_other": "{{count}} licenses about to expire",
+  "orders_0": "No order yet",
+  "orders_1": "Last order created",
+  "orders_other": "{{count}} last orders"
 }

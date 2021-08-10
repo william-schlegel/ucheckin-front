@@ -4,7 +4,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Select from 'react-select';
-import { Confirm } from 'notiflix';
 import isEmpty from 'lodash.isempty';
 
 import DisplayError from '../ErrorMessage';
@@ -47,6 +46,7 @@ import InvitationTable from './InvitationTable';
 import InvitationNew from './InvitationNew';
 import FieldError from '../FieldError';
 import selectTheme from '../styles/selectTheme';
+import useConfirm from '../../lib/useConfirm';
 
 export default function Application({ id, initialData }) {
   const router = useRouter();
@@ -114,6 +114,13 @@ export default function Application({ id, initialData }) {
       },
     }
   );
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete-invitation'),
+    message: t('you-confirm-invitation'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteInvitation(args),
+  });
 
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.Application?.owner?.id;
@@ -160,13 +167,8 @@ export default function Application({ id, initialData }) {
   }
 
   function delInvitation(invitationId) {
-    Confirm.Show(
-      t('confirm-delete-invitation'),
-      t('you-confirm-invitation'),
-      t('yes-delete'),
-      t('no-delete'),
-      () => deleteInvitation({ variables: { invitationId } })
-    );
+    setArgs({ variables: { invitationId } });
+    setIsOpen(true);
   }
 
   function handleDeleteApplication() {
@@ -234,6 +236,7 @@ export default function Application({ id, initialData }) {
 
   return (
     <>
+      <Confirm />
       <Help
         contents={helpContent}
         visible={helpVisible}

@@ -3,7 +3,6 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
-import { Confirm } from 'notiflix';
 
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
@@ -24,6 +23,7 @@ import { useUser } from '../User/Queries';
 import ButtonNew from '../Buttons/ButtonNew';
 import EventNew from './EventNew';
 import Image from '../Tables/Image';
+import useConfirm from '../../lib/useConfirm';
 
 export default function Events() {
   const router = useRouter();
@@ -99,23 +99,25 @@ export default function Events() {
     ],
   ]);
 
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete'),
+    message: t('you-confirm'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteEvent(args),
+  });
+
   function handleCloseShowEvent() {
     setShowEvent('');
   }
 
   function handleDeleteEvent(id) {
-    Confirm.Show(
-      t('confirm-delete'),
-      t('you-confirm'),
-      t('yes-delete'),
-      t('no-delete'),
-      () =>
-        deleteEvent({
-          update: (cache, payload) =>
-            cache.evict(cache.identify(payload.data.deleteEvent)),
-          variables: { id },
-        })
-    );
+    setArgs({
+      update: (cache, payload) =>
+        cache.evict(cache.identify(payload.data.deleteEvent)),
+      variables: { id },
+    });
+    setIsOpen(true);
   }
 
   const actionButtons = [
@@ -136,6 +138,7 @@ export default function Events() {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <Confirm />
       <EventNew open={newEvent} onClose={handleCloseNewEvent} />
       {showEvent && (
         <EventDetails

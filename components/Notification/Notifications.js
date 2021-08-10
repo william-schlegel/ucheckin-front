@@ -3,7 +3,6 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
-import { Confirm } from 'notiflix';
 
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
@@ -24,6 +23,7 @@ import { useUser } from '../User/Queries';
 import NotificationType from '../Tables/NotificationType';
 import ButtonNew from '../Buttons/ButtonNew';
 import NotificationNew from './NotificationNew';
+import useConfirm from '../../lib/useConfirm';
 
 export default function Notifications() {
   const router = useRouter();
@@ -51,6 +51,13 @@ export default function Notifications() {
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
   const [newNotification, setNewNotification] = useState(false);
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete'),
+    message: t('you-confirm'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteNotification(args),
+  });
 
   useEffect(() => {
     const variables = {
@@ -96,18 +103,12 @@ export default function Notifications() {
   }
 
   function handleDeleteNotification(id) {
-    Confirm.Show(
-      t('confirm-delete'),
-      t('you-confirm'),
-      t('yes-delete'),
-      t('no-delete'),
-      () =>
-        deleteNotification({
-          update: (cache, payload) =>
-            cache.evict(cache.identify(payload.data.deleteNotification)),
-          variables: { id },
-        })
-    );
+    setIsOpen(true);
+    setArgs({
+      update: (cache, payload) =>
+        cache.evict(cache.identify(payload.data.deleteNotification)),
+      variables: { id },
+    });
   }
 
   const actionButtons = [
@@ -131,6 +132,7 @@ export default function Notifications() {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <Confirm />
       {newNotification && (
         <NotificationNew
           open={newNotification}

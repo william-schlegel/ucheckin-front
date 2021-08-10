@@ -104,7 +104,7 @@ export default function DashboardLicense() {
   if (error) return <DisplayError error={error} />;
   return (
     <DashboardCard>
-      <h2>{t('licenses', { count: nbLicenses })}</h2>
+      <h2>{t('licenses', { count: data.allLicenses.length })}</h2>
       <Table columns={columns} data={data.allLicenses} />
     </DashboardCard>
   );

@@ -4,14 +4,56 @@ import styled, {
   css,
   ThemeProvider,
 } from 'styled-components';
-import { Notify, Report, Confirm } from 'notiflix';
+import { ToastProvider } from 'react-toast-notifications';
 import { useEffect, useState } from 'react';
 import theme from 'styled-theming';
-
 import { useMutation } from '@apollo/client';
+
 import Header from './Header';
 import Nav from './Nav';
 import { UPDATE_THEME, useUser } from './User/Queries';
+
+function Page({ children }) {
+  const { user } = useUser();
+  const [darkTheme, setDarkTheme] = useState(false);
+  const [updateTheme] = useMutation(UPDATE_THEME);
+  const [toggleMenu, setToggleMenu] = useState(false);
+
+  useEffect(() => {
+    setDarkTheme(user.theme === 'dark');
+  }, [user]);
+
+  function handleChangeTheme(dkTheme) {
+    setDarkTheme(dkTheme);
+    updateTheme({
+      variables: { userId: user.id, theme: dkTheme ? 'dark' : 'light' },
+    });
+  }
+
+  return (
+    <ThemeProvider theme={{ mode: darkTheme ? 'dark' : 'light' }}>
+      <ToastProvider>
+        <MainScreen toggled={toggleMenu}>
+          <GlobalStyles />
+          <Header
+            darkTheme={darkTheme}
+            setDarkTheme={handleChangeTheme}
+            menuState={toggleMenu}
+            onClickMenu={() => setToggleMenu((prev) => !prev)}
+          />
+          <Nav toggled={toggleMenu} />
+          <InnerStyles>{children}</InnerStyles>
+        </MainScreen>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+}
+
+Page.propTypes = {
+  children: PropTypes.any,
+};
+
+export default Page;
 
 const colors = theme('mode', {
   light: css`
@@ -101,11 +143,6 @@ const GlobalStyles = createGlobalStyle`
     color: var(--primary);
     transition: transform 300ms ease-in-out;
   }
-  @media (min-width: 1000px) {
-    a:hover, button:hover {
-      transform: scale(1.1);
-    }
-  }
   button {
     color: var(--text-color);
   }
@@ -142,56 +179,3 @@ const MainScreen = styled.div`
       'content';
   }
 `;
-
-export default function Page({ children }) {
-  useEffect(() => {
-    Notify.Init({
-      fontSize: '20px',
-      messageMaxLength: 250,
-      width: '50ch',
-      borderRadius: '5px',
-    });
-    Report.Init({
-      borderRadius: '5px',
-    });
-    Confirm.Init({
-      borderRadius: '5px',
-      width: '50ch',
-    });
-  });
-  const { user } = useUser();
-  const [darkTheme, setDarkTheme] = useState(false);
-  const [updateTheme] = useMutation(UPDATE_THEME);
-  const [toggleMenu, setToggleMenu] = useState(false);
-
-  useEffect(() => {
-    setDarkTheme(user.theme === 'dark');
-  }, [user]);
-
-  function handleChangeTheme(dkTheme) {
-    setDarkTheme(dkTheme);
-    updateTheme({
-      variables: { userId: user.id, theme: dkTheme ? 'dark' : 'light' },
-    });
-  }
-
-  return (
-    <ThemeProvider theme={{ mode: darkTheme ? 'dark' : 'light' }}>
-      <MainScreen toggled={toggleMenu}>
-        <GlobalStyles />
-        <Header
-          darkTheme={darkTheme}
-          setDarkTheme={handleChangeTheme}
-          menuState={toggleMenu}
-          onClickMenu={() => setToggleMenu((prev) => !prev)}
-        />
-        <Nav toggled={toggleMenu} />
-        <InnerStyles>{children}</InnerStyles>
-      </MainScreen>
-    </ThemeProvider>
-  );
-}
-
-Page.propTypes = {
-  children: PropTypes.any,
-};

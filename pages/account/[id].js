@@ -14,11 +14,9 @@ Account.propTypes = {
 Account.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const { id } = ctx.query;
-  console.log(`id`, id);
   const initialData = await apolloClient.query({
     query: QUERY_ACCOUNT,
     variables: { id },
   });
-  console.log(`initialData`, initialData);
   return { id, initialData: initialData.data.User };
 };

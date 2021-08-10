@@ -2,8 +2,7 @@ import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 
-// import DisplayError from '../ErrorMessage';
-import errorMessage from '../../lib/errorMessage';
+import useErrorMessage from '../../lib/useErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import Loading from '../Loading';
 import {
@@ -17,6 +16,7 @@ function update(cache, payload) {
 
 export function UpdatePhoto({ id, photo, onSuccess }) {
   const { t } = useTranslation('common');
+  const displayError = useErrorMessage();
   const [updatePhoto, { loading, error }] = useMutation(
     UPDATE_PROFILE_PHOTO_MUTATION,
     {
@@ -35,7 +35,7 @@ export function UpdatePhoto({ id, photo, onSuccess }) {
   }
 
   if (error) {
-    errorMessage({ graphqlError: error, title: t('error') });
+    displayError({ graphqlError: error, title: t('error') });
     return null;
   }
 
@@ -55,6 +55,7 @@ UpdatePhoto.propTypes = {
 
 export function UpdateProfile({ id, updatedProfile, onSuccess }) {
   const { t } = useTranslation('user');
+  const displayError = useErrorMessage();
   const [updateProfile, { loading, error }] = useMutation(
     UPDATE_PROFILE_MUTATION
   );
@@ -70,7 +71,7 @@ export function UpdateProfile({ id, updatedProfile, onSuccess }) {
     onSuccess();
   }
   if (error) {
-    errorMessage({ graphqlError: error, title: t('error') });
+    displayError({ graphqlError: error, title: t('error') });
     return null;
   }
 

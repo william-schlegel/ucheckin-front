@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import { useClipboard } from 'use-clipboard-copy';
 import Router, { useRouter } from 'next/router';
-import { Notify, Confirm } from 'notiflix';
+import { useToasts } from 'react-toast-notifications';
 
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
@@ -34,6 +34,7 @@ import Table, { useColumns } from '../Tables/Table';
 import { LicenseType, LicenseTypes } from '../Tables/LicenseType';
 import ApiKey from '../Tables/ApiKey';
 import ValidityDate from '../Tables/ValidityDate';
+import useConfirm from '../../lib/useConfirm';
 
 export default function Account({ id, initialData }) {
   const { t } = useTranslation('user');
@@ -47,6 +48,7 @@ export default function Account({ id, initialData }) {
   const initialValues = useRef(initialData);
   const { inputs, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
+  const { addToast } = useToasts();
   const columnsApplication = useColumns([
     ['id', 'id', 'hidden'],
     [t('common:name'), 'name'],
@@ -108,7 +110,10 @@ export default function Account({ id, initialData }) {
     onCompleted: (tokenData) => {
       const newToken = tokenData.createToken.token;
       clipboard.copy(newToken);
-      Notify.Success(t('token-created', { token: newToken }));
+      addToast(t('token-created', { token: newToken }), {
+        appearance: 'success',
+        autoDismiss: true,
+      });
     },
   });
   const [deleteTokenMutation, { error: deleteTokenError }] = useMutation(
@@ -116,16 +121,30 @@ export default function Account({ id, initialData }) {
     {
       refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
       onCompleted: () => {
-        Notify.Success(t('token-deleted'));
+        addToast(t('token-deleted'), {
+          appearance: 'success',
+          autoDismiss: true,
+        });
       },
     }
   );
 
   const router = useRouter();
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete'),
+    message: t('you-confirm'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteTokenMutation(args),
+  });
 
   useEffect(() => {
-    if (clipboardCopied) Notify.Info(t('common:copied'));
-  }, [clipboardCopied, t]);
+    if (clipboardCopied)
+      addToast(t('common:copied'), {
+        appearance: 'success',
+        autoDismiss: true,
+      });
+  }, [clipboardCopied, t, addToast]);
 
   useEffect(() => {
     if (data && user) {
@@ -149,16 +168,10 @@ export default function Account({ id, initialData }) {
   }
 
   function deleteToken(idDel) {
-    Confirm.Show(
-      t('confirm-delete'),
-      t('you-confirm'),
-      t('yes-delete'),
-      t('no-delete'),
-      () =>
-        deleteTokenMutation({
-          variables: { id: idDel },
-        })
-    );
+    setArgs({
+      variables: { id: idDel },
+    });
+    setIsOpen(true);
   }
 
   if (loading) return <Loading />;
@@ -172,6 +185,7 @@ export default function Account({ id, initialData }) {
         visible={helpVisible}
         handleClose={toggleHelpVisibility}
       />
+      <Confirm />
       <Form>
         <FormHeader>
           <FormTitle>

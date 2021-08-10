@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useLazyQuery } from '@apollo/client';
-import { Report } from 'notiflix';
+import { useToasts } from 'react-toast-notifications';
 import { useCallback, useEffect, useState } from 'react';
 import ActionButton from './Buttons/ActionButton';
 import { ButtonStyled } from './styles/Button';
@@ -114,9 +114,10 @@ HelpButton.propTypes = {
  * @returns {Object} helpVisible: state of the window, toggleHelpVisibility: function to change the state, helpContent: query result
  */
 export function useHelp(key) {
-  const { lang, t } = useTranslation('common');
+  const { lang } = useTranslation('common');
   const [queryHelp, { error, data }] = useLazyQuery(QUERY_HELP);
   const [visible, setVisible] = useState(false);
+  const { addToast } = useToasts();
 
   useEffect(() => {
     if (key) {
@@ -128,9 +129,9 @@ export function useHelp(key) {
 
   useEffect(() => {
     if (error) {
-      Report.Failure(t('error'), error.message, t('ok'));
+      addToast(error.message, { appearance: 'error' });
     }
-  }, [error, t]);
+  }, [error, addToast]);
 
   function toggleHelpVisibility(force) {
     if (force === true) setVisible(true);

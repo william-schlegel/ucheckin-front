@@ -14,6 +14,7 @@ import {
   H2,
 } from '../components/styles/Card';
 import { ButtonStyled } from '../components/styles/Button';
+import client from '../apollo-client';
 
 const QUERY_SDK = gql`
   query QUERY_SDK {
@@ -31,7 +32,7 @@ const QUERY_SDK = gql`
   }
 `;
 
-export default function Sdk({ initialData }) {
+export default function Sdk({ initialData = [] }) {
   const { t, lang } = useTranslation('sdk');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('sdk');
   return (
@@ -130,11 +131,12 @@ function SdkBlock({ sdkData }) {
 
 SdkBlock.propTypes = { sdkData: PropTypes.object };
 
-Sdk.getInitialProps = async (ctx) => {
-  const { apolloClient } = ctx;
-  const initialData = await apolloClient.query({
-    query: QUERY_SDK,
-  });
-
-  return { initialData: initialData.data.allSdks };
-};
+export async function getServerSideProps() {
+  const { data } = await client.query({ query: QUERY_SDK });
+  console.log(`data`, data);
+  return {
+    props: {
+      initialData: data.allSdks,
+    },
+  };
+}

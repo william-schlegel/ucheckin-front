@@ -1,8 +1,17 @@
 {
   "dashboard": "Tableau de bord",
-  "applications": "{{count}} dernières applications crées",
-  "signals": "{{count}} derniers signaux créés",
-  "users": "{{count}} derniers utilisateurs enregistrés",
-  "licenses": "{{count}} licences proches de l'expiration",
-  "orders": "{{count}} dernières commandes"
+  "applications_0": "Pas encore d'application",
+  "applications_1": "Dernière application crée",
+  "applications_other": "{{count}} dernières applications crées",
+  "signals_0": "Pas encore de signal",
+  "signals_1": "Dernier signal créé",
+  "signals_other": "{{count}} derniers signaux créés",
+  "users_1": "Dernier utilisateur enregistré",
+  "users_other": "{{count}} derniers utilisateurs enregistrés",
+  "licenses_0": "Pas encore de licences",
+  "licenses_1": "Licence proche de l'expiration",
+  "licenses_other": "{{count}} licences proches de l'expiration",
+  "orders_0": "Pas encore de commande",
+  "orders_1": "Dernière commande",
+  "orders_other": "{{count}} dernières commandes"
 }
