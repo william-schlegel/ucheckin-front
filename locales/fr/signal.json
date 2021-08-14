@@ -30,5 +30,6 @@
   "central-freq": "Fréquence centrale",
   "overlap": "Recouvrement",
   "gain": "Gain",
-  "notification": "Notification associée"
+  "notification": "Notification associée",
+  "file-created": "Le fichier de son a été créé avec succès à l'adresse {{url}}"
 }

@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import Select from 'react-select';
+import { useToasts } from 'react-toast-notifications';
 
 import {
   Block,
@@ -25,24 +26,25 @@ import CancelButton from '../Buttons/ButtonCancel';
 import AudioPlayer from '../Audio/AudioPlayer';
 import selectTheme from '../styles/selectTheme';
 
-export default function SignalFiles({ signalId, files }) {
+export default function SignalFiles({ signalId, signalCode, files }) {
   const { t } = useTranslation('signal');
-  const { chanelOptions, getChanelName } = useChanel();
+  const { chanelOptions, getChanelName, getChanelFC } = useChanel();
   const [newFile, setNewFile] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [fileData, setFileData] = useState({});
   const [actualFile, setActualFile] = useState({});
+  const { addToast } = useToasts();
   const initialValues = useRef({
     chanel: 'CH2',
-    duration: 30,
+    duration: 10,
     interval: 300,
     centralFrequency: 18500,
     overlap: 0,
-    gain: 100,
+    gain: 80,
   });
   const { inputs, handleChange, setInputs } = useForm(initialValues.current);
-  const [createFile, { data }] = useMutation(MUTATION_ADD_SIGNAL_FILE, {
+  const [createFile] = useMutation(MUTATION_ADD_SIGNAL_FILE, {
     refetchQueries: [{ query: SIGNAL_QUERY, variables: { id: signalId } }],
   });
 
@@ -53,8 +55,38 @@ export default function SignalFiles({ signalId, files }) {
     [t('duration'), 'duration', null, { unit: t('seconds') }],
   ]);
 
-  function handleSaveFile() {
-    createFile({ variables: { signal: signalId, ...inputs } });
+  async function handleSaveFile() {
+    const fc = getChanelFC(inputs.chanel);
+    const searchString = new URLSearchParams({
+      signal: signalCode,
+      fc,
+      interval: Number(inputs.interval),
+      duration: Number(inputs.duration),
+      volume: Number(inputs.gain) / 100,
+      mode: 0,
+    }).toString();
+    const res = await fetch(`/api/signal?${searchString}`, { method: 'GET' });
+    console.log(`res`, res);
+    const { url, fileName } = await res.json();
+    if (res.status === 200) {
+      addToast(t('file-created', { url }), {
+        appearance: 'success',
+        autoDismiss: true,
+      });
+      const variables = {
+        variables: {
+          signal: signalId,
+          ...inputs,
+          centralFrequency: fc,
+          url,
+          fileName,
+        },
+      };
+      console.log(`variables`, variables);
+      createFile(variables);
+    } else {
+      addToast(res.error || res.statusText, { appearance: 'error' });
+    }
     setNewFile(false);
   }
 
@@ -67,7 +99,36 @@ export default function SignalFiles({ signalId, files }) {
   }
 
   function downloadFile(id) {
-    console.log(`download`, id);
+    const actual = files.find((f) => f.id === id);
+    if (actual) {
+      // const searchString = new URLSearchParams({
+      //   file: actual.fileName,
+      // });
+      // fetch(`/api/download?${searchString}`, {
+      //   method: 'GET',
+      // }).then(async (res) => {
+      // const data = await res.json();
+      // console.log(`data`, data);
+      // fetch(data.url, {
+      fetch(actual.url, {
+        method: 'GET',
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          // Create blob link to download
+          const url = window.URL.createObjectURL(new Blob([blob]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', actual.fileName);
+          // Append to html link element page
+          document.body.appendChild(link);
+          // Start download
+          link.click();
+          // Clean up and remove the link
+          link.parentNode.removeChild(link);
+        });
+      // });
+    }
   }
 
   function duplicateFile(id) {
@@ -108,7 +169,7 @@ export default function SignalFiles({ signalId, files }) {
             <AudioPlayer
               trackName={getChanelName(actualFile.chanel)}
               audioSrc={actualFile.url}
-              onEnded={() => setPlaying(false)}
+              onEnded={setPlaying(false)}
               onDownloadClick={() => downloadFile(actualFile.id)}
             />
           </RowFull>
@@ -123,12 +184,6 @@ export default function SignalFiles({ signalId, files }) {
             <RowReadOnly>
               <Label>{t('chanel')}</Label>
               <span>{getChanelName(fileData.chanel)}</span>
-            </RowReadOnly>
-            <RowReadOnly>
-              <Label>{t('duration')}</Label>
-              <span>
-                {fileData.duration} {t('seconds')}
-              </span>
             </RowReadOnly>
             <RowReadOnly>
               <Label>{t('duration')}</Label>
@@ -198,5 +253,6 @@ export default function SignalFiles({ signalId, files }) {
 
 SignalFiles.propTypes = {
   signalId: PropTypes.string.isRequired,
+  signalCode: PropTypes.string.isRequired,
   files: PropTypes.array.isRequired,
 };

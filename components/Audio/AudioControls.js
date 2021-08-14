@@ -77,7 +77,7 @@ function ProgressBar({ duration, value }) {
       <PgBar value={(value / duration) * 100}>
         <div className="pgbar-progress" />
       </PgBar>
-      <span>
+      <span style={{ fontVariantNumeric: 'tabular-nums' }}>
         {formatNumber(value)} / {formatNumber(duration)} s
       </span>
     </>

@@ -93,6 +93,7 @@ export const SIGNAL_QUERY = gql`
         overlap
         gain
         url
+        fileName
       }
     }
   }
@@ -107,6 +108,8 @@ export const MUTATION_ADD_SIGNAL_FILE = gql`
     $centralFrequency: Int
     $overlap: Int
     $gain: Int
+    $url: String!
+    $fileName: String!
   ) {
     createSignalFile(
       data: {
@@ -117,10 +120,13 @@ export const MUTATION_ADD_SIGNAL_FILE = gql`
         centralFrequency: $centralFrequency
         overlap: $overlap
         gain: $gain
+        url: $url
+        fileName: $fileName
       }
     ) {
       id
       url
+      fileName
     }
   }
 `;
