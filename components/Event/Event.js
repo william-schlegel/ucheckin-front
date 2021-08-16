@@ -43,6 +43,7 @@ import ActionButton from '../Buttons/ActionButton';
 import EventContent from './EventContent';
 import HtmlEditor from '../HtmlEditor';
 import useConfirm from '../../lib/useConfirm';
+import EventMap from './EventMap';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -59,6 +60,8 @@ const makeData = (data) => {
   return {
     name: dN.name || '',
     location: dN.location || '',
+    lat: dN.lat || 48.8693548,
+    lng: dN.lng || 2.3566885,
     owner: { id: dN.owner?.id, name: dN.owner?.name },
     application: { id: dN.application?.id, name: dN.application?.name },
     publishStart: dN.publishStart,
@@ -115,6 +118,7 @@ export default function Event({ id, initialData }) {
   const { role: userRole, id: userId } = user;
   const eventOwnerId = initialValues.current?.owner?.id;
   const [optionsAppUser, setOptionsAppUser] = useState([]);
+  const [showMap, setShowMap] = useState(false);
 
   const onDropHome = (acceptedFile) => {
     const file = acceptedFile[0];
@@ -233,6 +237,18 @@ export default function Event({ id, initialData }) {
         handleClose={toggleHelpVisibility}
       />
       <Confirm />
+      {showMap && (
+        <EventMap
+          location={inputs.location}
+          lat={initialValues.current.lat}
+          lng={initialValues.current.lng}
+          setLocation={(loc) => {
+            console.log(`loc`, loc);
+          }}
+          open={showMap}
+          onClose={() => setShowMap(false)}
+        />
+      )}
       <Form>
         <FormHeader>
           <FormTitle>
@@ -275,9 +291,7 @@ export default function Event({ id, initialData }) {
                       />
                       <ActionButton
                         type="map-pin"
-                        cb={() => {
-                          console.log('click map');
-                        }}
+                        cb={() => setShowMap(true)}
                       />
                     </Block>
                   </Row>

@@ -54,6 +54,8 @@ export const EVENT_QUERY = gql`
       publishStart
       publishEnd
       location
+      lat
+      lng
       application {
         id
         name
