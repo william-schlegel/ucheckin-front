@@ -22,5 +22,6 @@
   "event-screen": "Event screen",
   "image-home": "Home screen image",
   "image-event": "Event image",
-  "location": "Event location"
+  "location": "Event location",
+  "preview": "Preview"
 }

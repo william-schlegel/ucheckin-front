@@ -31,5 +31,5 @@
   "overlap": "Overlapping",
   "gain": "Gain",
   "notification": "Associated notification",
-  "file-created": "The sound file was created successfuly at {{url}}"
+  "file-created": "The sound file was created successfuly as {{fileName}}"
 }

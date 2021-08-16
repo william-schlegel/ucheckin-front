@@ -37,6 +37,34 @@ export default function Counter({
   max,
   fullWidth,
 }) {
+  if (fullWidth)
+    return (
+      <CounterFullStyled>
+        <CounterContent
+          label={label}
+          name={name}
+          input={input}
+          handleChange={handleChange}
+          min={min}
+          max={max}
+        />
+      </CounterFullStyled>
+    );
+  return (
+    <CounterStyled>
+      <CounterContent
+        label={label}
+        name={name}
+        input={input}
+        handleChange={handleChange}
+        min={min}
+        max={max}
+      />
+    </CounterStyled>
+  );
+}
+
+const CounterContent = ({ label, name, input, handleChange, min = 0, max }) => {
   const { t } = useTranslation('common');
 
   function checkValue(value) {
@@ -45,7 +73,7 @@ export default function Counter({
     return value;
   }
 
-  const CounterContent = () => (
+  return (
     <>
       <Label htmlFor={name}>{label}</Label>
       <div className="counter">
@@ -79,19 +107,16 @@ export default function Counter({
       </div>
     </>
   );
+};
 
-  if (fullWidth)
-    return (
-      <CounterFullStyled>
-        <CounterContent />
-      </CounterFullStyled>
-    );
-  return (
-    <CounterStyled>
-      <CounterContent />
-    </CounterStyled>
-  );
-}
+CounterContent.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  input: PropTypes.number.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  min: PropTypes.number,
+  max: PropTypes.number,
+};
 
 Counter.propTypes = {
   label: PropTypes.string,

@@ -21,6 +21,7 @@ import {
   FormHeader,
   FormTitle,
   RowReadOnly,
+  H2,
 } from '../styles/Card';
 import useForm from '../../lib/useForm';
 import { SearchUser } from '../SearchUser';
@@ -419,14 +420,14 @@ export default function Event({ id, initialData }) {
                     </Label>
                     <HtmlEditor
                       id="eventDescription"
-                      value={inputs.eventDescription}
+                      value={initialValues.current.eventDescription}
                       handleChange={(e) =>
                         handleChange({
                           name: 'eventDescription',
                           value: e.target.getContent(),
                         })
                       }
-                      height={200}
+                      height={300}
                     />
                     <FieldError error={validationError.eventDescription} />
                   </Row>
@@ -449,7 +450,13 @@ export default function Event({ id, initialData }) {
               )}
             </FormBody>
           </div>
-          <div>
+          <div
+            style={{
+              borderLeft: '1px solid var(--lightGray)',
+              paddingLeft: '1rem',
+            }}
+          >
+            <H2>{t('preview')}</H2>
             <EventHomeContainer>
               <EventHome event={inputs} />
             </EventHomeContainer>

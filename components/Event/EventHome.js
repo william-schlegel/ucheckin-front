@@ -6,11 +6,7 @@ export default function EventHome({ event }) {
   return (
     <Container>
       <img
-        src={
-          event.imageHome?.publicUrlTransformed
-            ? event.imageHome.publicUrlTransformed
-            : '/images/UNKNOWN.png'
-        }
+        src={event.imageHome?.publicUrlTransformed || '/images/UNKNOWN.png'}
         alt="home icon"
       />
       <div>

@@ -24,11 +24,7 @@ export default function EventContent({ event }) {
       </div>
       <div className="image">
         <img
-          src={
-            event.imageEvent?.publicUrlTransformed
-              ? event.imageEvent.publicUrlTransformed
-              : '/images/UNKNOWN.png'
-          }
+          src={event.imageEvent?.publicUrlTransformed || '/images/UNKNOWN.png'}
           alt="event"
         />
         <div className="event-description-container">

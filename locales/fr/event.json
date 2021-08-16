@@ -22,5 +22,6 @@
   "event-screen": "Ecran de l'événement",
   "image-home": "Image de l'écran d'accueil",
   "image-event": "Image de l'évenement",
-  "location": "Lieu de l'événement"
+  "location": "Lieu de l'événement",
+  "preview": "Prévisualisation"
 }

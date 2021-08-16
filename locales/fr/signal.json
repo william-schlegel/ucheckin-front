@@ -31,5 +31,5 @@
   "overlap": "Recouvrement",
   "gain": "Gain",
   "notification": "Notification associée",
-  "file-created": "Le fichier de son a été créé avec succès à l'adresse {{url}}"
+  "file-created": "Le fichier de son a été créé avec succès sous le nom {{fileName}}"
 }

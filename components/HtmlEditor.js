@@ -22,7 +22,7 @@ export default function HtmlEditor({ value, handleChange, height }) {
           'table',
         ],
         toolbar:
-          'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | image imagetools media emoticons | code',
+          'undo redo | bold italic forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | image imagetools media emoticons | code',
       }}
       onChange={handleChange}
     />

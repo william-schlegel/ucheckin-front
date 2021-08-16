@@ -69,7 +69,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
     console.log(`res`, res);
     const { url, fileName } = await res.json();
     if (res.status === 200) {
-      addToast(t('file-created', { url }), {
+      addToast(t('file-created', { fileName }), {
         appearance: 'success',
         autoDismiss: true,
       });
@@ -169,7 +169,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
             <AudioPlayer
               trackName={getChanelName(actualFile.chanel)}
               audioSrc={actualFile.url}
-              onEnded={setPlaying(false)}
+              onEnded={() => setPlaying(false)}
               onDownloadClick={() => downloadFile(actualFile.id)}
             />
           </RowFull>
@@ -238,6 +238,20 @@ export default function SignalFiles({ signalId, signalCode, files }) {
                   onChange={handleChange}
                 />
                 <span>{t('seconds')}</span>
+              </Block>
+            </RowFull>
+            <RowFull>
+              <Label htmlFor="interval">{t('interval')}</Label>
+              <Block>
+                <input
+                  required
+                  type="number"
+                  id="interval"
+                  name="interval"
+                  value={inputs.interval}
+                  onChange={handleChange}
+                />
+                <span>{t('miliseconds')}</span>
               </Block>
             </RowFull>
             <FormFooter>

@@ -54,7 +54,11 @@ export default function Signal({ id }) {
           </RowFull>
         </FormBodyFull>
       </Form>
-      <SignalFiles signalId={id} files={data.Signal.files} />
+      <SignalFiles
+        signalId={id}
+        signalCode={data.Signal.name}
+        files={data.Signal.files}
+      />
     </>
   );
 }

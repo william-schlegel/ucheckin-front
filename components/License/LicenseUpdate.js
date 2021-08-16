@@ -131,8 +131,12 @@ export default function LicenseUpdate({
     let validity = new Date(license.validity);
     const now = new Date();
     if (now > validity) validity = now;
-    validity.setMonth(validity.getMonth() + parseInt(inputs.monthLicense));
-    validity.setFullYear(validity.getFullYear() + parseInt(inputs.yearLicense));
+    if (!Number.isNaN(inputs.monthLicense))
+      validity.setMonth(validity.getMonth() + parseInt(inputs.monthLicense));
+    if (!Number.isNaN(inputs.yearLicense))
+      validity.setFullYear(
+        validity.getFullYear() + parseInt(inputs.yearLicense)
+      );
     setNewValidity(validity.toISOString());
   }, [inputs, price, license, setNewValidity]);
 
