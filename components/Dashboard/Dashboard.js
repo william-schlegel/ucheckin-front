@@ -9,6 +9,8 @@ import DashboardUser from './Users';
 import { useUser } from '../User/Queries';
 import DashboardLicense from './Licenses';
 import DashboardOrder from './Orders';
+import DashboardNotification from './Notifications';
+import DashboardEvent from './Events';
 
 const DashboardStyled = styled.div`
   display: flex;
@@ -53,6 +55,8 @@ export default function Dashboard() {
         <DashboardSignal />
         <DashboardLicense />
         <DashboardOrder />
+        <DashboardNotification />
+        <DashboardEvent />
       </DashboardStyled>
     </>
   );

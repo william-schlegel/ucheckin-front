@@ -21,7 +21,7 @@ export default function EventMap({
   const { t } = useTranslation('event');
   console.log(`location`, { location, lat, lng });
   return (
-    <Drawer onClose={onClose} open={open} title={t('new-event')}>
+    <Drawer onClose={onClose} open={open} title={t('location')}>
       <div style={{ width: '100%', height: '50vh' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: APIKey }}

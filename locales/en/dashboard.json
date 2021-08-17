@@ -13,5 +13,11 @@
   "licenses_other": "{{count}} licenses about to expire",
   "orders_0": "No order yet",
   "orders_1": "Last order created",
-  "orders_other": "{{count}} last orders"
+  "orders_other": "{{count}} last orders",
+  "notifications_0": "No notification yet",
+  "notifications_1": "Last notification",
+  "notifications_other": "{{count}} next notifications",
+  "events_0": "No event yet",
+  "events_1": "Last event",
+  "events_other": "{{count}} next events"
 }

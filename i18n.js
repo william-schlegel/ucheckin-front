@@ -12,6 +12,7 @@ module.exports = {
       'user',
       'order',
       'notification',
+      'event',
     ],
     'rgx:^/sdk': ['sdk'],
     'rgx:^/application': ['application', 'license'],
