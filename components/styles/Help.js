@@ -36,6 +36,14 @@ export const Wrapper = styled.div`
       transform: translate(-50%, -50%);
       z-index: 1001;
       padding: 0.5rem 2rem;
+      em {
+        font-style: italic;
+        color: var(--secondary);
+      }
+      strong {
+        font-weight: 700;
+        color: var(--primary);
+      }
       .header {
         border-bottom: 1px solid var(--lightGray);
         margin-bottom: 0.5rem;

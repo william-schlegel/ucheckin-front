@@ -5,6 +5,7 @@ import { useLazyQuery } from '@apollo/client';
 import { useToasts } from 'react-toast-notifications';
 import useTranslation from 'next-translate/useTranslation';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import ActionButton from './Buttons/ActionButton';
 import { ButtonStyled } from './styles/Button';
@@ -67,7 +68,9 @@ export function Help({ visible, handleClose, contents = [] }) {
             <h2>{contents[step].title}</h2>
             <ActionButton type="close" cb={closeHelp} />
           </div>
-          <ReactMarkdown>{contents[step].content}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {contents[step].content}
+          </ReactMarkdown>
           <div className="footer">
             <ButtonStyled onClick={handleClick}>{label}</ButtonStyled>
           </div>
