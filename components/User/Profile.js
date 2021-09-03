@@ -319,7 +319,7 @@ export default function Profile({ id, initialData }) {
                 theme={selectTheme}
                 className="select"
                 id="role"
-                value={roles.find((r) => r.value === inputs.role.id)}
+                value={roles.find((r) => r.value === inputs.role?.id)}
                 options={roles}
                 onChange={(e) =>
                   handleChange({ name: 'role.id', value: e.value })
@@ -329,7 +329,7 @@ export default function Profile({ id, initialData }) {
           ) : (
             <RowReadOnly>
               <Label>{t('role')}</Label>
-              <span>{inputs.role.name}</span>
+              <span>{inputs.role?.name}</span>
             </RowReadOnly>
           )}
         </FormBody>
