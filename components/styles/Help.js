@@ -3,11 +3,8 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   position: fixed;
   z-index: 4002;
-  width: 100%;
-  height: 100%;
   box-sizing: border-box;
-  left: 0;
-  top: 0;
+  inset: 0;
   padding: 10px;
   color: var(--text-color);
   border-radius: 25px;
@@ -18,10 +15,7 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   .overlay {
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
+    inset: 0;
     position: fixed;
     z-index: 0;
     background: rgba(38, 192, 211, 0.2);
@@ -34,7 +28,7 @@ export const Wrapper = styled.div`
       filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.05));
       border-radius: 5px;
       position: absolute;
-      top: 20%;
+      top: 30%;
       left: 50%;
       right: auto;
       bottom: auto;

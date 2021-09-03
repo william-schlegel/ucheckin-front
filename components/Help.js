@@ -1,9 +1,11 @@
-import gql from 'graphql-tag';
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
+import gql from 'graphql-tag';
 import { useLazyQuery } from '@apollo/client';
 import { useToasts } from 'react-toast-notifications';
-import { useCallback, useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
+import ReactMarkdown from 'react-markdown';
+
 import ActionButton from './Buttons/ActionButton';
 import { ButtonStyled } from './styles/Button';
 import { Wrapper } from './styles/Help';
@@ -33,7 +35,6 @@ export function Help({ visible, handleClose, contents = [] }) {
   const { t, lang } = useTranslation('common');
   const nbStep = contents.length;
   const [label, setLabel] = useState();
-  const [element, setElement] = useState();
 
   const closeHelp = useCallback(() => {
     setStep(0);
@@ -41,25 +42,12 @@ export function Help({ visible, handleClose, contents = [] }) {
   }, [setStep, handleClose]);
 
   useEffect(() => {
-    const el = document.getElementById('help-content-container');
-    setElement(el);
-  }, [contents, visible, closeHelp]);
-
-  useEffect(() => {
     setLabel(
       step === nbStep - 1
         ? t('close')
         : `${t('next')} (${contents[step + 1]?.title})`
     );
-    if (element && step < contents.length) {
-      const { content } = contents[step];
-
-      element.innerHTML = content.replace(
-        /<a href="\//gi,
-        `<a href="/${lang}/`
-      );
-    }
-  }, [step, contents, setLabel, nbStep, element, t, lang]);
+  }, [step, contents, setLabel, nbStep, t, lang]);
 
   function handleClick() {
     if (step < nbStep - 1) {
@@ -79,7 +67,7 @@ export function Help({ visible, handleClose, contents = [] }) {
             <h2>{contents[step].title}</h2>
             <ActionButton type="close" cb={closeHelp} />
           </div>
-          <div id="help-content-container" className="body" />
+          <ReactMarkdown>{contents[step].content}</ReactMarkdown>
           <div className="footer">
             <ButtonStyled onClick={handleClick}>{label}</ButtonStyled>
           </div>
