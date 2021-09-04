@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -11,6 +12,134 @@ import PropTypes from 'prop-types';
 import useOnClickOutside from '../lib/useOnClickOutside';
 import Signout from './User/SignOut';
 import { useUser } from './User/Queries';
+import { useHelp, Help, HelpButton } from './Help';
+
+const Flags = [
+  { country: 'FR', lng: 'fr' },
+  { country: 'US', lng: 'en' },
+];
+
+export default function Header({
+  darkTheme,
+  setDarkTheme,
+  menuState,
+  onClickMenu,
+}) {
+  const [flag, setFlag] = useState(0);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const refMenu = useRef();
+  const { t } = useTranslation('navigation');
+  const router = useRouter();
+  const { user } = useUser();
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('main');
+
+  const toggleTheme = useCallback(() => {
+    setDarkTheme(!darkTheme);
+  }, [darkTheme, setDarkTheme]);
+
+  const toggleFlag = useCallback(() => {
+    let newFlag = flag + 1;
+    if (newFlag >= Flags.length) newFlag = 0;
+    setFlag(newFlag);
+    setLanguage(Flags[newFlag].lng);
+  }, [flag]);
+
+  const toggleUserMenu = useCallback(() => {
+    setShowUserMenu(!showUserMenu);
+  }, [showUserMenu]);
+
+  function showMyProfile() {
+    router.push({
+      pathname: `/user/[id]`,
+      query: {
+        id: user.id,
+      },
+    });
+  }
+  function showMyAccount() {
+    router.push({
+      pathname: `/account/[id]`,
+      query: {
+        id: user.id,
+      },
+    });
+  }
+
+  useOnClickOutside(refMenu, () => setShowUserMenu(false));
+
+  return (
+    <>
+      <Help
+        contents={helpContent}
+        visible={helpVisible}
+        handleClose={toggleHelpVisibility}
+      />
+      <HeaderStyles menuState={menuState}>
+        <div className="bar">
+          <Logo>
+            <span className="nav-toggle">
+              <Menu size={48} onClick={onClickMenu} />
+            </span>
+            <img src="/images/UCHECKIN.png" alt="logo" />
+            <Link href="/">Ucheck In</Link>
+          </Logo>
+          <div className="sub-bar">
+            <HelpButton showHelp={toggleHelpVisibility} />
+            <button type="button" onClick={toggleTheme}>
+              {darkTheme ? <Sun /> : <Moon />}
+            </button>
+            <button type="button" onClick={toggleFlag}>
+              <Flag
+                svg
+                countryCode={Flags[flag].country}
+                style={{ fontSize: '2em', lineHeight: '2em' }}
+                aria-label="France"
+              />
+            </button>
+            {user?.id && (
+              <>
+                <button
+                  type="button"
+                  className="button-label"
+                  onClick={toggleUserMenu}
+                >
+                  {user?.photo?.publicUrlTransformed ? (
+                    <img
+                      className="avatar"
+                      src={user.photo.publicUrlTransformed}
+                      alt={user.name}
+                    />
+                  ) : (
+                    <User />
+                  )}
+                  <span>{user.name}</span>
+                </button>
+                {showUserMenu && (
+                  <div ref={refMenu} className="user-menu">
+                    <button type="button" onClick={showMyProfile}>
+                      {t('profile')}
+                    </button>
+                    <button type="button" onClick={showMyAccount}>
+                      {t('account')}
+                    </button>
+                    <Signout />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </HeaderStyles>
+    </>
+  );
+}
+
+Header.propTypes = {
+  darkTheme: PropTypes.bool,
+  setDarkTheme: PropTypes.func,
+  onClickMenu: PropTypes.func.isRequired,
+  menuState: PropTypes.bool,
+};
 
 const Logo = styled.h1`
   font-size: 3rem;
@@ -130,120 +259,3 @@ const HeaderStyles = styled.header`
     }
   }
 `;
-
-const Flags = [
-  { country: 'FR', lng: 'fr' },
-  { country: 'US', lng: 'en' },
-];
-
-export default function Header({
-  darkTheme,
-  setDarkTheme,
-  menuState,
-  onClickMenu,
-}) {
-  const [flag, setFlag] = useState(0);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const refMenu = useRef();
-  const { t } = useTranslation('navigation');
-  const router = useRouter();
-  const { user } = useUser();
-
-  const toggleTheme = useCallback(() => {
-    setDarkTheme(!darkTheme);
-  }, [darkTheme, setDarkTheme]);
-
-  const toggleFlag = useCallback(() => {
-    let newFlag = flag + 1;
-    if (newFlag >= Flags.length) newFlag = 0;
-    setFlag(newFlag);
-    setLanguage(Flags[newFlag].lng);
-  }, [flag]);
-
-  const toggleUserMenu = useCallback(() => {
-    setShowUserMenu(!showUserMenu);
-  }, [showUserMenu]);
-
-  function showMyProfile() {
-    router.push({
-      pathname: `/user/[id]`,
-      query: {
-        id: user.id,
-      },
-    });
-  }
-  function showMyAccount() {
-    router.push({
-      pathname: `/account/[id]`,
-      query: {
-        id: user.id,
-      },
-    });
-  }
-
-  useOnClickOutside(refMenu, () => setShowUserMenu(false));
-  return (
-    <HeaderStyles menuState={menuState}>
-      <div className="bar">
-        <Logo>
-          <span className="nav-toggle">
-            <Menu size={48} onClick={onClickMenu} />
-          </span>
-          <img src="/images/UCHECKIN.png" alt="logo" />
-          <Link href="/">Ucheck In</Link>
-        </Logo>
-        <div className="sub-bar">
-          <button type="button" onClick={toggleTheme}>
-            {darkTheme ? <Sun /> : <Moon />}
-          </button>
-          <button type="button" onClick={toggleFlag}>
-            <Flag
-              svg
-              countryCode={Flags[flag].country}
-              style={{ fontSize: '2em', lineHeight: '2em' }}
-              aria-label="France"
-            />
-          </button>
-          {user?.id && (
-            <>
-              <button
-                type="button"
-                className="button-label"
-                onClick={toggleUserMenu}
-              >
-                {user?.photo?.publicUrlTransformed ? (
-                  <img
-                    className="avatar"
-                    src={user.photo.publicUrlTransformed}
-                    alt={user.name}
-                  />
-                ) : (
-                  <User />
-                )}
-                <span>{user.name}</span>
-              </button>
-              {showUserMenu && (
-                <div ref={refMenu} className="user-menu">
-                  <button type="button" onClick={showMyProfile}>
-                    {t('profile')}
-                  </button>
-                  <button type="button" onClick={showMyAccount}>
-                    {t('account')}
-                  </button>
-                  <Signout />
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </HeaderStyles>
-  );
-}
-
-Header.propTypes = {
-  darkTheme: PropTypes.bool,
-  setDarkTheme: PropTypes.func,
-  onClickMenu: PropTypes.func.isRequired,
-  menuState: PropTypes.bool,
-};

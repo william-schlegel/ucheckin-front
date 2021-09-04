@@ -36,13 +36,27 @@ export const Wrapper = styled.div`
       transform: translate(-50%, -50%);
       z-index: 1001;
       padding: 0.5rem 2rem;
-      em {
-        font-style: italic;
-        color: var(--secondary);
-      }
-      strong {
-        font-weight: 700;
-        color: var(--primary);
+      .body {
+        em {
+          font-style: italic;
+          color: var(--secondary);
+        }
+        strong {
+          font-weight: 700;
+          color: var(--primary);
+        }
+        a {
+          display: inline-block;
+          padding: 0.1em 0.5em;
+          margin: 0.1em;
+          border-radius: 5px;
+          color: var(--primary);
+          border: 1px solid var(--primary);
+          &:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+          }
+        }
       }
       .header {
         border-bottom: 1px solid var(--lightGray);
@@ -58,17 +72,6 @@ export const Wrapper = styled.div`
           margin-left: 2rem;
           border-left: 1px solid var(--lightGray);
           padding-left: 0.5rem;
-        }
-      }
-      .body {
-        a {
-          padding: 0 1rem;
-          margin: 0 1rem;
-          border: 1px solid var(--primary);
-          &:hover {
-            color: var(--secondary);
-            border: 1px solid var(--secondary);
-          }
         }
       }
       .footer {

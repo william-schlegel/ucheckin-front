@@ -68,7 +68,7 @@ export function Help({ visible, handleClose, contents = [] }) {
             <h2>{contents[step].title}</h2>
             <ActionButton type="close" cb={closeHelp} />
           </div>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} className="body">
             {contents[step].content}
           </ReactMarkdown>
           <div className="footer">

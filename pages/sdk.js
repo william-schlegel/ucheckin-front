@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { Download } from 'react-feather';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import styled from 'styled-components';
 import { Help, HelpButton, useHelp } from '../components/Help';
@@ -75,15 +76,39 @@ const SdkBlockStyled = styled.div`
     align-self: center;
     filter: drop-shadow(var(--drop-shadow));
   }
-  .body {
+  .sdk-block {
     display: flex;
-    flex-direction: row;
   }
   .content {
     display: flex;
     flex-direction: column;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     justify-content: space-between;
+    .body {
+      display: block;
+      strong {
+        color: var(--primary);
+      }
+      em {
+        color: var(--secondary);
+      }
+      h2 {
+        color: var(--primary);
+        font-size: 1.25em;
+      }
+      a {
+        display: inline-block;
+        padding: 0.1em 0.5em;
+        margin: 0.1em;
+        border-radius: 5px;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        &:hover {
+          border-color: var(--secondary);
+          color: var(--secondary);
+        }
+      }
+    }
   }
 `;
 
@@ -91,17 +116,12 @@ function SdkBlock({ sdkData }) {
   const { content } = sdkData;
   const { t } = useTranslation('sdk');
 
-  useEffect(() => {
-    const el = document.getElementById(`sdk-content-container${sdkData.id}`);
-    if (el && content) el.innerHTML = content;
-  }, [content, sdkData]);
-
   return (
     <SdkBlockStyled>
       <FormTitle>
         <H2>{sdkData.name}</H2>
       </FormTitle>
-      <div className="body">
+      <div className="sdk-block">
         {sdkData.image.publicUrlTransformed && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -110,7 +130,9 @@ function SdkBlock({ sdkData }) {
           />
         )}
         <div className="content">
-          <div id={`sdk-content-container${sdkData.id}`} />
+          <ReactMarkdown remarkPlugins={[remarkGfm]} className="body">
+            {content}
+          </ReactMarkdown>
           <div>
             <a
               href={sdkData.link}
