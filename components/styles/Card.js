@@ -212,7 +212,7 @@ export const H4 = styled.h4`
 export const DashboardCard = styled(Card)`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2.5rem auto;
+  /* grid-template-rows: 2.5rem auto; */
 `;
 
 export const Separator = styled.div`

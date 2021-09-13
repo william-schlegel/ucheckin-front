@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Table, { useColumns } from '../Tables/Table';
 
@@ -22,6 +22,7 @@ const QUERY_USERS = gql`
         publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
     }
+    usersCount
   }
 `;
 
@@ -60,9 +61,12 @@ export default function DashboardUser() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('users', { count: data.allUsers.length })}</h2>
+    <Dashboard
+      title={t('users', { count: data.allUsers.length })}
+      total={t('users-total')}
+      count={data.usersCount}
+    >
       <Table columns={columns} data={data.allUsers} />
-    </DashboardCard>
+    </Dashboard>
   );
 }

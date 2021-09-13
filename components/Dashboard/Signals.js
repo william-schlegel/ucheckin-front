@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import Dashboard from '../Dashboard';
 
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import {
   LicensesDetailsSignal,
@@ -36,6 +36,7 @@ const QUERY_SIGNALS = gql`
         name
       }
     }
+    signalsCount
   }
 `;
 
@@ -85,10 +86,13 @@ export default function DashboardSignal() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('signals', { count: data.allSignals.length })}</h2>
+    <Dashboard
+      title={t('signals', { count: data.allSignals.length })}
+      total={t('signals-total')}
+      count={data.signalsCount}
+    >
       <Table columns={columns} data={data.allSignals} />
       <LicensesLegendSignal />
-    </DashboardCard>
+    </Dashboard>
   );
 }

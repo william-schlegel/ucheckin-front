@@ -11,6 +11,7 @@ import DashboardLicense from './Licenses';
 import DashboardOrder from './Orders';
 import DashboardNotification from './Notifications';
 import DashboardEvent from './Events';
+import DashboardStatistiques from './Statistiques';
 
 const DashboardStyled = styled.div`
   display: flex;
@@ -60,6 +61,7 @@ export default function Dashboard() {
         <DashboardNotification />
         <DashboardEvent />
       </DashboardStyled>
+      <DashboardStatistiques />
     </>
   );
 }

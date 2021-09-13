@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect } from 'react';
+import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import {
   LicensesDetailsApplication,
@@ -40,6 +40,7 @@ const QUERY_APPLICATIONS = gql`
         name
       }
     }
+    applicationsCount
   }
 `;
 
@@ -96,10 +97,13 @@ export default function DashboardApplication() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('applications', { count: data.allApplications.length })}</h2>
+    <Dashboard
+      title={t('applications', { count: data.allApplications.length })}
+      total={t('applications-total')}
+      count={data.applicationsCount}
+    >
       <Table columns={columns} data={data.allApplications} />
       <LicensesLegendApplication />
-    </DashboardCard>
+    </Dashboard>
   );
 }

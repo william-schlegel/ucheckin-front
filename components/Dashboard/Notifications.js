@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import NotificationType from '../Tables/NotificationType';
 import Table, { useColumns } from '../Tables/Table';
@@ -22,6 +22,7 @@ const QUERY_NOTIFICATIONS = gql`
       startDate
       endDate
     }
+    notificationsCount
   }
 `;
 
@@ -73,9 +74,12 @@ export default function DashboardNotification() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('notifications', { count: data.allNotifications.length })}</h2>
+    <Dashboard
+      title={t('notifications', { count: data.allNotifications.length })}
+      total={t('notifications-total')}
+      count={data.notificationsCount}
+    >
       <Table columns={columns} data={data.allNotifications} />
-    </DashboardCard>
+    </Dashboard>
   );
 }

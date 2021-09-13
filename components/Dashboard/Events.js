@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Image from '../Tables/Image';
 import Table, { useColumns } from '../Tables/Table';
@@ -25,6 +25,7 @@ const QUERY_EVENTS = gql`
         publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
     }
+    eventsCount
   }
 `;
 
@@ -76,9 +77,12 @@ export default function DashboardEvent() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('events', { count: data.allEvents.length })}</h2>
+    <Dashboard
+      title={t('events', { count: data.allEvents.length })}
+      total={t('events-total')}
+      count={data.eventsCount}
+    >
       <Table columns={columns} data={data.allEvents} />
-    </DashboardCard>
+    </Dashboard>
   );
 }

@@ -5,11 +5,11 @@ import { useRouter } from 'next/dist/client/router';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import Number from '../Tables/Number';
+import Dashboard from '../Dashboard';
 
 const nbApp = 5;
 
@@ -26,6 +26,7 @@ const QUERY_ORDERS = gql`
       totalBrut
       canceled
     }
+    ordersCount
   }
 `;
 
@@ -82,9 +83,12 @@ export default function DashboardOrder() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('orders', { count: data.allOrders.length })}</h2>
+    <Dashboard
+      title={t('orders', { count: data.allOrders.length })}
+      total={t('orders-total')}
+      count={data.ordersCount}
+    >
       <Table columns={columns} data={data.allOrders} />
-    </DashboardCard>
+    </Dashboard>
   );
 }

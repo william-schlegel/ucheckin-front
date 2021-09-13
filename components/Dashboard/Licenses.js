@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 
 import Loading from '../Loading';
-import { DashboardCard } from '../styles/Card';
 import Button from '../Tables/Button';
 import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
@@ -17,25 +17,26 @@ const QUERY_LICENSES = gql`
   query QUERY_LICENSES {
     allLicenses(first:${nbLicenses} , sortBy: validity_ASC) {
       id
-    validity
-    valid
-    application {
-      id
-      name
+      validity
+      valid
+      application {
+        id
+        name
+      }
+      licenseType {
+        id
+        name
+      }
+      signal {
+        id
+        name
+      }
+      owner {
+        id
+        name
+      }
     }
-    licenseType {
-      id
-      name
-    }
-    signal {
-      id
-      name
-    }
-    owner {
-      id
-      name
-    }
-    }
+    licensesCount
   }
 `;
 
@@ -103,9 +104,12 @@ export default function DashboardLicense() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <DashboardCard>
-      <h2>{t('licenses', { count: data.allLicenses.length })}</h2>
+    <Dashboard
+      title={t('licenses', { count: data.allLicenses.length })}
+      total={t('licenses-total')}
+      count={data.licensesCount}
+    >
       <Table columns={columns} data={data.allLicenses} />
-    </DashboardCard>
+    </Dashboard>
   );
 }

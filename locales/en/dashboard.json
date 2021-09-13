@@ -19,5 +19,15 @@
   "notifications_other": "{{count}} next notifications",
   "events_0": "No event yet",
   "events_1": "Last event",
-  "events_other": "{{count}} next events"
+  "events_other": "{{count}} next events",
+  "applications-total": "Total number of applications",
+  "signals-total": "Total number of signals",
+  "users-total": "Total number of users",
+  "licenses-total": "Total number of licenses",
+  "orders-total": "Total number of orders",
+  "notifications-total": "Total number of notifications",
+  "events-total": "Total number of events",
+  "statistiques": "Detection statistiques",
+  "start-date": "From",
+  "end-date": "To"
 }
