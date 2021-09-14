@@ -20,6 +20,18 @@ import {
 import selectTheme from '../styles/selectTheme';
 
 const DONUT_SIZE = 250;
+const COLOR_SCHEME = [
+  '#ff0000',
+  '#ff8700',
+  '#ffd300',
+  '#deff0a',
+  '#a1ff0a',
+  '#0aff99',
+  '#0aefff',
+  '#147df5',
+  '#580aff',
+  '#be0aff',
+];
 
 const QUERY_STATISTIQUES = gql`
   query QUERY_STATISTIQUES($dtDeb: String!, $dtFin: String!) {
@@ -43,24 +55,6 @@ const QUERY_STATISTIQUES = gql`
   }
 `;
 
-function reduceData(data, callback, filter) {
-  let fdata = data;
-  console.log(`filter`, filter);
-  if (filter !== 'all') {
-    fdata = data.filter((d) => d.application.id === filter);
-  }
-
-  return fdata.reduce((tot, v) => callback(tot, v), {
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: [],
-      },
-    ],
-  });
-}
-
 function createColors(obj) {
   function randomColor() {
     const r = Math.random() * 255;
@@ -70,8 +64,45 @@ function createColors(obj) {
   }
 
   const nbColor = obj.datasets[0].data.length;
-  for (let c = 0; c < nbColor; c += 1)
-    obj.datasets[0].backgroundColor.push(randomColor());
+  for (let c = 0; c < nbColor; c += 1) {
+    if (c < COLOR_SCHEME.length)
+      obj.datasets[0].backgroundColor.push(COLOR_SCHEME[c]);
+    else obj.datasets[0].backgroundColor.push(randomColor());
+  }
+}
+
+function reduceData(data, field, appId) {
+  let fdata = data;
+  if (appId !== 'all') {
+    fdata = data.filter((d) => d.application.id === appId);
+  }
+
+  const flds = field.split('.');
+  const res = fdata.reduce(
+    (tot, v) => {
+      let value = v;
+      for (let i = 0; i < flds.length; i += 1) value = v[flds[i]];
+      const id = tot.labels.findIndex((l) => l === value);
+      if (id < 0) {
+        tot.labels.push(value);
+        tot.datasets[0].data.push(1);
+      } else {
+        tot.datasets[0].data[id] += 1;
+      }
+      return tot;
+    },
+    {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+        },
+      ],
+    }
+  );
+  createColors(res);
+  return res;
 }
 
 export default function DashboardStatistiques() {
@@ -108,69 +139,25 @@ export default function DashboardStatistiques() {
     if (!data) return;
     const os = reduceData(
       data.allSignalDetections,
-      (tot, v) => {
-        const id = tot.labels.findIndex((l) => l === v.os);
-        if (id < 0) {
-          tot.labels.push(v.os);
-          tot.datasets[0].data.push(1);
-          if (v.os === 'android')
-            tot.datasets[0].backgroundColor.push('rgb(0,255,0)');
-          else if (v.os === 'ios')
-            tot.datasets[0].backgroundColor.push('rgb(0,0,0)');
-          else tot.datasets[0].backgroundColor.push('rgb(128,128,128)');
-        } else {
-          tot.datasets[0].data[id] += 1;
-        }
-        return tot;
-      },
+      'os',
       applications[application].value
     );
     const model = reduceData(
       data.allSignalDetections,
-      (tot, v) => {
-        const id = tot.labels.findIndex((l) => l === v.model);
-        if (id < 0) {
-          tot.labels.push(v.model);
-          tot.datasets[0].data.push(1);
-        } else {
-          tot.datasets[0].data[id] += 1;
-        }
-        return tot;
-      },
+      'model',
       applications[application].value
     );
-    createColors(model);
     const apps = reduceData(
       data.allSignalDetections,
-      (tot, v) => {
-        const id = tot.labels.findIndex((l) => l === v.application.name);
-        if (id < 0) {
-          tot.labels.push(v.application.name);
-          tot.datasets[0].data.push(1);
-        } else {
-          tot.datasets[0].data[id] += 1;
-        }
-        return tot;
-      },
+      'application.name',
       applications[application].value
     );
-    createColors(apps);
     const signals = reduceData(
       data.allSignalDetections,
-      (tot, v) => {
-        const id = tot.labels.findIndex((l) => l === v.signal.name);
-        if (id < 0) {
-          tot.labels.push(v.signal.name);
-          tot.datasets[0].data.push(1);
-        } else {
-          tot.datasets[0].data[id] += 1;
-        }
-        return tot;
-      },
+      'signal.name',
       applications[application].value
     );
-    createColors(signals);
-    setDataGraph((prev) => ({ ...prev, os, model, apps, signals }));
+    setDataGraph({ os, model, apps, signals });
   }, [data, setDataGraph, application]);
 
   if (loading) return <Loading />;
