@@ -30,7 +30,7 @@ export default function PriceNew({ open, onClose }) {
     refetchQueries: [
       {
         query: ALL_PRICES_QUERY,
-        variables: { skip: 0, first: perPage },
+        variables: { skip: 0, take: perPage },
       },
     ],
   });

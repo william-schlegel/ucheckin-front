@@ -42,7 +42,7 @@ export default function PriceDetails({ open, onClose, id }) {
 
   if (loading) return <Loading />;
   if (!data) return null;
-  const price = data.LicensePrice;
+  const price = data.licensePrice;
   return (
     <Drawer onClose={onClose} open={open} title={t('price-details')}>
       <Form>

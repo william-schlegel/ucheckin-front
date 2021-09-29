@@ -61,7 +61,7 @@ export default function Application({ id, initialData }) {
     refetchQueries: [
       {
         query: ALL_APPLICATIONS_QUERY,
-        variables: { skip: 0, first: perPage },
+        variables: { skip: 0, take: perPage },
       },
     ],
     onCompleted: () => {
@@ -75,7 +75,7 @@ export default function Application({ id, initialData }) {
     refetchQueries: [
       {
         query: ALL_APPLICATIONS_QUERY,
-        variables: { skip: 0, first: perPage },
+        variables: { skip: 0, take: perPage },
       },
     ],
     onCompleted: () => {
@@ -89,7 +89,7 @@ export default function Application({ id, initialData }) {
   const { user } = useUser();
   const { t } = useTranslation('application');
   const { licenseTypesOptions } = useLicenseName();
-  const initialValues = useRef(initialData.data.Application);
+  const initialValues = useRef(initialData.data.application);
   const {
     inputs,
     handleChange,
@@ -134,17 +134,17 @@ export default function Application({ id, initialData }) {
   useEffect(() => {
     if (data) {
       setInputs({
-        name: data.Application.name,
-        apiKey: data.Application.apiKey,
+        name: data.application.name,
+        apiKey: data.application.apiKey,
         owner: {
-          id: data.Application.owner.id,
-          name: data.Application.owner.name,
+          id: data.application.owner.id,
+          name: data.application.owner.name,
         },
-        licenseTypes: data.Application.licenseTypes.map((lt) => ({
+        licenseTypes: data.application.licenseTypes.map((lt) => ({
           id: lt.id,
         })),
-        invitations: data.Application.invitations,
-        licenses: data.Application.licenses,
+        invitations: data.application.invitations,
+        licenses: data.application.licenses,
       });
     }
   }, [setInputs, data]);
@@ -155,12 +155,12 @@ export default function Application({ id, initialData }) {
   }
 
   function updateLicense(licenseId) {
-    const license = data.Application.licenses.find((l) => l.id === licenseId);
+    const license = data.application.licenses.find((l) => l.id === licenseId);
     setSelectedLicense({
       licenseId,
       appId: id,
       signalId: license?.signal?.id,
-      ownerId: data.Application.owner.id,
+      ownerId: data.application.owner.id,
     });
     setShowUpdateLicense(true);
   }
@@ -359,7 +359,7 @@ export default function Application({ id, initialData }) {
           <RowFull>
             <Label>{t('licenses')}</Label>
             <LicenseTable
-              licenses={data.Application.licenses}
+              licenses={data.application.licenses}
               actionButtons={[{ type: 'extend', action: updateLicense }]}
             />
             <Block>

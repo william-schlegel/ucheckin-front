@@ -37,7 +37,7 @@ export default function Notifications() {
   );
   const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION);
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('notification');
   const [showNotification, setShowNotification] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
@@ -62,7 +62,7 @@ export default function Notifications() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -176,7 +176,7 @@ export default function Notifications() {
       />
       <Table
         columns={columns}
-        data={data?.allNotifications}
+        data={data?.notifications}
         error={error}
         loading={loading}
         actionButtons={actionButtons}

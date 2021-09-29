@@ -18,5 +18,5 @@ Account.getInitialProps = async (ctx) => {
     query: QUERY_ACCOUNT,
     variables: { id },
   });
-  return { id, initialData: initialData.data.User };
+  return { id, initialData: initialData.data.user };
 };

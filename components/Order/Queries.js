@@ -5,19 +5,17 @@ import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: OrderWhereInput) {
-    count: _allOrdersMeta(where: $where) {
-      count
-    }
+    count: ordersCount(where: $where)
   }
 `;
 
 export const ALL_ORDERS_QUERY = gql`
-  query ALL_ORDERS_QUERY($skip: Int = 0, $first: Int, $where: OrderWhereInput) {
-    allOrders(
-      first: $first
+  query ALL_ORDERS_QUERY($skip: Int = 0, $take: Int, $where: OrderWhereInput) {
+    orders(
+      take: $take
       skip: $skip
       where: $where
-      sortBy: orderDate_DESC
+      orderBy: { orderDate: desc }
     ) {
       id
       number
@@ -46,7 +44,7 @@ export const ALL_ORDERS_QUERY = gql`
 
 export const ORDER_QUERY = gql`
   query ORDER_QUERY($id: ID!) {
-    Order(where: { id: $id }) {
+    order(where: { id: $id }) {
       id
       number
       owner {

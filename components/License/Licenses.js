@@ -72,13 +72,13 @@ export default function Licenses() {
     { error: errorPage, loading: loadingPage },
   ] = useLazyQuery(PAGINATION_QUERY, {
     onCompleted: (dataP) => {
-      dispatch({ type: 'pagination', count: dataP.count.count });
+      dispatch({ type: 'pagination', count: dataP.count });
     },
   });
   const [queryLicenses, { error, loading }] = useLazyQuery(ALL_LICENSES_QUERY, {
     ssr: false,
     onCompleted: (dataLic) => {
-      const licenses = dataLic?.allLicenses || [];
+      const licenses = dataLic?.licenses || [];
       const resA = licensesAnalysis(licenses);
       dispatch({
         type: 'analysis',
@@ -99,7 +99,7 @@ export default function Licenses() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });

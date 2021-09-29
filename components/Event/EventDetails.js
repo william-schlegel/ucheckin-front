@@ -39,35 +39,35 @@ export default function EventDetails({ open, onClose, id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('event')} <span>{data.Event.name}</span>
+            {t('event')} <span>{data.event.name}</span>
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
           <RowReadOnly>
             <Label>{t('name')}</Label>
-            <span>{data.Event.name}</span>
+            <span>{data.event.name}</span>
           </RowReadOnly>
           <H3>{t('home')}</H3>
           <RowReadOnly>
             <Label>{t('publish-start')}</Label>
-            <ValidityDate value={data.Event.publishStart} after />
+            <ValidityDate value={data.event.publishStart} after />
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('publish-end')}</Label>
-            <ValidityDate value={data.Event.publishEnd} />
+            <ValidityDate value={data.event.publishEnd} />
           </RowReadOnly>
-          <EventHome event={data.Event} />
+          <EventHome event={data.event} />
           <Phone>
-            <EventContent event={data.Event} />
+            <EventContent event={data.event} />
           </Phone>
           <RowReadOnly>
             <Block>
               <Label>{t('application')}</Label>
-              <span>{data.Event.application?.name}</span>
+              <span>{data.event.application?.name}</span>
               <ActionButton
                 type="view"
                 cb={() =>
-                  router.push(`/application/${data.Event.application?.id}`)
+                  router.push(`/application/${data.event.application?.id}`)
                 }
                 label={t('navigation:application')}
               />

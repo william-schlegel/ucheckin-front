@@ -4,18 +4,16 @@ import { useEffect } from 'react';
 
 export const PAGINATION_PRICE_QUERY = gql`
   query PAGINATION_PRICE_QUERY($where: LicensePriceWhereInput) {
-    count: _allLicensePricesMeta(where: $where) {
-      count
-    }
+    count: licensePricesCount(where: $where)
   }
 `;
 export const ALL_PRICES_QUERY = gql`
   query ALL_LICENSES_PRICES_QUERY(
     $skip: Int = 0
-    $first: Int
+    $take: Int
     $where: LicensePriceWhereInput
   ) {
-    allLicensePrices(first: $first, skip: $skip, where: $where) {
+    licensePrices(take: $take, skip: $skip, where: $where) {
       id
       users {
         id
@@ -34,7 +32,7 @@ export const ALL_PRICES_QUERY = gql`
 
 export const PRICE_QUERY = gql`
   query PRICE_QUERY($id: ID!) {
-    LicensePrice(where: { id: $id }) {
+    licensePrice(where: { id: $id }) {
       id
       users {
         id

@@ -27,7 +27,7 @@ export default function Users() {
   const [queryUsers, { error, loading, data }] = useLazyQuery(ALL_USERS_QUERY);
 
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('user');
   const [newUser, setNewUser] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('user');
@@ -40,7 +40,7 @@ export default function Users() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -111,7 +111,7 @@ export default function Users() {
       />
       <Table
         columns={columns}
-        data={data?.allUsers}
+        data={data?.users}
         error={error}
         loading={loading}
         actionButtons={[

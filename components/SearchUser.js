@@ -7,7 +7,7 @@ import selectTheme from './styles/selectTheme';
 
 const ALL_USER_QUERY = gql`
   query ALL_USER_QUERY {
-    allUsers {
+    users {
       id
       name
       email
@@ -17,7 +17,7 @@ const ALL_USER_QUERY = gql`
 
 export function SearchUser({ name, value, onChange, required }) {
   const { loading, data } = useQuery(ALL_USER_QUERY);
-  const users = data?.allUsers || [];
+  const users = data?.users || [];
   const userList = users.map((u) => ({ value: u.id, label: u.name }));
 
   function handleChange(us) {
@@ -49,7 +49,7 @@ SearchUser.propTypes = {
 
 export function SearchUsers({ name, value, onChange, required }) {
   const { loading, data } = useQuery(ALL_USER_QUERY);
-  const users = data?.allUsers || [];
+  const users = data?.users || [];
   const userList = users.map((u) => ({ value: u.id, label: u.name }));
 
   if (loading) return <Loading />;

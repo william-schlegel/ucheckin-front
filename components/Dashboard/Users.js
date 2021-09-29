@@ -13,7 +13,7 @@ const nbUser = 5;
 
 const QUERY_USERS = gql`
   query QUERY_USERS {
-    allUsers(first: ${nbUser}, sortBy: creation_DESC) {
+    users(take: ${nbUser}, orderBy: {creation: desc}) {
       id
       name
       company
@@ -62,11 +62,11 @@ export default function DashboardUser() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('users', { count: data.allUsers.length })}
+      title={t('users', { count: data.users.length })}
       total={t('users-total')}
       count={data.usersCount}
     >
-      <Table columns={columns} data={data.allUsers} />
+      <Table columns={columns} data={data.users} />
     </Dashboard>
   );
 }

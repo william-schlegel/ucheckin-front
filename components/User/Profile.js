@@ -55,7 +55,7 @@ export default function Profile({ id, initialData }) {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const { user } = useUser();
   const countries = useMemo(() => countryList().getData(), []);
-  const initialValues = useRef(initialData.data.User);
+  const initialValues = useRef(initialData.data.user);
   const {
     inputs,
     handleChange,
@@ -76,7 +76,7 @@ export default function Profile({ id, initialData }) {
 
   useEffect(() => {
     if (data && user) {
-      setCanEdit(user.role?.canManageUsers || data.User.id === user.id);
+      setCanEdit(user.role?.canManageUsers || data.user.id === user.id);
     }
   }, [data, user]);
 

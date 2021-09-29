@@ -20,7 +20,7 @@ export default function EventNew({ open, onClose }) {
     refetchQueries: [
       {
         query: ALL_EVENTS_QUERY,
-        variables: { skip: 0, first: perPage },
+        variables: { skip: 0, take: perPage },
       },
     ],
     onCompleted: (item) => {

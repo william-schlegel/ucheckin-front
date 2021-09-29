@@ -35,8 +35,8 @@ const COLOR_SCHEME = [
 
 const QUERY_STATISTIQUES = gql`
   query QUERY_STATISTIQUES($dtDeb: String!, $dtFin: String!) {
-    allSignalDetections(
-      where: { AND: [{ date_gt: $dtDeb }, { date_lt: $dtFin }] }
+    signalDetections(
+      where: { AND: [{ date: { gte: $dtDeb } }, { date: { lte: $dtFin } }] }
     ) {
       date
       os
@@ -72,35 +72,34 @@ function createColors(obj) {
 }
 
 function reduceData(data, field, appId) {
+  const initialValue = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: [],
+      },
+    ],
+  };
+  if (!data) return initialValue;
   let fdata = data;
   if (appId !== 'all') {
     fdata = data.filter((d) => d.application.id === appId);
   }
 
   const flds = field.split('.');
-  const res = fdata.reduce(
-    (tot, v) => {
-      let value = v;
-      for (let i = 0; i < flds.length; i += 1) value = v[flds[i]];
-      const id = tot.labels.findIndex((l) => l === value);
-      if (id < 0) {
-        tot.labels.push(value);
-        tot.datasets[0].data.push(1);
-      } else {
-        tot.datasets[0].data[id] += 1;
-      }
-      return tot;
-    },
-    {
-      labels: [],
-      datasets: [
-        {
-          data: [],
-          backgroundColor: [],
-        },
-      ],
+  const res = fdata.reduce((tot, v) => {
+    let value = v;
+    for (let i = 0; i < flds.length; i += 1) value = v[flds[i]];
+    const id = tot.labels.findIndex((l) => l === value);
+    if (id < 0) {
+      tot.labels.push(value);
+      tot.datasets[0].data.push(1);
+    } else {
+      tot.datasets[0].data[id] += 1;
     }
-  );
+    return tot;
+  }, initialValue);
   createColors(res);
   return res;
 }
@@ -126,7 +125,7 @@ export default function DashboardStatistiques() {
     const apps = new Map();
     if (data) {
       apps.set(applications[0].value, applications[0].label);
-      for (const a of data.allSignalDetections) {
+      for (const a of data.signalDetections) {
         apps.set(a.application.id, a.application.name);
       }
       setApplications(
@@ -138,22 +137,22 @@ export default function DashboardStatistiques() {
   useEffect(() => {
     if (!data) return;
     const os = reduceData(
-      data.allSignalDetections,
+      data.sgnalDetections,
       'os',
       applications[application].value
     );
     const model = reduceData(
-      data.allSignalDetections,
+      data.signalDetections,
       'model',
       applications[application].value
     );
     const apps = reduceData(
-      data.allSignalDetections,
+      data.signalDetections,
       'application.name',
       applications[application].value
     );
     const signals = reduceData(
-      data.allSignalDetections,
+      data.signalDetections,
       'signal.name',
       applications[application].value
     );

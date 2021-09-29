@@ -15,7 +15,7 @@ const nbLicenses = 5;
 
 const QUERY_LICENSES = gql`
   query QUERY_LICENSES {
-    allLicenses(first:${nbLicenses} , sortBy: validity_ASC) {
+    licenses(take:${nbLicenses} , orderBy: {validity: asc}) {
       id
       validity
       valid
@@ -105,11 +105,11 @@ export default function DashboardLicense() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('licenses', { count: data.allLicenses.length })}
+      title={t('licenses', { count: data.licenses.length })}
       total={t('licenses-total')}
       count={data.licensesCount}
     >
-      <Table columns={columns} data={data.allLicenses} />
+      <Table columns={columns} data={data.licenses} />
     </Dashboard>
   );
 }

@@ -68,8 +68,8 @@ export default function Order({ id, backButton }) {
     <Form>
       <FormHeader>
         <FormTitle>
-          {t('order')} <span>{data.Order.number}</span>
-          {data.Order.canceled && <Canceled>{t('canceled')}</Canceled>}
+          {t('order')} <span>{data.order.number}</span>
+          {data.order.canceled && <Canceled>{t('canceled')}</Canceled>}
         </FormTitle>
         {backButton && (
           <ButtonBack route="/orders" label={t('navigation:orders')} />
@@ -78,40 +78,40 @@ export default function Order({ id, backButton }) {
       <FormBody>
         <RowReadOnly>
           <Label>{t('order-date')}</Label>
-          <ValidityDate value={data.Order.orderDate} noColor />
+          <ValidityDate value={data.order.orderDate} noColor />
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('user')}</Label>
-          <span>{data.Order.owner.name}</span>
+          <span>{data.order.owner.name}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('company')}</Label>
-          <span>{data.Order.owner.company}</span>
+          <span>{data.order.owner.company}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('address')}</Label>
-          <span>{data.Order.owner.address}</span>
+          <span>{data.order.owner.address}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('zip-code')}</Label>
-          <span>{data.Order.owner.zipCode}</span>
+          <span>{data.order.owner.zipCode}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('city')}</Label>
-          <span>{data.Order.owner.city}</span>
+          <span>{data.order.owner.city}</span>
         </RowReadOnly>
         <RowReadOnly>
           <Label>{t('country')}</Label>
-          <span>{data.Order.owner.country}</span>
+          <span>{data.order.owner.country}</span>
         </RowReadOnly>
       </FormBody>
       <FormBodyFull>
         <Row>
-          <Table columns={columns} data={data.Order.items} />
+          <Table columns={columns} data={data.order.items} />
         </Row>
         <Total
-          vat={parseFloat(data.Order.vatValue)}
-          value={{ amount: parseFloat(data.Order.totalBrut) }}
+          vat={parseFloat(data.order.vatValue)}
+          value={{ amount: parseFloat(data.order.totalBrut) }}
         />
       </FormBodyFull>
     </Form>

@@ -54,7 +54,7 @@ import useConfirm from '../../lib/useConfirm';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
-    allApplications(where: { owner: { id: $user } }) {
+    applications(where: { owner: { id: $user } }) {
       id
       name
     }
@@ -63,7 +63,7 @@ const QUERY_APP_FROM_USER = gql`
 
 const QUERY_SIGNAL_FROM_APP = gql`
   query QUERY_SIGNAL_FROM_APP($appId: ID!) {
-    allSignals(where: { licenses_some: { application: { id: $appId } } }) {
+    signals(where: { licenses_some: { application: { id: $appId } } }) {
       id
       name
     }
@@ -101,7 +101,7 @@ const makeItem = (itm) => {
 };
 // make mutable object
 const makeData = (data) => {
-  const dN = data.Notification;
+  const dN = data.notification;
   const newInputs = {
     name: dN.name || '',
     displayName: dN.displayName || '',
@@ -194,18 +194,18 @@ export default function Notification({ id, initialData }) {
   }, [userRole, userId, notifOwnerId]);
 
   useEffect(() => {
-    if (dataApp?.allApplications) {
+    if (dataApp?.applications) {
       setOptionsAppUser(
-        dataApp.allApplications.map((d) => ({ value: d.id, label: d.name }))
+        dataApp.applications.map((d) => ({ value: d.id, label: d.name }))
       );
       setOptionsSignals([]);
     }
   }, [dataApp, setOptionsAppUser]);
 
   useEffect(() => {
-    if (dataSig?.allSignals) {
+    if (dataSig?.signals) {
       setOptionsSignals(
-        dataSig.allSignals.map((d) => ({ value: d.id, label: d.name }))
+        dataSig.signals.map((d) => ({ value: d.id, label: d.name }))
       );
     }
   }, [dataSig, setOptionsSignals]);

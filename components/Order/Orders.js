@@ -43,7 +43,7 @@ export default function Orders() {
     }
   );
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('order');
   const [showOrder, setShowOrder] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('order');
@@ -58,7 +58,7 @@ export default function Orders() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -111,7 +111,7 @@ export default function Orders() {
   }
 
   function cancelOrder(id) {
-    const order = data.allOrders.find((o) => o.id === id);
+    const order = data.orders.find((o) => o.id === id);
     if (!order) return;
     if (order.canceled) {
       addToast(t('already-canceled'), {
@@ -172,7 +172,7 @@ export default function Orders() {
       />
       <Table
         columns={columns}
-        data={data?.allOrders}
+        data={data?.orders}
         error={error}
         loading={loading}
         actionButtons={actionButtons}

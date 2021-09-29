@@ -18,7 +18,7 @@ const nbSignals = 5;
 
 const QUERY_SIGNALS = gql`
   query QUERY_SIGNALS {
-    allSignals(first:${nbSignals} , sortBy: creation_DESC) {
+    signals(take:${nbSignals} , orderBy: {creation: desc}) {
       id
       name
       active
@@ -87,11 +87,11 @@ export default function DashboardSignal() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('signals', { count: data.allSignals.length })}
+      title={t('signals', { count: data.signals.length })}
       total={t('signals-total')}
       count={data.signalsCount}
     >
-      <Table columns={columns} data={data.allSignals} />
+      <Table columns={columns} data={data.signals} />
       <LicensesLegendSignal />
     </Dashboard>
   );

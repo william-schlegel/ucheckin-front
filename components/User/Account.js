@@ -148,7 +148,7 @@ export default function Account({ id, initialData }) {
 
   useEffect(() => {
     if (data && user) {
-      setCanEdit(user.role?.canManageUsers || data.User.id === user.id);
+      setCanEdit(user.role?.canManageUsers || data.user.id === user.id);
     }
   }, [data, user]);
 

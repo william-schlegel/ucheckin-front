@@ -19,7 +19,7 @@ import client from '../apollo-client';
 
 const QUERY_SDK = gql`
   query QUERY_SDK {
-    allSdks {
+    sdks {
       id
       name
       link
@@ -158,7 +158,7 @@ export async function getServerSideProps() {
   const { data } = await client.query({ query: QUERY_SDK });
   return {
     props: {
-      initialData: data.allSdks,
+      initialData: data.sdks,
     },
   };
 }

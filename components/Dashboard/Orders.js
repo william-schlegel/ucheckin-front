@@ -15,7 +15,7 @@ const nbApp = 5;
 
 const QUERY_ORDERS = gql`
   query QUERY_ORDERS {
-    allOrders(first:${nbApp} , sortBy: orderDate_DESC) {
+    orders(take:${nbApp} , orderBy: {orderDate: desc}) {
       id
       number
       orderDate
@@ -84,11 +84,11 @@ export default function DashboardOrder() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('orders', { count: data.allOrders.length })}
+      title={t('orders', { count: data.orders.length })}
       total={t('orders-total')}
       count={data.ordersCount}
     >
-      <Table columns={columns} data={data.allOrders} />
+      <Table columns={columns} data={data.orders} />
     </Dashboard>
   );
 }

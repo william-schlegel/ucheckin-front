@@ -15,7 +15,7 @@ const nbLicenses = 5;
 
 const QUERY_NOTIFICATIONS = gql`
   query QUERY_NOTIFICATIONS {
-    allNotifications(first:${nbLicenses} , sortBy: startDate_DESC) {
+    notifications(take:${nbLicenses} , orderBy: {startDate: desc}) {
       id
       name
       type
@@ -75,11 +75,11 @@ export default function DashboardNotification() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('notifications', { count: data.allNotifications.length })}
+      title={t('notifications', { count: data.notifications.length })}
       total={t('notifications-total')}
       count={data.notificationsCount}
     >
-      <Table columns={columns} data={data.allNotifications} />
+      <Table columns={columns} data={data.notifications} />
     </Dashboard>
   );
 }

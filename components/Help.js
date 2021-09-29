@@ -13,9 +13,11 @@ import { Wrapper } from './styles/Help';
 
 const QUERY_HELP = gql`
   query QUERY_HELP($key: String!, $lang: String!) {
-    allHelps(
-      where: { AND: [{ key: $key }, { language: $lang }] }
-      sortBy: step_ASC
+    helps(
+      where: {
+        AND: [{ key: { equals: $key } }, { language: { equals: $lang } }]
+      }
+      orderBy: { step: asc }
     ) {
       id
       title
@@ -133,6 +135,6 @@ export function useHelp(key) {
   return {
     helpVisible: visible,
     toggleHelpVisibility,
-    helpContent: data?.allHelps,
+    helpContent: data?.helps,
   };
 }

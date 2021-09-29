@@ -31,7 +31,7 @@ export default function ButtonFreeTrial({
       },
       {
         query: ALL_APPLICATIONS_QUERY,
-        variables: { skip: 0, first: perPage },
+        variables: { skip: 0, take: perPage },
       },
     ],
   });

@@ -4,23 +4,21 @@ import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: LicenseWhereInput) {
-    count: _allLicensesMeta(where: $where) {
-      count
-    }
+    count: licensesCount(where: $where)
   }
 `;
 
 export const ALL_LICENSES_QUERY = gql`
   query ALL_LICENSES_QUERY(
     $skip: Int = 0
-    $first: Int
+    $take: Int
     $where: LicenseWhereInput
   ) {
-    allLicenses(
-      first: $first
+    licenses(
+      take: $take
       skip: $skip
       where: $where
-      sortBy: validity_ASC
+      orderBy: { validity: asc }
     ) {
       id
       signal {
@@ -50,7 +48,7 @@ export const ALL_LICENSES_QUERY = gql`
 
 export const LICENSE_QUERY = gql`
   query LICENSE_QUERY($id: ID!) {
-    License(where: { id: $id }) {
+    license(where: { id: $id }) {
       id
       signal {
         id
@@ -126,7 +124,7 @@ export const PURCHASE_LICENSE_MUTATION = gql`
 
 export const LICENSE_PRICE_QUERY = gql`
   query LICENSE_PRICE_QUERY($dayDate: String!, $owner: ID!) {
-    prices: allLicensePrices(
+    prices: licensePrices(
       where: {
         AND: [
           { OR: [{ default: true }, { users_some: { id: $owner } }] }
@@ -134,7 +132,7 @@ export const LICENSE_PRICE_QUERY = gql`
           { validUntil_gte: $dayDate }
         ]
       }
-      sortBy: [validAfter_DESC]
+      orderBy: [{ validAfter: desc }]
     ) {
       id
       default

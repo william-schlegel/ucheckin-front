@@ -36,18 +36,18 @@ export default function License({ id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('license')} <span>{data.License.license}</span>
+            {t('license')} <span>{data.license.license}</span>
             <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
           <RowReadOnly>
             <Label>{t('common:owner')}</Label>
-            <span>{data.License.owner.name}</span>
+            <span>{data.license.owner.name}</span>
           </RowReadOnly>
           <RowFull>
             <Label>{t('license:licenses')}</Label>
-            <LicenseTable licenses={data.License.licenses} />
+            <LicenseTable licenses={data.license.licenses} />
           </RowFull>
         </FormBodyFull>
       </Form>

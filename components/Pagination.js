@@ -19,7 +19,7 @@ export default function Pagination({
   page,
   error,
   loading,
-  count,
+  count = 0,
   pageRef,
   withFilter,
   setShowFilter,
@@ -29,6 +29,7 @@ export default function Pagination({
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   const pageCount = Math.ceil(count / perPage);
+  console.log(`count`, { count, pageCount });
   return (
     <PaginationBlock>
       <PaginationStyles>

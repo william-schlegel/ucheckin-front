@@ -15,7 +15,7 @@ const nbLicenses = 5;
 
 const QUERY_EVENTS = gql`
   query QUERY_EVENTS {
-    allEvents(first:${nbLicenses} , sortBy: validityStart_DESC) {
+    events(take:${nbLicenses} , orderBy: {validityStart: desc}) {
       id
       name
       description
@@ -78,11 +78,11 @@ export default function DashboardEvent() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('events', { count: data.allEvents.length })}
+      title={t('events', { count: data.events.length })}
       total={t('events-total')}
       count={data.eventsCount}
     >
-      <Table columns={columns} data={data.allEvents} />
+      <Table columns={columns} data={data.events} />
     </Dashboard>
   );
 }

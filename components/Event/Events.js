@@ -38,7 +38,7 @@ export default function Events() {
   );
   const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION);
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('event');
   const [showEvent, setShowEvent] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('event');
@@ -57,7 +57,7 @@ export default function Events() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -174,7 +174,7 @@ export default function Events() {
       />
       <Table
         columns={columns}
-        data={data?.allEvents}
+        data={data?.events}
         error={error}
         loading={loading}
         actionButtons={actionButtons}

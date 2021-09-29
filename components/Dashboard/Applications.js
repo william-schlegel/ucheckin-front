@@ -20,7 +20,7 @@ const nbApp = 5;
 
 const QUERY_APPLICATIONS = gql`
   query QUERY_APPLICATIONS {
-    allApplications(first:${nbApp} , sortBy: creation_DESC) {
+    applications(take:${nbApp} , orderBy: {creation: desc}) {
       id
       name
       licenseTypes {
@@ -98,11 +98,11 @@ export default function DashboardApplication() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('applications', { count: data.allApplications.length })}
+      title={t('applications', { count: data.applications.length })}
       total={t('applications-total')}
       count={data.applicationsCount}
     >
-      <Table columns={columns} data={data.allApplications} />
+      <Table columns={columns} data={data.applications} />
       <LicensesLegendApplication />
     </Dashboard>
   );

@@ -4,15 +4,13 @@ import { useEffect, useState } from 'react';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: UserWhereInput) {
-    count: _allUsersMeta(where: $where) {
-      count
-    }
+    count: usersCount(where: $where)
   }
 `;
 
 export const ALL_USERS_QUERY = gql`
-  query ALL_USERS_QUERY($skip: Int = 0, $first: Int, $where: UserWhereInput) {
-    allUsers(first: $first, skip: $skip, where: $where) {
+  query ALL_USERS_QUERY($skip: Int = 0, $take: Int, $where: UserWhereInput) {
+    users(take: $take, skip: $skip, where: $where) {
       id
       name
       email
@@ -30,7 +28,7 @@ export const ALL_USERS_QUERY = gql`
 
 export const QUERY_ACCOUNT = gql`
   query QUERY_ACCOUNT($id: ID!) {
-    User(where: { id: $id }) {
+    user(where: { id: $id }) {
       id
       name
       company
@@ -100,7 +98,7 @@ export const DELETE_TOKEN_MUTATION = gql`
 
 export const QUERY_PROFILE = gql`
   query QUERY_PROFILE($id: ID!) {
-    User(where: { id: $id }) {
+    user(where: { id: $id }) {
       id
       email
       name
@@ -266,7 +264,7 @@ export const UPDATE_THEME = gql`
 
 const ROLE_QUERY = gql`
   query ROLE_QUERY {
-    allRoles {
+    roles {
       id
       name
     }
@@ -299,7 +297,7 @@ export function useUser() {
 
 export function useRole() {
   const { data } = useQuery(ROLE_QUERY);
-  const items = data?.allRoles;
+  const items = data?.roles;
   const [roles, setRoles] = useState([]);
   useEffect(() => {
     if (items) setRoles(items.map((r) => ({ value: r.id, label: r.name })));

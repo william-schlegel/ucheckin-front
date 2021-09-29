@@ -4,19 +4,17 @@ import { useEffect } from 'react';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: SignalWhereInput) {
-    count: _allSignalsMeta(where: $where) {
-      count
-    }
+    count: signalsCount(where: $where)
   }
 `;
 
 export const ALL_SIGNALS_QUERY = gql`
   query ALL_SIGNALS_QUERY(
     $skip: Int = 0
-    $first: Int
+    $take: Int
     $where: SignalWhereInput
   ) {
-    allSignals(first: $first, skip: $skip, where: $where) {
+    signals(take: $take, skip: $skip, where: $where) {
       id
       name
       active
@@ -60,7 +58,7 @@ export const VALIDATE_SIGNAL_MUTATION = gql`
 
 export const SIGNAL_QUERY = gql`
   query SIGNAL_QUERY($id: ID!) {
-    Signal(where: { id: $id }) {
+    signal(where: { id: $id }) {
       id
       name
       owner {

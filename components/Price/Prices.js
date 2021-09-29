@@ -33,7 +33,7 @@ export default function Prices() {
     ALL_PRICES_QUERY
   );
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('license');
 
   const [showPrice, setShowPrice] = useState('');
@@ -50,7 +50,7 @@ export default function Prices() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -140,7 +140,7 @@ export default function Prices() {
       />
       <Table
         columns={columns}
-        data={data?.allLicensePrices}
+        data={data?.licensePrices}
         error={error}
         loading={loading}
         actionButtons={[{ type: 'view', action: viewPrice }]}

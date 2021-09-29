@@ -28,7 +28,7 @@ export default function NotificationNew({ open, onClose }) {
       refetchQueries: [
         {
           query: ALL_NOTIFICATIONS_QUERY,
-          variables: { skip: 0, first: perPage },
+          variables: { skip: 0, take: perPage },
         },
       ],
       onCompleted: (item) => {

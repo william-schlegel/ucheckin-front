@@ -47,7 +47,7 @@ import RichEditor from '../SlateEditor';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
-    allApplications(where: { owner: { id: $user } }) {
+    applications(where: { owner: { id: $user } }) {
       id
       name
     }
@@ -56,7 +56,7 @@ const QUERY_APP_FROM_USER = gql`
 
 // make mutable object
 const makeData = (data) => {
-  const dN = data.Event;
+  const dN = data.event;
   return {
     name: dN.name || '',
     location: dN.location || '',
@@ -170,9 +170,9 @@ export default function Event({ id, initialData }) {
   }, [userRole, userId, eventOwnerId]);
 
   useEffect(() => {
-    if (dataApp?.allApplications) {
+    if (dataApp?.applications) {
       setOptionsAppUser(
-        dataApp.allApplications.map((d) => ({ value: d.id, label: d.name }))
+        dataApp.applications.map((d) => ({ value: d.id, label: d.name }))
       );
     }
   }, [dataApp, setOptionsAppUser]);

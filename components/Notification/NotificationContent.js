@@ -28,7 +28,7 @@ const displayTypes = [
 
 const QUERY_NOTIF_PARENT = gql`
   query QUERY_NOTIF_PARENT($id: ID!) {
-    Notification(where: { id: $id }) {
+    notification(where: { id: $id }) {
       id
       type
     }

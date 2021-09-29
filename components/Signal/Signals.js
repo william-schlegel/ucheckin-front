@@ -38,7 +38,7 @@ export default function Signals() {
   const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
 
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('signal');
   const [showSignal, setShowSignal] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('signal');
@@ -54,7 +54,7 @@ export default function Signals() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -169,7 +169,7 @@ export default function Signals() {
       />
       <Table
         columns={columns}
-        data={data?.allSignals}
+        data={data?.signals}
         error={error}
         loading={loading}
         actionButtons={[{ type: 'view', action: viewSignal }]}

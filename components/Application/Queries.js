@@ -4,7 +4,7 @@ import { dateDay } from '../DatePicker';
 
 export const APPLICATION_QUERY = gql`
   query APPLICATION_QUERY($id: ID!) {
-    Application(where: { id: $id }) {
+    application(where: { id: $id }) {
       id
       name
       apiKey
@@ -45,19 +45,17 @@ export const APPLICATION_QUERY = gql`
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: ApplicationWhereInput) {
-    count: _allApplicationsMeta(where: $where) {
-      count
-    }
+    count: applicationsCount(where: $where)
   }
 `;
 
 export const ALL_APPLICATIONS_QUERY = gql`
   query ALL_APPLICATIONS_QUERY(
     $skip: Int = 0
-    $first: Int
+    $take: Int
     $where: ApplicationWhereInput
   ) {
-    allApplications(first: $first, skip: $skip, where: $where) {
+    applications(take: $take, skip: $skip, where: $where) {
       id
       name
       apiKey
@@ -100,7 +98,7 @@ export const DELETE_APPLICATION_MUTATION = gql`
 
 export const ALL_SIGNAL_OWNER = gql`
   query ALL_SIGNAL_OWNER($ownerId: ID!) {
-    allSignals(
+    signals(
       where: {
         owner: { id: $ownerId }
         licenses_every: { signal_is_null: true }
@@ -174,7 +172,7 @@ export const DELETE_INVITATION = gql`
 
 export const CHECK_INVITATION_TOKEN = gql`
   query CHECK_INVITATION_TOKEN($token: String!) {
-    allInvitations(where: { token: $token }) {
+    invitations(where: { token: $token }) {
       id
       application {
         id

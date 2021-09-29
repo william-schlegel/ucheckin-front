@@ -37,7 +37,7 @@ export default function Applications() {
   );
 
   const page = parseInt(router.query.page) || 1;
-  const { count } = dataPage?.count || 1;
+  const count = dataPage?.count;
   const { t } = useTranslation('application');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
     'application'
@@ -54,7 +54,7 @@ export default function Applications() {
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
-      first: perPage,
+      take: perPage,
     };
     if (filters) variables.where = filters;
     queryPagination({ variables: filters });
@@ -66,7 +66,7 @@ export default function Applications() {
   }
 
   function AddLicense(id) {
-    const app = data.allApplications.find((a) => a.id === id);
+    const app = data.applications.find((a) => a.id === id);
     if (!app.licenseTypes?.length) return;
     setDataAddLicense({ appId: app.id, ownerId: app.owner.id });
     setShowAddLicense(true);
@@ -164,7 +164,7 @@ export default function Applications() {
       />
       <Table
         columns={columns}
-        data={data.allApplications}
+        data={data.applications}
         error={error}
         loading={loading}
         actionButtons={[

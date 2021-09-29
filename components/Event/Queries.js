@@ -4,19 +4,17 @@ import { useEffect } from 'react';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: EventWhereInput) {
-    count: _allEventsMeta(where: $where) {
-      count
-    }
+    count: eventsCount(where: $where)
   }
 `;
 
 export const ALL_EVENTS_QUERY = gql`
-  query ALL_EVENTS_QUERY($skip: Int = 0, $first: Int, $where: EventWhereInput) {
-    allEvents(
-      first: $first
+  query ALL_EVENTS_QUERY($skip: Int = 0, $take: Int, $where: EventWhereInput) {
+    events(
+      take: $take
       skip: $skip
       where: $where
-      sortBy: validityStart_DESC
+      orderBy: { validityStart: desc }
     ) {
       id
       name
@@ -38,7 +36,7 @@ export const ALL_EVENTS_QUERY = gql`
 
 export const EVENT_QUERY = gql`
   query EVENT_QUERY($id: ID!) {
-    Event(where: { id: $id }) {
+    event(where: { id: $id }) {
       id
       name
       owner {

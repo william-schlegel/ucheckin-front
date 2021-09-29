@@ -38,7 +38,7 @@ export default function Signal({ id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('signal')} <span>{data.Signal.name}</span>
+            {t('signal')} <span>{data.signal.name}</span>
             <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
           <ButtonBack route="/signals" label={t('navigation:signals')} />
@@ -46,18 +46,18 @@ export default function Signal({ id }) {
         <FormBodyFull>
           <RowReadOnly>
             <Label>{t('common:owner')}</Label>
-            <span>{data.Signal.owner.name}</span>
+            <span>{data.signal.owner.name}</span>
           </RowReadOnly>
           <RowFull>
             <Label>{t('license:licenses')}</Label>
-            <LicenseTable licenses={data.Signal.licenses} />
+            <LicenseTable licenses={data.signal.licenses} />
           </RowFull>
         </FormBodyFull>
       </Form>
       <SignalFiles
         signalId={id}
-        signalCode={data.Signal.name}
-        files={data.Signal.files}
+        signalCode={data.signal.name}
+        files={data.signal.files}
       />
     </>
   );

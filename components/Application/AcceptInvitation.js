@@ -46,7 +46,7 @@ export default function AcceptInvitation({ token }) {
     onCompleted: () => router.push('/login'),
   });
   const { t } = useTranslation('application');
-  const invitation = data?.allInvitations[0] || { user: {}, application: {} };
+  const invitation = data?.invitations[0] || { user: {}, application: {} };
   const initialValues = useRef({ name: '', company: '', password: '' });
   const {
     inputs,

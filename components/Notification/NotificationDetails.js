@@ -39,31 +39,31 @@ export default function NotificationDetails({ open, onClose, id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('notification')} <span>{data.Notification.name}</span>
+            {t('notification')} <span>{data.notification.name}</span>
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
           <RowReadOnly>
             <Label>{t('name')}</Label>
-            <span>{data.Notification.name}</span>
+            <span>{data.notification.name}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('display-name')}</Label>
-            <span>{data.Notification.displayName}</span>
+            <span>{data.notification.displayName}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('type')}</Label>
-            <NotificationType notification={data.Notification.type} />
+            <NotificationType notification={data.notification.type} />
           </RowReadOnly>
           <RowReadOnly>
             <Block>
               <Label>{t('application')}</Label>
-              <span>{data.Notification.application?.name}</span>
+              <span>{data.notification.application?.name}</span>
               <ActionButton
                 type="view"
                 cb={() =>
                   router.push(
-                    `/application/${data.Notification.application?.id}`
+                    `/application/${data.notification.application?.id}`
                   )
                 }
                 label={t('navigation:application')}
@@ -73,11 +73,11 @@ export default function NotificationDetails({ open, onClose, id }) {
           <RowReadOnly>
             <Block>
               <Label>{t('signal')}</Label>
-              <span>{data.Notification.signal?.name}</span>
+              <span>{data.notification.signal?.name}</span>
               <ActionButton
                 type="signal"
                 cb={() =>
-                  router.push(`/signal/${data.Notification.signal?.id}`)
+                  router.push(`/signal/${data.notification.signal?.id}`)
                 }
                 label={t('common:signal')}
               />
@@ -85,23 +85,23 @@ export default function NotificationDetails({ open, onClose, id }) {
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('start-date')}</Label>
-            <ValidityDate value={data.Notification.startDate} after />
+            <ValidityDate value={data.notification.startDate} after />
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('end-date')}</Label>
-            <ValidityDate value={data.Notification.endDate} />
+            <ValidityDate value={data.notification.endDate} />
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('nb-notif')}</Label>
-            <span>{data.Notification.items.length}</span>
+            <span>{data.notification.items.length}</span>
           </RowReadOnly>
           <Separator />
           <NotifContainer>
-            {data.Notification.items.map((it) => (
+            {data.notification.items.map((it) => (
               <Notif
                 style={{ maxWidth: '100px' }}
                 key={it.id}
-                typeNotif={data.Notification.type}
+                typeNotif={data.notification.type}
                 item={it}
               />
             ))}

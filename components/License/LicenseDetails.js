@@ -58,11 +58,11 @@ export default function LicenseDetails({ open, onClose, id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('license')} <span>{data.License.license}</span>
+            {t('license')} <span>{data.license.license}</span>
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
-          {data.License.trialLicense && (
+          {data.license.trialLicense && (
             <RowReadOnly>
               <div style={{ marginRight: '1rem' }}>
                 <Gift size={30} color="var(--secondary)" />
@@ -72,43 +72,43 @@ export default function LicenseDetails({ open, onClose, id }) {
           )}
           <RowReadOnly>
             <Label>{t('common:owner')}</Label>
-            <span>{data.License.owner.name}</span>
+            <span>{data.license.owner.name}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('signal')}</Label>
-            <span>{data.License.signal?.name}</span>
+            <span>{data.license.signal?.name}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('application')}</Label>
-            <span>{data.License.application.name}</span>
+            <span>{data.license.application.name}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('validity')}</Label>
-            <ValidityDate value={data.License.validity} />
+            <ValidityDate value={data.license.validity} />
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('common:info')}</Label>
             <span>
               {t('purchase-info', {
-                name: data.License.owner.name,
-                dt: formatDate(data.License.purchaseDate),
-                info: data.License.purchaseInformation,
+                name: data.license.owner.name,
+                dt: formatDate(data.license.purchaseDate),
+                info: data.license.purchaseInformation,
               })}
             </span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('nb-area')}</Label>
-            <span>{data.License.nbArea}</span>
+            <span>{data.license.nbArea}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('common:license-model')}</Label>
-            <LicenseType license={data.License.licenseType.id} />
+            <LicenseType license={data.license.licenseType.id} />
           </RowReadOnly>
           <Row>
             <Label>{t('order-history')}</Label>
             <Table
               columns={columns}
-              data={data.License.orderItems}
+              data={data.license.orderItems}
               withPagination
             />
           </Row>

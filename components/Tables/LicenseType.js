@@ -9,7 +9,7 @@ import Loading from '../Loading';
 
 export const ALL_LICENSE_TYPE_QUERY = gql`
   query ALL_LICENSE_TYPE_QUERY {
-    allLicenseTypes {
+    licenseTypes {
       id
       name
       logo {
@@ -21,7 +21,7 @@ export const ALL_LICENSE_TYPE_QUERY = gql`
 
 export const LICENSE_TYPE_QUERY = gql`
   query LICENSE_TYPE_QUERY($id: ID!) {
-    LicenseType(where: { id: $id }) {
+    licenseType(where: { id: $id }) {
       id
       name
       logo {
@@ -39,9 +39,9 @@ export function useLicenseName() {
 
   useEffect(() => {
     if (!loading && !error && data) {
-      setLicenseTypes(data.allLicenseTypes);
+      setLicenseTypes(data.licenseTypes);
       setLicenseTypesOptions(
-        data.allLicenseTypes.map((l) => ({ value: l.id, label: t(l.name) }))
+        data.licenseTypes.map((l) => ({ value: l.id, label: t(l.name) }))
       );
     }
   }, [loading, error]);
@@ -108,13 +108,13 @@ export function LicenseType({ license, children }) {
     <LicenseStyled>
       <img
         src={
-          !data.LicenseType?.logo
+          !data.licenseType?.logo
             ? '/images/UNKNOWN.png'
-            : data.LicenseType.logo.publicUrlTransformed
+            : data.licenseType.logo.publicUrlTransformed
         }
         alt=""
       />
-      <span>{t(data.LicenseType.name)}</span>
+      <span>{t(data.licenseType.name)}</span>
       {children}
     </LicenseStyled>
   );

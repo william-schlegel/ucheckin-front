@@ -4,23 +4,21 @@ import { useEffect } from 'react';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: NotificationWhereInput) {
-    count: _allNotificationsMeta(where: $where) {
-      count
-    }
+    count: notificationsCount(where: $where)
   }
 `;
 
 export const ALL_NOTIFICATIONS_QUERY = gql`
   query ALL_NOTIFICATIONS_QUERY(
     $skip: Int = 0
-    $first: Int
+    $take: Int
     $where: NotificationWhereInput
   ) {
-    allNotifications(
-      first: $first
+    notifications(
+      take: $take
       skip: $skip
       where: $where
-      sortBy: startDate_DESC
+      orderBy: { startDate: desc }
     ) {
       id
       name
@@ -54,7 +52,7 @@ export const ALL_NOTIFICATIONS_QUERY = gql`
 
 export const NOTIFICATION_QUERY = gql`
   query NOTIFICATION_QUERY($id: ID!) {
-    Notification(where: { id: $id }) {
+    notification(where: { id: $id }) {
       id
       name
       owner {
