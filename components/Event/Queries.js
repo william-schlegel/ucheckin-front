@@ -63,7 +63,9 @@ export const EVENT_QUERY = gql`
       imageEvent {
         publicUrlTransformed(transformation: { width: "800", height: "600" })
       }
-      eventDescription
+      eventDescription {
+        document
+      }
     }
   }
 `;

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'react-feather';
 import styled from 'styled-components';
 import { formatDate } from '../DatePicker';
+import { serializeHtml } from '../../lib/serializeDocument';
 
 export default function EventContent({ event }) {
   const [element, setElement] = useState();
@@ -13,7 +14,11 @@ export default function EventContent({ event }) {
   }, []);
 
   useEffect(() => {
-    if (element) element.innerHTML = event.eventDescription;
+    if (element) {
+      element.innerHTML = serializeHtml({
+        children: event.eventDescription.document,
+      });
+    }
   }, [element, event]);
 
   return (
@@ -83,6 +88,11 @@ const Container = styled.div`
       font-size: 14px;
       p {
         margin: 0;
+      }
+      h1 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: red;
       }
       .event-title {
         color: white;

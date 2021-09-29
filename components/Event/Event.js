@@ -41,9 +41,9 @@ import EventHome from './EventHome';
 import Phone from '../styles/Phone';
 import ActionButton from '../Buttons/ActionButton';
 import EventContent from './EventContent';
-import HtmlEditor from '../HtmlEditor';
 import useConfirm from '../../lib/useConfirm';
 import EventMap from './EventMap';
+import RichEditor from '../SlateEditor';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -202,6 +202,8 @@ export default function Event({ id, initialData }) {
       newInputs.owner = { connect: { id: newInputs.owner.id } };
     if (wasTouched('application.id'))
       newInputs.application = { connect: { id: newInputs.application.id } };
+    if (wasTouched('eventDescription.document'))
+      newInputs.eventDescription = newInputs.eventDescription.document;
     if (isEmpty(newInputs.imageHome)) delete newInputs.imageHome;
     if (isEmpty(newInputs.imageEvent)) delete newInputs.imageEvent;
     return updateEvent({
@@ -432,16 +434,15 @@ export default function Event({ id, initialData }) {
                     <Label htmlFor="eventDescription" required>
                       {t('event-description')}
                     </Label>
-                    <HtmlEditor
+                    <RichEditor
                       id="eventDescription"
-                      value={initialValues.current.eventDescription}
-                      handleChange={(e) =>
+                      value={initialValues.current.eventDescription.document}
+                      setValue={(value) =>
                         handleChange({
-                          name: 'eventDescription',
-                          value: e.target.getContent(),
+                          name: 'eventDescription.document',
+                          value,
                         })
                       }
-                      height={300}
                     />
                     <FieldError error={validationError.eventDescription} />
                   </Row>
