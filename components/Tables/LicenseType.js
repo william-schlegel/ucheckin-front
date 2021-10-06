@@ -88,7 +88,7 @@ const LicensesStyled = styled.div`
   margin: 0;
   gap: 5px;
   > * {
-    border: 1px solid var(--lightGray);
+    border: 1px solid var(--light-grey);
     padding: 5px;
     border-radius: 5px;
     margin: 0;

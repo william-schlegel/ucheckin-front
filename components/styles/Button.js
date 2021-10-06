@@ -47,7 +47,7 @@ export const DeleteButtonStyled = styled(ButtonStyled)`
 `;
 
 export const CancelButtonStyled = styled(ButtonStyled)`
-  --hover-color: var(--lightBlack);
+  --hover-color: var(--light-black);
   --color: var(--black);
   --bg-hover-color: var(--cancel-color-hover);
   --bg-color: var(--cancel-color);

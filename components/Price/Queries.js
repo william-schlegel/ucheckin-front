@@ -82,7 +82,7 @@ export function useFindPrice(priceId) {
       });
   }, [priceId, findPrice]);
   return {
-    price: data?.Price || {
+    price: data?.price || {
       id: priceId,
     },
     priceError: error,

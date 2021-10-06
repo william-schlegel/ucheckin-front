@@ -6,7 +6,7 @@ const NavStyles = styled.nav`
   margin: 0;
   padding: 0;
   font-size: 1.25rem;
-  border-right: var(--lightGray) solid 1px;
+  border-right: var(--light-grey) solid 1px;
   background-color: var(--primary);
   display: block;
   /* max-width: fit-content; */
@@ -20,8 +20,8 @@ const NavStyles = styled.nav`
     li {
       list-style: none;
       &:last-child {
-        border-top: var(--lightGray) solid 1px;
-        /* outline: var(--lightGray) solid 1px; */
+        border-top: var(--light-grey) solid 1px;
+        /* outline: var(--light-grey) solid 1px; */
         padding: 1rem 0;
         margin-top: auto;
         padding-bottom: 0;

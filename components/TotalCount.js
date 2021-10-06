@@ -10,7 +10,7 @@ const TotalStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  border-top: 1px solid var(--gray);
+  border-top: 1px solid var(--grey);
   .label {
     color: var(--primary);
   }

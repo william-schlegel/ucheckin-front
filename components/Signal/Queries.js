@@ -48,7 +48,7 @@ export const ALL_SIGNALS_QUERY = gql`
 
 export const VALIDATE_SIGNAL_MUTATION = gql`
   mutation VALIDATE_SIGNAL_MUTATION($id: ID!, $value: Boolean!) {
-    updateSignal(id: $id, data: { active: $value }) {
+    updateSignal(where: { id: $id }, data: { active: $value }) {
       id
       name
       active
@@ -156,7 +156,7 @@ export function useFindSignal(signalId) {
       });
   }, [signalId, findSignal]);
   return {
-    signal: data?.Signal || {
+    signal: data?.signal || {
       id: signalId,
       name: '',
     },

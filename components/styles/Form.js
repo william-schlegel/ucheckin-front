@@ -30,7 +30,7 @@ const Form = styled.form`
     width: 100%;
     padding: 1rem;
     /* font-size: 1.5rem; */
-    border: 1px solid var(--lightGray);
+    border: 1px solid var(--light-grey);
     &:focus {
       outline: 0;
       border-color: var(--primary);

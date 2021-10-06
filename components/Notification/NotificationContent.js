@@ -18,7 +18,7 @@ import { UPDATE_NOTIFICATION_ITEM, CREATE_NOTIFICATION_ITEM } from './Queries';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import { ImageSelection } from '../styles/ImageSelection';
-import HtmlEditor from '../HtmlEditor';
+import RichEditor from '../SlateEditor';
 
 const displayTypes = [
   { value: 'image', label: 'image' },
@@ -56,7 +56,9 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   );
 
   const initialValues = useRef(item);
-  const { inputs, handleChange, validate } = useForm(initialValues.current);
+  const { inputs, handleChange, validate, wasTouched } = useForm(
+    initialValues.current
+  );
   const [image, setImage] = useState('');
 
   const onDrop = (acceptedFile) => {
@@ -88,7 +90,10 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
       handleChange({ name: 'probability', value: 0 });
     const newInputs = validate();
     if (newInputs) {
+      if (wasTouched('htmlContent.document'))
+        newInputs.htmlContent = newInputs.htmlContent.document;
       newInputs.notification = { connect: { id: notifId } };
+      console.log(`newInputs`, newInputs);
       if (item.id)
         updateNotificationItem({ variables: { id: item.id, data: newInputs } });
       else createNotificationItem({ variables: { data: newInputs } });
@@ -141,14 +146,16 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
           )}
           {inputs.displayType === 'html' && (
             <Row>
-              <HtmlEditor
-                value={item.htmlContent}
-                handleChange={(e) =>
+              <RichEditor
+                id="eventDescription"
+                value={initialValues.current.htmlContent?.document}
+                setValue={(value) =>
                   handleChange({
-                    name: 'htmlContent',
-                    value: e.target.getContent(),
+                    name: 'htmlContent.document',
+                    value,
                   })
                 }
+                placeholder={t('notification-placeholder')}
               />
             </Row>
           )}
@@ -184,8 +191,8 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               fullWidth
             />
           </Row>
-          {(notification.Notification.type === 'random-draw' ||
-            notification.Notification.type === 'instant-win') && (
+          {(notification.notification.type === 'random-draw' ||
+            notification.notification.type === 'instant-win') && (
             <>
               <RowReadOnly>
                 <Label>{t('default')}</Label>
@@ -211,7 +218,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               )}
             </>
           )}
-          {notification.Notification.type === 'instant-win' && (
+          {notification.notification.type === 'instant-win' && (
             <>
               <RowReadOnly>
                 <Label>{t('default')}</Label>

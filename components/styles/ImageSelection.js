@@ -7,7 +7,7 @@ export const ImageSelection = styled.div`
   .dropzone {
     padding: 1rem;
     text-align: center;
-    border: 3px dashed var(--lightGray);
+    border: 3px dashed var(--light-grey);
     border-radius: 10px;
   }
   img {
@@ -16,6 +16,6 @@ export const ImageSelection = styled.div`
     height: auto;
     width: auto;
     margin: 1rem auto;
-    border: 1px solid var(--lightGray);
+    border: 1px solid var(--light-grey);
   }
 `;

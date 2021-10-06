@@ -54,7 +54,7 @@ import useConfirm from '../../lib/useConfirm';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
-    applications(where: { owner: { id: $user } }) {
+    applications(where: { owner: { id: { equals: $user } } }) {
       id
       name
     }
@@ -63,7 +63,9 @@ const QUERY_APP_FROM_USER = gql`
 
 const QUERY_SIGNAL_FROM_APP = gql`
   query QUERY_SIGNAL_FROM_APP($appId: ID!) {
-    signals(where: { licenses_some: { application: { id: $appId } } }) {
+    signals(
+      where: { licenses: { some: { application: { id: { equals: $appId } } } } }
+    ) {
       id
       name
     }
@@ -74,7 +76,7 @@ const defaultItem = {
   displayType: '',
   image: {},
   imageLink: '',
-  htmlContent: '',
+  htmlContent: { document: undefined },
   videoLink: 'https://youtu.be/',
   numberOfDisplay: 0,
   delayBetweenDisplay: 1,
@@ -169,7 +171,7 @@ export default function Notification({ id, initialData }) {
   ]);
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
-  const notifOwnerId = initialData.data?.Notification?.owner?.id;
+  const notifOwnerId = initialData.data?.notification?.owner?.id;
   const [optionsAppUser, setOptionsAppUser] = useState([]);
   const [optionsSignals, setOptionsSignals] = useState([]);
   const [selectedItem, setSelectedItem] = useState(0);
@@ -306,9 +308,9 @@ export default function Notification({ id, initialData }) {
   }
 
   useEffect(() => {
-    const uId = initialData?.data?.Notification?.owner?.id;
+    const uId = initialData?.data?.notification?.owner?.id;
     if (uId) queryAppUser({ variables: { user: uId } });
-    const appId = initialData?.data?.Notification?.application?.id;
+    const appId = initialData?.data?.notification?.application?.id;
     if (appId) querySignal({ variables: { appId } });
   }, [initialData, queryAppUser, querySignal]);
 
@@ -608,7 +610,7 @@ export function Notif({
   }, [item]);
 
   useEffect(() => {
-    if (element) element.innerHTML = item.htmlContent;
+    if (element) element.innerHTML = item.htmlContent.document;
   }, [element, item]);
 
   if (!item) return null;
@@ -699,7 +701,7 @@ const NotificationContainer = styled.div`
 const AddContainer = styled.div`
   display: grid;
   place-items: center;
-  border: 1px dashed var(--lightGray);
+  border: 1px dashed var(--light-grey);
   border-radius: 5px;
   button {
     border: none;
@@ -735,7 +737,7 @@ const NotifStyle = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--lightGray);
+  border: 1px solid var(--light-grey);
   padding: 3px;
   border-radius: 5px;
   img {
@@ -752,7 +754,7 @@ const NotifStyle = styled.div`
     height: 100%;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--lightGray);
+    border: 1px solid var(--light-grey);
     padding: 3rem 0;
   }
   .actions {

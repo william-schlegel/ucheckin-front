@@ -4,6 +4,7 @@
   "name": "Nom de l'événement",
   "description": "Description courte",
   "event-description": "Description complète",
+  "description-placeholder": "Entrez ici la description de l'événement...",
   "icon": "Icone dans l'écran d'accueil",
   "hero-image": "Image de l'écran de description",
   "localisation": "Lieu géographique de l'évènement",

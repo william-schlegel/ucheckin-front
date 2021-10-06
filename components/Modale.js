@@ -20,7 +20,7 @@ const Modal = styled.div`
   z-index: 1001;
   padding: 0.5rem 2rem;
   .header {
-    border-bottom: 1px solid var(--lightGray);
+    border-bottom: 1px solid var(--light-grey);
     margin-bottom: 0.5rem;
     display: flex;
     justify-content: space-between;
@@ -31,12 +31,12 @@ const Modal = styled.div`
     }
     a {
       margin-left: 2rem;
-      border-left: 1px solid var(--lightGray);
+      border-left: 1px solid var(--light-grey);
       padding-left: 0.5rem;
     }
   }
   .footer {
-    border-top: 1px solid var(--lightGray);
+    border-top: 1px solid var(--light-grey);
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     padding-top: 0.5rem;

@@ -99,7 +99,7 @@ export const FormBody = styled.div`
   select {
     padding: 0.5rem;
     font-size: 1.25rem;
-    border: 1px solid var(--lightGray);
+    border: 1px solid var(--light-grey);
     width: 100%;
     &:focus {
       outline: 0;
@@ -114,7 +114,7 @@ export const FormBody = styled.div`
 export const Input = styled.input`
   padding: 0.5rem;
   font-size: 1.25rem;
-  border: 1px solid var(--lightGray);
+  border: 1px solid var(--light-grey);
   width: 100%;
   &:focus {
     outline: 0;
@@ -129,7 +129,7 @@ export const FormBodyFull = styled(FormBody)`
 export const FormFooter = styled.div`
   display: flex;
   align-items: center;
-  border-top: 1px solid var(--lightGray);
+  border-top: 1px solid var(--light-grey);
   margin: 1rem 0;
   padding-top: 1rem;
   flex-wrap: wrap;
@@ -140,7 +140,7 @@ export const FormHeader = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
-  border-bottom: 1px solid var(--lightGray);
+  border-bottom: 1px solid var(--light-grey);
   margin: 1rem 0;
   padding-bottom: 1rem;
   font-size: 1.5rem;
@@ -218,5 +218,5 @@ export const DashboardCard = styled(Card)`
 export const Separator = styled.div`
   padding-top: 1rem;
   margin: 0.5rem 0;
-  border-bottom: 1px solid var(--lightGray);
+  border-bottom: 1px solid var(--light-grey);
 `;

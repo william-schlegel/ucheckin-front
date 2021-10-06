@@ -52,7 +52,7 @@ const DrawerHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--lightGray);
+  border-bottom: 1px solid var(--light-grey);
   padding: 0.5rem;
   margin-bottom: 1rem;
   h3 {
@@ -69,7 +69,7 @@ export const DrawerFooter = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  border-top: 1px solid var(--lightGray);
+  border-top: 1px solid var(--light-grey);
   padding-top: 0.5rem;
   margin-top: 1rem;
   gap: 0.5rem;

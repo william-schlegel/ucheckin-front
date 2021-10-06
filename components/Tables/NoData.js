@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const NoDataStyled = styled.div`
   display: flex;
-  border: 1px solid var(--offWhite);
+  border: 1px solid var(--off-white);
   width: 100%;
   align-items: center;
   justify-content: center;

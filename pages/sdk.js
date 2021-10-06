@@ -67,7 +67,7 @@ Sdk.propTypes = { initialData: PropTypes.array };
 const SdkBlockStyled = styled.div`
   display: block;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--lightGray);
+  border-bottom: 1px solid var(--light-grey);
   img {
     max-width: 300px;
     height: auto;

@@ -221,7 +221,7 @@ export default function Event({ id, initialData }) {
   }
 
   useEffect(() => {
-    const uId = initialData?.data?.Event?.owner?.id;
+    const uId = initialData?.data?.event?.owner?.id;
     if (uId) queryAppUser({ variables: { user: uId } });
   }, [initialData, queryAppUser]);
 
@@ -443,6 +443,7 @@ export default function Event({ id, initialData }) {
                           value,
                         })
                       }
+                      placeholder={t('description-placeholder')}
                     />
                     <FieldError error={validationError.eventDescription} />
                   </Row>
@@ -467,7 +468,7 @@ export default function Event({ id, initialData }) {
           </div>
           <div
             style={{
-              borderLeft: '1px solid var(--lightGray)',
+              borderLeft: '1px solid var(--light-grey)',
               paddingLeft: '1rem',
             }}
           >

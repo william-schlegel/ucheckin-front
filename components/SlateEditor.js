@@ -6,6 +6,7 @@ import { Editable, withReact, Slate, useSlate } from 'slate-react';
 import { createEditor, Editor, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
 import styled from 'styled-components';
+import useTranslation from 'next-translate/useTranslation';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -13,6 +14,8 @@ const HOTKEYS = {
   'mod+u': 'underline',
   'mod+`': 'code',
 };
+
+const ICON_SIZE = 16;
 
 function isMarkActive(editor, format) {
   const marks = Editor.marks(editor);
@@ -29,10 +32,17 @@ function toggleMark(editor, format) {
   }
 }
 
-const RichEditor = ({ value, setValue }) => {
+const RichEditor = ({
+  value = [{ type: 'paragraph', children: [{ text: '' }] }],
+  setValue,
+  placeholder,
+}) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const { t } = useTranslation('common');
+
+  console.log(`value`, value);
 
   return (
     <Box>
@@ -47,8 +57,8 @@ const RichEditor = ({ value, setValue }) => {
           <MarkButton format="bold">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -63,8 +73,8 @@ const RichEditor = ({ value, setValue }) => {
           <MarkButton format="italic">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -80,8 +90,8 @@ const RichEditor = ({ value, setValue }) => {
           <MarkButton format="underline">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -96,8 +106,8 @@ const RichEditor = ({ value, setValue }) => {
           <MarkButton format="code">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -112,8 +122,8 @@ const RichEditor = ({ value, setValue }) => {
           <BlockButton format="heading-one">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="currentColor"
               stroke="currentColor"
@@ -127,8 +137,8 @@ const RichEditor = ({ value, setValue }) => {
           <BlockButton format="heading-two">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="currentColor"
               stroke="currentColor"
@@ -142,8 +152,8 @@ const RichEditor = ({ value, setValue }) => {
           <BlockButton format="block-quote">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="currentColor"
               stroke="currentColor"
@@ -157,8 +167,8 @@ const RichEditor = ({ value, setValue }) => {
           <BlockButton format="bulleted-list">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -178,8 +188,8 @@ const RichEditor = ({ value, setValue }) => {
           <BlockButton format="numbered-list">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width={ICON_SIZE}
+              height={ICON_SIZE}
               viewBox="0 0 24 24"
               fill="currentColor"
               stroke="currentColor"
@@ -198,7 +208,7 @@ const RichEditor = ({ value, setValue }) => {
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
-            placeholder="Enter some rich text…"
+            placeholder={placeholder || t('description')}
             spellCheck
             autoFocus
             onKeyDown={(event) => {
@@ -220,6 +230,7 @@ const RichEditor = ({ value, setValue }) => {
 RichEditor.propTypes = {
   value: PropTypes.array,
   setValue: PropTypes.func,
+  placeholder: PropTypes.string,
 };
 
 export const Element = ({ attributes, children, element }) => {
@@ -306,7 +317,7 @@ function toggleBlock(editor, format) {
 const BlockButton = ({ format, children }) => {
   const editor = useSlate();
   return (
-    <BoxBtn>
+    <BoxBtn selected={isMarkActive(editor, format)}>
       <ToggleButton
         value={format}
         selected={isBlockActive(editor, format)}
@@ -331,7 +342,7 @@ const MarkButton = ({ format, children }) => {
   const editor = useSlate();
 
   return (
-    <BoxBtn>
+    <BoxBtn selected={isMarkActive(editor, format)}>
       <ToggleButton
         value={format}
         selected={isMarkActive(editor, format)}
@@ -358,27 +369,28 @@ const Toolbar = styled.div`
 `;
 
 const Box = styled.div`
-  border: 1px solid var(--lightGrey);
+  border: 1px solid var(--light-grey);
   padding: 1rem;
   width: 100%;
 `;
 
 const BoxBtn = styled.div`
-  border: 1px solid var(--lightGrey);
+  border: 1px solid var(--light-grey);
   border-radius: 5px;
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1rem;
+  background-color: ${(props) =>
+    props.selected ? 'var(--grey)' : 'transparent'};
 `;
 
 const ToggleButton = styled.div`
-  border-color: var(--lightGrey);
+  border-color: var(--grey);
   background-color: transparent;
-  color: ${(props) =>
-    props.selected ? 'var(--text-color)' : 'var(--lightGrey)'};
+  color: ${(props) => (props.selected ? 'var(--off-white)' : 'var(--grey)')};
 `;
 
 export default RichEditor;

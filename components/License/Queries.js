@@ -127,9 +127,9 @@ export const LICENSE_PRICE_QUERY = gql`
     prices: licensePrices(
       where: {
         AND: [
-          { OR: [{ default: true }, { users_some: { id: $owner } }] }
-          { validAfter_lt: $dayDate }
-          { validUntil_gte: $dayDate }
+          { OR: [{ default: true }, { users: { some: { id: $owner } } }] }
+          { validAfter: { lt: $dayDate } }
+          { validUntil: { gte: $dayDate } }
         ]
       }
       orderBy: [{ validAfter: desc }]
@@ -191,7 +191,7 @@ export function useFindLicense(licenseId) {
   });
 
   return {
-    license: data?.License || {
+    license: data?.license || {
       id: licenseId,
       validity: dateDay(),
       licenseType: {},

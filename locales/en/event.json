@@ -4,6 +4,7 @@
   "name": "Event name",
   "description": "Short description",
   "event-description": "Full description",
+  "description-placeholder": "Enter here the full description of the event...",
   "icon": "Icon in the home screen",
   "hero-image": "Image of the description screen",
   "localisation": "Geographical location of the event",

@@ -225,7 +225,7 @@ const HeaderStyles = styled.header`
       position: absolute;
       right: 0;
       top: 90px;
-      border: var(--gray) solid 1px;
+      border: var(--grey) solid 1px;
       background-color: var(--background);
       border-radius: 3px;
       list-style: none;

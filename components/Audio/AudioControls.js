@@ -11,7 +11,7 @@ const PlayerControl = styled.div`
   align-items: center;
   margin: 0 0.5rem;
   padding: 0.5rem;
-  border: 1px solid var(--gray);
+  border: 1px solid var(--grey);
   border-radius: 5px;
   span {
     white-space: nowrap;
@@ -21,7 +21,7 @@ const PlayerControl = styled.div`
 const PgBar = styled.div`
   width: 100%;
   height: 0.5rem;
-  border: 1px solid var(--gray);
+  border: 1px solid var(--grey);
   .pgbar-progress {
     width: ${(props) => props.value}%;
     background-color: var(--secondary);

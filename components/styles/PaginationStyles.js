@@ -7,12 +7,12 @@ const Box = styled.div`
   justify-content: center;
   align-content: center;
   margin: 0.5rem 0;
-  border: 1px solid var(--lightGrey);
+  border: 1px solid var(--light-grey);
   border-radius: 10px;
   & > * {
     margin: 0;
     padding: 15px 30px;
-    border-right: 1px solid var(--lightGrey);
+    border-right: 1px solid var(--light-grey);
     &:last-child {
       border-right: 0;
     }

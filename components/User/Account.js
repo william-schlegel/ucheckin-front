@@ -154,7 +154,7 @@ export default function Account({ id, initialData }) {
 
   useEffect(() => {
     if (data) {
-      const { User: UserData } = data;
+      const { user: UserData } = data;
       setInputs(UserData);
     }
   }, [setInputs, data]);

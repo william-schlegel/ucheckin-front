@@ -90,7 +90,7 @@ export const ADD_TOKEN_MUTATION = gql`
 
 export const DELETE_TOKEN_MUTATION = gql`
   mutation DELETE_TOKEN_MUTATION($id: ID!) {
-    deleteToken(id: $id) {
+    deleteToken(where: { id: $id }) {
       id
     }
   }
@@ -222,10 +222,10 @@ export const UPDATE_PROFILE_MUTATION = gql`
     $city: String
     $telephone: String
     $contact: String
-    $role: RoleRelateToOneInput
+    $role: RoleRelateToOneForUpdateInput
   ) {
     updateUser(
-      id: $id
+      where: { id: $id }
       data: {
         email: $email
         name: $name
@@ -245,7 +245,7 @@ export const UPDATE_PROFILE_MUTATION = gql`
 
 export const UPDATE_PROFILE_PHOTO_MUTATION = gql`
   mutation UPDATE_PROFILE_PHOTO_MUTATION($id: ID!, $photo: Upload) {
-    updateUser(id: $id, data: { photo: $photo }) {
+    updateUser(where: { id: $id }, data: { photo: $photo }) {
       id
       photo {
         publicUrlTransformed(transformation: { width: "200", height: "200" })
@@ -256,7 +256,7 @@ export const UPDATE_PROFILE_PHOTO_MUTATION = gql`
 
 export const UPDATE_THEME = gql`
   mutation UPDATE_THEME($userId: ID!, $theme: String!) {
-    updateUser(id: $userId, data: { theme: $theme }) {
+    updateUser(where: { id: $userId }, data: { theme: $theme }) {
       id
     }
   }

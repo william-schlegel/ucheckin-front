@@ -11,7 +11,7 @@ const Img = styled.img`
   max-height: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   width: ${(props) => (props.ratio ? `${props.size * props.ratio}px` : 'auto')};
-  border: ${(props) => (props.border ? 'solid 1px var(--lightGray)' : 'none')};
+  border: ${(props) => (props.border ? 'solid 1px var(--light-grey)' : 'none')};
   border-radius: ${(props) => (props.rounded ? `${props.size}px` : 0)};
 `;
 

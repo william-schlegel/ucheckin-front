@@ -78,7 +78,9 @@ export const NOTIFICATION_QUERY = gql`
           publicUrlTransformed(transformation: { width: "200", height: "400" })
         }
         imageLink
-        htmlContent
+        htmlContent {
+          document
+        }
         videoLink
         numberOfDisplay
         delayBetweenDisplay
@@ -92,7 +94,7 @@ export const NOTIFICATION_QUERY = gql`
 
 export const DELETE_NOTIFICATION_MUTATION = gql`
   mutation DELETE_NOTIFICATION_MUTATION($id: ID!) {
-    deleteNotification(id: $id) {
+    deleteNotification(where: { id: $id }) {
       id
       name
     }
@@ -107,12 +109,12 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
     $type: String
     $startDate: String
     $endDate: String
-    $owner: UserRelateToOneInput
-    $application: ApplicationRelateToOneInput
-    $signal: SignalRelateToOneInput
+    $owner: UserRelateToOneForUpdateInput
+    $application: ApplicationRelateToOneForUpdateInput
+    $signal: SignalRelateToOneForUpdateInput
   ) {
     updateNotification(
-      id: $id
+      where: { id: $id }
       data: {
         name: $name
         displayName: $displayName
@@ -136,9 +138,9 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
     $type: String
     $startDate: String
     $endDate: String
-    $owner: UserRelateToOneInput
-    $application: ApplicationRelateToOneInput
-    $signal: SignalRelateToOneInput
+    $owner: UserRelateToOneForCreateInput
+    $application: ApplicationRelateToOneForCreateInput
+    $signal: SignalRelateToOneForCreateInput
   ) {
     createNotification(
       data: {
@@ -158,7 +160,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
 `;
 
 export const CREATE_NOTIFICATION_ITEM = gql`
-  mutation CREATE_NOTIFICATION_ITEM($data: NotificationItemCreateInput) {
+  mutation CREATE_NOTIFICATION_ITEM($data: NotificationItemCreateInput!) {
     createNotificationItem(data: $data) {
       id
       displayType
@@ -177,7 +179,7 @@ export const UPDATE_NOTIFICATION_ITEM = gql`
     $id: ID!
     $data: NotificationItemUpdateInput
   ) {
-    updateNotificationItem(id: $id, data: $data) {
+    updateNotificationItem(where: { id: $id }, data: $data) {
       id
       displayType
       image {
@@ -192,7 +194,7 @@ export const UPDATE_NOTIFICATION_ITEM = gql`
 
 export const DELETE_NOTIFICATION_ITEM = gql`
   mutation DELETE_NOTIFICATION_ITEM($id: ID!) {
-    deleteNotificationItem(id: $id) {
+    deleteNotificationItem(where: { id: $id }) {
       id
     }
   }
@@ -209,7 +211,7 @@ export function useFindNotification(notificationId) {
       });
   }, [notificationId, findNotification]);
   return {
-    notification: data?.Notification || {
+    notification: data?.notification || {
       id: notificationId,
     },
     notificationError: error,

@@ -86,7 +86,7 @@ export const CREATE_ORDER_MUTATION = gql`
 
 export const CANCEL_ORDER_MUTATION = gql`
   mutation CANCEL_ORDER_MUTATION($id: ID!) {
-    updateOrder(id: $id, data: { canceled: true }) {
+    updateOrder(where: { id: $id }, data: { canceled: true }) {
       id
     }
   }
@@ -101,7 +101,7 @@ export function useFindOrder(orderId) {
       });
   }, [orderId, findOrder]);
   return {
-    order: data?.Order || {
+    order: data?.order || {
       id: orderId,
       validity: dateDay(),
     },

@@ -100,8 +100,8 @@ export const ALL_SIGNAL_OWNER = gql`
   query ALL_SIGNAL_OWNER($ownerId: ID!) {
     signals(
       where: {
-        owner: { id: $ownerId }
-        licenses_every: { signal_is_null: true }
+        owner: { id: { equals: $ownerId } }
+        licenses: { every: { signal: { id: { equals: null } } } }
       }
     ) {
       id
@@ -122,11 +122,11 @@ export const UPDATE_APPLICATION_MUTATION = gql`
     $id: ID!
     $name: String
     $apiKey: String
-    $owner: UserRelateToOneInput
-    $licenseTypes: LicenseTypeRelateToManyInput
+    $owner: UserRelateToOneForUpdateInput
+    $licenseTypes: LicenseTypeRelateToManyForUpdateInput
   ) {
     updateApplication(
-      id: $id
+      where: { id: $id }
       data: {
         name: $name
         apiKey: $apiKey
@@ -164,7 +164,7 @@ export const CREATE_INVITATION_MUTATION = gql`
 
 export const DELETE_INVITATION = gql`
   mutation DELETE_INVITATION($invitationId: ID!) {
-    deleteInvitation(id: $invitationId) {
+    deleteInvitation(where: { id: $invitationId }) {
       id
     }
   }
@@ -172,7 +172,7 @@ export const DELETE_INVITATION = gql`
 
 export const CHECK_INVITATION_TOKEN = gql`
   query CHECK_INVITATION_TOKEN($token: String!) {
-    invitations(where: { token: $token }) {
+    invitations(where: { token: { equals: $token } }) {
       id
       application {
         id
@@ -219,7 +219,7 @@ export function useFindApplication(appId) {
   });
 
   return {
-    application: data?.Application || {
+    application: data?.application || {
       id: appId,
       name: '',
       apiKey: '',

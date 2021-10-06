@@ -123,7 +123,7 @@ export default function Application({ id, initialData }) {
   });
 
   const { role: userRole, id: userId } = user;
-  const appOwnerId = data?.Application?.owner?.id;
+  const appOwnerId = data?.application?.owner?.id;
 
   useEffect(() => {
     if (userRole) {

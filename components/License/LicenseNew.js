@@ -27,8 +27,6 @@ import useFindUser from '../../lib/useFindUser';
 import ButtonFreeTrial from '../Buttons/ButtonFreeTrial';
 import { dateNow } from '../DatePicker';
 import useVat from '../../lib/useVat';
-// import { CREATE_LICENSE_MUTATION } from '../License/Queries';
-// import { CREATE_ORDER_MUTATION } from '../Order/Queries';
 import { LicenseType } from '../Tables/LicenseType';
 import { PURCHASE_LICENSE_MUTATION } from './Queries';
 import { LicenseContainer } from '../styles/License';

@@ -73,6 +73,7 @@ export default function Profile({ id, initialData }) {
   const router = useRouter();
   const roles = useRole();
   const { addToast } = useToasts();
+  console.log(`initialData`, initialData);
 
   useEffect(() => {
     if (data && user) {
@@ -82,7 +83,7 @@ export default function Profile({ id, initialData }) {
 
   useEffect(() => {
     if (data) {
-      const { User: UserData } = data;
+      const { user: UserData } = data;
       setInputs(UserData);
     }
   }, [setInputs, data]);

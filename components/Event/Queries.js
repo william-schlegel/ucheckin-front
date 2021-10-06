@@ -70,7 +70,7 @@ export const EVENT_QUERY = gql`
 
 export const DELETE_EVENT_MUTATION = gql`
   mutation DELETE_EVENT_MUTATION($id: ID!) {
-    deleteEvent(id: $id) {
+    deleteEvent(where: { id: $id }) {
       id
       name
     }
@@ -78,8 +78,8 @@ export const DELETE_EVENT_MUTATION = gql`
 `;
 
 export const UPDATE_EVENT_MUTATION = gql`
-  mutation UPDATE_EVENT_MUTATION($id: ID!, $data: EventUpdateInput) {
-    updateEvent(id: $id, data: $data) {
+  mutation UPDATE_EVENT_MUTATION($id: ID!, $data: EventUpdateInput!) {
+    updateEvent(where: { id: $id }, data: $data) {
       id
     }
   }
@@ -102,7 +102,7 @@ export function useFindEvent(eventId) {
       });
   }, [eventId, findEvent]);
   return {
-    event: data?.Event || {
+    event: data?.event || {
       id: eventId,
     },
     eventError: error,

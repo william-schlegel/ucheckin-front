@@ -187,11 +187,11 @@ const Wrapper = styled.div`
         display: flex;
         flex-direction: column;
         height: 100%;
-        border-right: 1px solid var(--lightGray);
+        border-right: 1px solid var(--light-grey);
         margin-right: 0.5em;
         .menu-item {
           padding: 0.5em;
-          border-bottom: 1px solid var(--lightGray);
+          border-bottom: 1px solid var(--light-grey);
           margin-right: 0.5em;
           cursor: pointer;
           &:hover {
@@ -227,7 +227,7 @@ const Wrapper = styled.div`
           }
         }
         .header {
-          border-bottom: 1px solid var(--lightGray);
+          border-bottom: 1px solid var(--light-grey);
           margin-bottom: 0.5rem;
           display: flex;
           justify-content: space-between;
@@ -238,12 +238,12 @@ const Wrapper = styled.div`
           }
           a {
             margin-left: 2rem;
-            border-left: 1px solid var(--lightGray);
+            border-left: 1px solid var(--light-grey);
             padding-left: 0.5rem;
           }
         }
         .footer {
-          border-top: 1px solid var(--lightGray);
+          border-top: 1px solid var(--light-grey);
           margin-top: 0.5rem;
           margin-bottom: 0.5rem;
           padding-top: 0.5rem;
