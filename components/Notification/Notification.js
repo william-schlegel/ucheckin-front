@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useLazyQuery, useMutation } from '@apollo/client';
