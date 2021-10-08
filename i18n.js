@@ -13,6 +13,7 @@ module.exports = {
       'order',
       'notification',
       'event',
+      'statistic',
     ],
     'rgx:^/sdk': ['sdk'],
     'rgx:^/application': ['application', 'license'],
@@ -28,5 +29,6 @@ module.exports = {
     'rgx:^/event': ['event'],
     'rgx:^/login': ['user'],
     'rgx:^/accept-invitation': ['application'],
+    'rgx:^/statistic': ['statistic'],
   },
 };

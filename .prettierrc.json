@@ -4,5 +4,7 @@
   "trailingCom,ma": "es5",
   "tabWidth": 2,
   "semi": true,
-  "useTabs": false
+  "useTabs": false,
+  "jsxBracketSameLine": true,
+  "endOfLine": "auto"
 }

@@ -1,22 +1,17 @@
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+import { useRouter } from 'next/dist/client/router';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { Doughnut } from 'react-chartjs-2';
 import Select from 'react-select';
+import styled from 'styled-components';
 
+import ButtonNew from '../Buttons/ButtonNew';
 import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import {
-  Block,
-  DashboardCard,
-  FormBody,
-  H2,
-  Label,
-  RowFull,
-} from '../styles/Card';
+import { Block, DashboardCard, FormBody, H2, Label, RowFull } from '../styles/Card';
 import selectTheme from '../styles/selectTheme';
 
 const DONUT_SIZE = 250;
@@ -33,11 +28,9 @@ const COLOR_SCHEME = [
   '#be0aff',
 ];
 
-const QUERY_STATISTIQUES = gql`
-  query QUERY_STATISTIQUES($dtDeb: String!, $dtFin: String!) {
-    signalDetections(
-      where: { AND: [{ date: { gte: $dtDeb } }, { date: { lte: $dtFin } }] }
-    ) {
+export const QUERY_STATISTICS = gql`
+  query QUERY_STATISTICS($dtDeb: DateTime!, $dtFin: DateTime!) {
+    signalDetections(where: { AND: [{ date: { gte: $dtDeb } }, { date: { lte: $dtFin } }] }) {
       date
       os
       model
@@ -65,8 +58,7 @@ function createColors(obj) {
 
   const nbColor = obj.datasets[0].data.length;
   for (let c = 0; c < nbColor; c += 1) {
-    if (c < COLOR_SCHEME.length)
-      obj.datasets[0].backgroundColor.push(COLOR_SCHEME[c]);
+    if (c < COLOR_SCHEME.length) obj.datasets[0].backgroundColor.push(COLOR_SCHEME[c]);
     else obj.datasets[0].backgroundColor.push(randomColor());
   }
 }
@@ -90,7 +82,7 @@ function reduceData(data, field, appId) {
   const flds = field.split('.');
   const res = fdata.reduce((tot, v) => {
     let value = v;
-    for (let i = 0; i < flds.length; i += 1) value = v[flds[i]];
+    for (let i = 0; i < flds.length; i += 1) value = value[flds[i]];
     const id = tot.labels.findIndex((l) => l === value);
     if (id < 0) {
       tot.labels.push(value);
@@ -104,16 +96,13 @@ function reduceData(data, field, appId) {
   return res;
 }
 
-export default function DashboardStatistiques() {
+export default function DashboardStatistics() {
   const { t } = useTranslation('dashboard');
-  const [queryStat, { error, loading, data }] = useLazyQuery(
-    QUERY_STATISTIQUES
-  );
+  const router = useRouter();
+  const [queryStat, { error, loading, data }] = useLazyQuery(QUERY_STATISTICS);
   const [dtDeb, setDtDeb] = useState(dateInMonth(-1));
   const [dtFin, setDtFin] = useState(dateNow());
-  const [applications, setApplications] = useState([
-    { value: 'all', label: t('all') },
-  ]);
+  const [applications, setApplications] = useState([{ value: 'all', label: t('all') }]);
   const [application, setApplication] = useState(0);
   const [dataGraph, setDataGraph] = useState({});
 
@@ -128,24 +117,14 @@ export default function DashboardStatistiques() {
       for (const a of data.signalDetections) {
         apps.set(a.application.id, a.application.name);
       }
-      setApplications(
-        Array.from(apps).map((a) => ({ value: a[0], label: a[1] }))
-      );
+      setApplications(Array.from(apps).map((a) => ({ value: a[0], label: a[1] })));
     }
   }, [data]);
 
   useEffect(() => {
     if (!data) return;
-    const os = reduceData(
-      data.sgnalDetections,
-      'os',
-      applications[application].value
-    );
-    const model = reduceData(
-      data.signalDetections,
-      'model',
-      applications[application].value
-    );
+    const os = reduceData(data.signalDetections, 'os', applications[application].value);
+    const model = reduceData(data.signalDetections, 'model', applications[application].value);
     const apps = reduceData(
       data.signalDetections,
       'application.name',
@@ -164,7 +143,7 @@ export default function DashboardStatistiques() {
   return (
     <div style={{ width: '100%', marginTop: '1rem' }}>
       <DashboardCard>
-        <H2>{t('statistiques')}</H2>
+        <H2>{t('statistics')}</H2>
         <Content>
           <FormBody style={{ display: 'flex', flexDirection: 'column' }}>
             <div
@@ -172,8 +151,7 @@ export default function DashboardStatistiques() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-              }}
-            >
+              }}>
               <RowFull>
                 <Label>{t('application')}</Label>
                 <Select
@@ -181,9 +159,7 @@ export default function DashboardStatistiques() {
                   className="select"
                   value={applications[application]}
                   onChange={(sel) =>
-                    setApplication(
-                      applications.findIndex((a) => a.value === sel.value)
-                    )
+                    setApplication(applications.findIndex((a) => a.value === sel.value))
                   }
                   options={applications}
                 />
@@ -208,16 +184,15 @@ export default function DashboardStatistiques() {
                   />
                 </Block>
               </RowFull>
+              <ButtonNew label={t('stat-details')} onClick={() => router.push('/statistics')} />
             </div>
             <div>&nbsp;</div>
           </FormBody>
-          <Content
-            style={{ flexWrap: 'wrap', justifyContent: 'space-between' }}
-          >
+          <Content style={{ flexWrap: 'wrap', justifyContent: 'space-between' }}>
             <div>
               {dataGraph.os && (
                 <>
-                  <h3>{t('os')}</h3>
+                  <h3>{t('statistic:os')}</h3>
                   <Doughnut
                     data={dataGraph.os}
                     width={DONUT_SIZE}
@@ -233,7 +208,7 @@ export default function DashboardStatistiques() {
             <div>
               {dataGraph.model && (
                 <>
-                  <h3>{t('model')}</h3>
+                  <h3>{t('statistic:model')}</h3>
                   <Doughnut
                     data={dataGraph.model}
                     width={DONUT_SIZE}
@@ -249,7 +224,7 @@ export default function DashboardStatistiques() {
             <div>
               {dataGraph.apps && (
                 <>
-                  <h3>{t('applications')}</h3>
+                  <h3>{t('statistic:applications')}</h3>
                   <Doughnut
                     data={dataGraph.apps}
                     width={DONUT_SIZE}
@@ -265,7 +240,7 @@ export default function DashboardStatistiques() {
             <div>
               {dataGraph.apps && (
                 <>
-                  <h3>{t('signals')}</h3>
+                  <h3>{t('statistic:signals')}</h3>
                   <Doughnut
                     data={dataGraph.signals}
                     width={DONUT_SIZE}

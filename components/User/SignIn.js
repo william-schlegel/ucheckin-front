@@ -1,30 +1,18 @@
-import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { useRef, useState } from 'react';
 import { LogIn, UserPlus, XCircle } from 'react-feather';
 
-import { useRouter } from 'next/router';
-import {
-  Form,
-  FormHeader,
-  FormTitle,
-  FormBodyFull,
-  Row,
-  FormFooter,
-  Label,
-} from '../styles/Card';
 import useForm from '../../lib/useForm';
-import { CURRENT_USER_QUERY, SIGNIN_MUTATION } from './Queries';
-import Error from '../ErrorMessage';
-import {
-  PrimaryButtonStyled,
-  ButtonStyled,
-  SecondaryButtonStyled,
-} from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
-import SignUp from './SignUp';
-import RequestReset from './RequestReset';
+import Error from '../ErrorMessage';
 import FieldError from '../FieldError';
+import { ButtonStyled, PrimaryButtonStyled, SecondaryButtonStyled } from '../styles/Button';
+import { Form, FormBodyFull, FormFooter, FormHeader, FormTitle, Label, Row } from '../styles/Card';
+import { CURRENT_USER_QUERY, SIGNIN_MUTATION } from './Queries';
+import RequestReset from './RequestReset';
+import SignUp from './SignUp';
 
 export default function SignInForm() {
   const { t } = useTranslation('user');
@@ -39,10 +27,7 @@ export default function SignInForm() {
     resetForm,
     validate,
     validationError,
-  } = useForm(initialState.current, [
-    { field: 'email', check: 'isEmail' },
-    'password',
-  ]);
+  } = useForm(initialState.current, [{ field: 'email', check: 'isEmail' }, 'password']);
   const [signin, { data }] = useMutation(SIGNIN_MUTATION, {
     variables: inputs,
     // refetch the currently logged in user
@@ -60,8 +45,7 @@ export default function SignInForm() {
     // Send the email and password to the graphqlAPI
   }
   const error =
-    data?.authenticateUserWithPassword.__typename ===
-    'UserAuthenticationWithPasswordFailure'
+    data?.authenticateUserWithPassword.__typename === 'UserAuthenticationWithPasswordFailure'
       ? data?.authenticateUserWithPassword
       : undefined;
 
@@ -99,7 +83,7 @@ export default function SignInForm() {
               name="password"
               required
               placeholder="Password"
-              autoComplete="password"
+              autoComplete="current-password"
               value={inputs.password}
               onChange={handleChange}
             />
@@ -113,10 +97,7 @@ export default function SignInForm() {
             </IconButtonStyles>
             {t('signin')}
           </SecondaryButtonStyled>
-          <PrimaryButtonStyled
-            type="button"
-            onClick={() => setShowSignup(true)}
-          >
+          <PrimaryButtonStyled type="button" onClick={() => setShowSignup(true)}>
             <IconButtonStyles>
               <UserPlus size={24} />
             </IconButtonStyles>

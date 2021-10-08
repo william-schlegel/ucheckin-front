@@ -1,30 +1,23 @@
-import { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
+import { useEffect, useState } from 'react';
 
-import Pagination from '../Pagination';
-import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
-import Loading from '../Loading';
 import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
-import SignalDetails from './SignalDetails';
 import Button from '../Tables/Button';
+import { LicensesDetailsSignal, LicensesLegendSignal } from '../Tables/LicensesDetails';
 import Switch from '../Tables/Switch';
-import {
-  PAGINATION_QUERY,
-  ALL_SIGNALS_QUERY,
-  VALIDATE_SIGNAL_MUTATION,
-} from './Queries';
-import {
-  LicensesDetailsSignal,
-  LicensesLegendSignal,
-} from '../Tables/LicensesDetails';
-import { useHelp, Help, HelpButton } from '../Help';
-import SearchField, { useFilter } from '../SearchField';
+import Table, { useColumns } from '../Tables/Table';
 import { useUser } from '../User/Queries';
+import { ALL_SIGNALS_QUERY, PAGINATION_QUERY, VALIDATE_SIGNAL_MUTATION } from './Queries';
+import SignalDetails from './SignalDetails';
 
 export default function Signals() {
   const router = useRouter();
@@ -32,9 +25,7 @@ export default function Signals() {
     queryPagination,
     { error: errorPage, loading: loadingPage, data: dataPage },
   ] = useLazyQuery(PAGINATION_QUERY);
-  const [querySignals, { error, loading, data }] = useLazyQuery(
-    ALL_SIGNALS_QUERY
-  );
+  const [querySignals, { error, loading, data }] = useLazyQuery(ALL_SIGNALS_QUERY);
   const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
 
   const page = parseInt(router.query.page) || 1;
@@ -45,8 +36,8 @@ export default function Signals() {
   const { user } = useUser();
 
   const searchFields = [
-    { field: 'name_contains_i', label: t('signal'), type: 'text' },
-    { field: 'owner.name_contains_i', label: t('common:owner'), type: 'text' },
+    { field: 'name.contains', label: t('signal'), type: 'text' },
+    { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
     { field: 'active', label: t('active'), type: 'switch' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
@@ -97,13 +88,7 @@ export default function Signals() {
         row: {
           values: { id },
         },
-      }) => (
-        <Switch
-          value={value}
-          disabled={false}
-          callBack={() => validateSignal(id, value)}
-        />
-      ),
+      }) => <Switch value={value} disabled={false} callBack={() => validateSignal(id, value)} />,
     ],
     [t('common:owner'), 'owner.name'],
     [
@@ -135,17 +120,9 @@ export default function Signals() {
       <Head>
         <title>{t('signals')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {showSignal && (
-        <SignalDetails
-          open={!!showSignal}
-          onClose={handleCloseShowSignal}
-          id={showSignal}
-        />
+        <SignalDetails open={!!showSignal} onClose={handleCloseShowSignal} id={showSignal} />
       )}
       <EntetePage>
         <h3>{t('signals')}</h3>
@@ -167,6 +144,7 @@ export default function Signals() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageSignal}
       />
+      <ActualFilter fields={searchFields} actualFilter={filters} />
       <Table
         columns={columns}
         data={data?.signals}

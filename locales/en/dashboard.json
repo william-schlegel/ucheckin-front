@@ -27,7 +27,10 @@
   "orders-total": "Total number of orders",
   "notifications-total": "Total number of notifications",
   "events-total": "Total number of events",
-  "statistiques": "Detection statistiques",
+  "statistics": "Detection statistics",
   "start-date": "From",
-  "end-date": "To"
+  "end-date": "To",
+  "application": "Application",
+  "all": "All",
+  "stat-details": "Statistics details"
 }

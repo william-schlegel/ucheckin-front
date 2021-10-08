@@ -1,91 +1,89 @@
-import { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { useQuery, useMutation } from '@apollo/client';
-import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
-import Select from 'react-select';
+import { useMutation, useQuery } from '@apollo/client';
 import isEmpty from 'lodash.isempty';
+import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
+import Select from 'react-select';
 
+import { perPage } from '../../config';
+import useConfirm from '../../lib/useConfirm';
+import useForm from '../../lib/useForm';
+import ButtonBack from '../Buttons/ButtonBack';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonDelete from '../Buttons/ButtonDelete';
+import ButtonNew from '../Buttons/ButtonNew';
+import ButtonValidation from '../Buttons/ButtonValidation';
 import DisplayError from '../ErrorMessage';
+import FieldError from '../FieldError';
+import { Help, HelpButton, useHelp } from '../Help';
+import LicenseNew from '../License/LicenseNew';
+import LicenseTable from '../License/LicenseTable';
+import LicenseUpdate from '../License/LicenseUpdate';
 import Loading from '../Loading';
+import { SearchUser } from '../SearchUser';
 import {
   Block,
   Form,
   FormBody,
   FormFooter,
-  Row,
-  Label,
   FormHeader,
   FormTitle,
-  RowReadOnly,
+  Label,
+  Row,
   RowFull,
+  RowReadOnly,
 } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import { SearchUser } from '../SearchUser';
-import ButtonBack from '../Buttons/ButtonBack';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import ButtonNew from '../Buttons/ButtonNew';
-import ButtonDelete from '../Buttons/ButtonDelete';
-import ButtonValidation from '../Buttons/ButtonValidation';
+import selectTheme from '../styles/selectTheme';
+import ApiKey from '../Tables/ApiKey';
 import { LicenseTypes, useLicenseName } from '../Tables/LicenseType';
-import LicenseTable from '../License/LicenseTable';
+import { useUser } from '../User/Queries';
+import InvitationNew from './InvitationNew';
+import InvitationTable from './InvitationTable';
 import {
   ALL_APPLICATIONS_QUERY,
-  DELETE_APPLICATION_MUTATION,
   APPLICATION_QUERY,
-  UPDATE_APPLICATION_MUTATION,
+  DELETE_APPLICATION_MUTATION,
   DELETE_INVITATION,
+  UPDATE_APPLICATION_MUTATION,
 } from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import LicenseNew from '../License/LicenseNew';
-import LicenseUpdate from '../License/LicenseUpdate';
-import ApiKey from '../Tables/ApiKey';
-import { useUser } from '../User/Queries';
-import { perPage } from '../../config';
-import InvitationTable from './InvitationTable';
-import InvitationNew from './InvitationNew';
-import FieldError from '../FieldError';
-import selectTheme from '../styles/selectTheme';
-import useConfirm from '../../lib/useConfirm';
 
 export default function Application({ id, initialData }) {
   const router = useRouter();
   const { loading, error, data } = useQuery(APPLICATION_QUERY, {
     variables: { id },
   });
-  const [
-    deleteApplication,
-    { loading: loadingDelete, error: errorDelete },
-  ] = useMutation(DELETE_APPLICATION_MUTATION, {
-    variables: { id },
-    refetchQueries: [
-      {
-        query: ALL_APPLICATIONS_QUERY,
-        variables: { skip: 0, take: perPage },
+  const [deleteApplication, { loading: loadingDelete, error: errorDelete }] = useMutation(
+    DELETE_APPLICATION_MUTATION,
+    {
+      variables: { id },
+      refetchQueries: [
+        {
+          query: ALL_APPLICATIONS_QUERY,
+          variables: { skip: 0, take: perPage },
+        },
+      ],
+      onCompleted: () => {
+        router.push('/applications');
       },
-    ],
-    onCompleted: () => {
-      router.push('/applications');
-    },
-  });
-  const [
-    updateApplication,
-    { loading: loadingUpdate, error: errorUpdate },
-  ] = useMutation(UPDATE_APPLICATION_MUTATION, {
-    refetchQueries: [
-      {
-        query: ALL_APPLICATIONS_QUERY,
-        variables: { skip: 0, take: perPage },
-      },
-    ],
-    onCompleted: () => {
-      router.push('/applications');
-    },
-  });
-
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
-    'application'
+    }
   );
+  const [updateApplication, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_APPLICATION_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: ALL_APPLICATIONS_QUERY,
+          variables: { skip: 0, take: perPage },
+        },
+      ],
+      onCompleted: () => {
+        router.push('/applications');
+      },
+    }
+  );
+
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('application');
   const { user } = useUser();
   const { t } = useTranslation('application');
   const { licenseTypesOptions } = useLicenseName();
@@ -103,17 +101,12 @@ export default function Application({ id, initialData }) {
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState({});
   const [showAddInvit, setShowAddInvit] = useState(false);
-  const [deleteInvitation, { error: errorDI }] = useMutation(
-    DELETE_INVITATION,
-    {
-      onCompleted: (item) => {
-        const invitations = inputs.invitations.filter(
-          (i) => i.id !== item.deleteInvitation.id
-        );
-        setInputs((prev) => ({ ...prev, invitations }));
-      },
-    }
-  );
+  const [deleteInvitation, { error: errorDI }] = useMutation(DELETE_INVITATION, {
+    onCompleted: (item) => {
+      const invitations = inputs.invitations.filter((i) => i.id !== item.deleteInvitation.id);
+      setInputs((prev) => ({ ...prev, invitations }));
+    },
+  });
   const { Confirm, setIsOpen, setArgs } = useConfirm({
     title: t('confirm-delete-invitation'),
     message: t('you-confirm-invitation'),
@@ -181,11 +174,10 @@ export default function Application({ id, initialData }) {
       router.push('/applications');
       return;
     }
-    if (wasTouched('owner.id'))
-      newInputs.owner = { connect: { id: newInputs.owner.id } };
+    if (wasTouched('owner.id')) newInputs.owner = { connect: { id: newInputs.owner.id } };
     if (wasTouched('licenseTypes'))
       newInputs.licenseTypes = {
-        disconnectAll: true,
+        set: [],
         connect: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
       };
     const variables = {
@@ -201,9 +193,7 @@ export default function Application({ id, initialData }) {
 
   function handleCloseNewInvitation(newUser) {
     if (newUser.email) {
-      const existingUser = inputs.invitations.find(
-        (i) => i.email === newUser.email
-      );
+      const existingUser = inputs.invitations.find((i) => i.email === newUser.email);
 
       if (!existingUser) {
         const invitations = [...inputs.invitations];
@@ -230,11 +220,7 @@ export default function Application({ id, initialData }) {
   return (
     <>
       <Confirm />
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {id && inputs.owner.id && (
         <LicenseNew
           open={showAddLicense}
@@ -253,23 +239,14 @@ export default function Application({ id, initialData }) {
           signalId={selectedLicense.signalId}
         />
       )}
-      {id && (
-        <InvitationNew
-          appId={id}
-          open={showAddInvit}
-          onClose={handleCloseNewInvitation}
-        />
-      )}
+      {id && <InvitationNew appId={id} open={showAddInvit} onClose={handleCloseNewInvitation} />}
       <Form>
         <FormHeader>
           <FormTitle>
             {t('application')} <span>{inputs.name}</span>
             <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
-          <ButtonBack
-            route="/applications"
-            label={t('navigation:application')}
-          />
+          <ButtonBack route="/applications" label={t('navigation:application')} />
         </FormHeader>
         <FormBody>
           {canEdit ? (
@@ -369,17 +346,10 @@ export default function Application({ id, initialData }) {
         </FormBody>
         <FormFooter>
           {canEdit && id && (
-            <ButtonValidation
-              disabled={loadingUpdate}
-              onClick={handleUpdateApplication}
-              update
-            />
+            <ButtonValidation disabled={loadingUpdate} onClick={handleUpdateApplication} update />
           )}
           {canEdit && id && (
-            <ButtonDelete
-              disabled={loadingDelete}
-              onClick={handleDeleteApplication}
-            />
+            <ButtonDelete disabled={loadingDelete} onClick={handleDeleteApplication} />
           )}
           <ButtonCancel onClick={() => router.back()} />
         </FormFooter>

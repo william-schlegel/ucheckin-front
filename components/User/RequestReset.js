@@ -1,25 +1,22 @@
-import { useRef } from 'react';
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
-import PropTypes from 'prop-types';
+import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useRef } from 'react';
 import { XCircle } from 'react-feather';
 
-import { Form, FormBodyFull, Row, FormFooter, Label } from '../styles/Card';
 import useForm from '../../lib/useForm';
-import Error from '../ErrorMessage';
-import Drawer from '../Drawer';
-import { ButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
-import { CURRENT_USER_QUERY } from './Queries';
+import Drawer from '../Drawer';
+import Error from '../ErrorMessage';
 import FieldError from '../FieldError';
+import { ButtonStyled } from '../styles/Button';
+import { Form, FormBodyFull, FormFooter, Label, Row } from '../styles/Card';
+import { CURRENT_USER_QUERY } from './Queries';
 
 const REQUEST_RESET_MUTATION = gql`
   mutation REQUEST_RESET_MUTATION($email: String!) {
-    sendUserPasswordResetLink(email: $email) {
-      code
-      message
-    }
+    sendUserPasswordResetLink(email: $email)
   }
 `;
 
@@ -28,13 +25,9 @@ export default function RequestReset({ open, onClose }) {
   const initialState = useRef({
     email: '',
   });
-  const {
-    inputs,
-    handleChange,
-    resetForm,
-    validate,
-    validationError,
-  } = useForm(initialState, [{ field: 'email', check: 'isEmail' }]);
+  const { inputs, handleChange, resetForm, validate, validationError } = useForm(initialState, [
+    { field: 'email', check: 'isEmail' },
+  ]);
   const [signup, { data, error }] = useMutation(REQUEST_RESET_MUTATION, {
     variables: inputs,
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
@@ -51,9 +44,7 @@ export default function RequestReset({ open, onClose }) {
       <Form method="POST" onSubmit={handleSubmit}>
         <Error error={error} />
         <FormBodyFull>
-          {data?.sendUserPasswordResetLink === null && (
-            <p>{t('link-success')}</p>
-          )}
+          {data?.sendUserPasswordResetLink === null && <p>{t('link-success')}</p>}
           <Row>
             <Label htmlFor="email" required>
               {t('email')}

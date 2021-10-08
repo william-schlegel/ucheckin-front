@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 
 export const PAGINATION_QUERY = gql`
@@ -131,20 +131,8 @@ export const CREATE_USER_MUTATION = gql`
 `;
 
 export const SIGNUP_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
-    $email: String!
-    $name: String!
-    $password: String!
-    $company: String!
-  ) {
-    createUser(
-      data: {
-        email: $email
-        name: $name
-        password: $password
-        company: $company
-      }
-    ) {
+  mutation SIGNUP_MUTATION($email: String!, $name: String!, $password: String!, $company: String!) {
+    createUser(data: { email: $email, name: $name, password: $password, company: $company }) {
       id
       email
       name
@@ -204,7 +192,6 @@ export const SIGNIN_MUTATION = gql`
         }
       }
       ... on UserAuthenticationWithPasswordFailure {
-        code
         message
       }
     }

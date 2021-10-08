@@ -1,29 +1,25 @@
-import { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
+import { useEffect, useState } from 'react';
 
-import Pagination from '../Pagination';
-import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
-import Loading from '../Loading';
-import DisplayError from '../ErrorMessage';
-import EntetePage from '../styles/EntetePage';
-import NotificationDetails from './NotificationDetails';
-import ValidityDate from '../Tables/ValidityDate';
-import {
-  PAGINATION_QUERY,
-  ALL_NOTIFICATIONS_QUERY,
-  DELETE_NOTIFICATION_MUTATION,
-} from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import SearchField, { useFilter } from '../SearchField';
-import { useUser } from '../User/Queries';
-import NotificationType from '../Tables/NotificationType';
-import ButtonNew from '../Buttons/ButtonNew';
-import NotificationNew from './NotificationNew';
 import useConfirm from '../../lib/useConfirm';
+import ButtonNew from '../Buttons/ButtonNew';
+import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
+import EntetePage from '../styles/EntetePage';
+import NotificationType from '../Tables/NotificationType';
+import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
+import { useUser } from '../User/Queries';
+import NotificationDetails from './NotificationDetails';
+import NotificationNew from './NotificationNew';
+import { ALL_NOTIFICATIONS_QUERY, DELETE_NOTIFICATION_MUTATION, PAGINATION_QUERY } from './Queries';
 
 export default function Notifications() {
   const router = useRouter();
@@ -32,22 +28,18 @@ export default function Notifications() {
     queryPagination,
     { error: errorPage, loading: loadingPage, data: dataPage },
   ] = useLazyQuery(PAGINATION_QUERY);
-  const [queryNotifications, { error, loading, data }] = useLazyQuery(
-    ALL_NOTIFICATIONS_QUERY
-  );
+  const [queryNotifications, { error, loading, data }] = useLazyQuery(ALL_NOTIFICATIONS_QUERY);
   const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION);
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
   const { t } = useTranslation('notification');
   const [showNotification, setShowNotification] = useState('');
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
-    'notification'
-  );
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('notification');
   const { user } = useUser();
 
   const searchFields = [
-    { field: 'name_contains_i', label: t('name'), type: 'text' },
-    { field: 'displayName_contains_i', label: t('display-name'), type: 'text' },
+    { field: 'name.contains', label: t('name'), type: 'text' },
+    { field: 'displayName.contains', label: t('display-name'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
   const [newNotification, setNewNotification] = useState(false);
@@ -81,21 +73,9 @@ export default function Notifications() {
     ['id', 'id', 'hidden'],
     [t('name'), 'name'],
     [t('display-name'), 'displayName'],
-    [
-      t('type'),
-      'type',
-      ({ cell: { value } }) => <NotificationType notification={value} />,
-    ],
-    [
-      t('start-date'),
-      'startDate',
-      ({ cell: { value } }) => <ValidityDate value={value} noColor />,
-    ],
-    [
-      t('end-date'),
-      'endDate',
-      ({ cell: { value } }) => <ValidityDate value={value} noColor />,
-    ],
+    [t('type'), 'type', ({ cell: { value } }) => <NotificationType notification={value} />],
+    [t('start-date'), 'startDate', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
+    [t('end-date'), 'endDate', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
   ]);
 
   function handleCloseShowNotification() {
@@ -105,8 +85,7 @@ export default function Notifications() {
   function handleDeleteNotification(id) {
     setIsOpen(true);
     setArgs({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.deleteNotification)),
+      update: (cache, payload) => cache.evict(cache.identify(payload.data.deleteNotification)),
       variables: { id },
     });
   }
@@ -130,17 +109,10 @@ export default function Notifications() {
       <Head>
         <title>{t('notifications')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       {newNotification && (
-        <NotificationNew
-          open={newNotification}
-          onClose={handleCloseNewNotification}
-        />
+        <NotificationNew open={newNotification} onClose={handleCloseNewNotification} />
       )}
       {showNotification && (
         <NotificationDetails
@@ -174,6 +146,7 @@ export default function Notifications() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageNotification}
       />
+      <ActualFilter fields={searchFields} actualFilter={filters} />
       <Table
         columns={columns}
         data={data?.notifications}

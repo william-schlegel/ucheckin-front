@@ -1,26 +1,26 @@
-import { useEffect, useReducer, useState } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
+import { useEffect, useReducer, useState } from 'react';
 import { Gift } from 'react-feather';
 
-import Pagination from '../Pagination';
-import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
-import Loading from '../Loading';
 import DisplayError from '../ErrorMessage';
-import EntetePage from '../styles/EntetePage';
-import LicenseDetails from './LicenseDetails';
-import Switch from '../Tables/Switch';
-import SearchField, { useFilter } from '../SearchField';
-import { PAGINATION_QUERY, ALL_LICENSES_QUERY } from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import ValidityDate from '../Tables/ValidityDate';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import { FormHeader, FormTitle } from '../styles/Card';
+import EntetePage from '../styles/EntetePage';
 import { LicenseType } from '../Tables/LicenseType';
-import LicenseUpdate from './LicenseUpdate';
+import Switch from '../Tables/Switch';
+import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
+import LicenseDetails from './LicenseDetails';
+import LicenseUpdate from './LicenseUpdate';
+import { ALL_LICENSES_QUERY, PAGINATION_QUERY } from './Queries';
 
 // calculate number of free & number of valid licenses
 function licensesAnalysis(licenses) {
@@ -67,14 +67,14 @@ export default function Licenses() {
   const { t } = useTranslation('license');
   const { user } = useUser();
 
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage },
-  ] = useLazyQuery(PAGINATION_QUERY, {
-    onCompleted: (dataP) => {
-      dispatch({ type: 'pagination', count: dataP.count });
-    },
-  });
+  const [queryPagination, { error: errorPage, loading: loadingPage }] = useLazyQuery(
+    PAGINATION_QUERY,
+    {
+      onCompleted: (dataP) => {
+        dispatch({ type: 'pagination', count: dataP.count });
+      },
+    }
+  );
   const [queryLicenses, { error, loading }] = useLazyQuery(ALL_LICENSES_QUERY, {
     ssr: false,
     onCompleted: (dataLic) => {
@@ -91,9 +91,7 @@ export default function Licenses() {
   const [selectedLicense, setSelectedLicense] = useState({});
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('license');
-  const searchFields = [
-    { field: 'owner.name_contains_i', label: t('common:owner'), type: 'text' },
-  ];
+  const searchFields = [{ field: 'owner.name.contains', label: t('common:owner'), type: 'text' }];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
 
   useEffect(() => {
@@ -122,8 +120,7 @@ export default function Licenses() {
               display: 'grid',
               placeItems: 'center',
               color: 'var(--secondary)',
-            }}
-          >
+            }}>
             <Gift />
           </div>
         ) : null,
@@ -136,16 +133,8 @@ export default function Licenses() {
       'licenseType',
       ({ cell: { value } }) => <LicenseType license={value} />,
     ],
-    [
-      t('valid'),
-      'valid',
-      ({ cell: { value } }) => <Switch value={value} disabled />,
-    ],
-    [
-      t('validity'),
-      'validity',
-      ({ cell: { value } }) => <ValidityDate value={value} />,
-    ],
+    [t('valid'), 'valid', ({ cell: { value } }) => <Switch value={value} disabled />],
+    [t('validity'), 'validity', ({ cell: { value } }) => <ValidityDate value={value} />],
     // [t('count'), 'count', ({ cell: { value } }) => <Number value={value} />],
   ]);
 
@@ -178,17 +167,9 @@ export default function Licenses() {
       <Head>
         <title>{t('licenses')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {showLicense && (
-        <LicenseDetails
-          open={!!showLicense}
-          onClose={handleCloseShowLicense}
-          id={showLicense}
-        />
+        <LicenseDetails open={!!showLicense} onClose={handleCloseShowLicense} id={showLicense} />
       )}
       {selectedLicense.licenseId && (
         <LicenseUpdate
@@ -231,6 +212,7 @@ export default function Licenses() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageLicense}
       />
+      <ActualFilter fields={searchFields} actualFilter={filters} />
       <Table
         columns={columns}
         data={state.licenses.map((l) => ({

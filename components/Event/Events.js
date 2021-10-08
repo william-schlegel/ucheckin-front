@@ -1,29 +1,25 @@
-import { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
+import { useEffect, useState } from 'react';
 
-import Pagination from '../Pagination';
-import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
-import Loading from '../Loading';
-import DisplayError from '../ErrorMessage';
-import EntetePage from '../styles/EntetePage';
-import EventDetails from './EventDetails';
-import ValidityDate from '../Tables/ValidityDate';
-import {
-  PAGINATION_QUERY,
-  ALL_EVENTS_QUERY,
-  DELETE_EVENT_MUTATION,
-} from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import SearchField, { useFilter } from '../SearchField';
-import { useUser } from '../User/Queries';
-import ButtonNew from '../Buttons/ButtonNew';
-import EventNew from './EventNew';
-import Image from '../Tables/Image';
 import useConfirm from '../../lib/useConfirm';
+import ButtonNew from '../Buttons/ButtonNew';
+import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
+import EntetePage from '../styles/EntetePage';
+import Image from '../Tables/Image';
+import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
+import { useUser } from '../User/Queries';
+import EventDetails from './EventDetails';
+import EventNew from './EventNew';
+import { ALL_EVENTS_QUERY, DELETE_EVENT_MUTATION, PAGINATION_QUERY } from './Queries';
 
 export default function Events() {
   const router = useRouter();
@@ -33,9 +29,7 @@ export default function Events() {
     queryPagination,
     { error: errorPage, loading: loadingPage, data: dataPage },
   ] = useLazyQuery(PAGINATION_QUERY);
-  const [queryEvents, { error, loading, data }] = useLazyQuery(
-    ALL_EVENTS_QUERY
-  );
+  const [queryEvents, { error, loading, data }] = useLazyQuery(ALL_EVENTS_QUERY);
   const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION);
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
@@ -44,8 +38,8 @@ export default function Events() {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('event');
 
   const searchFields = [
-    { field: 'name_contains_i', label: t('name'), type: 'text' },
-    { field: 'description_contains_i', label: t('description'), type: 'text' },
+    { field: 'name.contains', label: t('name'), type: 'text' },
+    { field: 'description.contains', label: t('description'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
   const [newEvent, setNewEvent] = useState(false);
@@ -72,31 +66,19 @@ export default function Events() {
     ['id', 'id', 'hidden'],
     [t('name'), 'name'],
     [t('description'), 'description'],
-    [
-      t('icon'),
-      'imageHome',
-      ({ cell: { value } }) => <Image image={value} size={40} rounded />,
-    ],
+    [t('icon'), 'imageHome', ({ cell: { value } }) => <Image image={value} size={40} rounded />],
     [
       t('validity-start'),
       'validityStart',
       ({ cell: { value } }) => <ValidityDate value={value} after />,
     ],
-    [
-      t('validity-end'),
-      'validityEnd',
-      ({ cell: { value } }) => <ValidityDate value={value} />,
-    ],
+    [t('validity-end'), 'validityEnd', ({ cell: { value } }) => <ValidityDate value={value} />],
     [
       t('publish-start'),
       'publishStart',
       ({ cell: { value } }) => <ValidityDate value={value} after />,
     ],
-    [
-      t('publish-end'),
-      'publishEnd',
-      ({ cell: { value } }) => <ValidityDate value={value} />,
-    ],
+    [t('publish-end'), 'publishEnd', ({ cell: { value } }) => <ValidityDate value={value} />],
   ]);
 
   const { Confirm, setIsOpen, setArgs } = useConfirm({
@@ -113,8 +95,7 @@ export default function Events() {
 
   function handleDeleteEvent(id) {
     setArgs({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.deleteEvent)),
+      update: (cache, payload) => cache.evict(cache.identify(payload.data.deleteEvent)),
       variables: { id },
     });
     setIsOpen(true);
@@ -133,19 +114,11 @@ export default function Events() {
       <Head>
         <title>{t('events')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       <EventNew open={newEvent} onClose={handleCloseNewEvent} />
       {showEvent && (
-        <EventDetails
-          open={!!showEvent}
-          onClose={handleCloseShowEvent}
-          id={showEvent}
-        />
+        <EventDetails open={!!showEvent} onClose={handleCloseShowEvent} id={showEvent} />
       )}
       <EntetePage>
         <h3>{t('events')}</h3>
@@ -172,6 +145,7 @@ export default function Events() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageEvent}
       />
+      <ActualFilter fields={searchFields} actualFilter={filters} />
       <Table
         columns={columns}
         data={data?.events}

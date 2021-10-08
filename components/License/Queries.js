@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+
 import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
@@ -9,17 +10,8 @@ export const PAGINATION_QUERY = gql`
 `;
 
 export const ALL_LICENSES_QUERY = gql`
-  query ALL_LICENSES_QUERY(
-    $skip: Int = 0
-    $take: Int
-    $where: LicenseWhereInput
-  ) {
-    licenses(
-      take: $take
-      skip: $skip
-      where: $where
-      orderBy: { validity: asc }
-    ) {
+  query ALL_LICENSES_QUERY($skip: Int = 0, $take: Int, $where: LicenseWhereInput) {
+    licenses(take: $take, skip: $skip, where: $where, orderBy: { validity: asc }) {
       id
       signal {
         id
@@ -87,11 +79,7 @@ export const LICENSE_QUERY = gql`
 `;
 
 export const CREATE_TRIAL_LICENSE = gql`
-  mutation CREATE_TRIAL_LICENSE(
-    $ownerId: ID!
-    $appId: ID!
-    $trialText: String
-  ) {
+  mutation CREATE_TRIAL_LICENSE($ownerId: ID!, $appId: ID!, $trialText: String) {
     createTrial(appId: $appId, ownerId: $ownerId, text: $trialText) {
       id
     }
@@ -123,11 +111,11 @@ export const PURCHASE_LICENSE_MUTATION = gql`
 `;
 
 export const LICENSE_PRICE_QUERY = gql`
-  query LICENSE_PRICE_QUERY($dayDate: String!, $owner: ID!) {
+  query LICENSE_PRICE_QUERY($dayDate: DateTime!, $owner: ID!) {
     prices: licensePrices(
       where: {
         AND: [
-          { OR: [{ default: true }, { users: { some: { id: $owner } } }] }
+          { OR: [{ default: { equals: true } }, { users: { some: { id: { equals: $owner } } } }] }
           { validAfter: { lt: $dayDate } }
           { validUntil: { gte: $dayDate } }
         ]

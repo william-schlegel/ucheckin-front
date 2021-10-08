@@ -1,32 +1,32 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
-  Copy,
-  Edit,
-  X,
   Calendar,
-  ChevronLeft,
-  Trash,
   Check,
-  Plus,
-  HelpCircle,
-  Eye,
-  Search,
-  Download,
-  Play,
-  Repeat,
-  Pause,
-  Square,
-  PlusCircle,
-  MinusCircle,
+  ChevronLeft,
+  Clock,
+  Copy,
   CreditCard,
+  DollarSign,
+  Download,
+  Edit,
+  Eye,
+  HelpCircle,
+  MapPin,
+  MinusCircle,
+  Pause,
+  Play,
+  Plus,
+  PlusCircle,
+  Repeat,
+  Search,
+  Square,
+  Trash,
+  UserCheck,
+  Volume,
   Volume2,
   VolumeX,
-  Volume,
-  Clock,
-  UserCheck,
-  DollarSign,
-  MapPin,
+  X,
 } from 'react-feather';
 import styled from 'styled-components';
 
@@ -46,20 +46,10 @@ export const IconButtonStyles = styled.a.attrs((props) => ({
   }
 `;
 
-export default function ActionButton({
-  type,
-  cb = () => {},
-  label,
-  size = 24,
-}) {
+export default function ActionButton({ type, cb = () => {}, label, size = 24 }) {
   const { t } = useTranslation('common');
   return (
-    <IconButtonStyles
-      key={type}
-      type="button"
-      onClick={cb}
-      title={label || t(type)}
-    >
+    <IconButtonStyles key={type} type="button" onClick={cb} title={label || t(type)}>
       {type === 'add-license' && <Volume2 size={size} />}
       {type === 'back' && <ChevronLeft size={size} />}
       {type === 'check' && <Check size={size} />}

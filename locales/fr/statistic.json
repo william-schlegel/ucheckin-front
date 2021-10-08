@@ -1,0 +1,17 @@
+{
+  "statistics": "Statistiques de détections",
+  "date": "Date",
+  "signal": "Signal",
+  "os": "OS",
+  "model": "Modèle",
+  "application": "Application",
+  "applications": "Applications",
+  "signals": "Signaux",
+  "start-date": "Du",
+  "end-date": "Au",
+  "statistic-details": "Détail de la détection",
+  "statistic": "Détection",
+  "chanel": "Canal",
+  "uuid": "UUID",
+  "extra": "Data client"
+}

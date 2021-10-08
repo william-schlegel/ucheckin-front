@@ -27,7 +27,7 @@
   "events_1": "Dernier événement",
   "events_other": "{{count}} prochains événements",
   "events-total": "Nombre total d'événements",
-  "statistiques": "Statistiques de détection",
+  "statistics": "Statistiques de détection",
   "start-date": "Du",
   "end-date": "Au",
   "application": "Application",
@@ -35,5 +35,6 @@
   "model": "Modèle",
   "applications": "Applications",
   "signals": "Signaux",
-  "all": "Toutes"
+  "all": "Toutes",
+  "stat-details": "Détails des statistiques"
 }

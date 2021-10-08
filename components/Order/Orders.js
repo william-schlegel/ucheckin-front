@@ -1,29 +1,25 @@
-import { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
-import { useToasts } from 'react-toast-notifications';
 import useTranslation from 'next-translate/useTranslation';
+import { useEffect, useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 
-import Pagination from '../Pagination';
-import Table, { useColumns } from '../Tables/Table';
 import { perPage } from '../../config';
-import Loading from '../Loading';
-import DisplayError from '../ErrorMessage';
-import EntetePage from '../styles/EntetePage';
-import OrderDetails from './OrderDetails';
-import Switch from '../Tables/Switch';
-import Number from '../Tables/Number';
-import ValidityDate from '../Tables/ValidityDate';
-import {
-  PAGINATION_QUERY,
-  ALL_ORDERS_QUERY,
-  CANCEL_ORDER_MUTATION,
-} from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import SearchField, { useFilter } from '../SearchField';
-import { useUser } from '../User/Queries';
 import useConfirm from '../../lib/useConfirm';
+import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
+import EntetePage from '../styles/EntetePage';
+import Number from '../Tables/Number';
+import Switch from '../Tables/Switch';
+import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
+import { useUser } from '../User/Queries';
+import OrderDetails from './OrderDetails';
+import { ALL_ORDERS_QUERY, CANCEL_ORDER_MUTATION, PAGINATION_QUERY } from './Queries';
 
 export default function Orders() {
   const router = useRouter();
@@ -33,15 +29,10 @@ export default function Orders() {
     queryPagination,
     { error: errorPage, loading: loadingPage, data: dataPage },
   ] = useLazyQuery(PAGINATION_QUERY);
-  const [queryOrders, { error, loading, data }] = useLazyQuery(
-    ALL_ORDERS_QUERY
-  );
-  const [cancelOrderMutation, { error: errorCancel }] = useMutation(
-    CANCEL_ORDER_MUTATION,
-    {
-      refetchQueries: [{ query: ALL_ORDERS_QUERY }],
-    }
-  );
+  const [queryOrders, { error, loading, data }] = useLazyQuery(ALL_ORDERS_QUERY);
+  const [cancelOrderMutation, { error: errorCancel }] = useMutation(CANCEL_ORDER_MUTATION, {
+    refetchQueries: [{ query: ALL_ORDERS_QUERY }],
+  });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
   const { t } = useTranslation('order');
@@ -50,7 +41,7 @@ export default function Orders() {
   const { addToast } = useToasts();
 
   const searchFields = [
-    { field: 'owner.name_contains_i', label: t('user'), type: 'text' },
+    { field: 'owner.name.contains', label: t('user'), type: 'text' },
     { field: 'canceled', label: t('canceled'), type: 'switch' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
@@ -73,31 +64,11 @@ export default function Orders() {
     ['id', 'id', 'hidden'],
     [t('number'), 'number'],
     [t('user'), 'owner.name'],
-    [
-      t('order-date'),
-      'orderDate',
-      ({ cell: { value } }) => <ValidityDate value={value} noColor />,
-    ],
-    [
-      t('total-brut'),
-      'totalBrut',
-      ({ cell: { value } }) => <Number value={value} money />,
-    ],
-    [
-      t('vat-value'),
-      'vatValue',
-      ({ cell: { value } }) => <Number value={value} percentage />,
-    ],
-    [
-      t('total-net'),
-      'totalNet',
-      ({ cell: { value } }) => <Number value={value} money />,
-    ],
-    [
-      t('canceled'),
-      'canceled',
-      ({ cell: { value } }) => <Switch value={value} disabled />,
-    ],
+    [t('order-date'), 'orderDate', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
+    [t('total-brut'), 'totalBrut', ({ cell: { value } }) => <Number value={value} money />],
+    [t('vat-value'), 'vatValue', ({ cell: { value } }) => <Number value={value} percentage />],
+    [t('total-net'), 'totalNet', ({ cell: { value } }) => <Number value={value} money />],
+    [t('canceled'), 'canceled', ({ cell: { value } }) => <Switch value={value} disabled />],
   ]);
   const { Confirm, setIsOpen, setArgs } = useConfirm({
     title: t('confirm-cancel'),
@@ -137,18 +108,10 @@ export default function Orders() {
       <Head>
         <title>{t('orders')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       {showOrder && (
-        <OrderDetails
-          open={!!showOrder}
-          onClose={handleCloseShowOrder}
-          id={showOrder}
-        />
+        <OrderDetails open={!!showOrder} onClose={handleCloseShowOrder} id={showOrder} />
       )}
       <EntetePage>
         <h3>{t('orders')}</h3>
@@ -170,6 +133,7 @@ export default function Orders() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageOrder}
       />
+      <ActualFilter fields={searchFields} actualFilter={filters} />
       <Table
         columns={columns}
         data={data?.orders}

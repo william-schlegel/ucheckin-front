@@ -11,25 +11,7 @@ import DashboardLicense from './Licenses';
 import DashboardOrder from './Orders';
 import DashboardNotification from './Notifications';
 import DashboardEvent from './Events';
-import DashboardStatistiques from './Statistiques';
-
-const DashboardStyled = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1 0 400px;
-  gap: 1rem;
-  & > * {
-    min-width: 30%;
-    @media (max-width: 1000px) {
-      width: 100%;
-    }
-  }
-  h2 {
-    margin: 0;
-    margin-bottom: 1rem;
-    color: var(--secondary);
-  }
-`;
+import DashboardStatistics from './Statistics';
 
 export default function Dashboard() {
   const { t } = useTranslation('dashboard');
@@ -61,7 +43,26 @@ export default function Dashboard() {
         <DashboardNotification />
         <DashboardEvent />
       </DashboardStyled>
-      <DashboardStatistiques />
+      <DashboardStatistics />
     </>
   );
 }
+
+const DashboardStyled = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 0 400px;
+  gap: 1rem;
+  & > * {
+    min-width: 30%;
+    @media (max-width: 1000px) {
+      width: 100%;
+    }
+  }
+  h2 {
+    margin: 0;
+    margin-bottom: 1rem;
+    color: var(--secondary);
+  }
+`;
+
