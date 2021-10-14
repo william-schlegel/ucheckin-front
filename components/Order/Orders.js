@@ -25,10 +25,8 @@ export default function Orders() {
   const router = useRouter();
   const { user } = useUser();
 
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [queryOrders, { error, loading, data }] = useLazyQuery(ALL_ORDERS_QUERY);
   const [cancelOrderMutation, { error: errorCancel }] = useMutation(CANCEL_ORDER_MUTATION, {
     refetchQueries: [{ query: ALL_ORDERS_QUERY }],

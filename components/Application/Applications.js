@@ -25,10 +25,8 @@ import { ALL_APPLICATIONS_QUERY, PAGINATION_QUERY } from './Queries';
 export default function Applications() {
   const router = useRouter();
   const { user } = useUser();
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [queryApplications, { data, error, loading }] = useLazyQuery(ALL_APPLICATIONS_QUERY);
 
   const page = parseInt(router.query.page) || 1;

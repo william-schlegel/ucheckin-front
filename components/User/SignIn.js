@@ -21,13 +21,10 @@ export default function SignInForm() {
     email: '',
     password: '',
   });
-  const {
-    inputs,
-    handleChange,
-    resetForm,
-    validate,
-    validationError,
-  } = useForm(initialState.current, [{ field: 'email', check: 'isEmail' }, 'password']);
+  const { inputs, handleChange, resetForm, validate, validationError } = useForm(
+    initialState.current,
+    [{ field: 'email', check: 'isEmail' }, 'password']
+  );
   const [signin, { data }] = useMutation(SIGNIN_MUTATION, {
     variables: inputs,
     // refetch the currently logged in user

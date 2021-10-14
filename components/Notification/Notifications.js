@@ -24,10 +24,8 @@ import { ALL_NOTIFICATIONS_QUERY, DELETE_NOTIFICATION_MUTATION, PAGINATION_QUERY
 export default function Notifications() {
   const router = useRouter();
 
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [queryNotifications, { error, loading, data }] = useLazyQuery(ALL_NOTIFICATIONS_QUERY);
   const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION);
   const page = parseInt(router.query.page) || 1;

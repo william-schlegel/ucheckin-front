@@ -14,6 +14,7 @@ module.exports = {
       'notification',
       'event',
       'statistic',
+      'umit',
     ],
     'rgx:^/sdk': ['sdk'],
     'rgx:^/application': ['application', 'license'],
@@ -30,5 +31,6 @@ module.exports = {
     'rgx:^/login': ['user'],
     'rgx:^/accept-invitation': ['application'],
     'rgx:^/statistic': ['statistic'],
+    'rgx:^/umit': ['umit'],
   },
 };

@@ -1,30 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
-import { useCallback, useState, useRef } from 'react';
-import Link from 'next/link';
-import styled from 'styled-components';
-import { Sun, Moon, User, Menu } from 'react-feather';
-import Flag from 'react-country-flag';
-import useTranslation from 'next-translate/useTranslation';
-import setLanguage from 'next-translate/setLanguage';
 import { useRouter } from 'next/dist/client/router';
+import Link from 'next/link';
+import setLanguage from 'next-translate/setLanguage';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { useCallback, useRef, useState } from 'react';
+import Flag from 'react-country-flag';
+import { Menu, Moon, Sun, User } from 'react-feather';
+import styled from 'styled-components';
 
 import useOnClickOutside from '../lib/useOnClickOutside';
-import Signout from './User/SignOut';
+import { Help, HelpButton, useHelp } from './Help';
 import { useUser } from './User/Queries';
-import { useHelp, Help, HelpButton } from './Help';
+import Signout from './User/SignOut';
 
 const Flags = [
   { country: 'FR', lng: 'fr' },
   { country: 'US', lng: 'en' },
 ];
 
-export default function Header({
-  darkTheme,
-  setDarkTheme,
-  menuState,
-  onClickMenu,
-}) {
+export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu }) {
   const [flag, setFlag] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const refMenu = useRef();
@@ -69,11 +64,7 @@ export default function Header({
 
   return (
     <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <HeaderStyles menuState={menuState}>
         <div className="bar">
           <Logo>
@@ -98,17 +89,9 @@ export default function Header({
             </button>
             {user?.id && (
               <>
-                <button
-                  type="button"
-                  className="button-label"
-                  onClick={toggleUserMenu}
-                >
+                <button type="button" className="button-label" onClick={toggleUserMenu}>
                   {user?.photo?.publicUrlTransformed ? (
-                    <img
-                      className="avatar"
-                      src={user.photo.publicUrlTransformed}
-                      alt={user.name}
-                    />
+                    <img className="avatar" src={user.photo.publicUrlTransformed} alt={user.name} />
                   ) : (
                     <User />
                   )}

@@ -175,6 +175,7 @@ export const CURRENT_USER_QUERY = gql`
           canManageLicenseType
           canManageEvent
           canManageNotification
+          canManageUmits
         }
       }
     }

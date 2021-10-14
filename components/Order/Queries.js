@@ -1,6 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
+
 import { dateDay } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
@@ -11,12 +12,7 @@ export const PAGINATION_QUERY = gql`
 
 export const ALL_ORDERS_QUERY = gql`
   query ALL_ORDERS_QUERY($skip: Int = 0, $take: Int, $where: OrderWhereInput) {
-    orders(
-      take: $take
-      skip: $skip
-      where: $where
-      orderBy: { orderDate: desc }
-    ) {
+    orders(take: $take, skip: $skip, where: $where, orderBy: { orderDate: desc }) {
       id
       number
       owner {

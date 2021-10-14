@@ -1,10 +1,11 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 
+import ButtonCancel from '../Buttons/ButtonCancel';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonCancel from '../Buttons/ButtonCancel';
+import LicenseTable from '../License/LicenseTable';
 import Loading from '../Loading';
 import {
   Form,
@@ -15,7 +16,6 @@ import {
   RowFull,
   RowReadOnly,
 } from '../styles/Card';
-import LicenseTable from '../License/LicenseTable';
 import { SIGNAL_QUERY } from './Queries';
 import SignalFiles from './SignalFiles';
 
@@ -46,11 +46,7 @@ export default function SignalDetails({ open, onClose, id }) {
           </RowFull>
         </FormBodyFull>
       </Form>
-      <SignalFiles
-        signalId={id}
-        signalCode={data.signal.name}
-        files={data.signal.files}
-      />
+      <SignalFiles signalId={id} signalCode={data.signal.name} files={data.signal.files} />
       <DrawerFooter>
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}

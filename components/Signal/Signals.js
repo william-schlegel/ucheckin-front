@@ -21,10 +21,8 @@ import SignalDetails from './SignalDetails';
 
 export default function Signals() {
   const router = useRouter();
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [querySignals, { error, loading, data }] = useLazyQuery(ALL_SIGNALS_QUERY);
   const [updateValidity] = useMutation(VALIDATE_SIGNAL_MUTATION);
 

@@ -2,10 +2,10 @@ import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 
-import SignOut from './User/SignOut';
+import Footer from './Footer';
 import NavStyles from './styles/NavStyles';
 import { useUser } from './User/Queries';
-import Footer from './Footer';
+import SignOut from './User/SignOut';
 
 export default function Nav({ toggled }) {
   const { user } = useUser();
@@ -45,6 +45,11 @@ export default function Nav({ toggled }) {
           <li>
             <Link href="/events">{t('events')}</Link>
           </li>
+          {user.role?.canManageUmits && (
+            <li>
+              <Link href="/umit">{t('umit')}</Link>
+            </li>
+          )}{' '}
           <li>
             <div>
               <SignOut />

@@ -1,8 +1,8 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 
-import ActionButton from './ActionButton';
 import { PrimaryButtonStyled } from '../styles/Button';
+import ActionButton from './ActionButton';
 
 export default function NewButton({ onClick, disabled, label }) {
   const { t } = useTranslation('common');

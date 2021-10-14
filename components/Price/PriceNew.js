@@ -1,29 +1,21 @@
-import { useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useRef } from 'react';
 import SwitchComponent from 'react-switch';
 
+import { perPage } from '../../config';
+import useForm from '../../lib/useForm';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonValidation from '../Buttons/ButtonValidation';
+import DatePicker, { dateDay, dateInMonth } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import { ALL_PRICES_QUERY, CREATE_PRICE_MUTATION } from './Queries';
-import {
-  Label,
-  Row,
-  Form,
-  FormBody,
-  Block,
-  RowReadOnly,
-  FormBodyFull,
-} from '../styles/Card';
-import useForm from '../../lib/useForm';
-import { perPage } from '../../config';
-import DatePicker, { dateDay, dateInMonth } from '../DatePicker';
-import { SearchUsers } from '../SearchUser';
 import { TableStyled } from '../License/LicensePrice';
+import { SearchUsers } from '../SearchUser';
+import { Block, Form, FormBody, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
 import { LicenseType, useLicenseName } from '../Tables/LicenseType';
+import { ALL_PRICES_QUERY, CREATE_PRICE_MUTATION } from './Queries';
 
 export default function PriceNew({ open, onClose }) {
   const [createPrice, { loading, error }] = useMutation(CREATE_PRICE_MUTATION, {
@@ -59,8 +51,7 @@ export default function PriceNew({ open, onClose }) {
     const prices = new Map();
     licenseTypes.forEach((lt) => {
       const price = prices.get(lt.id) || { id: lt.id };
-      if (inputs[`${lt.id}:monthly`])
-        price.monthly = inputs[`${lt.id}:monthly`];
+      if (inputs[`${lt.id}:monthly`]) price.monthly = inputs[`${lt.id}:monthly`];
       if (inputs[`${lt.id}:yearly`]) price.yearly = inputs[`${lt.id}:yearly`];
       prices.set(lt.id, price);
     });
@@ -91,9 +82,7 @@ export default function PriceNew({ open, onClose }) {
               <DatePicker
                 ISOStringValue={inputs.validAfter}
                 id="validAfter"
-                onChange={(dt) =>
-                  handleChange({ name: 'validAfter', value: dt.toISOString() })
-                }
+                onChange={(dt) => handleChange({ name: 'validAfter', value: dt.toISOString() })}
               />
             </Block>
           </Row>
@@ -103,9 +92,7 @@ export default function PriceNew({ open, onClose }) {
               <DatePicker
                 ISOStringValue={inputs.validUntil}
                 id="validUntil"
-                onChange={(dt) =>
-                  handleChange({ name: 'validUntil', value: dt.toISOString() })
-                }
+                onChange={(dt) => handleChange({ name: 'validUntil', value: dt.toISOString() })}
               />
             </Block>
           </Row>

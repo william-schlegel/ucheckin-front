@@ -1,0 +1,21 @@
+{
+  "measures": "Résultats de mesures",
+  "sensors": "Capteurs",
+  "materials": "Caractéristiques des matériaux",
+  "locations": "Addresses des sites",
+  "location": "Addresse du site",
+  "location-details": "Détails de l'adresse",
+  "new-location": "Nouvelle adresse",
+  "company": "Société",
+  "name": "Nom du site",
+  "address": "Adresse",
+  "zip-code": "Code postal",
+  "city": "Ville",
+  "country": "Pays",
+  "contact": "Responsable maintenance",
+  "telephone": "Téléphone",
+  "confirm-delete-location": "Suppression d'une adresse",
+  "you-confirm": "Confirmez-vous la suppression de cette fiche ?",
+  "yes-delete": "Oui, supprimer",
+  "no-delete": "Non, ne pas supprimer"
+}

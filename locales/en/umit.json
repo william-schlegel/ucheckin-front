@@ -1,0 +1,17 @@
+{
+  "measures": "Measurement results",
+  "sensors": "Sensors",
+  "locations": "Sites addresses",
+  "materials": "Materials caracteristics",
+  "location": "Site address",
+  "location-details": "Location details",
+  "new-location": "New location",
+  "company": "Company",
+  "name": "Site name",
+  "address": "Address",
+  "zip-code": "Zip code",
+  "city": "City",
+  "country": "Country",
+  "contact": "Maintenance manager",
+  "telephone": "phone number"
+}
