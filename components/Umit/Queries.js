@@ -12,13 +12,19 @@ export const PAGINATION_MATERIAL_QUERY = gql`
   }
 `;
 
+export const PAGINATION_SENSOR_QUERY = gql`
+  query PAGINATION_SENSOR_QUERY {
+    count: umitSensorsCount
+  }
+`;
+
 export const ALL_LOCATIONS_QUERY = gql`
   query ALL_LOCATIONS_QUERY($skip: Int = 0, $take: Int, $where: UmitLocationWhereInput) {
     umitLocations(
       take: $take
       skip: $skip
       where: $where
-      orderBy: [{ name: asc }, { company: asc }]
+      orderBy: [{ company: asc }, { name: asc }]
     ) {
       id
       name
@@ -29,6 +35,42 @@ export const ALL_LOCATIONS_QUERY = gql`
       contact
       telephone
       company
+    }
+  }
+`;
+
+export const ALL_MATERIALS_QUERY = gql`
+  query ALL_MATERIALS_QUERY($skip: Int = 0, $take: Int, $where: UmitMaterialWhereInput) {
+    umitMaterials(
+      take: $take
+      skip: $skip
+      where: $where
+      orderBy: [{ company: asc }, { name: asc }]
+    ) {
+      id
+      company
+      name
+      propSpeed
+    }
+  }
+`;
+
+export const ALL_SENSORS_QUERY = gql`
+  query ALL_SENSORS_QUERY($skip: Int = 0, $take: Int, $where: UmitSensorWhereInput) {
+    umitSensors(
+      take: $take
+      skip: $skip
+      where: $where
+      orderBy: [{ company: asc }, { building: asc }, { unit: asc }, { ref: asc }]
+    ) {
+      id
+      company
+      name
+      description
+      building
+      unit
+      ref
+      lastMeasureAt
     }
   }
 `;
@@ -49,9 +91,59 @@ export const LOCATION_QUERY = gql`
   }
 `;
 
+export const MATERIAL_QUERY = gql`
+  query MATERIAL_QUERY($id: ID!) {
+    umitMaterial(where: { id: $id }) {
+      id
+      company
+      name
+      propSpeed
+    }
+  }
+`;
+
+export const SENSOR_QUERY = gql`
+  query SENSOR_QUERY($id: ID!) {
+    umitSensor(where: { id: $id }) {
+      id
+      company
+      name
+      description
+      building
+      unit
+      ref
+      lastMeasureAt
+      macAddress
+      frequency
+      location {
+        name
+      }
+      material {
+        name
+      }
+      propSpeed
+      startA
+      startB
+      widthA
+      widthB
+      thresholdA
+      thresholdB
+      alert
+    }
+  }
+`;
+
 export const CREATE_LOCATION_MUTATION = gql`
   mutation CREATE_LOCATION_MUTATION($data: UmitLocationCreateInput!) {
     createUmitLocation(data: $data) {
+      id
+    }
+  }
+`;
+
+export const CREATE_MATERIAL_MUTATION = gql`
+  mutation CREATE_MATERIAL_MUTATION($data: UmitMaterialCreateInput!) {
+    createUmitMaterial(data: $data) {
       id
     }
   }
@@ -68,9 +160,36 @@ export const UPDATE_LOCATION_MUTATION = gql`
   }
 `;
 
+export const UPDATE_MATERIAL_MUTATION = gql`
+  mutation UPDATE_MATERIAL_MUTATION(
+    $where: UmitMaterialWhereUniqueInput!
+    $data: UmitMaterialUpdateInput!
+  ) {
+    updateUmitMaterial(where: $where, data: $data) {
+      id
+    }
+  }
+`;
+
 export const DELETE_LOCATION_MUTATION = gql`
   mutation DELETE_LOCATION_MUTATION($where: UmitLocationWhereUniqueInput!) {
     deleteUmitLocation(where: $where) {
+      id
+    }
+  }
+`;
+
+export const DELETE_MATERIAL_MUTATION = gql`
+  mutation DELETE_MATERIAL_MUTATION($where: UmitMaterialWhereUniqueInput!) {
+    deleteUmitMaterial(where: $where) {
+      id
+    }
+  }
+`;
+
+export const DELETE_SENSOR_MUTATION = gql`
+  mutation DELETE_SENSOR_MUTATION($where: UmitSensorWhereUniqueInput!) {
+    deleteUmitSensor(where: $where) {
       id
     }
   }

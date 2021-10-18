@@ -24,7 +24,6 @@ export default function LocationNew({ open, onClose }) {
   });
   const { t } = useTranslation('umit');
   const initialValues = useRef({
-    company: '',
     name: '',
     address: '',
     zipCode: '',
@@ -34,7 +33,6 @@ export default function LocationNew({ open, onClose }) {
     telephone: '',
   });
   const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
-    'company',
     'name',
   ]);
 
@@ -42,20 +40,6 @@ export default function LocationNew({ open, onClose }) {
     <Drawer onClose={onClose} open={open} title={t('new-location')}>
       <Form>
         <FormBodyFull>
-          <Row>
-            <Label htmlFor="company" required>
-              {t('company')}
-            </Label>
-            <input
-              required
-              type="text"
-              id="company"
-              name="company"
-              value={inputs.company}
-              onChange={handleChange}
-            />
-            <FieldError error={validationError.company} />
-          </Row>
           <Row>
             <Label htmlFor="name" required>
               {t('name')}

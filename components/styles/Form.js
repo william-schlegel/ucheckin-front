@@ -71,4 +71,9 @@ const Form = styled.form`
   }
 `;
 
+export const Flex = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 export default Form;

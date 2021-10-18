@@ -8,10 +8,9 @@ import { perPage } from '../../config';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
-import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
-import EntetePage from '../styles/EntetePage';
+import { Flex } from '../styles/Form';
 import Table, { useColumns } from '../Tables/Table';
 import { Layout } from './layout';
 import LocationDetails from './LocationDetail';
@@ -37,7 +36,6 @@ export default function Locations() {
   const count = dataPage?.count;
   const { t } = useTranslation('umit');
   const [showLocation, setShowLocation] = useState('');
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
   const [newLocation, setNewLocation] = useState(false);
 
   useEffect(() => {
@@ -89,7 +87,6 @@ export default function Locations() {
       <Head>
         <title>{t('locations')}</title>
       </Head>
-      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       {showLocation && (
         <LocationDetails
@@ -99,22 +96,20 @@ export default function Locations() {
         />
       )}
       {newLocation && <LocationNew open={!!newLocation} onClose={() => setNewLocation(false)} />}
-      <EntetePage>
-        <h3>{t('locations')}</h3>
-        <HelpButton showHelp={toggleHelpVisibility} />
+      <Flex>
+        <Pagination
+          page={page}
+          error={errorPage}
+          loading={loadingPage}
+          count={count}
+          pageRef="locations"
+        />
         <ButtonNew
           onClick={() => {
             setNewLocation(true);
           }}
         />
-      </EntetePage>
-      <Pagination
-        page={page}
-        error={errorPage}
-        loading={loadingPage}
-        count={count}
-        pageRef="locations"
-      />
+      </Flex>
       <Table
         columns={columns}
         data={data?.umitLocations}

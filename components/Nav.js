@@ -45,11 +45,9 @@ export default function Nav({ toggled }) {
           <li>
             <Link href="/events">{t('events')}</Link>
           </li>
-          {user.role?.canManageUmits && (
-            <li>
-              <Link href="/umit">{t('umit')}</Link>
-            </li>
-          )}{' '}
+          <li>
+            <Link href="/umit">{t('umit')}</Link>
+          </li>
           <li>
             <div>
               <SignOut />
