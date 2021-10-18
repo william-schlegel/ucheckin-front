@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
 import { formatDate } from '../DatePicker';
 
 const Container = styled.div`
@@ -11,12 +12,12 @@ const Container = styled.div`
 
 const TOLERANCE = 5;
 
-export default function ValidityDate({ value, after, noColor }) {
+export default function ValidityDate({ value, after, noColor, dateColor = 'inherit' }) {
   const now = new Date();
   const limit = new Date(value);
   const tolerance = new Date(value);
   tolerance.setDate(tolerance.getDate() - TOLERANCE);
-  let color = 'inherit';
+  let color = dateColor;
   if (!noColor) {
     if (after) {
       if (now < limit) color = now > tolerance ? 'orange' : 'red';

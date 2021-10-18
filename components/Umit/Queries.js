@@ -18,6 +18,12 @@ export const PAGINATION_SENSOR_QUERY = gql`
   }
 `;
 
+export const PAGINATION_MEASURE_QUERY = gql`
+  query PAGINATION_MEASURE_QUERY {
+    count: umitMeasuresCount
+  }
+`;
+
 export const ALL_LOCATIONS_QUERY = gql`
   query ALL_LOCATIONS_QUERY($skip: Int = 0, $take: Int, $where: UmitLocationWhereInput) {
     umitLocations(
@@ -71,6 +77,32 @@ export const ALL_SENSORS_QUERY = gql`
       unit
       ref
       lastMeasureAt
+    }
+  }
+`;
+
+export const ALL_MEASURES_QUERY = gql`
+  query ALL_MEASURES_QUERY($skip: Int = 0, $take: Int, $where: UmitMeasureWhereInput) {
+    umitMeasures(
+      take: $take
+      skip: $skip
+      where: $where
+      orderBy: [{ company: asc }, { measureDate: desc }]
+    ) {
+      id
+      company
+      location {
+        name
+      }
+      sensor {
+        building
+        unit
+        ref
+        name
+        alert
+      }
+      measureDate
+      thickness
     }
   }
 `;
@@ -129,6 +161,34 @@ export const SENSOR_QUERY = gql`
       thresholdA
       thresholdB
       alert
+    }
+  }
+`;
+
+export const MEASURE_QUERY = gql`
+  query MEASURE_QUERY($id: ID!) {
+    umitMeasure(where: { id: $id }) {
+      id
+      company
+      location {
+        name
+      }
+      measureDate
+      sensor {
+        building
+        unit
+        ref
+        name
+        alert
+      }
+      startA
+      startB
+      thickness
+      thresholdA
+      thresholdB
+      widthA
+      widthB
+      points
     }
   }
 `;

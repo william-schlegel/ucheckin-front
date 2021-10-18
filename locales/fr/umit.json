@@ -38,5 +38,12 @@
   "width": "Largeur",
   "threshold": "Seuil",
   "settings": "Réglages",
-  "umit": "UMIT"
+  "umit": "UMIT",
+  "measure-date": "Date de relevé",
+  "thickness": "Epaisseur",
+  "all": "Tous",
+  "start-date": "Depuis le",
+  "end-date": "Jusqu'au",
+  "measure-details": "Détails de la mesure",
+  "measure-name": "Capeur relevé"
 }

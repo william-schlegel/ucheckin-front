@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import useTranslation from 'next-translate/useTranslation';
+
 import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
-
 import Loading from '../Loading';
 import Button from '../Tables/Button';
 import Switch from '../Tables/Switch';
@@ -67,8 +67,7 @@ export default function DashboardLicense() {
           row: {
             values: { 'signal.id': id },
           },
-        }) =>
-          id ? <Button action={action} label={value} value={id} block /> : null,
+        }) => (id ? <Button action={action} label={value} value={id} block /> : null),
         { action: viewSignal },
       ],
       [
@@ -88,15 +87,9 @@ export default function DashboardLicense() {
       [
         t('license:valid'),
         'valid',
-        ({ cell: { value } }) => (
-          <Switch label={t('license:valid')} value={value} disabled />
-        ),
+        ({ cell: { value } }) => <Switch label={t('license:valid')} value={value} disabled />,
       ],
-      [
-        t('license:validity'),
-        'validity',
-        ({ cell: { value } }) => <ValidityDate value={value} />,
-      ],
+      [t('license:validity'), 'validity', ({ cell: { value } }) => <ValidityDate value={value} />],
     ],
     false
   );
@@ -107,8 +100,7 @@ export default function DashboardLicense() {
     <Dashboard
       title={t('licenses', { count: data.licenses.length })}
       total={t('licenses-total')}
-      count={data.licensesCount}
-    >
+      count={data.licensesCount}>
       <Table columns={columns} data={data.licenses} />
     </Dashboard>
   );
