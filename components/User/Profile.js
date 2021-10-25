@@ -1,43 +1,37 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/client';
-import useTranslation from 'next-translate/useTranslation';
 import Router, { useRouter } from 'next/router';
-import { useToasts } from 'react-toast-notifications';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
+import { useToasts } from 'react-toast-notifications';
 
-import DisplayError from '../ErrorMessage';
-import Loading from '../Loading';
-import {
-  Form,
-  FormBody,
-  FormFooter,
-  Row,
-  Label,
-  FormHeader,
-  FormTitle,
-  RowFull,
-  Block,
-  RowReadOnly,
-} from '../styles/Card';
-import {
-  useUser,
-  QUERY_PROFILE,
-  useRole,
-  UPDATE_PROFILE_MUTATION,
-} from './Queries';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
-import { useHelp, Help, HelpButton } from '../Help';
-import { UpdatePhoto } from './ProfileUpdate';
-import { PrimaryButtonStyled } from '../styles/Button';
-
-import Avatar from '../Tables/Avatar';
-import selectTheme from '../styles/selectTheme';
+import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import { PrimaryButtonStyled } from '../styles/Button';
+import {
+  Block,
+  Form,
+  FormBody,
+  FormFooter,
+  FormHeader,
+  FormTitle,
+  Label,
+  Row,
+  RowFull,
+  RowReadOnly,
+} from '../styles/Card';
+import selectTheme from '../styles/selectTheme';
+import Avatar from '../Tables/Avatar';
+import { UpdatePhoto } from './ProfileUpdate';
+import { QUERY_PROFILE, UPDATE_PROFILE_MUTATION, useRole, useUser } from './Queries';
 
 function update(cache, payload) {
   cache.evict(cache.identify(payload.data.updateUser));
@@ -47,33 +41,26 @@ export default function Profile({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_PROFILE, {
     variables: { id },
   });
-  const [
-    updateProfile,
-    { loading: loadingUpdate, error: errorUpdate },
-  ] = useMutation(UPDATE_PROFILE_MUTATION);
+  const [updateProfile, { loading: loadingUpdate, error: errorUpdate }] =
+    useMutation(UPDATE_PROFILE_MUTATION);
   const { t } = useTranslation('user');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const { user } = useUser();
   const countries = useMemo(() => countryList().getData(), []);
   const initialValues = useRef(initialData.data.user);
-  const {
-    inputs,
-    handleChange,
-    setInputs,
-    validate,
-    validationError,
-    wasTouched,
-  } = useForm(initialValues.current, [
-    'name',
-    { field: 'email', check: 'isEmail' },
-    'company',
-  ]);
+  const { inputs, handleChange, setInputs, validate, validationError, wasTouched } = useForm(
+    initialValues.current,
+    ['name', { field: 'email', check: 'isEmail' }, 'company']
+  );
   const [photoFile, setPhotoFile] = useState();
   const [canEdit, setCanEdit] = useState(false);
   const router = useRouter();
   const roles = useRole();
+  const invoicingModels = [
+    { value: 'online', label: t('online') },
+    { value: 'invoice', label: t('invoice') },
+  ];
   const { addToast } = useToasts();
-  console.log(`initialData`, initialData);
 
   useEffect(() => {
     if (data && user) {
@@ -106,11 +93,9 @@ export default function Profile({ id, initialData }) {
   async function handleValidation() {
     const newInputs = validate();
     if (!newInputs) return;
-    if (wasTouched('role.id'))
-      newInputs.role = { connect: { id: newInputs.role.id } };
+    if (wasTouched('role.id')) newInputs.role = { connect: { id: newInputs.role.id } };
     await updateProfile({ variables: { id, ...newInputs }, update });
-    if (!errorUpdate)
-      addToast(t('success'), { appearance: 'success', autoDismiss: true });
+    if (!errorUpdate) addToast(t('success'), { appearance: 'success', autoDismiss: true });
   }
 
   if (loading || !roles.length) return <Loading />;
@@ -118,11 +103,7 @@ export default function Profile({ id, initialData }) {
 
   return (
     <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Form>
         <FormHeader>
           <FormTitle>
@@ -217,9 +198,7 @@ export default function Profile({ id, initialData }) {
                   id="country"
                   options={countries}
                   value={getCountry(inputs.country)}
-                  onChange={(e) =>
-                    handleChange({ name: 'country', value: e.value })
-                  }
+                  onChange={(e) => handleChange({ name: 'country', value: e.value })}
                 />
               </Row>
               <Row>
@@ -292,55 +271,58 @@ export default function Profile({ id, initialData }) {
           <RowFull>
             <Label htmlFor="photo">{t('photo')}</Label>
             <Block>
-              <Avatar
-                src={inputs?.photo?.publicUrlTransformed}
-                alt={inputs.name}
-              />
-              <input
-                type="file"
-                id="photo"
-                name="photo"
-                onChange={handlePhotoFile}
-              />
+              <Avatar src={inputs?.photo?.publicUrlTransformed} alt={inputs.name} />
+              <input type="file" id="photo" name="photo" onChange={handlePhotoFile} />
               <UpdatePhoto
                 id={id}
                 photo={photoFile}
-                onSuccess={(newPhoto) =>
-                  setInputs({ ...inputs, photo: newPhoto })
-                }
+                onSuccess={(newPhoto) => setInputs({ ...inputs, photo: newPhoto })}
               />
             </Block>
           </RowFull>
           {user?.role?.canManageUsers ? (
-            <Row>
-              <Label htmlFor="role" required>
-                {t('role')}
-              </Label>
-              <Select
-                theme={selectTheme}
-                className="select"
-                id="role"
-                value={roles.find((r) => r.value === inputs.role?.id)}
-                options={roles}
-                onChange={(e) =>
-                  handleChange({ name: 'role.id', value: e.value })
-                }
-              />
-            </Row>
+            <>
+              <Row>
+                <Label htmlFor="role" required>
+                  {t('role')}
+                </Label>
+                <Select
+                  theme={selectTheme}
+                  className="select"
+                  id="role"
+                  value={roles.find((r) => r.value === inputs.role?.id)}
+                  options={roles}
+                  onChange={(e) => handleChange({ name: 'role.id', value: e.value })}
+                />
+              </Row>
+              <Row>
+                <Label htmlFor="invoicing-model">{t('invoicing-model')}</Label>
+                <Select
+                  theme={selectTheme}
+                  className="select"
+                  id="invoicing-model"
+                  value={invoicingModels.find((r) => r.value === inputs.invoicingModel)}
+                  options={invoicingModels}
+                  onChange={(e) => handleChange({ name: 'invoicingModel', value: e.value })}
+                />
+              </Row>
+            </>
           ) : (
-            <RowReadOnly>
-              <Label>{t('role')}</Label>
-              <span>{inputs.role?.name}</span>
-            </RowReadOnly>
+            <>
+              <RowReadOnly>
+                <Label>{t('role')}</Label>
+                <span>{inputs.role?.name}</span>
+              </RowReadOnly>
+              <RowReadOnly>
+                <Label>{t('invoicing-model')}</Label>
+                <span>{inputs.invoicingModel}</span>
+              </RowReadOnly>
+            </>
           )}
         </FormBody>
         <FormFooter>
           {canEdit && id && (
-            <ButtonValidation
-              disabled={loadingUpdate}
-              onClick={handleValidation}
-              update
-            />
+            <ButtonValidation disabled={loadingUpdate} onClick={handleValidation} update />
           )}
           <ButtonCancel onClick={() => Router.back()} />
         </FormFooter>

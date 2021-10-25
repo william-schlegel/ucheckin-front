@@ -34,6 +34,7 @@ export const ALL_ORDERS_QUERY = gql`
       totalNet
       orderDate
       canceled
+      paid
     }
   }
 `;
@@ -68,6 +69,7 @@ export const ORDER_QUERY = gql`
       totalNet
       orderDate
       canceled
+      paid
     }
   }
 `;
@@ -83,6 +85,14 @@ export const CREATE_ORDER_MUTATION = gql`
 export const CANCEL_ORDER_MUTATION = gql`
   mutation CANCEL_ORDER_MUTATION($id: ID!) {
     updateOrder(where: { id: $id }, data: { canceled: true }) {
+      id
+    }
+  }
+`;
+
+export const PAY_ORDER_MUTATION = gql`
+  mutation PAY_ORDER_MUTATION($id: ID!) {
+    updateOrder(where: { id: $id }, data: { paid: true }) {
       id
     }
   }

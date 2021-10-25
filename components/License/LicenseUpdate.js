@@ -1,47 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
 
+import useFindUser from '../../lib/useFindUser';
+import useForm from '../../lib/useForm';
+import useVat from '../../lib/useVat';
+import { useFindApplication } from '../Application/Queries';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonPayment from '../Buttons/ButtonPayment';
 import Counter from '../Counter';
+import { dateDay, formatDate } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonPayment from '../Buttons/ButtonPayment';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import { useFindLicense, UPDATE_LICENSE_MUTATION } from './Queries';
+import Loading from '../Loading';
+import { useFindSignal } from '../Signal/Queries';
 import {
+  Block,
+  Form,
+  FormBody,
   FormBodyFull,
   Label,
   Row,
-  Form,
-  Block,
-  RowReadOnly,
-  FormBody,
   RowFull,
+  RowReadOnly,
   Separator,
 } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import LicensePrice, { usePrice } from './LicensePrice';
-import Total from '../TotalCount';
-import { useFindApplication } from '../Application/Queries';
-import useFindUser from '../../lib/useFindUser';
-import { useFindSignal } from '../Signal/Queries';
-import { dateDay, formatDate } from '../DatePicker';
-import useVat from '../../lib/useVat';
 import { LicenseType } from '../Tables/LicenseType';
-import Loading from '../Loading';
+import Total from '../TotalCount';
+import LicensePrice, { usePrice } from './LicensePrice';
+import { UPDATE_LICENSE_MUTATION, useFindLicense } from './Queries';
 
-export default function LicenseUpdate({
-  open,
-  onClose,
-  licenseId,
-  appId,
-  ownerId,
-  signalId,
-}) {
-  const [updateLicense, { loading, error }] = useMutation(
-    UPDATE_LICENSE_MUTATION
-  );
+export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId, signalId }) {
+  const [updateLicense, { loading, error }] = useMutation(UPDATE_LICENSE_MUTATION);
   const { license, licenseLoading, licenseError } = useFindLicense(licenseId);
   const { user } = useFindUser(ownerId);
   const { application } = useFindApplication(appId);
@@ -62,6 +53,13 @@ export default function LicenseUpdate({
     expectedAmountBrut: 0,
     purchaseItems: [],
   });
+  const [invoicingModel, setinvoicingModel] = useState('online');
+
+  useEffect(() => {
+    if (user) {
+      setinvoicingModel(user.invoicingModel);
+    }
+  }, [user]);
 
   function closeAndClear(orderId) {
     resetForm();
@@ -86,18 +84,14 @@ export default function LicenseUpdate({
     const { monthLicense, yearLicense } = inputs;
 
     if (price?.items) {
-      const myPrice = price.items.filter(
-        (p) => p.licenseType.id === license.licenseType.id
-      )[0];
+      const myPrice = price.items.filter((p) => p.licenseType.id === license.licenseType.id)[0];
       if (myPrice) {
         const pData = [];
         const tot =
           parseInt(monthLicense || 0) *
             parseInt(license.nbArea || 1) *
             parseFloat(myPrice.monthly) +
-          parseInt(yearLicense || 0) *
-            parseInt(license.nbArea || 1) *
-            parseFloat(myPrice.yearly);
+          parseInt(yearLicense || 0) * parseInt(license.nbArea || 1) * parseFloat(myPrice.yearly);
         setTotal({ amount: tot });
         if (parseInt(monthLicense)) {
           pData.push({
@@ -134,9 +128,7 @@ export default function LicenseUpdate({
     if (!Number.isNaN(inputs.monthLicense))
       validity.setMonth(validity.getMonth() + parseInt(inputs.monthLicense));
     if (!Number.isNaN(inputs.yearLicense))
-      validity.setFullYear(
-        validity.getFullYear() + parseInt(inputs.yearLicense)
-      );
+      validity.setFullYear(validity.getFullYear() + parseInt(inputs.yearLicense));
     setNewValidity(validity.toISOString());
   }, [inputs, price, license, setNewValidity]);
 
@@ -172,17 +164,12 @@ export default function LicenseUpdate({
         <FormBodyFull>
           <Row>
             {user.id && (
-              <LicensePrice
-                owner={user.id}
-                licenseTypeIds={[{ id: license.licenseType.id }]}
-              />
+              <LicensePrice owner={user.id} licenseTypeIds={[{ id: license.licenseType.id }]} />
             )}
           </Row>
           <LicenseType license={license.licenseType.id}>
             {license.licenseType.perArea && (
-              <span>
-                &nbsp;- {t('nb-area-validity', { count: license.nbArea })}
-              </span>
+              <span>&nbsp;- {t('nb-area-validity', { count: license.nbArea })}</span>
             )}
           </LicenseType>
           <Separator />
@@ -216,6 +203,7 @@ export default function LicenseUpdate({
           onError={handleError}
           purchaseFunction={updateLicense}
           data={purchaseData}
+          invoicingModel={invoicingModel}
         />
         <ButtonCancel onClick={() => closeAndClear(null)} />
         {error && <DisplayError error={error} />}

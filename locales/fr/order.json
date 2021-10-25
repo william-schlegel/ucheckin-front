@@ -23,5 +23,8 @@
   "yes-cancel": "Oui",
   "no-cancel": "Non",
   "cancelation": "Annulation de commande",
-  "already-canceled": "Cette commande est déjà annulée"
+  "already-canceled": "Cette commande est déjà annulée",
+  "already-paid": "Cette commande est déjà payée",
+  "paid": "Payée",
+  "not-paid": "Non payée"
 }

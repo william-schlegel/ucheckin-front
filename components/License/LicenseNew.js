@@ -1,35 +1,35 @@
-import { useEffect, useReducer } from 'react';
 import { useMutation } from '@apollo/client';
-import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useReducer } from 'react';
 
+import useFindUser from '../../lib/useFindUser';
+import useForm from '../../lib/useForm';
+import useVat from '../../lib/useVat';
+import { useFindApplication } from '../Application/Queries';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonFreeTrial from '../Buttons/ButtonFreeTrial';
+import ButtonPayment from '../Buttons/ButtonPayment';
 import Counter from '../Counter';
+import { dateNow } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonPayment from '../Buttons/ButtonPayment';
-import ButtonCancel from '../Buttons/ButtonCancel';
 import {
+  Block,
+  Form,
+  FormBody,
   FormBodyFull,
+  H3,
   Label,
   Row,
-  Form,
-  Block,
-  FormBody,
-  H3,
   RowReadOnly,
   Separator,
 } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import LicensePrice, { usePrice } from './LicensePrice';
-import Total from '../TotalCount';
-import { useFindApplication } from '../Application/Queries';
-import useFindUser from '../../lib/useFindUser';
-import ButtonFreeTrial from '../Buttons/ButtonFreeTrial';
-import { dateNow } from '../DatePicker';
-import useVat from '../../lib/useVat';
-import { LicenseType } from '../Tables/LicenseType';
-import { PURCHASE_LICENSE_MUTATION } from './Queries';
 import { LicenseContainer } from '../styles/License';
+import { LicenseType } from '../Tables/LicenseType';
+import Total from '../TotalCount';
+import LicensePrice, { usePrice } from './LicensePrice';
+import { PURCHASE_LICENSE_MUTATION } from './Queries';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -45,6 +45,11 @@ function reducer(state, action) {
       return {
         ...state,
         trial: action.trial,
+      };
+    case 'SET_INVOICING_MODE':
+      return {
+        ...state,
+        invoicingModel: action.invoicingModel,
       };
     case 'SET_DATA':
       return {
@@ -77,9 +82,16 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
     licenses: 0,
     signals: 0,
     trial: false,
+    invoicingModel: 'online',
     purchaseData: {},
     paymentOk: false,
   });
+
+  useEffect(() => {
+    if (user) {
+      dispatch({ type: 'SET_INVOICING_MODE', invoicingModel: user.invoicingModel });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (application) {
@@ -111,9 +123,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
     let nbS = 0;
     if (application?.licenseTypes && price?.items) {
       for (const lt of application.licenseTypes) {
-        const myPrice = price.items.filter(
-          (p) => p.licenseType.id === lt.id
-        )[0];
+        const myPrice = price.items.filter((p) => p.licenseType.id === lt.id)[0];
         if (myPrice) {
           tot +=
             parseInt(monthLicense[lt.id] || 0) *
@@ -184,12 +194,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
             </Block>
           </RowReadOnly>
           <Row>
-            {user?.id && (
-              <LicensePrice
-                owner={user.id}
-                licenseTypeIds={application.licenseTypes}
-              />
-            )}
+            {user?.id && <LicensePrice owner={user.id} licenseTypeIds={application.licenseTypes} />}
           </Row>
           {application.licenseTypes.map((lt) => (
             <LicenseContainer key={lt.id}>
@@ -247,13 +252,10 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           onError={handleError}
           purchaseFunction={purchaseLicense}
           data={state.purchaseData}
+          invoicingModel={state.invoicingModel}
         />
         {state.trial && (
-          <ButtonFreeTrial
-            ownerId={ownerId}
-            appId={appId}
-            onSuccess={() => onClose()}
-          />
+          <ButtonFreeTrial ownerId={ownerId} appId={appId} onSuccess={() => onClose()} />
         )}
         <ButtonCancel onClick={() => onClose(null)} />
       </DrawerFooter>

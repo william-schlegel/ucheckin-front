@@ -1,8 +1,9 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
-
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+import ButtonBack from '../Buttons/ButtonBack';
 import Loading from '../Loading';
 import {
   Form,
@@ -14,20 +15,23 @@ import {
   Row,
   RowReadOnly,
 } from '../styles/Card';
-import { ORDER_QUERY } from './Queries';
-import ValidityDate from '../Tables/ValidityDate';
-import Table, { useColumns } from '../Tables/Table';
-import Number from '../Tables/Number';
 import { LicenseType } from '../Tables/LicenseType';
+import Number from '../Tables/Number';
+import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
 import Total from '../TotalCount';
-import ButtonBack from '../Buttons/ButtonBack';
+import { ORDER_QUERY } from './Queries';
 
 const Canceled = styled.span`
   margin: 0 1rem 0 auto !important;
-  background-color: red;
+  background-color: 'red';
   padding: 0.5rem 2rem;
-  color: yellow !important;
+  color: 'yellow' !important;
   border-radius: 3px;
+`;
+
+const Paid = styled.span`
+  color: ${(props) => (props.paid ? 'green' : 'red')} !important;
 `;
 
 export default function Order({ id, backButton }) {
@@ -43,21 +47,9 @@ export default function Order({ id, backButton }) {
         ({ cell: { value } }) => <LicenseType license={value} />,
       ],
       [t('common:name'), 'name'],
-      [
-        t('quantity'),
-        'quantity',
-        ({ cell: { value } }) => <Number value={value} />,
-      ],
-      [
-        t('nb-area'),
-        'nbArea',
-        ({ cell: { value } }) => <Number value={value} />,
-      ],
-      [
-        t('unit-price'),
-        'unitPrice',
-        ({ cell: { value } }) => <Number value={value} money />,
-      ],
+      [t('quantity'), 'quantity', ({ cell: { value } }) => <Number value={value} />],
+      [t('nb-area'), 'nbArea', ({ cell: { value } }) => <Number value={value} />],
+      [t('unit-price'), 'unitPrice', ({ cell: { value } }) => <Number value={value} money />],
     ],
     false
   );
@@ -70,10 +62,9 @@ export default function Order({ id, backButton }) {
         <FormTitle>
           {t('order')} <span>{data.order.number}</span>
           {data.order.canceled && <Canceled>{t('canceled')}</Canceled>}
+          <Paid paid={data.order.paid}>{data.order.paid ? t('paid') : t('not-paid')}</Paid>
         </FormTitle>
-        {backButton && (
-          <ButtonBack route="/orders" label={t('navigation:orders')} />
-        )}
+        {backButton && <ButtonBack route="/orders" label={t('navigation:orders')} />}
       </FormHeader>
       <FormBody>
         <RowReadOnly>

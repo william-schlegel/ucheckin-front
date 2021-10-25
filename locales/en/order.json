@@ -17,5 +17,14 @@
   "quantity": "Quantity",
   "nb-area": "Number of areas",
   "unit-price": "Unit price",
-  "order-details": "Order details"
+  "order-details": "Order details",
+  "confirm-cancel": "Do you want to cancel this order",
+  "you-confirm": "Do you confirm the cancelation?",
+  "yes-cancel": "Yes",
+  "no-cancel": "No",
+  "cancelation": "Order cancelation",
+  "already-canceled": "This order is already cancelled",
+  "already-paid": "This order is already paid",
+  "paid": "Paid",
+  "not-paid": "Not paid"
 }

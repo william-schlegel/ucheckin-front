@@ -40,5 +40,8 @@
   "application": "Application associée",
   "invitations": "Mes invitations",
   "validity": "Fin de validité",
-  "link-success": "La demande de réinitialisation a bien été prise en compte, vérifiez vos email pour le lien"
+  "link-success": "La demande de réinitialisation a bien été prise en compte, vérifiez vos email pour le lien",
+  "invoicing-model": "Modèle de facturation",
+  "online": "Payment en ligne",
+  "invoice": "Payment sur facture"
 }

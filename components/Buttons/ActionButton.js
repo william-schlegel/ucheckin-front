@@ -72,7 +72,7 @@ export default function ActionButton({ type, cb = () => {}, label, size = 24 }) 
       {type === 'signal' && <Volume size={size} />}
       {type === 'stop' && <Square size={size} />}
       {type === 'trash' && <Trash size={size} />}
-      {type === 'user-account' && <DollarSign size={size} />}
+      {(type === 'user-account' || type === 'dollar') && <DollarSign size={size} />}
       {type === 'user-profile' && <UserCheck size={size} />}
       {type === 'view' && <Eye size={size} />}
       {type === 'map-pin' && <MapPin size={size} />}
@@ -109,6 +109,7 @@ ActionButton.propTypes = {
     'extend',
     'user-profile',
     'user-account',
+    'dollar',
     'map-pin',
   ]).isRequired,
   cb: PropTypes.func.isRequired,

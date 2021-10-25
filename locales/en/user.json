@@ -40,5 +40,8 @@
   "application": "Associated application",
   "invitations": "My invitations",
   "validity": "End of validity",
-  "link-success": "The reset request has been taken into account, check your email for the link"
+  "link-success": "The reset request has been taken into account, check your email for the link",
+  "invoicing-model": "Invoicing model",
+  "online": "Online payment",
+  "invoice": "Invoice payment"
 }

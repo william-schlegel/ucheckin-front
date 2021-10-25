@@ -47,6 +47,7 @@
   "download": "Download the signal file",
   "clone": "Clone the signal",
   "payment": "Proceed to payment",
+  "invoice": "Invoice payment",
   "license-model": "License Model",
   "no-license": "No license",
   "license-unknown": "License unknown {{code}}",

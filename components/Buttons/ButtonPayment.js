@@ -1,20 +1,15 @@
-import { useState } from 'react';
-import useTranslation from 'next-translate/useTranslation';
-import PropTypes from 'prop-types';
+import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import {
-  CardElement,
-  Elements,
-  useElements,
-  useStripe,
-} from '@stripe/react-stripe-js';
+import useTranslation from 'next-translate/useTranslation';
 import nProgress from 'nprogress';
-
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { CreditCard, DollarSign } from 'react-feather';
 import styled from 'styled-components';
-import { CreditCard } from 'react-feather';
-import { IconButtonStyles } from './ActionButton';
-import { SecondaryButtonStyled } from '../styles/Button';
+
 import Loading from '../Loading';
+import { SecondaryButtonStyled } from '../styles/Button';
+import { IconButtonStyles } from './ActionButton';
 
 const stripeLib = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
 
@@ -29,7 +24,28 @@ export default function ButtonPayment({
   data,
   onSuccess,
   onError,
+  invoicingModel,
 }) {
+  const { t } = useTranslation('common');
+  if (invoicingModel === 'invoice') {
+    if (disabled) return null;
+    return (
+      <PaymentStyled>
+        <SecondaryButtonStyled
+          type="button"
+          onClick={() => {
+            purchaseFunction({ variables: { ...data, token: 'invoice' } });
+            onSuccess();
+          }}>
+          <IconButtonStyles>
+            <DollarSign size={24} />
+          </IconButtonStyles>
+          {t('invoice')}
+        </SecondaryButtonStyled>
+      </PaymentStyled>
+    );
+  }
+
   return (
     <PaymentStyled>
       {!disabled && (
@@ -52,6 +68,7 @@ ButtonPayment.propTypes = {
   disabled: PropTypes.bool,
   purchaseFunction: PropTypes.func,
   data: PropTypes.object,
+  invoicingModel: PropTypes.string,
 };
 
 const CheckoutFormStyles = styled.form`

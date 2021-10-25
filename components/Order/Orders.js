@@ -19,7 +19,12 @@ import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
 import OrderDetails from './OrderDetails';
-import { ALL_ORDERS_QUERY, CANCEL_ORDER_MUTATION, PAGINATION_QUERY } from './Queries';
+import {
+  ALL_ORDERS_QUERY,
+  CANCEL_ORDER_MUTATION,
+  PAGINATION_QUERY,
+  PAY_ORDER_MUTATION,
+} from './Queries';
 
 export default function Orders() {
   const router = useRouter();
@@ -29,6 +34,9 @@ export default function Orders() {
     useLazyQuery(PAGINATION_QUERY);
   const [queryOrders, { error, loading, data }] = useLazyQuery(ALL_ORDERS_QUERY);
   const [cancelOrderMutation, { error: errorCancel }] = useMutation(CANCEL_ORDER_MUTATION, {
+    refetchQueries: [{ query: ALL_ORDERS_QUERY }],
+  });
+  const [payOrderMutation, { error: errorPay }] = useMutation(PAY_ORDER_MUTATION, {
     refetchQueries: [{ query: ALL_ORDERS_QUERY }],
   });
   const page = parseInt(router.query.page) || 1;
@@ -66,6 +74,7 @@ export default function Orders() {
     [t('total-brut'), 'totalBrut', ({ cell: { value } }) => <Number value={value} money />],
     [t('vat-value'), 'vatValue', ({ cell: { value } }) => <Number value={value} percentage />],
     [t('total-net'), 'totalNet', ({ cell: { value } }) => <Number value={value} money />],
+    [t('paid'), 'paid', ({ cell: { value } }) => <Switch value={value} disabled />],
     [t('canceled'), 'canceled', ({ cell: { value } }) => <Switch value={value} disabled />],
   ]);
   const { Confirm, setIsOpen, setArgs } = useConfirm({
@@ -93,14 +102,29 @@ export default function Orders() {
     }
   }
 
+  function validPayment(id) {
+    const order = data.orders.find((o) => o.id === id);
+    if (!order) return;
+    if (order.paid) {
+      addToast(t('already-paid'), {
+        appearance: 'info',
+        autoDismiss: true,
+      });
+    } else {
+      payOrderMutation({ variables: { id } });
+    }
+  }
+
   const actionButtons = [{ type: 'view', action: viewOrder }];
   if (user?.role?.canManageOrder) {
+    actionButtons.push({ type: 'dollar', action: validPayment });
     actionButtons.push({ type: 'trash', action: cancelOrder });
   }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   if (errorCancel) return <DisplayError error={errorCancel} />;
+  if (errorPay) return <DisplayError error={errorPay} />;
   return (
     <>
       <Head>

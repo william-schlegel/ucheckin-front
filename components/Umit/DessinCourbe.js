@@ -36,10 +36,9 @@ export default function DessinCourbe({
   const handleCanvas = (canvas) => {
     if (!points.length) return;
     if (!canvas) return;
-    if (!dim.current.width) return;
 
-    canvas.width = dim.current.width;
-    canvas.height = dim.current.height;
+    canvas.width = dim.width;
+    canvas.height = dim.height;
     const offsetX = 5;
     const offsetY = 25;
     const maxPoints = Math.max(...points);
@@ -109,6 +108,9 @@ export default function DessinCourbe({
     const picB = drawPorte(dataMesure.startB, dataMesure.widthB, dataMesure.thresholdB, 'blue');
     handlePics(picA, picB);
   };
+
+  if (!dim.width) return null;
+
   return (
     <div ref={ref}>
       <canvas ref={handleCanvas} />

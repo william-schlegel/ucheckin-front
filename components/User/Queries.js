@@ -109,6 +109,7 @@ export const QUERY_PROFILE = gql`
       country
       telephone
       contact
+      invoicingModel
       photo {
         publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
@@ -211,6 +212,7 @@ export const UPDATE_PROFILE_MUTATION = gql`
     $telephone: String
     $contact: String
     $role: RoleRelateToOneForUpdateInput
+    $invoicingModel: String
   ) {
     updateUser(
       where: { id: $id }
@@ -224,6 +226,7 @@ export const UPDATE_PROFILE_MUTATION = gql`
         telephone: $telephone
         contact: $contact
         role: $role
+        invoicingModel: $invoicingModel
       }
     ) {
       id
