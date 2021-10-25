@@ -15,7 +15,7 @@ import { Block, FormBody, Label, RowFull } from '../styles/Card';
 import selectTheme from '../styles/selectTheme';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import { Layout } from './layout';
+import { Layout } from './Layout';
 import MeasureDetails from './MeasureDetail';
 import { ALL_LOCATIONS_QUERY, ALL_MEASURES_QUERY, PAGINATION_MEASURE_QUERY } from './Queries';
 import UmitNav from './UmitNav';

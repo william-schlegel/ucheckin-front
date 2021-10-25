@@ -11,7 +11,7 @@ import Loading from '../Loading';
 import Pagination from '../Pagination';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import { Layout } from './layout';
+import { Layout } from './Layout';
 import { ALL_SENSORS_QUERY, DELETE_SENSOR_MUTATION, PAGINATION_SENSOR_QUERY } from './Queries';
 import SensorDetail from './SensorDetail';
 import UmitNav from './UmitNav';

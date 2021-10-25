@@ -12,7 +12,7 @@ import Loading from '../Loading';
 import Pagination from '../Pagination';
 import { Flex } from '../styles/Form';
 import Table, { useColumns } from '../Tables/Table';
-import { Layout } from './layout';
+import { Layout } from './Layout';
 import LocationDetails from './LocationDetail';
 import LocationNew from './LocationNew';
 import {
