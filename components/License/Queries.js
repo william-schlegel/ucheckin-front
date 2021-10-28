@@ -165,14 +165,6 @@ export const UPDATE_LICENSE_MUTATION = gql`
   }
 `;
 
-export const CREATE_LICENSE_MUTATION = gql`
-  mutation CREATE_LICENSE_MUTATION($data: [LicensesCreateInput]!) {
-    createLicenses(data: $data) {
-      id
-    }
-  }
-`;
-
 export function useFindLicense(licenseId) {
   const { data, error, loading } = useQuery(LICENSE_QUERY, {
     variables: { id: licenseId },

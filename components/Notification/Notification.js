@@ -1,57 +1,55 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
-import Select from 'react-select';
 import gql from 'graphql-tag';
-import { PlusCircle, Code, Youtube } from 'react-feather';
-
-import styled from 'styled-components';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
+import { Code, PlusCircle, Youtube } from 'react-feather';
+import Select from 'react-select';
+import styled from 'styled-components';
+
+import { formatPrct } from '../../lib/formatNumber';
+import useConfirm from '../../lib/useConfirm';
+import useForm from '../../lib/useForm';
+import ActionButton from '../Buttons/ActionButton';
+import ButtonBack from '../Buttons/ButtonBack';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonDelete from '../Buttons/ButtonDelete';
+import ButtonValidation from '../Buttons/ButtonValidation';
+import Counter from '../Counter';
+import DatePicker from '../DatePicker';
 import DisplayError from '../ErrorMessage';
+import FieldError from '../FieldError';
+import { Help, HelpButton, useHelp } from '../Help';
+import { SearchUser } from '../SearchUser';
 import {
   Block,
   Form,
   FormBody,
+  FormBodyFull,
   FormFooter,
-  Row,
-  Label,
   FormHeader,
   FormTitle,
-  RowReadOnly,
-  RowFull,
-  FormBodyFull,
-  Separator,
   H3,
+  Label,
+  Row,
+  RowFull,
+  RowReadOnly,
+  Separator,
 } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import { SearchUser } from '../SearchUser';
-import ButtonBack from '../Buttons/ButtonBack';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import ButtonDelete from '../Buttons/ButtonDelete';
-import NotificationType, {
-  useNotificationName,
-} from '../Tables/NotificationType';
+import Phone from '../styles/Phone';
+import selectTheme from '../styles/selectTheme';
+import NotificationType, { useNotificationName } from '../Tables/NotificationType';
+import ValidityDate from '../Tables/ValidityDate';
+import { useUser } from '../User/Queries';
+import NotificationContent from './NotificationContent';
 import {
+  DELETE_NOTIFICATION_ITEM,
   DELETE_NOTIFICATION_MUTATION,
   UPDATE_NOTIFICATION_MUTATION,
-  DELETE_NOTIFICATION_ITEM,
 } from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import { useUser } from '../User/Queries';
-import DatePicker from '../DatePicker';
-import ValidityDate from '../Tables/ValidityDate';
-import Counter from '../Counter';
-import NotificationContent from './NotificationContent';
-import ActionButton from '../Buttons/ActionButton';
-import FieldError from '../FieldError';
-import selectTheme from '../styles/selectTheme';
-import Phone from '../styles/Phone';
-import { formatPrct } from '../../lib/formatNumber';
-import useConfirm from '../../lib/useConfirm';
 
 const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
@@ -64,9 +62,7 @@ const QUERY_APP_FROM_USER = gql`
 
 const QUERY_SIGNAL_FROM_APP = gql`
   query QUERY_SIGNAL_FROM_APP($appId: ID!) {
-    signals(
-      where: { licenses: { some: { application: { id: { equals: $appId } } } } }
-    ) {
+    signals(where: { licenses: { some: { application: { id: { equals: $appId } } } } }) {
       id
       name
     }
@@ -125,51 +121,38 @@ const makeData = (data) => {
 export default function Notification({ id, initialData }) {
   const router = useRouter();
 
-  const [
-    deleteNotification,
-    { loading: loadingDelete, error: errorDelete },
-  ] = useMutation(DELETE_NOTIFICATION_MUTATION, {
-    variables: { id },
-    onCompleted: () => {
-      router.push('/notifications');
-    },
-  });
-  const [
-    updateNotification,
-    { loading: loadingUpdate, error: errorUpdate },
-  ] = useMutation(UPDATE_NOTIFICATION_MUTATION, {
-    onCompleted: () => {
-      router.push('/notifications');
-    },
-  });
-  const [deleteNotificationItem, { error: errorDeleteItem }] = useMutation(
-    DELETE_NOTIFICATION_ITEM
+  const [deleteNotification, { loading: loadingDelete, error: errorDelete }] = useMutation(
+    DELETE_NOTIFICATION_MUTATION,
+    {
+      variables: { id },
+      onCompleted: () => {
+        router.push('/notifications');
+      },
+    }
   );
+  const [updateNotification, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_NOTIFICATION_MUTATION,
+    {
+      onCompleted: () => {
+        router.push('/notifications');
+      },
+    }
+  );
+  const [deleteNotificationItem, { error: errorDeleteItem }] =
+    useMutation(DELETE_NOTIFICATION_ITEM);
 
   const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
   const [querySignal, { data: dataSig }] = useLazyQuery(QUERY_SIGNAL_FROM_APP);
 
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
-    'notification'
-  );
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('notification');
   const { user } = useUser();
   const { t } = useTranslation('notification');
   const { notificationTypesOptions } = useNotificationName();
   const initialValues = useRef(makeData(initialData.data));
-  const {
-    inputs,
-    handleChange,
-    setInputs,
-    validate,
-    validationError,
-    wasTouched,
-  } = useForm(initialValues.current, [
-    'name',
-    'displayName',
-    'owner.id',
-    'application.id',
-    'signal.id',
-  ]);
+  const { inputs, handleChange, setInputs, validate, validationError, wasTouched } = useForm(
+    initialValues.current,
+    ['name', 'displayName', 'owner.id', 'application.id', 'signal.id']
+  );
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
   const notifOwnerId = initialData.data?.notification?.owner?.id;
@@ -178,9 +161,7 @@ export default function Notification({ id, initialData }) {
   const [selectedItem, setSelectedItem] = useState(0);
   const [item, setItem] = useState({});
   const [showItem, setShowItem] = useState(false);
-  const [nbNotif, setNbNotif] = useState(
-    initialValues.current.items.length || 1
-  );
+  const [nbNotif, setNbNotif] = useState(initialValues.current.items.length || 1);
 
   const [confirmCB, setConfirmCB] = useState(() => {});
   const { Confirm, setIsOpen, setArgs } = useConfirm({
@@ -198,23 +179,18 @@ export default function Notification({ id, initialData }) {
 
   useEffect(() => {
     if (dataApp?.applications) {
-      setOptionsAppUser(
-        dataApp.applications.map((d) => ({ value: d.id, label: d.name }))
-      );
+      setOptionsAppUser(dataApp.applications.map((d) => ({ value: d.id, label: d.name })));
       setOptionsSignals([]);
     }
   }, [dataApp, setOptionsAppUser]);
 
   useEffect(() => {
     if (dataSig?.signals) {
-      setOptionsSignals(
-        dataSig.signals.map((d) => ({ value: d.id, label: d.name }))
-      );
+      setOptionsSignals(dataSig.signals.map((d) => ({ value: d.id, label: d.name })));
     }
   }, [dataSig, setOptionsSignals]);
 
-  const totalPrct = () =>
-    inputs.items.reduce((tot, itm) => tot + itm.probability, 0);
+  const totalPrct = () => inputs.items.reduce((tot, itm) => tot + itm.probability, 0);
 
   function handleChangeUser(value) {
     const uId = value.value;
@@ -267,8 +243,7 @@ export default function Notification({ id, initialData }) {
     e.preventDefault();
     setConfirmCB(deleteNotification);
     setArgs({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.deleteNotification)),
+      update: (cache, payload) => cache.evict(cache.identify(payload.data.deleteNotification)),
       variables: { id },
     });
     setIsOpen(true);
@@ -279,16 +254,13 @@ export default function Notification({ id, initialData }) {
     const newInputs = validate();
     if (!newInputs) return;
 
-    if (wasTouched('owner.id'))
-      newInputs.owner = { connect: { id: newInputs.owner.id } };
+    if (wasTouched('owner.id')) newInputs.owner = { connect: { id: newInputs.owner.id } };
     if (wasTouched('application.id'))
       newInputs.application = { connect: { id: newInputs.application.id } };
-    if (wasTouched('signal.id'))
-      newInputs.signal = { connect: { id: newInputs.signal.id } };
+    if (wasTouched('signal.id')) newInputs.signal = { connect: { id: newInputs.signal.id } };
     newInputs.id = id;
     return updateNotification({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.updateNotification)),
+      update: (cache, payload) => cache.evict(cache.identify(payload.data.updateNotification)),
       variables: newInputs,
     });
   }
@@ -324,19 +296,10 @@ export default function Notification({ id, initialData }) {
       <Head>
         <title>{t('notification')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm cb={confirmCB} />
       {showItem && (
-        <NotificationContent
-          open={showItem}
-          onClose={handleCloseItem}
-          item={item}
-          notifId={id}
-        />
+        <NotificationContent open={showItem} onClose={handleCloseItem} item={item} notifId={id} />
       )}{' '}
       <Form>
         <FormHeader>
@@ -350,10 +313,7 @@ export default function Notification({ id, initialData }) {
             )}
             <HelpButton showHelp={toggleHelpVisibility} />
           </FormTitle>
-          <ButtonBack
-            route="/notifications"
-            label={t('navigation:notifications')}
-          />
+          <ButtonBack route="/notifications" label={t('navigation:notifications')} />
         </FormHeader>
         <NotificationContainer>
           <div className="content-form">
@@ -404,9 +364,7 @@ export default function Notification({ id, initialData }) {
                       theme={selectTheme}
                       className="select"
                       required
-                      value={notificationTypesOptions.find(
-                        (n) => n.value === inputs.type
-                      )}
+                      value={notificationTypesOptions.find((n) => n.value === inputs.type)}
                       onChange={handleChangeType}
                       options={notificationTypesOptions}
                     />
@@ -452,9 +410,7 @@ export default function Notification({ id, initialData }) {
                       theme={selectTheme}
                       className="select"
                       required
-                      value={optionsAppUser.find(
-                        (n) => n.value === inputs.application.id
-                      )}
+                      value={optionsAppUser.find((n) => n.value === inputs.application.id)}
                       onChange={(sel) => handleChangeApp(sel)}
                       options={optionsAppUser}
                     />
@@ -466,9 +422,7 @@ export default function Notification({ id, initialData }) {
                       className="select"
                       theme={selectTheme}
                       required
-                      value={optionsSignals.find(
-                        (n) => n.value === inputs.signal.id
-                      )}
+                      value={optionsSignals.find((n) => n.value === inputs.signal.id)}
                       onChange={(n) =>
                         handleChange({
                           name: 'signal.id',
@@ -553,9 +507,7 @@ export default function Notification({ id, initialData }) {
                       total={totalPrct()}
                     />
                   ))}
-                  {inputs.items.length < nbNotif && (
-                    <AddNotif onClick={addContent} />
-                  )}
+                  {inputs.items.length < nbNotif && <AddNotif onClick={addContent} />}
                 </NotifContainer>
               </Row>
             </FormBodyFull>
@@ -568,17 +520,10 @@ export default function Notification({ id, initialData }) {
         </NotificationContainer>
         <FormFooter>
           {canEdit && id && (
-            <ButtonValidation
-              disabled={loadingUpdate}
-              onClick={handleUpdateNotification}
-              update
-            />
+            <ButtonValidation disabled={loadingUpdate} onClick={handleUpdateNotification} update />
           )}
           {canEdit && id && (
-            <ButtonDelete
-              disabled={loadingDelete}
-              onClick={handleDeleteNotification}
-            />
+            <ButtonDelete disabled={loadingDelete} onClick={handleDeleteNotification} />
           )}
           <ButtonCancel onClick={() => router.back()} />
         </FormFooter>
@@ -618,11 +563,7 @@ export function Notif({
   return (
     <NotifStyle onClick={onClick} style={style}>
       {item.displayType === 'image' && item?.image?.publicUrlTransformed && (
-        <img
-          className="image"
-          src={item.image.publicUrlTransformed}
-          alt={item.name}
-        />
+        <img className="image" src={item.image.publicUrlTransformed} alt={item.name} />
       )}
       {item.displayType === 'html' && (
         <div className="html-content">
@@ -650,8 +591,7 @@ export function Notif({
                 <span>{t('default')}</span>
               ) : (
                 <span>
-                  {item.probability} (
-                  {total ? formatPrct(item.probability / total) : '-'})
+                  {item.probability} ({total ? formatPrct(item.probability / total) : '-'})
                 </span>
               )}
             </div>

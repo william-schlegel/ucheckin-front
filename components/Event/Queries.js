@@ -10,12 +10,7 @@ export const PAGINATION_QUERY = gql`
 
 export const ALL_EVENTS_QUERY = gql`
   query ALL_EVENTS_QUERY($skip: Int = 0, $take: Int, $where: EventWhereInput) {
-    events(
-      take: $take
-      skip: $skip
-      where: $where
-      orderBy: { validityStart: desc }
-    ) {
+    events(take: $take, skip: $skip, where: $where, orderBy: { validityStart: desc }) {
       id
       name
       description

@@ -9,17 +9,8 @@ export const PAGINATION_QUERY = gql`
 `;
 
 export const ALL_NOTIFICATIONS_QUERY = gql`
-  query ALL_NOTIFICATIONS_QUERY(
-    $skip: Int = 0
-    $take: Int
-    $where: NotificationWhereInput
-  ) {
-    notifications(
-      take: $take
-      skip: $skip
-      where: $where
-      orderBy: { startDate: desc }
-    ) {
+  query ALL_NOTIFICATIONS_QUERY($skip: Int = 0, $take: Int, $where: NotificationWhereInput) {
+    notifications(take: $take, skip: $skip, where: $where, orderBy: { startDate: desc }) {
       id
       name
       owner {
@@ -107,8 +98,8 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
     $name: String
     $displayName: String
     $type: String
-    $startDate: String
-    $endDate: String
+    $startDate: DateTime
+    $endDate: DateTime
     $owner: UserRelateToOneForUpdateInput
     $application: ApplicationRelateToOneForUpdateInput
     $signal: SignalRelateToOneForUpdateInput
@@ -136,8 +127,8 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
     $name: String!
     $displayName: String
     $type: String
-    $startDate: String
-    $endDate: String
+    $startDate: DateTime
+    $endDate: DateTime
     $owner: UserRelateToOneForCreateInput
     $application: ApplicationRelateToOneForCreateInput
     $signal: SignalRelateToOneForCreateInput
@@ -175,10 +166,7 @@ export const CREATE_NOTIFICATION_ITEM = gql`
 `;
 
 export const UPDATE_NOTIFICATION_ITEM = gql`
-  mutation UPDATE_NOTIFICATION_ITEM(
-    $id: ID!
-    $data: NotificationItemUpdateInput
-  ) {
+  mutation UPDATE_NOTIFICATION_ITEM($id: ID!, $data: NotificationItemUpdateInput!) {
     updateNotificationItem(where: { id: $id }, data: $data) {
       id
       displayType
@@ -201,9 +189,7 @@ export const DELETE_NOTIFICATION_ITEM = gql`
 `;
 
 export function useFindNotification(notificationId) {
-  const [findNotification, { data, error, loading }] = useLazyQuery(
-    NOTIFICATION_QUERY
-  );
+  const [findNotification, { data, error, loading }] = useLazyQuery(NOTIFICATION_QUERY);
   useEffect(() => {
     if (notificationId)
       findNotification({

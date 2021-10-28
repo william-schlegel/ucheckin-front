@@ -9,11 +9,7 @@ export const PAGINATION_QUERY = gql`
 `;
 
 export const ALL_SIGNALS_QUERY = gql`
-  query ALL_SIGNALS_QUERY(
-    $skip: Int = 0
-    $take: Int
-    $where: SignalWhereInput
-  ) {
+  query ALL_SIGNALS_QUERY($skip: Int = 0, $take: Int, $where: SignalWhereInput) {
     signals(take: $take, skip: $skip, where: $where) {
       id
       name
@@ -125,24 +121,6 @@ export const MUTATION_ADD_SIGNAL_FILE = gql`
       id
       url
       fileName
-    }
-  }
-`;
-
-export const CREATE_SIGNAL_MUTATION = gql`
-  mutation CREATE_SIGNAL_MUTATION($ownerId: ID!) {
-    createSignal(data: { owner: { connect: { id: $ownerId } } }) {
-      id
-      name
-    }
-  }
-`;
-
-export const CREATE_SIGNALS_MUTATION = gql`
-  mutation CREATE_SIGNALS_MUTATION($data: [SignalsCreateInput]!) {
-    createSignals(data: $data) {
-      id
-      name
     }
   }
 `;
