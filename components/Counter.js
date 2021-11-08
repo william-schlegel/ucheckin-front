@@ -1,12 +1,13 @@
 import useTranslation from 'next-translate/useTranslation';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
 import ActionButton from './Buttons/ActionButton';
 import { Label } from './styles/Card';
 
 const CounterStyled = styled.div`
   display: grid;
-  grid-template-columns: minmax(100px, 40%) 1fr;
+  grid-template-columns: 2fr 1fr; // minmax(100px, 40%) 1fr;
   margin-right: auto;
   align-items: center;
   width: 100%;
@@ -28,15 +29,7 @@ const CounterFullStyled = styled(CounterStyled)`
   width: 100%;
 `;
 
-export default function Counter({
-  label,
-  name,
-  input,
-  handleChange,
-  min = 0,
-  max,
-  fullWidth,
-}) {
+export default function Counter({ label, name, input, handleChange, min = 0, max, fullWidth }) {
   if (fullWidth)
     return (
       <CounterFullStyled>
@@ -79,9 +72,7 @@ const CounterContent = ({ label, name, input, handleChange, min = 0, max }) => {
       <div className="counter">
         <ActionButton
           type="minus-circle"
-          cb={() =>
-            handleChange({ type: 'number', name, value: checkValue(input - 1) })
-          }
+          cb={() => handleChange({ type: 'number', name, value: checkValue(input - 1) })}
           label={t('minus')}
         />
         <input
@@ -99,9 +90,7 @@ const CounterContent = ({ label, name, input, handleChange, min = 0, max }) => {
         />
         <ActionButton
           type="plus-circle"
-          cb={() =>
-            handleChange({ type: 'number', name, value: checkValue(input + 1) })
-          }
+          cb={() => handleChange({ type: 'number', name, value: checkValue(input + 1) })}
           label={t('plus')}
         />
       </div>

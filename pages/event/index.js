@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import { dateDay, dateInMonth } from '../../components/DatePicker';
 import ViewNotification from '../../components/Notification/Notification';
 import { CURRENT_USER_QUERY } from '../../components/User/Queries';
@@ -6,9 +7,11 @@ import { CURRENT_USER_QUERY } from '../../components/User/Queries';
 export default function Notification({ initialData }) {
   return <ViewNotification id="" initialData={initialData} />;
 }
+
 Notification.propTypes = {
   initialData: PropTypes.object,
 };
+
 Notification.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const user = await apolloClient.query({ query: CURRENT_USER_QUERY });

@@ -1,6 +1,7 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
+  BarChart,
   Calendar,
   Check,
   ChevronLeft,
@@ -76,6 +77,7 @@ export default function ActionButton({ type, cb = () => {}, label, size = 24 }) 
       {type === 'user-profile' && <UserCheck size={size} />}
       {type === 'view' && <Eye size={size} />}
       {type === 'map-pin' && <MapPin size={size} />}
+      {type === 'chart' && <BarChart size={size} />}
     </IconButtonStyles>
   );
 }
@@ -111,6 +113,7 @@ ActionButton.propTypes = {
     'user-account',
     'dollar',
     'map-pin',
+    'chart',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

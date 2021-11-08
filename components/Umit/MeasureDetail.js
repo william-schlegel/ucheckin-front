@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 
+import { calculCourbe } from '../../lib/maths';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
@@ -16,6 +18,11 @@ export default function MeasureDetails({ open, onClose, id }) {
     variables: { id },
   });
   const { t } = useTranslation('umit');
+  const [points, setPoints] = useState([]);
+
+  useEffect(() => {
+    if (data?.umitMeasure?.points) setPoints(calculCourbe(data.umitMeasure.points));
+  }, [data?.umitMeasure?.points]);
 
   if (loading) return <Loading />;
   if (!data) return null;
@@ -24,7 +31,7 @@ export default function MeasureDetails({ open, onClose, id }) {
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('measure-name')} <span>{data.umitMeasure.sensor.name}</span>
+            {t('measure-name')} <span>{data.umitMeasure.sensor?.name}</span>
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
@@ -37,13 +44,18 @@ export default function MeasureDetails({ open, onClose, id }) {
             <span
               style={{
                 fontSize: '1.5rem',
-                color: data.umitMeasure.thickness < data.umitMeasure.sensor.alert ? 'red' : 'green',
-              }}>
+                color: data.umitMeasure.sensor?.alert
+                  ? data.umitMeasure.thickness < data.umitMeasure.sensor.alert
+                    ? 'red'
+                    : 'green'
+                  : 'black',
+              }}
+            >
               {data.umitMeasure.thickness} mm
             </span>
           </RowReadOnly>
           <RowReadOnly>
-            <DessinCourbe points={data.umitMeasure.points} dataMesure={data.umitMeasure} />
+            <DessinCourbe points={points} dataMesure={data.umitMeasure} />
           </RowReadOnly>
         </FormBodyFull>
       </Form>
@@ -59,15 +71,15 @@ export default function MeasureDetails({ open, onClose, id }) {
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('building')}</Label>
-            <span>{data.umitMeasure.sensor.building}</span>
+            <span>{data.umitMeasure.sensor?.building}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('unit')}</Label>
-            <span>{data.umitMeasure.sensor.unit}</span>
+            <span>{data.umitMeasure.sensor?.unit}</span>
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('ref')}</Label>
-            <span>{data.umitMeasure.sensor.ref}</span>
+            <span>{data.umitMeasure.sensor?.ref}</span>
           </RowReadOnly>
         </FormBodyFull>
       </Form>

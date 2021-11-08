@@ -31,6 +31,7 @@
   "last-measure": "Dernière mesure",
   "never-settled": "Jamais relevé",
   "sensor-details": "Détails du capteur",
+  "sensor-chart": "Graphique d'évolution de la mesure",
   "mac-address": "Adresse MAC",
   "frequency": "Fréquence capteur",
   "alert": "Seuil d'alerte",

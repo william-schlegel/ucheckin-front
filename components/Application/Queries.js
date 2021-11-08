@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+
 import { dateDay } from '../DatePicker';
 
 export const APPLICATION_QUERY = gql`
@@ -50,11 +51,7 @@ export const PAGINATION_QUERY = gql`
 `;
 
 export const ALL_APPLICATIONS_QUERY = gql`
-  query ALL_APPLICATIONS_QUERY(
-    $skip: Int = 0
-    $take: Int
-    $where: ApplicationWhereInput
-  ) {
+  query ALL_APPLICATIONS_QUERY($skip: Int = 0, $take: Int, $where: ApplicationWhereInput) {
     applications(take: $take, skip: $skip, where: $where) {
       id
       name
@@ -89,7 +86,7 @@ export const CREATE_APPLICATION_MUTATION = gql`
 
 export const DELETE_APPLICATION_MUTATION = gql`
   mutation DELETE_APPLICATION_MUTATION($id: ID!) {
-    deleteApplication(id: $id) {
+    deleteApplication(where: { id: $id }) {
       id
       name
     }
@@ -127,12 +124,7 @@ export const UPDATE_APPLICATION_MUTATION = gql`
   ) {
     updateApplication(
       where: { id: $id }
-      data: {
-        name: $name
-        apiKey: $apiKey
-        owner: $owner
-        licenseTypes: $licenseTypes
-      }
+      data: { name: $name, apiKey: $apiKey, owner: $owner, licenseTypes: $licenseTypes }
     ) {
       id
     }
@@ -202,12 +194,7 @@ export const CREATE_ACCOUNT_INVITATION = gql`
     $company: String!
     $password: String!
   ) {
-    createAccountInvitation(
-      token: $token
-      name: $name
-      company: $company
-      password: $password
-    ) {
+    createAccountInvitation(token: $token, name: $name, company: $company, password: $password) {
       id
     }
   }

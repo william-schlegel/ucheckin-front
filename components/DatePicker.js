@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
-import Datepicker, { registerLocale } from 'react-datepicker'; // './Datepiker/Datepicker';
 import fr from 'date-fns/locale/fr';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import Datepicker, { registerLocale } from 'react-datepicker'; // './Datepiker/Datepicker';
 
 registerLocale('fr', fr);
 
@@ -29,14 +29,11 @@ export function dateDay() {
 
 export function dateInMonth(nbMonth = 1) {
   const dt = new Date();
-  return new Date(
-    dt.getFullYear(),
-    dt.getMonth() + nbMonth,
-    dt.getDate()
-  ).toISOString();
+  return new Date(dt.getFullYear(), dt.getMonth() + nbMonth, dt.getDate()).toISOString();
 }
 
 export function formatDate(dt, locale) {
+  if (!dt) return '';
   const options = { day: '2-digit', month: 'long', year: 'numeric' };
   const formatter = Intl.DateTimeFormat(locale, options);
   return formatter.format(new Date(dt));

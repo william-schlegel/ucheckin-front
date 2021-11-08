@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import useTranslation from 'next-translate/useTranslation';
 
 import { CURRENT_USER_QUERY, SIGN_OUT_MUTATION } from './Queries';
 
@@ -18,7 +18,7 @@ export default function SignOut() {
 
   return (
     <button type="button" onClick={handleClick}>
-      {t('signout')}
+      <span style={{ width: '100%', textAlign: 'center' }}>{t('signout')}</span>
     </button>
   );
 }

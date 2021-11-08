@@ -31,6 +31,7 @@
   "last-measure": "Last measure",
   "never-settled": "Never settled",
   "sensor-details": "Sensor details",
+  "sensor-chart": "Thickness evolution chart",
   "mac-address": "MAC Address",
   "frequency": "Sensor frequency",
   "alert": "Alert threshold",

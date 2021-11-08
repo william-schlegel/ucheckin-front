@@ -1,52 +1,52 @@
-import { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
-import Select from 'react-select';
 import gql from 'graphql-tag';
-import { useDropzone } from 'react-dropzone';
-
-import styled from 'styled-components';
-import Head from 'next/head';
 import isEmpty from 'lodash.isempty';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import Select from 'react-select';
+import styled from 'styled-components';
+
+import useConfirm from '../../lib/useConfirm';
+import useForm from '../../lib/useForm';
+import ActionButton from '../Buttons/ActionButton';
+import ButtonBack from '../Buttons/ButtonBack';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonDelete from '../Buttons/ButtonDelete';
+import ButtonValidation from '../Buttons/ButtonValidation';
+import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
+import FieldError from '../FieldError';
+import { Help, HelpButton, useHelp } from '../Help';
+import { SearchUser } from '../SearchUser';
+import RichEditor from '../SlateEditor';
 import {
   Block,
   Form,
   FormBody,
   FormFooter,
-  Row,
-  Label,
   FormHeader,
   FormTitle,
-  RowReadOnly,
   H2,
+  Label,
+  Row,
+  RowReadOnly,
 } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import { SearchUser } from '../SearchUser';
-import ButtonBack from '../Buttons/ButtonBack';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import ButtonDelete from '../Buttons/ButtonDelete';
-import { DELETE_EVENT_MUTATION, UPDATE_EVENT_MUTATION } from './Queries';
-import { useHelp, Help, HelpButton } from '../Help';
-import { useUser } from '../User/Queries';
-import DatePicker from '../DatePicker';
-import Image from '../Tables/Image';
-import FieldError from '../FieldError';
-import selectTheme from '../styles/selectTheme';
 import { ImageSelection } from '../styles/ImageSelection';
-import EventHome from './EventHome';
 import Phone from '../styles/Phone';
-import ActionButton from '../Buttons/ActionButton';
+import selectTheme from '../styles/selectTheme';
+import Image from '../Tables/Image';
+import { useUser } from '../User/Queries';
 import EventContent from './EventContent';
-import useConfirm from '../../lib/useConfirm';
+import EventHome from './EventHome';
 import EventMap from './EventMap';
-import RichEditor from '../SlateEditor';
+import { DELETE_EVENT_MUTATION, UPDATE_EVENT_MUTATION } from './Queries';
 
 const QUERY_APP_FROM_USER = gql`
-  query QUERY_APP_FROM_USER($user: ID!) {
+  query QUERY_APP_FROM_USER($user: IDFilter) {
     applications(where: { owner: { id: $user } }) {
       id
       name
@@ -54,69 +54,39 @@ const QUERY_APP_FROM_USER = gql`
   }
 `;
 
-// make mutable object
-const makeData = (data) => {
-  const dN = data.event;
-  return {
-    name: dN.name || '',
-    location: dN.location || '',
-    lat: dN.lat || 48.8693548,
-    lng: dN.lng || 2.3566885,
-    owner: { id: dN.owner?.id, name: dN.owner?.name },
-    application: { id: dN.application?.id, name: dN.application?.name },
-    publishStart: dN.publishStart,
-    publishEnd: dN.publishEnd,
-    imageHome: { publicUrlTransformed: dN.imageHome?.publicUrlTransformed },
-    description: dN.description || '',
-    validityStart: dN.validityStart,
-    validityEnd: dN.validityEnd,
-    imageEvent: { publicUrlTransformed: dN.imageEvent?.publicUrlTransformed },
-    eventDescription: dN.eventDescription || '',
-  };
-};
-
 export default function Event({ id, initialData }) {
   const router = useRouter();
-  const [
-    deleteEvent,
-    { loading: loadingDelete, error: errorDelete },
-  ] = useMutation(DELETE_EVENT_MUTATION, {
-    variables: { id },
-    onCompleted: () => {
-      router.push('/events');
-    },
-  });
-  const [
-    updateEvent,
-    { loading: loadingUpdate, error: errorUpdate },
-  ] = useMutation(UPDATE_EVENT_MUTATION, {
-    onCompleted: () => {
-      router.push('/events');
-    },
-  });
+  const [deleteEvent, { loading: loadingDelete, error: errorDelete }] = useMutation(
+    DELETE_EVENT_MUTATION,
+    {
+      variables: { id },
+      onCompleted: () => {
+        router.push('/events');
+      },
+    }
+  );
+  const [updateEvent, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_EVENT_MUTATION,
+    {
+      onCompleted: () => {
+        router.push('/events');
+      },
+    }
+  );
   const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
 
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('event');
   const { user } = useUser();
   const { t } = useTranslation('event');
-  const initialValues = useRef(makeData(initialData.data));
-  const {
-    inputs,
-    handleChange,
-    validate,
-    validationError,
-    wasTouched,
-  } = useForm(initialValues.current, [
-    'name',
-    'description',
-    'owner.id',
-    'application.id',
-    'eventDescription',
-    'location',
-  ]);
+  const initialValues = useRef(initialData.data.event); //useRef(makeData(initialData.data));
+  const { inputs, handleChange, validate, validationError, wasTouched } = useForm(
+    initialValues.current,
+    ['name', 'description', 'owner.id', 'application.id', 'eventDescription', 'location']
+  );
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
-  const eventOwnerId = initialValues.current?.owner?.id;
+  const eventOwnerId = initialValues.current?.owner?.id || user.id;
+  console.log(`eventOwnerId`, eventOwnerId);
   const [optionsAppUser, setOptionsAppUser] = useState([]);
   const [showMap, setShowMap] = useState(false);
 
@@ -137,19 +107,13 @@ export default function Event({ id, initialData }) {
     });
   };
 
-  const {
-    getRootProps: rootPropsHome,
-    getInputProps: inputPropsHome,
-  } = useDropzone({
+  const { getRootProps: rootPropsHome, getInputProps: inputPropsHome } = useDropzone({
     onDrop: onDropHome,
     accept: 'image/jpeg, image/png',
     multiple: false,
   });
 
-  const {
-    getRootProps: rootPropsEvent,
-    getInputProps: inputPropsEvent,
-  } = useDropzone({
+  const { getRootProps: rootPropsEvent, getInputProps: inputPropsEvent } = useDropzone({
     onDrop: onDropEvent,
     accept: 'image/jpeg, image/png',
     multiple: false,
@@ -171,9 +135,7 @@ export default function Event({ id, initialData }) {
 
   useEffect(() => {
     if (dataApp?.applications) {
-      setOptionsAppUser(
-        dataApp.applications.map((d) => ({ value: d.id, label: d.name }))
-      );
+      setOptionsAppUser(dataApp.applications.map((d) => ({ value: d.id, label: d.name })));
     }
   }, [dataApp, setOptionsAppUser]);
 
@@ -186,8 +148,7 @@ export default function Event({ id, initialData }) {
   function handleDeleteEvent(e) {
     if (e) e.preventDefault();
     setArgs({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.deleteEvent)),
+      update: (cache, payload) => cache.evict(cache.identify(payload.data.deleteEvent)),
       variables: { id },
     });
     setIsOpen(true);
@@ -198,8 +159,7 @@ export default function Event({ id, initialData }) {
     const newInputs = validate();
     if (!newInputs) return;
 
-    if (wasTouched('owner.id'))
-      newInputs.owner = { connect: { id: newInputs.owner.id } };
+    if (wasTouched('owner.id')) newInputs.owner = { connect: { id: newInputs.owner.id } };
     if (wasTouched('application.id'))
       newInputs.application = { connect: { id: newInputs.application.id } };
     if (wasTouched('eventDescription.document'))
@@ -207,8 +167,7 @@ export default function Event({ id, initialData }) {
     if (isEmpty(newInputs.imageHome)) delete newInputs.imageHome;
     if (isEmpty(newInputs.imageEvent)) delete newInputs.imageEvent;
     return updateEvent({
-      update: (cache, payload) =>
-        cache.evict(cache.identify(payload.data.updateEvent)),
+      update: (cache, payload) => cache.evict(cache.identify(payload.data.updateEvent)),
       variables: { id, data: newInputs },
     });
   }
@@ -222,7 +181,7 @@ export default function Event({ id, initialData }) {
 
   useEffect(() => {
     const uId = initialData?.data?.event?.owner?.id;
-    if (uId) queryAppUser({ variables: { user: uId } });
+    if (uId) queryAppUser({ variables: { user: { equals: uId } } });
   }, [initialData, queryAppUser]);
 
   if (errorDelete) return <DisplayError error={errorDelete} />;
@@ -233,11 +192,7 @@ export default function Event({ id, initialData }) {
       <Head>
         <title>{t('event')}</title>
       </Head>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       {showMap && (
         <EventMap
@@ -291,10 +246,7 @@ export default function Event({ id, initialData }) {
                         value={inputs.location}
                         onChange={handleChange}
                       />
-                      <ActionButton
-                        type="map-pin"
-                        cb={() => setShowMap(true)}
-                      />
+                      <ActionButton type="map-pin" cb={() => setShowMap(true)} />
                     </Block>
                   </Row>
                   {eventOwnerId === userId ? (
@@ -303,7 +255,7 @@ export default function Event({ id, initialData }) {
                       <SearchUser
                         required
                         name="owner.id"
-                        value={inputs.owner.id}
+                        value={inputs.owner?.id}
                         onChange={handleChangeUser}
                       />
                       <FieldError error={validationError['owner.id']} />
@@ -320,9 +272,7 @@ export default function Event({ id, initialData }) {
                       theme={selectTheme}
                       className="select"
                       required
-                      value={optionsAppUser.find(
-                        (n) => n.value === inputs.application.id
-                      )}
+                      value={optionsAppUser.find((n) => n.value === inputs.application?.id)}
                       onChange={(sel) => handleChangeApp(sel)}
                       options={optionsAppUser}
                     />
@@ -333,7 +283,7 @@ export default function Event({ id, initialData }) {
                       <Label htmlFor="publishStart">{t('publish-start')}</Label>
                       <DatePicker
                         id="publishStart"
-                        ISOStringValue={inputs.publishStart}
+                        ISOStringValue={inputs.publishStart || dateNow()}
                         onChange={(dt) =>
                           handleChange({
                             name: 'publishStart',
@@ -348,7 +298,7 @@ export default function Event({ id, initialData }) {
                       <Label htmlFor="publishEnd">{t('publish-end')} </Label>
                       <DatePicker
                         id="publishEnd"
-                        ISOStringValue={inputs.publishEnd}
+                        ISOStringValue={inputs.publishEnd || dateInMonth(1)}
                         onChange={(dt) =>
                           handleChange({
                             name: 'publishEnd',
@@ -384,12 +334,10 @@ export default function Event({ id, initialData }) {
                   </Row>
                   <Row>
                     <Block>
-                      <Label htmlFor="validityStart">
-                        {t('validity-start')}
-                      </Label>
+                      <Label htmlFor="validityStart">{t('validity-start')}</Label>
                       <DatePicker
                         id="validityStart"
-                        ISOStringValue={inputs.validityStart}
+                        ISOStringValue={inputs.validityStart || dateNow()}
                         onChange={(dt) =>
                           handleChange({
                             name: 'validityStart',
@@ -404,7 +352,7 @@ export default function Event({ id, initialData }) {
                       <Label htmlFor="validityEnd">{t('validity-end')} </Label>
                       <DatePicker
                         id="validityEnd"
-                        ISOStringValue={inputs.validityEnd}
+                        ISOStringValue={inputs.validityEnd || dateInMonth(1)}
                         onChange={(dt) =>
                           handleChange({
                             name: 'validityEnd',
@@ -422,12 +370,7 @@ export default function Event({ id, initialData }) {
                           <p>{t('image-event')}</p>
                         </div>
                       </ImageSelection>
-                      <Image
-                        image={inputs.imageEvent}
-                        size={100}
-                        ratio={480 / 320}
-                        border
-                      />
+                      <Image image={inputs.imageEvent} size={100} ratio={480 / 320} border />
                     </HomeImageContainer>
                   </Row>
                   <Row>
@@ -436,7 +379,7 @@ export default function Event({ id, initialData }) {
                     </Label>
                     <RichEditor
                       id="eventDescription"
-                      value={initialValues.current.eventDescription.document}
+                      value={initialValues.current.eventDescription?.document}
                       setValue={(value) =>
                         handleChange({
                           name: 'eventDescription.document',
@@ -456,11 +399,11 @@ export default function Event({ id, initialData }) {
                   </RowReadOnly>
                   <RowReadOnly>
                     <Label>{t('application')}</Label>
-                    <span>{inputs.application.name}</span>
+                    <span>{inputs.application?.name}</span>
                   </RowReadOnly>
                   <RowReadOnly>
                     <Label>{t('common:owner')}</Label>
-                    <span>{inputs.owner.name}</span>
+                    <span>{inputs.owner?.name}</span>
                   </RowReadOnly>
                 </>
               )}
@@ -483,18 +426,9 @@ export default function Event({ id, initialData }) {
         </EventContainer>
         <FormFooter>
           {canEdit && id && (
-            <ButtonValidation
-              disabled={loadingUpdate}
-              onClick={handleUpdateEvent}
-              update
-            />
+            <ButtonValidation disabled={loadingUpdate} onClick={handleUpdateEvent} update />
           )}
-          {canEdit && id && (
-            <ButtonDelete
-              disabled={loadingDelete}
-              onClick={handleDeleteEvent}
-            />
-          )}
+          {canEdit && id && <ButtonDelete disabled={loadingDelete} onClick={handleDeleteEvent} />}
           <ButtonCancel onClick={() => router.back()} />
         </FormFooter>
       </Form>
@@ -503,7 +437,7 @@ export default function Event({ id, initialData }) {
 }
 
 Event.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.object,
   initialData: PropTypes.object,
 };
 

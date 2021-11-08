@@ -4,18 +4,12 @@ import PropTypes from 'prop-types';
 import { Download } from 'react-feather';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
 import styled from 'styled-components';
-import { Help, HelpButton, useHelp } from '../components/Help';
-import {
-  Block,
-  FormBodyFull,
-  FormHeader,
-  FormTitle,
-  H2,
-} from '../components/styles/Card';
-import { ButtonStyled } from '../components/styles/Button';
+
 import client from '../apollo-client';
+import { Help, HelpButton, useHelp } from '../components/Help';
+import { ButtonStyled } from '../components/styles/Button';
+import { Block, FormBodyFull, FormHeader, FormTitle, H2 } from '../components/styles/Card';
 
 const QUERY_SDK = gql`
   query QUERY_SDK {
@@ -38,11 +32,7 @@ export default function Sdk({ initialData = [] }) {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('sdk');
   return (
     <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <FormHeader>
         <FormTitle>
           <Block>
@@ -124,22 +114,14 @@ function SdkBlock({ sdkData }) {
       <div className="sdk-block">
         {sdkData.image.publicUrlTransformed && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={sdkData.image.publicUrlTransformed}
-            alt={sdkData.image.name}
-          />
+          <img src={sdkData.image.publicUrlTransformed} alt={sdkData.image.name} />
         )}
         <div className="content">
           <ReactMarkdown remarkPlugins={[remarkGfm]} className="body">
             {content}
           </ReactMarkdown>
           <div>
-            <a
-              href={sdkData.link}
-              target="_blank"
-              alt={sdkData.name}
-              rel="noreferrer"
-            >
+            <a href={sdkData.link} target="_blank" alt={sdkData.name} rel="noreferrer">
               <ButtonStyled>
                 <Download />
                 <span>{t('download')}</span>
@@ -156,6 +138,7 @@ SdkBlock.propTypes = { sdkData: PropTypes.object };
 
 export async function getServerSideProps() {
   const { data } = await client.query({ query: QUERY_SDK });
+  // console.log(`data.sdks`, data.sdks);
   return {
     props: {
       initialData: data.sdks,

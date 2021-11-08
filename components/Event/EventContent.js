@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'react-feather';
 import styled from 'styled-components';
-import { formatDate } from '../DatePicker';
+
 import { serializeHtml } from '../../lib/serializeDocument';
+import { formatDate } from '../DatePicker';
 
 export default function EventContent({ event }) {
   const [element, setElement] = useState();
@@ -14,7 +15,7 @@ export default function EventContent({ event }) {
   }, []);
 
   useEffect(() => {
-    if (element) {
+    if (element && event?.eventDescription) {
       element.innerHTML = serializeHtml({
         children: event.eventDescription.document,
       });
@@ -28,10 +29,7 @@ export default function EventContent({ event }) {
         <span>{event.name}</span>
       </div>
       <div className="image">
-        <img
-          src={event.imageEvent?.publicUrlTransformed || '/images/UNKNOWN.png'}
-          alt="event"
-        />
+        <img src={event.imageEvent?.publicUrlTransformed || '/images/UNKNOWN.png'} alt="event" />
         <div className="event-description-container">
           <p className="event-title">{event.description}</p>
           <p className="location">{`${event.location || '?'}, ${formatDate(

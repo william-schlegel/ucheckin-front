@@ -7,14 +7,15 @@ import { useEffect, useState } from 'react';
 import { perPage } from '../../config';
 import useConfirm from '../../lib/useConfirm';
 import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
+import EntetePage from '../styles/EntetePage';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import { Layout } from './Layout';
 import { ALL_SENSORS_QUERY, DELETE_SENSOR_MUTATION, PAGINATION_SENSOR_QUERY } from './Queries';
+import SensorChart from './SensorChart';
 import SensorDetail from './SensorDetail';
-import UmitNav from './UmitNav';
 
 export default function Sensors() {
   const router = useRouter();
@@ -30,6 +31,8 @@ export default function Sensors() {
   const count = dataPage?.count;
   const { t } = useTranslation('umit');
   const [showSensor, setShowSensor] = useState('');
+  const [showChart, setShowChart] = useState('');
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
 
   useEffect(() => {
     const variables = {
@@ -69,8 +72,16 @@ export default function Sensors() {
     if (id) setShowSensor(id);
   }
 
+  function viewChart(id) {
+    if (id) setShowChart(id);
+  }
+
   function handleCloseShowSensor() {
     setShowSensor('');
+  }
+
+  function handleCloseShowChart() {
+    setShowChart('');
   }
 
   function deleteSensor(id) {
@@ -84,21 +95,28 @@ export default function Sensors() {
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
   return (
-    <Layout>
-      <UmitNav active={'sensors'} />
+    <>
       <Head>
         <title>{t('sensors')}</title>
       </Head>
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
+      <EntetePage>
+        <h3>{t('sensors')}</h3>
+        <HelpButton showHelp={toggleHelpVisibility} />
+      </EntetePage>
       <Confirm />
       {showSensor && (
         <SensorDetail open={!!showSensor} onClose={handleCloseShowSensor} id={showSensor} />
+      )}
+      {showChart && (
+        <SensorChart open={!!showChart} onClose={handleCloseShowChart} id={showChart} />
       )}
       <Pagination
         page={page}
         error={errorPage}
         loading={loadingPage}
         count={count}
-        pageRef="sensors"
+        pageRef="umit/sensors"
       />
       <Table
         columns={columns}
@@ -106,10 +124,11 @@ export default function Sensors() {
         error={error}
         loading={loading}
         actionButtons={[
+          { type: 'chart', action: viewChart },
           { type: 'view', action: viewSensor },
           { type: 'trash', action: deleteSensor },
         ]}
       />
-    </Layout>
+    </>
   );
 }

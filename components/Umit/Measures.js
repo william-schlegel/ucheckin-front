@@ -9,16 +9,16 @@ import styled from 'styled-components';
 import { perPage } from '../../config';
 import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
 import { Block, FormBody, Label, RowFull } from '../styles/Card';
+import EntetePage from '../styles/EntetePage';
 import selectTheme from '../styles/selectTheme';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import { Layout } from './Layout';
 import MeasureDetails from './MeasureDetail';
 import { ALL_LOCATIONS_QUERY, ALL_MEASURES_QUERY, PAGINATION_MEASURE_QUERY } from './Queries';
-import UmitNav from './UmitNav';
 
 export default function Measures() {
   const router = useRouter();
@@ -34,6 +34,7 @@ export default function Measures() {
   const [dtFin, setDtFin] = useState(dateNow());
   const [locations, setLocations] = useState([{ value: 'all', label: t('all') }]);
   const [location, setLocation] = useState(0);
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
 
   useQuery(ALL_LOCATIONS_QUERY, {
     onCompleted: (data) =>
@@ -108,14 +109,18 @@ export default function Measures() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   return (
-    <Layout>
-      <UmitNav active={'measures'} />
+    <>
       {showMeasure && (
         <MeasureDetails open={!!showMeasure} onClose={handleCloseShowMeasure} id={showMeasure} />
       )}
       <Head>
         <title>{t('measures')}</title>
       </Head>
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
+      <EntetePage>
+        <h3>{t('measures')}</h3>
+        <HelpButton showHelp={toggleHelpVisibility} />
+      </EntetePage>
       <MeasureLayout>
         <FormBody style={{ display: 'flex', width: '100%', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: '0.5rem', minWidth: '30%', alignItems: 'center' }}>
@@ -155,7 +160,7 @@ export default function Measures() {
             error={errorPage}
             loading={loadingPage}
             count={count}
-            pageRef="measures"
+            pageRef="umit/measures"
           />
           <Table
             columns={columns}
@@ -166,7 +171,7 @@ export default function Measures() {
           />
         </div>
       </MeasureLayout>
-    </Layout>
+    </>
   );
 }
 

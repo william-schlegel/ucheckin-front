@@ -8,11 +8,11 @@ import { perPage } from '../../config';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
-import { Flex } from '../styles/Form';
+import EntetePage from '../styles/EntetePage';
 import Table, { useColumns } from '../Tables/Table';
-import { Layout } from './Layout';
 import LocationDetails from './LocationDetail';
 import LocationNew from './LocationNew';
 import {
@@ -20,7 +20,6 @@ import {
   DELETE_LOCATION_MUTATION,
   PAGINATION_LOCATION_QUERY,
 } from './Queries';
-import UmitNav from './UmitNav';
 
 export default function Locations() {
   const router = useRouter();
@@ -37,6 +36,7 @@ export default function Locations() {
   const { t } = useTranslation('umit');
   const [showLocation, setShowLocation] = useState('');
   const [newLocation, setNewLocation] = useState(false);
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
 
   useEffect(() => {
     const variables = {
@@ -82,11 +82,21 @@ export default function Locations() {
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
   return (
-    <Layout>
-      <UmitNav active={'locations'} />
+    <>
       <Head>
         <title>{t('locations')}</title>
       </Head>
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
+      <EntetePage>
+        <h3>{t('locations')}</h3>
+        <HelpButton showHelp={toggleHelpVisibility} />
+        <ButtonNew
+          onClick={() => {
+            setNewLocation(true);
+          }}
+        />
+      </EntetePage>
+
       <Confirm />
       {showLocation && (
         <LocationDetails
@@ -96,20 +106,13 @@ export default function Locations() {
         />
       )}
       {newLocation && <LocationNew open={!!newLocation} onClose={() => setNewLocation(false)} />}
-      <Flex>
-        <Pagination
-          page={page}
-          error={errorPage}
-          loading={loadingPage}
-          count={count}
-          pageRef="locations"
-        />
-        <ButtonNew
-          onClick={() => {
-            setNewLocation(true);
-          }}
-        />
-      </Flex>
+      <Pagination
+        page={page}
+        error={errorPage}
+        loading={loadingPage}
+        count={count}
+        pageRef="umit/locations"
+      />
       <Table
         columns={columns}
         data={data?.umitLocations}
@@ -120,6 +123,6 @@ export default function Locations() {
           { type: 'trash', action: deleteLocation },
         ]}
       />
-    </Layout>
+    </>
   );
 }

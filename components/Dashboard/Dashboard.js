@@ -1,31 +1,25 @@
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
 
-import DashboardApplication from './Applications';
-import DashboardSignal from './Signals';
-import { useHelp, Help, HelpButton } from '../Help';
-import { FormHeader, FormTitle, Block, H2 } from '../styles/Card';
-import DashboardUser from './Users';
+import { Help, HelpButton, useHelp } from '../Help';
+import { Block, FormHeader, FormTitle, H2 } from '../styles/Card';
 import { useUser } from '../User/Queries';
-import DashboardLicense from './Licenses';
-import DashboardOrder from './Orders';
-import DashboardNotification from './Notifications';
+import DashboardApplication from './Applications';
 import DashboardEvent from './Events';
+import DashboardLicense from './Licenses';
+import DashboardNotification from './Notifications';
+import DashboardOrder from './Orders';
+import DashboardSignal from './Signals';
 import DashboardStatistics from './Statistics';
+import DashboardUser from './Users';
 
 export default function Dashboard() {
   const { t } = useTranslation('dashboard');
-  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp(
-    'dashboard'
-  );
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('dashboard');
   const { user } = useUser();
   return (
     <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <FormHeader>
         <FormTitle>
           <Block>
@@ -65,4 +59,3 @@ const DashboardStyled = styled.div`
     color: var(--secondary);
   }
 `;
-

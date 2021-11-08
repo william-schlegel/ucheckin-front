@@ -8,18 +8,17 @@ import { perPage } from '../../config';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
-import { Flex } from '../styles/Form';
+import EntetePage from '../styles/EntetePage';
 import Table, { useColumns } from '../Tables/Table';
-import { Layout } from './Layout';
 import MaterialNew from './MaterialNew';
 import {
   ALL_MATERIALS_QUERY,
   DELETE_MATERIAL_MUTATION,
   PAGINATION_MATERIAL_QUERY,
 } from './Queries';
-import UmitNav from './UmitNav';
 
 export default function Materials() {
   const router = useRouter();
@@ -35,6 +34,7 @@ export default function Materials() {
   const count = dataPage?.count;
   const { t } = useTranslation('umit');
   const [newMaterial, setNewMaterial] = useState(false);
+  const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
 
   useEffect(() => {
     const variables = {
@@ -78,27 +78,31 @@ export default function Materials() {
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
   return (
-    <Layout>
-      <UmitNav active={'materials'} />
+    <>
       <Head>
         <title>{t('materials')}</title>
       </Head>
-      <Confirm />
-      {newMaterial && <MaterialNew open={!!newMaterial} onClose={() => setNewMaterial(false)} />}
-      <Flex>
-        <Pagination
-          page={page}
-          error={errorPage}
-          loading={loadingPage}
-          count={count}
-          pageRef="materials"
-        />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
+      <EntetePage>
+        <h3>{t('materials')}</h3>
+        <HelpButton showHelp={toggleHelpVisibility} />
         <ButtonNew
           onClick={() => {
             setNewMaterial(true);
           }}
         />
-      </Flex>
+      </EntetePage>
+
+      <Confirm />
+      {newMaterial && <MaterialNew open={!!newMaterial} onClose={() => setNewMaterial(false)} />}
+      <Pagination
+        page={page}
+        error={errorPage}
+        loading={loadingPage}
+        count={count}
+        pageRef="umit/materials"
+      />
+
       <Table
         columns={columns}
         data={data?.umitMaterials}
@@ -106,6 +110,6 @@ export default function Materials() {
         loading={loading}
         actionButtons={[{ type: 'trash', action: deleteMaterial }]}
       />
-    </Layout>
+    </>
   );
 }

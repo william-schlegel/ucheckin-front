@@ -36,7 +36,8 @@ export default function ButtonPayment({
           onClick={() => {
             purchaseFunction({ variables: { ...data, token: 'invoice' } });
             onSuccess();
-          }}>
+          }}
+        >
           <IconButtonStyles>
             <DollarSign size={24} />
           </IconButtonStyles>

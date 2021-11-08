@@ -165,6 +165,19 @@ export const SENSOR_QUERY = gql`
   }
 `;
 
+export const SENSOR_CHART_QUERY = gql`
+  query SENSOR_CHART_QUERY($id: ID!) {
+    umitSensor(where: { id: $id }) {
+      name
+      alert
+    }
+    umitMeasures(where: { sensor: { id: { equals: $id } } }, orderBy: { measureDate: asc }) {
+      measureDate
+      thickness
+    }
+  }
+`;
+
 export const MEASURE_QUERY = gql`
   query MEASURE_QUERY($id: ID!) {
     umitMeasure(where: { id: $id }) {

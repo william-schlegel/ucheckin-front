@@ -1,13 +1,9 @@
-import PropTypes from 'prop-types';
-import styled, {
-  createGlobalStyle,
-  css,
-  ThemeProvider,
-} from 'styled-components';
-import { ToastProvider } from 'react-toast-notifications';
-import { useEffect, useState } from 'react';
-import theme from 'styled-theming';
 import { useMutation } from '@apollo/client';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { ToastProvider } from 'react-toast-notifications';
+import styled, { createGlobalStyle, css, ThemeProvider } from 'styled-components';
+import theme from 'styled-theming';
 
 import Header from './Header';
 import Nav from './Nav';
@@ -160,7 +156,7 @@ const InnerStyles = styled.div`
 
 const MainScreen = styled.div`
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 300px 1fr;
   grid-template-rows: 96px 1fr;
   grid-template-areas:
     'header header'

@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import styled from 'styled-components';
 
 import { formatMoney, formatPrct } from '../lib/formatNumber';
 import { Block, H2, Label, Row, RowReadOnly } from './styles/Card';
@@ -55,12 +55,8 @@ export default function Total({ value, vat }) {
     <>
       <Row>
         <Block>
-          {value.licenses > 0 && (
-            <span>{t('total-license', { count: value.licenses })}</span>
-          )}
-          {value.signals > 0 && (
-            <span>{t('total-signal', { count: value.signals })}</span>
-          )}
+          {value.licenses > 0 && <span>{t('total-license', { count: value.licenses })}</span>}
+          {value.signals > 0 && <span>{t('total-signal', { count: value.signals })}</span>}
         </Block>
       </Row>
       <TotalStyled>
@@ -84,9 +80,7 @@ export default function Total({ value, vat }) {
                   key={JSON.stringify(value)}
                   timeout={{ enter: 400, exit: 400 }}
                 >
-                  <span className="total">
-                    {formatMoney(value.amount * (1 + vat))}
-                  </span>
+                  <span className="total">{formatMoney(value.amount * (1 + vat))}</span>
                 </CSSTransition>
               </TransitionGroup>
             </AnimationStyles>

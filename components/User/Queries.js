@@ -177,6 +177,9 @@ export const CURRENT_USER_QUERY = gql`
           canManageEvent
           canManageNotification
           canManageUmits
+          canSeeUmitMenu
+          canSeeUcheckinMenu
+          canSeeAppMenu
         }
       }
     }

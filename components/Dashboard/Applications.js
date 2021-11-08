@@ -1,17 +1,14 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import useTranslation from 'next-translate/useTranslation';
 import { useEffect } from 'react';
+
 import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
-
 import Loading from '../Loading';
 import Button from '../Tables/Button';
-import {
-  LicensesDetailsApplication,
-  LicensesLegendApplication,
-} from '../Tables/LicensesDetails';
+import { LicensesDetailsApplication, LicensesLegendApplication } from '../Tables/LicensesDetails';
 import { LicenseTypes } from '../Tables/LicenseType';
 import Table, { useColumns } from '../Tables/Table';
 import { useUser } from '../User/Queries';
@@ -79,9 +76,7 @@ export default function DashboardApplication() {
       [
         t('license:licenses'),
         'licenses',
-        ({ cell: { value } }) => (
-          <LicensesDetailsApplication licenses={value} />
-        ),
+        ({ cell: { value } }) => <LicensesDetailsApplication licenses={value} />,
       ],
       [t('common:owner'), 'owner.name', 'hidden'],
     ],

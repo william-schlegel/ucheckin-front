@@ -62,10 +62,10 @@ function reducer(state, action) {
 }
 
 const initialValues = {
+  nbSignal: {},
   monthLicense: {},
   yearLicense: {},
-  monthArea: {},
-  yearArea: {},
+  nbArea: {},
 };
 export default function LicenseNew({ open, onClose, appId, ownerId }) {
   const [purchaseLicense, { error }] = useMutation(PURCHASE_LICENSE_MUTATION);
@@ -110,55 +110,41 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }
 
   useEffect(() => {
-    const { monthLicense, yearLicense, monthArea, yearArea } = inputs;
+    const { nbSignal, monthLicense, yearLicense, nbArea } = inputs;
     const pData = {
       appId,
       ownerId,
       purchaseInfo: t('new-licenses', { dt: dateNow() }),
       vatId: vat.id,
+      nbSignal,
     };
     const pItems = [];
     let tot = 0;
     let nbL = 0;
     let nbS = 0;
+    let nbA = 0;
     if (application?.licenseTypes && price?.items) {
       for (const lt of application.licenseTypes) {
         const myPrice = price.items.filter((p) => p.licenseType.id === lt.id)[0];
-        if (myPrice) {
-          tot +=
-            parseInt(monthLicense[lt.id] || 0) *
-              parseInt(monthArea[lt.id] || 1) *
-              parseFloat(myPrice.monthly) +
-            parseInt(yearLicense[lt.id] || 0) *
-              parseInt(yearArea[lt.id] || 1) *
-              parseFloat(myPrice.yearly);
-        }
-        const newL =
-          (inputs.monthLicense[lt.id] || 0) * (inputs.monthArea[lt.id] || 1) +
-          (inputs.yearLicense[lt.id] || 0) * (inputs.yearArea[lt.id] || 1);
-        nbL += newL;
-        const nbSig = lt.perArea
-          ? (inputs.monthLicense[lt.id] || 0) + (inputs.yearLicense[lt.id] || 0)
-          : 0;
-        nbS += nbSig;
-        if (inputs.monthLicense[lt.id]) {
+        const licensePrice =
+          parseInt(monthLicense[lt.id] || 0) * parseFloat(myPrice.monthly) +
+          parseInt(yearLicense[lt.id] || 0) * parseFloat(myPrice.yearly);
+        if (licensePrice) {
+          nbS += parseInt(inputs.nbSignal[lt.id]) || 0;
+          nbA += parseInt(inputs.nbArea[lt.id]) || 0;
+          console.log(`nbS, nbA`, {nbS, nbA});
+          const newL = lt.perArea ? nbS * nbA : 1;
+          nbL += newL;
+          tot += newL * licensePrice;
+          const monthly = !!inputs.monthLicense[lt.id];
           pItems.push({
             licenseTypeId: lt.id,
             priceItemId: myPrice.id,
-            itemName: t(`item-name-${lt.name}-monthly`),
-            quantity: inputs.monthLicense[lt.id],
-            nbArea: inputs.monthArea[lt.id] || 0,
-            monthly: true,
-          });
-        }
-        if (inputs.yearLicense[lt.id]) {
-          pItems.push({
-            licenseTypeId: lt.id,
-            priceItemId: myPrice.id,
-            itemName: t(`item-name-${lt.name}-yearly`),
-            quantity: inputs.yearLicense[lt.id],
-            nbArea: inputs.yearArea[lt.id] || 0,
-            monthly: false,
+            itemName: t(`item-name-${lt.name}-${monthly ? 'monthly' : 'yearly'}`),
+            quantity: monthly ? inputs.monthLicense[lt.id] : inputs.yearLicense[lt.id],
+            monthly,
+            nbSignal: nbS,
+            nbArea: nbA || 1,
           });
         }
       }
@@ -166,8 +152,9 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
     dispatch({
       type: 'UPDATE_AMOUNT',
       amount: tot,
-      licenses: nbL,
+      areas: nbA,
       signals: nbS,
+      licenses: nbL,
     });
     pData.expectedAmountBrut = tot;
     pData.purchaseItems = [...pItems];
@@ -199,10 +186,27 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           {application.licenseTypes.map((lt) => (
             <LicenseContainer key={lt.id}>
               <LicenseType license={lt.id} />
+              {lt.perArea && (
+                <div style={{ marginLeft: '0.5em' }}>
+                  <Counter
+                    label={t('nb-signal')}
+                    name={`nbSignal.${lt.id}`}
+                    input={inputs.nbSignal[lt.id] || 0}
+                    handleChange={handleChange}
+                  />
+                  <Counter
+                    label={t('nb-area')}
+                    name={`nbArea.${lt.id}`}
+                    input={inputs.nbArea[lt.id] || 0}
+                    handleChange={handleChange}
+                    min={1}
+                  />
+                </div>
+              )}
               <Separator />
-              <FormBody>
+              <FormBodyFull>
                 <Row>
-                  <H3>{t(lt.perArea ? 'nb-signal' : 'nb-license')}</H3>
+                  <H3>{t('nb-license')}</H3>
                   <div>
                     <Counter
                       label={t('by-month')}
@@ -218,28 +222,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
                     />
                   </div>
                 </Row>
-                {lt.perArea && (
-                  <Row>
-                    <H3>{t('nb-area')}</H3>
-                    <div>
-                      <Counter
-                        label=""
-                        name={`monthArea.${lt.id}`}
-                        input={inputs.monthArea[lt.id] || 1}
-                        handleChange={handleChange}
-                        min={1}
-                      />
-                      <Counter
-                        label=""
-                        name={`yearArea.${lt.id}`}
-                        input={inputs.yearArea[lt.id] || 1}
-                        handleChange={handleChange}
-                        min={1}
-                      />
-                    </div>
-                  </Row>
-                )}
-              </FormBody>
+              </FormBodyFull>
             </LicenseContainer>
           ))}
           <Total value={state} vat={parseFloat(vat.value)} />
@@ -264,9 +247,4 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   );
 }
 
-LicenseNew.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
-  appId: PropTypes.string.isRequired,
-  ownerId: PropTypes.string.isRequired,
-};
+

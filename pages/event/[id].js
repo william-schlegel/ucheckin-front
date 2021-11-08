@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import ViewEvent from '../../components/Event/Event';
 import { EVENT_QUERY } from '../../components/Event/Queries';
 
@@ -18,6 +19,7 @@ Event.getInitialProps = async (ctx) => {
     query: EVENT_QUERY,
     variables: { id },
   });
+  console.log(`Event initialData`, initialData);
   return {
     id,
     initialData,

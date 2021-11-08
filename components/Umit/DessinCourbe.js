@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-
 // import useSize from '../../lib/useSize';
+
+const ID_CANVAS = 'canvas-courbe';
 
 const getIdMax = (points) => {
   let max = 0;
@@ -22,23 +23,26 @@ export default function DessinCourbe({
     return { picA, picB };
   },
 }) {
-  const ref = useRef();
   // const dim = useSize(ref);
 
   const dim = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
-    dim.current.width = parseInt(ref.current.parentElement.clientWidth - 28);
-    dim.current.height = parseInt(dim.current.width * 0.66);
+    const el = document.getElementById(ID_CANVAS);
+    console.log(`el`, el);
+    if (!el) return;
+    const w = el.parentElement.clientWidth - 28;
+    dim.current.width = parseInt(w);
+    dim.current.height = parseInt(w * 0.66);
     console.log(`dim`, dim.current);
-  }, [ref]);
+  }, []);
 
   const handleCanvas = (canvas) => {
     if (!points.length) return;
     if (!canvas) return;
 
-    canvas.width = dim.width;
-    canvas.height = dim.height;
+    canvas.width = dim.current.width;
+    canvas.height = dim.current.height;
     const offsetX = 5;
     const offsetY = 25;
     const maxPoints = Math.max(...points);
@@ -79,7 +83,7 @@ export default function DessinCourbe({
     // courbe
     ctx.beginPath();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#000';
+    ctx.strokeStyle = '#888';
     const ix = Math.floor(points.length / w);
     ctx.moveTo(offsetX, h - offsetY);
     for (let p = 1; p < points.length; p += ix) {
@@ -109,10 +113,8 @@ export default function DessinCourbe({
     handlePics(picA, picB);
   };
 
-  if (!dim.width) return null;
-
   return (
-    <div ref={ref}>
+    <div id={ID_CANVAS}>
       <canvas ref={handleCanvas} />
     </div>
   );

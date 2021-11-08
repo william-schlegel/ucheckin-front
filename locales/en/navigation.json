@@ -15,5 +15,9 @@
   "notifications": "Notifications",
   "sdk": "SDK",
   "events": "UcheckIn events",
-  "umit": "UMIT"
+  "umit": "UMIT",
+  "measures": "Measurement results",
+  "sensors": "Sensors",
+  "locations": "Sites",
+  "materials": "Materials caracteristics"
 }
