@@ -28,7 +28,7 @@
   "nb-area": "Number of area for each signal",
   "wi-us": "Number of Wi-Us licenses",
   "your-price": "Your price",
-  "total": "Total of the order",
+  "total": "Total of the invoice",
   "actual-validity": "Actual validity",
   "nb-month": "Additional month",
   "nb-year": "Additional year",
@@ -65,5 +65,5 @@
   "item-name-ucheck-in-renew-yearly": "Renew yearly license for UcheckIn",
   "date-purchase": "Purchase date",
   "quantity": "Quantity",
-  "order-history": "Order history"
+  "invoice-history": "Invoice history"
 }

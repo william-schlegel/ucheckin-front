@@ -1,7 +1,8 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useReducer } from 'react';
+import Select from 'react-select';
 
 import useFindUser from '../../lib/useFindUser';
 import useForm from '../../lib/useForm';
@@ -14,18 +15,10 @@ import Counter from '../Counter';
 import { dateNow } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import {
-  Block,
-  Form,
-  FormBody,
-  FormBodyFull,
-  H3,
-  Label,
-  Row,
-  RowReadOnly,
-  Separator,
-} from '../styles/Card';
+import { OWNER_SIGNALS_QUERY } from '../Signal/Queries';
+import { Block, Form, FormBodyFull, H3, Label, Row, RowReadOnly, Separator } from '../styles/Card';
 import { LicenseContainer } from '../styles/License';
+import selectTheme from '../styles/selectTheme';
 import { LicenseType } from '../Tables/LicenseType';
 import Total from '../TotalCount';
 import LicensePrice, { usePrice } from './LicensePrice';
@@ -66,9 +59,11 @@ const initialValues = {
   monthLicense: {},
   yearLicense: {},
   nbArea: {},
+  signalId: '',
 };
-export default function LicenseNew({ open, onClose, appId, ownerId }) {
+export default function LicenseNew({ open, onClose, appId, ownerId, withSignal }) {
   const [purchaseLicense, { error }] = useMutation(PURCHASE_LICENSE_MUTATION);
+  const { data: signalData } = useQuery(OWNER_SIGNALS_QUERY, { variables: { ownerId } });
   const { user, userError } = useFindUser(ownerId);
   const { application, applicationError } = useFindApplication(appId);
   const { vat } = useVat(ownerId);
@@ -110,13 +105,14 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   }
 
   useEffect(() => {
-    const { nbSignal, monthLicense, yearLicense, nbArea } = inputs;
+    const { nbSignal, monthLicense, yearLicense, signalId } = inputs;
     const pData = {
       appId,
       ownerId,
       purchaseInfo: t('new-licenses', { dt: dateNow() }),
       vatId: vat.id,
       nbSignal,
+      signalId,
     };
     const pItems = [];
     let tot = 0;
@@ -130,9 +126,9 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
           parseInt(monthLicense[lt.id] || 0) * parseFloat(myPrice.monthly) +
           parseInt(yearLicense[lt.id] || 0) * parseFloat(myPrice.yearly);
         if (licensePrice) {
-          nbS += parseInt(inputs.nbSignal[lt.id]) || 0;
+          if (signalId) nbS += 1;
+          else nbS += parseInt(inputs.nbSignal[lt.id]) || 0;
           nbA += parseInt(inputs.nbArea[lt.id]) || 0;
-          console.log(`nbS, nbA`, {nbS, nbA});
           const newL = lt.perArea ? nbS * nbA : 1;
           nbL += newL;
           tot += newL * licensePrice;
@@ -161,8 +157,15 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
     dispatch({ type: 'SET_DATA', data: pData });
   }, [inputs, appId, ownerId]);
 
+  function getSignal() {
+    const sig = signalData.signals.find((s) => s.id === inputs.signal);
+    if (sig) return { value: sig.id, label: sig.name };
+  }
+
   if (userError) return <DisplayError error={userError} />;
   if (applicationError) return <DisplayError error={applicationError} />;
+
+  console.log(`inputs.signalId`, inputs.signalId);
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-licenses')}>
@@ -188,12 +191,30 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
               <LicenseType license={lt.id} />
               {lt.perArea && (
                 <div style={{ marginLeft: '0.5em' }}>
-                  <Counter
-                    label={t('nb-signal')}
-                    name={`nbSignal.${lt.id}`}
-                    input={inputs.nbSignal[lt.id] || 0}
-                    handleChange={handleChange}
-                  />
+                  {withSignal ? (
+                    <div style={{ marginBottom: '0.5rem' }}>
+                      <Label>{t('signal')}</Label>
+                      <Select
+                        theme={selectTheme}
+                        className="select"
+                        value={getSignal()}
+                        onChange={(e) =>
+                          handleChange({
+                            value: e.value,
+                            name: 'signalId',
+                          })
+                        }
+                        options={signalData.signals.map((s) => ({ value: s.id, label: s.name }))}
+                      />
+                    </div>
+                  ) : (
+                    <Counter
+                      label={t('nb-signal')}
+                      name={`nbSignal.${lt.id}`}
+                      input={inputs.nbSignal[lt.id] || 0}
+                      handleChange={handleChange}
+                    />
+                  )}
                   <Counter
                     label={t('nb-area')}
                     name={`nbArea.${lt.id}`}
@@ -247,4 +268,10 @@ export default function LicenseNew({ open, onClose, appId, ownerId }) {
   );
 }
 
-
+LicenseNew.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  appId: PropTypes.string,
+  ownerId: PropTypes.string,
+  withSignal: PropTypes.bool,
+};

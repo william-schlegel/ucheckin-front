@@ -19,6 +19,7 @@ import {
   Play,
   Plus,
   PlusCircle,
+  Printer,
   Repeat,
   Search,
   Square,
@@ -78,6 +79,7 @@ export default function ActionButton({ type, cb = () => {}, label, size = 24 }) 
       {type === 'view' && <Eye size={size} />}
       {type === 'map-pin' && <MapPin size={size} />}
       {type === 'chart' && <BarChart size={size} />}
+      {type === 'printer' && <Printer size={size} />}
     </IconButtonStyles>
   );
 }
@@ -114,6 +116,7 @@ ActionButton.propTypes = {
     'dollar',
     'map-pin',
     'chart',
+    'printer',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

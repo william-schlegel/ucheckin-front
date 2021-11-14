@@ -79,8 +79,8 @@ export const LICENSE_QUERY = gql`
 `;
 
 export const CREATE_TRIAL_LICENSE = gql`
-  mutation CREATE_TRIAL_LICENSE($ownerId: ID!, $appId: ID!, $trialText: String) {
-    createTrial(appId: $appId, ownerId: $ownerId, text: $trialText) {
+  mutation CREATE_TRIAL_LICENSE($ownerId: ID!, $appId: ID!, $trialText: String, $signalId: ID) {
+    createTrial(appId: $appId, ownerId: $ownerId, text: $trialText, signalId: $signalId) {
       id
     }
   }
@@ -95,6 +95,7 @@ export const PURCHASE_LICENSE_MUTATION = gql`
     $token: String!
     $expectedAmountBrut: Float!
     $vatId: ID
+    $signalId: ID
   ) {
     purchaseNewLicenses(
       appId: $appId
@@ -104,6 +105,7 @@ export const PURCHASE_LICENSE_MUTATION = gql`
       expectedAmountBrut: $expectedAmountBrut
       vatId: $vatId
       purchaseItems: $purchaseItems
+      signalId: $signalId
     ) {
       id
     }

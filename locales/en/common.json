@@ -75,5 +75,7 @@
   "invalid-password": "The password must be at least 8 characters long",
   "map-pin": "Point on the map",
   "no-null-value": "No null value",
-  "chart": "Chart"
+  "chart": "Chart",
+  "dollar": "Pay",
+  "printer": "Print"
 }

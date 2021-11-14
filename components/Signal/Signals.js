@@ -12,7 +12,11 @@ import Pagination from '../Pagination';
 import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
 import Button from '../Tables/Button';
-import { LicensesDetailsSignal, LicensesLegendSignal } from '../Tables/LicensesDetails';
+import {
+  LicensesApplications,
+  LicensesDetailsSignal,
+  LicensesLegendSignal,
+} from '../Tables/LicensesDetails';
 import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
 import { useUser } from '../User/Queries';
@@ -89,6 +93,13 @@ export default function Signals() {
       }) => <Switch value={value} disabled={false} callBack={() => validateSignal(id, value)} />,
     ],
     [t('common:owner'), 'owner.name'],
+    [
+      t('applications'),
+      'applications',
+      ({ cell: { value } }) => <LicensesApplications licenses={value} />,
+      {},
+      'licenses_app',
+    ],
     [
       t('licenses'),
       'licenses',

@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/client';
 import PropTypes from 'prop-types';
 
-import DisplayError from '../ErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
+import DisplayError from '../ErrorMessage';
 import { UPDATE_APPLICATION_MUTATION } from './Queries';
 
 function update(cache, payload) {
@@ -10,9 +10,7 @@ function update(cache, payload) {
 }
 
 export default function UpdateApplication({ id, updatedApp, onSuccess }) {
-  const [updateApplication, { loading, error }] = useMutation(
-    UPDATE_APPLICATION_MUTATION
-  );
+  const [updateApplication, { loading, error }] = useMutation(UPDATE_APPLICATION_MUTATION);
 
   const { name, apiKey, owner, invitations, licenseTypes } = updatedApp;
   const variables = {

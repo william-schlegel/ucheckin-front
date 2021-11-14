@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { HelpCircle } from 'react-feather';
 import styled from 'styled-components';
+
 import { IconButtonStyles } from '../Buttons/ActionButton';
 
 const Licenses = styled.div`
@@ -57,13 +58,9 @@ export function LicensesDetailsApplication({ licenses }) {
   return (
     <Licenses>
       {licenses.length <= 0 && <span>{t('common:no-license')}</span>}
-      {licenses.length > 0 && (
-        <span className="nb-license">{licenses.length}</span>
-      )}
+      {licenses.length > 0 && <span className="nb-license">{licenses.length}</span>}
       {count.valid > 0 && <span className="valide">{count.valid}</span>}
-      {count.notValid > 0 && (
-        <span className="not-valide">{count.notValid}</span>
-      )}
+      {count.notValid > 0 && <span className="not-valide">{count.notValid}</span>}
     </Licenses>
   );
 }
@@ -146,13 +143,9 @@ export function LicensesDetailsSignal({ licenses }) {
   return (
     <Licenses>
       {licenses.length <= 0 && <span>{t('common:no-license')}</span>}
-      {licenses.length > 0 && (
-        <span className="nb-license">{licenses.length}</span>
-      )}
+      {licenses.length > 0 && <span className="nb-license">{licenses.length}</span>}
       {count.valid > 0 && <span className="valide">{count.valid}</span>}
-      {count.notValid > 0 && (
-        <span className="not-valide">{count.notValid}</span>
-      )}
+      {count.notValid > 0 && <span className="not-valide">{count.notValid}</span>}
     </Licenses>
   );
 }
@@ -187,4 +180,9 @@ export function LicensesLegendSignal() {
       </HelpButton>
     </ButtonContainer>
   );
+}
+
+export function LicensesApplications({ licenses }) {
+  if (!Array.isArray(licenses)) return null;
+  return <div>{licenses.map((l) => l.application.name).join(', ')}</div>;
 }

@@ -13,6 +13,7 @@
   "valide": "Licenses valides",
   "not-valide": "Licenses non valides (expirées)",
   "add-license": "Ajouter une ou des licences à l'application",
+  "add-license-signal": "Utiliser un signal existant sur cette application",
   "updated": "Mise à jour",
   "invitation-status": "Statut de l'invitation",
   "invitations": "Invitations",

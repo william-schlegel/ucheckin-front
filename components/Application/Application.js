@@ -88,16 +88,13 @@ export default function Application({ id, initialData }) {
   const { t } = useTranslation('application');
   const { licenseTypesOptions } = useLicenseName();
   const initialValues = useRef(initialData.data.application);
-  const {
-    inputs,
-    handleChange,
-    setInputs,
-    validate,
-    validationError,
-    wasTouched,
-  } = useForm(initialValues.current, ['name', 'licenseTypes']);
+  const { inputs, handleChange, setInputs, validate, validationError, wasTouched } = useForm(
+    initialValues.current,
+    ['name', 'licenseTypes']
+  );
   const [canEdit, setCanEdit] = useState(false);
   const [showAddLicense, setShowAddLicense] = useState(false);
+  const [licenseWithSignal, setLicenseWithSignal] = useState(false);
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState({});
   const [showAddInvit, setShowAddInvit] = useState(false);
@@ -117,6 +114,7 @@ export default function Application({ id, initialData }) {
 
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.application?.owner?.id;
+  const [licenseTypeChanged, setLicenseTypeChanged] = useState(false);
 
   useEffect(() => {
     if (userRole) {
@@ -144,6 +142,13 @@ export default function Application({ id, initialData }) {
 
   function AddLicense() {
     if (!inputs?.licenseTypes.length) return;
+    setLicenseWithSignal(false);
+    setShowAddLicense(true);
+  }
+
+  function AddLicenseSignal() {
+    if (!inputs?.licenseTypes.length) return;
+    setLicenseWithSignal(true);
     setShowAddLicense(true);
   }
 
@@ -183,10 +188,6 @@ export default function Application({ id, initialData }) {
     const variables = {
       id,
       ...newInputs,
-      // apiKey: inputs.apiKey,
-      // name: inputs.name,
-      // owner: { id: inputs.owner.id },
-      // licenseTypes: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
     };
     updateApplication({ variables });
   }
@@ -206,9 +207,11 @@ export default function Application({ id, initialData }) {
 
   function handleCloseNewLicense(orderId) {
     setShowAddLicense(false);
-    if (orderId) {
-      router.push(`/order/${orderId}`);
-    }
+    console.log(`orderId`, orderId);
+    router.reload();
+    // if (orderId) {
+    //   router.push(`/invoice/${orderId}`);
+    // }
   }
 
   if (loading || !user) return <Loading />;
@@ -227,6 +230,7 @@ export default function Application({ id, initialData }) {
           onClose={handleCloseNewLicense}
           appId={id}
           ownerId={inputs.owner.id}
+          withSignal={licenseWithSignal}
         />
       )}
       {selectedLicense.licenseId && (
@@ -305,6 +309,7 @@ export default function Application({ id, initialData }) {
                   licenseTypesOptions.find((lt) => lt.value === lid.id)
                 )}
                 onChange={(e) => {
+                  setLicenseTypeChanged(true);
                   handleChange({
                     value: e.map((lt) => ({ id: lt.value })),
                     name: 'licenseTypes',
@@ -340,7 +345,16 @@ export default function Application({ id, initialData }) {
               actionButtons={[{ type: 'extend', action: updateLicense }]}
             />
             <Block>
-              <ButtonNew label={t('add-license')} onClick={AddLicense} />
+              <ButtonNew
+                label={t('add-license')}
+                onClick={AddLicense}
+                disabled={licenseTypeChanged}
+              />
+              <ButtonNew
+                label={t('add-license-signal')}
+                onClick={AddLicenseSignal}
+                disabled={licenseTypeChanged}
+              />
             </Block>
           </RowFull>
         </FormBody>

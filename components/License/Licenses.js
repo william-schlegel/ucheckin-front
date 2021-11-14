@@ -120,7 +120,8 @@ export default function Licenses() {
               display: 'grid',
               placeItems: 'center',
               color: 'var(--secondary)',
-            }}>
+            }}
+          >
             <Gift />
           </div>
         ) : null,
@@ -145,7 +146,7 @@ export default function Licenses() {
   function handleCloseExtend(orderId) {
     setShowUpdateLicense(false);
     if (orderId) {
-      router.push(`/order/${orderId}`);
+      router.push(`/invoice/${orderId}`);
     }
   }
 

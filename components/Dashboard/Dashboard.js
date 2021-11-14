@@ -6,9 +6,9 @@ import { Block, FormHeader, FormTitle, H2 } from '../styles/Card';
 import { useUser } from '../User/Queries';
 import DashboardApplication from './Applications';
 import DashboardEvent from './Events';
+import DashboardInvoice from './Invoices';
 import DashboardLicense from './Licenses';
 import DashboardNotification from './Notifications';
-import DashboardOrder from './Orders';
 import DashboardSignal from './Signals';
 import DashboardStatistics from './Statistics';
 import DashboardUser from './Users';
@@ -33,7 +33,7 @@ export default function Dashboard() {
         <DashboardApplication />
         <DashboardSignal />
         <DashboardLicense />
-        <DashboardOrder />
+        <DashboardInvoice />
         <DashboardNotification />
         <DashboardEvent />
       </DashboardStyled>

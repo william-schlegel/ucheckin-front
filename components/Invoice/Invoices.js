@@ -18,7 +18,7 @@ import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
-import OrderDetails from './OrderDetails';
+import InvoiceDetails from './InvoiceDetails';
 import {
   ALL_ORDERS_QUERY,
   CANCEL_ORDER_MUTATION,
@@ -41,13 +41,14 @@ export default function Orders() {
   });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
-  const { t } = useTranslation('order');
+  const { t } = useTranslation('invoice');
   const [showOrder, setShowOrder] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('order');
   const { addToast } = useToasts();
 
   const searchFields = [
     { field: 'owner.name.contains', label: t('user'), type: 'text' },
+    { field: 'paid', label: t('paid'), type: 'switch' },
     { field: 'canceled', label: t('canceled'), type: 'switch' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
@@ -70,7 +71,11 @@ export default function Orders() {
     ['id', 'id', 'hidden'],
     [t('number'), 'number'],
     [t('user'), 'owner.name'],
-    [t('order-date'), 'orderDate', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
+    [
+      t('invoice-date'),
+      'orderDate',
+      ({ cell: { value } }) => <ValidityDate value={value} noColor />,
+    ],
     [t('total-brut'), 'totalBrut', ({ cell: { value } }) => <Number value={value} money />],
     [t('vat-value'), 'vatValue', ({ cell: { value } }) => <Number value={value} percentage />],
     [t('total-net'), 'totalNet', ({ cell: { value } }) => <Number value={value} money />],
@@ -115,7 +120,14 @@ export default function Orders() {
     }
   }
 
-  const actionButtons = [{ type: 'view', action: viewOrder }];
+  function printInvoice(id) {
+    console.log(`print id`, id);
+  }
+
+  const actionButtons = [
+    { type: 'view', action: viewOrder },
+    { type: 'printer', action: printInvoice },
+  ];
   if (user?.role?.canManageOrder) {
     actionButtons.push({ type: 'dollar', action: validPayment });
     actionButtons.push({ type: 'trash', action: cancelOrder });
@@ -128,15 +140,15 @@ export default function Orders() {
   return (
     <>
       <Head>
-        <title>{t('orders')}</title>
+        <title>{t('invoices')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       {showOrder && (
-        <OrderDetails open={!!showOrder} onClose={handleCloseShowOrder} id={showOrder} />
+        <InvoiceDetails open={!!showOrder} onClose={handleCloseShowOrder} id={showOrder} />
       )}
       <EntetePage>
-        <h3>{t('orders')}</h3>
+        <h3>{t('invoices')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />
       </EntetePage>
       <Pagination
@@ -144,7 +156,7 @@ export default function Orders() {
         error={errorPage}
         loading={loadingPage}
         count={count}
-        pageRef="orders"
+        pageRef="invoices"
         withFilter
         setShowFilter={setShowFilter}
       />

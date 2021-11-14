@@ -33,11 +33,27 @@ export const ALL_SIGNALS_QUERY = gql`
         }
         validity
       }
+      applications: licenses {
+        application {
+          id
+          name
+        }
+      }
       notification {
         id
         name
         displayName
       }
+    }
+  }
+`;
+
+export const OWNER_SIGNALS_QUERY = gql`
+  query OWNER_SIGNALS_QUERY($ownerId: ID) {
+    signals(where: { owner: { id: { equals: $ownerId } } }) {
+      id
+      name
+      active
     }
   }
 `;

@@ -1,20 +1,16 @@
+/* eslint-disable react/jsx-key */
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
-import { useTable, usePagination } from 'react-table';
-import useTranslation from 'next-translate/useTranslation';
-
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from 'react-feather';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'react-feather';
+import { usePagination, useTable } from 'react-table';
 import styled from 'styled-components';
-import TableStyle from '../styles/Table';
+
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import NoData from './NoData';
+import TableStyle from '../styles/Table';
 import ActionButtons from './ActionButtons';
+import NoData from './NoData';
 
 export function useColumns(columns, action = true) {
   const { t } = useTranslation('common');
@@ -53,19 +49,8 @@ export function useColumns(columns, action = true) {
   return tableColumns;
 }
 
-function TableWithoutPagination({
-  columns,
-  data,
-  hiddenColumns,
-  actionButtons,
-}) {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
+function TableWithoutPagination({ columns, data, hiddenColumns, actionButtons }) {
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
     columns,
     data,
     initialState: { hiddenColumns },
@@ -91,9 +76,7 @@ function TableWithoutPagination({
                 if (cell.column.customRender) {
                   // console.log(`cell`, cell);
                   // console.log(`row`, row);
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                  );
+                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                 }
                 if (
                   Array.isArray(actionButtons) &&
@@ -102,10 +85,7 @@ function TableWithoutPagination({
                 ) {
                   return (
                     <td {...cell.getCellProps()}>
-                      <ActionButtons
-                        actionButtons={actionButtons}
-                        values={cell.row.values}
-                      />
+                      <ActionButtons actionButtons={actionButtons} values={cell.row.values} />
                     </td>
                   );
                 }
@@ -113,9 +93,7 @@ function TableWithoutPagination({
                 return (
                   <td {...cell.getCellProps()}>
                     {cell.render('Cell')}
-                    {cell.column.options.unit
-                      ? ` ${cell.column.options.unit}`
-                      : ''}
+                    {cell.column.options.unit ? ` ${cell.column.options.unit}` : ''}
                   </td>
                 );
               })}
@@ -134,13 +112,7 @@ TableWithoutPagination.propTypes = {
   hiddenColumns: PropTypes.array,
 };
 
-function TableWithPagination({
-  columns,
-  data,
-  hiddenColumns,
-  actionButtons,
-  rowPerPage,
-}) {
+function TableWithPagination({ columns, data, hiddenColumns, actionButtons, rowPerPage }) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -184,9 +156,7 @@ function TableWithPagination({
                   if (cell.column.customRender) {
                     // console.log(`cell`, cell);
                     // console.log(`row`, row);
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                    );
+                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                   }
                   if (
                     Array.isArray(actionButtons) &&
@@ -195,10 +165,7 @@ function TableWithPagination({
                   ) {
                     return (
                       <td {...cell.getCellProps()}>
-                        <ActionButtons
-                          actionButtons={actionButtons}
-                          values={cell.row.values}
-                        />
+                        <ActionButtons actionButtons={actionButtons} values={cell.row.values} />
                       </td>
                     );
                   }
@@ -206,9 +173,7 @@ function TableWithPagination({
                   return (
                     <td {...cell.getCellProps()}>
                       {cell.render('Cell')}
-                      {cell.column.options.unit
-                        ? ` ${cell.column.options.unit}`
-                        : ''}
+                      {cell.column.options.unit ? ` ${cell.column.options.unit}` : ''}
                     </td>
                   );
                 })}
@@ -248,9 +213,7 @@ export default function Table({
   rowPerPage,
 }) {
   const hiddenColumns = useMemo(() => {
-    const hiddenCols = columns
-      .filter((c) => c?.options === 'hidden')
-      .map((c) => c.accessor);
+    const hiddenCols = columns.filter((c) => c?.options === 'hidden').map((c) => c.accessor);
     return hiddenCols;
   }, [columns]);
 
@@ -310,11 +273,7 @@ function TablePagination({
       <button type="button" disabled={page <= 0} onClick={() => gotoPage(0)}>
         <ChevronsLeft />
       </button>
-      <button
-        type="button"
-        disabled={!canPreviousPage}
-        onClick={() => previousPage()}
-      >
+      <button type="button" disabled={!canPreviousPage} onClick={() => previousPage()}>
         <ChevronLeft />
       </button>
       <span>{t('pagination', { page: page + 1, pageCount })}</span>

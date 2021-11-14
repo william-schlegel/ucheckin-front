@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
+import Select from 'react-select';
 
 import { perPage } from '../../config';
 import useForm from '../../lib/useForm';
@@ -11,6 +12,8 @@ import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Form, FormBodyFull, Label, Row } from '../styles/Card';
+import selectTheme from '../styles/selectTheme';
+import { useLicenseName } from '../Tables/LicenseType';
 import { ALL_APPLICATIONS_QUERY, CREATE_APPLICATION_MUTATION } from './Queries';
 
 export default function ApplicationNew({ open, onClose }) {
@@ -25,10 +28,25 @@ export default function ApplicationNew({ open, onClose }) {
   const { t } = useTranslation('application');
   const initialValues = useRef({
     name: '',
+    licenseTypes: [],
   });
   const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
     'name',
   ]);
+  const { licenseTypesOptions } = useLicenseName();
+
+  function createNewApplication() {
+    const newInputs = validate();
+    if (!newInputs) return;
+    const variables = {
+      name: newInputs.name,
+      licenseTypes: {
+        connect: inputs.licenseTypes.map((lt) => ({ id: lt.id })),
+      },
+    };
+    createApplication({ variables });
+    onClose();
+  }
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-application')}>
@@ -48,17 +66,31 @@ export default function ApplicationNew({ open, onClose }) {
             />
             <FieldError error={validationError.name} />
           </Row>
+          <Row>
+            <Label htmlFor="licenseTypes" required>
+              {t('common:license-model')}
+            </Label>
+            <Select
+              theme={selectTheme}
+              className="select"
+              value={inputs.licenseTypes.map((lid) =>
+                licenseTypesOptions.find((lt) => lt.value === lid.id)
+              )}
+              onChange={(e) => {
+                handleChange({
+                  value: e.map((lt) => ({ id: lt.value })),
+                  name: 'licenseTypes',
+                });
+              }}
+              options={licenseTypesOptions}
+              isMulti
+            />
+            <FieldError error={validationError.licenseTypes} />
+          </Row>
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation
-          disabled={loading}
-          onClick={() => {
-            if (!validate()) return;
-            createApplication({ variables: inputs }).catch((err) => alert(err.message));
-            onClose();
-          }}
-        />
+        <ButtonValidation disabled={loading} onClick={createNewApplication} />
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}
       </DrawerFooter>
@@ -68,5 +100,5 @@ export default function ApplicationNew({ open, onClose }) {
 
 ApplicationNew.propTypes = {
   open: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
 };

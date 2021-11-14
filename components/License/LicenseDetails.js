@@ -1,27 +1,19 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
-
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import { Gift } from 'react-feather';
+
+import ButtonCancel from '../Buttons/ButtonCancel';
+import { formatDate } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonCancel from '../Buttons/ButtonCancel';
 import Loading from '../Loading';
-import {
-  Form,
-  FormBodyFull,
-  FormHeader,
-  FormTitle,
-  Label,
-  Row,
-  RowReadOnly,
-} from '../styles/Card';
-import { LICENSE_QUERY } from './Queries';
-import ValidityDate from '../Tables/ValidityDate';
-import Number from '../Tables/Number';
+import { Form, FormBodyFull, FormHeader, FormTitle, Label, Row, RowReadOnly } from '../styles/Card';
 import { LicenseType } from '../Tables/LicenseType';
-import { formatDate } from '../DatePicker';
+import Number from '../Tables/Number';
 import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
+import { LICENSE_QUERY } from './Queries';
 
 export default function LicenseDetails({ open, onClose, id }) {
   const { loading, error, data } = useQuery(LICENSE_QUERY, {
@@ -33,20 +25,12 @@ export default function LicenseDetails({ open, onClose, id }) {
       ['id', 'id', 'hidden'],
       [
         t('date-purchase'),
-        'order.orderDate',
+        'invoice.orderDate',
         ({ cell: { value } }) => <ValidityDate noColor value={value} />,
       ],
       [t('common:name'), 'name'],
-      [
-        t('quantity'),
-        'quantity',
-        ({ cell: { value } }) => <Number value={value} />,
-      ],
-      [
-        t('nb-area'),
-        'nbArea',
-        ({ cell: { value } }) => <Number value={value} />,
-      ],
+      [t('quantity'), 'quantity', ({ cell: { value } }) => <Number value={value} />],
+      [t('nb-area'), 'nbArea', ({ cell: { value } }) => <Number value={value} />],
     ],
     false
   );
@@ -105,12 +89,8 @@ export default function LicenseDetails({ open, onClose, id }) {
             <LicenseType license={data.license.licenseType.id} />
           </RowReadOnly>
           <Row>
-            <Label>{t('order-history')}</Label>
-            <Table
-              columns={columns}
-              data={data.license.orderItems}
-              withPagination
-            />
+            <Label>{t('invoice-history')}</Label>
+            <Table columns={columns} data={data.license.orderItems} withPagination />
           </Row>
         </FormBodyFull>
       </Form>

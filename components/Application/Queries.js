@@ -77,8 +77,11 @@ export const ALL_APPLICATIONS_QUERY = gql`
 `;
 
 export const CREATE_APPLICATION_MUTATION = gql`
-  mutation CREATE_APPLICATION_MUTATION($name: String!) {
-    createApplication(data: { name: $name }) {
+  mutation CREATE_APPLICATION_MUTATION(
+    $name: String!
+    $licenseTypes: LicenseTypeRelateToManyForCreateInput
+  ) {
+    createApplication(data: { name: $name, licenseTypes: $licenseTypes }) {
       id
     }
   }

@@ -51,7 +51,7 @@ export default function MeasureDetails({ open, onClose, id }) {
                   : 'black',
               }}
             >
-              {data.umitMeasure.thickness} mm
+              {data.umitMeasure.thickness.toFixed(2)} mm
             </span>
           </RowReadOnly>
           <RowReadOnly>

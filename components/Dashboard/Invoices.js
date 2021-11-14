@@ -1,15 +1,15 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
-import DisplayError from '../ErrorMessage';
+import useTranslation from 'next-translate/useTranslation';
 
+import Dashboard from '../Dashboard';
+import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import Button from '../Tables/Button';
+import Number from '../Tables/Number';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import Number from '../Tables/Number';
-import Dashboard from '../Dashboard';
 
 const nbApp = 5;
 
@@ -30,13 +30,13 @@ const QUERY_ORDERS = gql`
   }
 `;
 
-export default function DashboardOrder() {
+export default function DashboardInvoice() {
   const { t } = useTranslation('dashboard');
   const { error, loading, data } = useQuery(QUERY_ORDERS);
   const router = useRouter();
 
-  function viewOrder(orderId) {
-    router.push(`/order/${orderId}`);
+  function viewInvoice(orderId) {
+    router.push(`/invoice/${orderId}`);
   }
 
   const columns = useColumns(
@@ -44,7 +44,7 @@ export default function DashboardOrder() {
       ['id', 'id', 'hidden'],
       ['canceled', 'canceled', 'hidden'],
       [
-        t('order:number'),
+        t('invoice:number'),
         'number',
         ({
           column: {
@@ -54,25 +54,17 @@ export default function DashboardOrder() {
           row: {
             values: { id, canceled },
           },
-        }) => (
-          <Button
-            action={action}
-            label={value}
-            value={id}
-            block
-            secondary={canceled}
-          />
-        ),
-        { action: viewOrder },
+        }) => <Button action={action} label={value} value={id} block secondary={canceled} />,
+        { action: viewInvoice },
       ],
-      [t('order:user'), 'owner.name'],
+      [t('invoice:user'), 'owner.name'],
       [
-        t('order:order-date'),
+        t('invoice:Invoice-date'),
         'orderDate',
         ({ cell: { value } }) => <ValidityDate value={value} noColor />,
       ],
       [
-        t('order:total-brut'),
+        t('invoice:total-brut'),
         'totalBrut',
         ({ cell: { value } }) => <Number value={value} money />,
       ],
@@ -84,8 +76,8 @@ export default function DashboardOrder() {
   if (error) return <DisplayError error={error} />;
   return (
     <Dashboard
-      title={t('orders', { count: data.orders.length })}
-      total={t('orders-total')}
+      title={t('invoices', { count: data.orders.length })}
+      total={t('invoices-total')}
       count={data.ordersCount}
     >
       <Table columns={columns} data={data.orders} />

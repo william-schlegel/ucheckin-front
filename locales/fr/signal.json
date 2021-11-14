@@ -5,6 +5,7 @@
   "new-signal": "Nouveau signal",
   "signal-details": "Details du signal",
   "application": "Utilisé par l'application",
+  "applications": "Utilisé par les applications",
   "not-used": "Non utilisé dans aucune application",
   "number": "Nombre de signaux",
   "error-number": "Erreur dans le nombre de signaux (maximum {{max}})",

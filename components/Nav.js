@@ -35,7 +35,7 @@ export default function Nav({ toggled }) {
                 </li>
               )}
               <li>
-                <Link href="/orders">{t('orders')}</Link>
+                <Link href="/invoices">{t('invoices')}</Link>
               </li>
               {(user.role?.canSeeOtherUsers || user.role?.canManageUsers) && (
                 <li>

@@ -4,6 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 
@@ -40,9 +41,7 @@ export function useLicenseName() {
   useEffect(() => {
     if (!loading && !error && data) {
       setLicenseTypes(data.licenseTypes);
-      setLicenseTypesOptions(
-        data.licenseTypes.map((l) => ({ value: l.id, label: t(l.name) }))
-      );
+      setLicenseTypesOptions(data.licenseTypes.map((l) => ({ value: l.id, label: t(l.name) })));
     }
   }, [loading, error]);
 

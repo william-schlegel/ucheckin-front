@@ -1,10 +1,12 @@
-import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+
+import ButtonBack from '../Buttons/ButtonBack';
 import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
 import LicenseTable from '../License/LicenseTable';
 import Loading from '../Loading';
-import { useHelp, Help, HelpButton } from '../Help';
 import {
   Form,
   FormBodyFull,
@@ -16,7 +18,6 @@ import {
 } from '../styles/Card';
 import { SIGNAL_QUERY } from './Queries';
 import SignalFiles from './SignalFiles';
-import ButtonBack from '../Buttons/ButtonBack';
 
 export default function Signal({ id }) {
   const { loading, error, data } = useQuery(SIGNAL_QUERY, {
@@ -30,11 +31,7 @@ export default function Signal({ id }) {
 
   return (
     <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Form>
         <FormHeader>
           <FormTitle>
@@ -54,11 +51,7 @@ export default function Signal({ id }) {
           </RowFull>
         </FormBodyFull>
       </Form>
-      <SignalFiles
-        signalId={id}
-        signalCode={data.signal.name}
-        files={data.signal.files}
-      />
+      <SignalFiles signalId={id} signalCode={data.signal.name} files={data.signal.files} />
     </>
   );
 }

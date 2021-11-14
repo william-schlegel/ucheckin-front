@@ -93,7 +93,9 @@ export default function Measures() {
           values: { alert },
         },
       }) => (
-        <div style={{ color: value < alert ? 'red' : 'green', textAlign: 'right' }}>{value} mm</div>
+        <div style={{ color: value < alert ? 'red' : 'green', textAlign: 'right' }}>
+          {value.toFixed(2)} mm
+        </div>
       ),
     ],
   ]);

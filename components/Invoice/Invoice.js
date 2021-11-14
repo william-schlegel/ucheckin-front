@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import ButtonBack from '../Buttons/ButtonBack';
+import { formatDate } from '../DatePicker';
 import Loading from '../Loading';
 import {
   Form,
@@ -34,11 +35,11 @@ const Paid = styled.span`
   color: ${(props) => (props.paid ? 'green' : 'red')} !important;
 `;
 
-export default function Order({ id, backButton }) {
+export default function Invoice({ id, backButton }) {
   const { loading, data } = useQuery(ORDER_QUERY, {
     variables: { id },
   });
-  const { t } = useTranslation('order');
+  const { t } = useTranslation('invoice');
   const columns = useColumns(
     [
       [
@@ -60,15 +61,19 @@ export default function Order({ id, backButton }) {
     <Form>
       <FormHeader>
         <FormTitle>
-          {t('order')} <span>{data.order.number}</span>
+          {t('invoice')} <span>{data.order.number}</span>
           {data.order.canceled && <Canceled>{t('canceled')}</Canceled>}
-          <Paid paid={data.order.paid}>{data.order.paid ? t('paid') : t('not-paid')}</Paid>
+          <Paid paid={data.order.paid}>
+            {data.order.paid
+              ? t('paid-the', { date: formatDate(data.order.paymentDate) })
+              : t('not-paid')}
+          </Paid>
         </FormTitle>
-        {backButton && <ButtonBack route="/orders" label={t('navigation:orders')} />}
+        {backButton && <ButtonBack route="/invoices" label={t('navigation:invoices')} />}
       </FormHeader>
       <FormBody>
         <RowReadOnly>
-          <Label>{t('order-date')}</Label>
+          <Label>{t('invoice-date')}</Label>
           <ValidityDate value={data.order.orderDate} noColor />
         </RowReadOnly>
         <RowReadOnly>
@@ -109,7 +114,7 @@ export default function Order({ id, backButton }) {
   );
 }
 
-Order.propTypes = {
+Invoice.propTypes = {
   id: PropTypes.string.isRequired,
   backButton: PropTypes.bool,
 };

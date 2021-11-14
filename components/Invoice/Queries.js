@@ -2,7 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
 
-import { dateDay } from '../DatePicker';
+import { dateDay, dateNow } from '../DatePicker';
 
 export const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY($where: OrderWhereInput) {
@@ -35,6 +35,7 @@ export const ALL_ORDERS_QUERY = gql`
       orderDate
       canceled
       paid
+      paymentDate
     }
   }
 `;
@@ -70,6 +71,7 @@ export const ORDER_QUERY = gql`
       orderDate
       canceled
       paid
+      paymentDate
     }
   }
 `;
@@ -92,7 +94,7 @@ export const CANCEL_ORDER_MUTATION = gql`
 
 export const PAY_ORDER_MUTATION = gql`
   mutation PAY_ORDER_MUTATION($id: ID!) {
-    updateOrder(where: { id: $id }, data: { paid: true }) {
+    updateOrder(where: { id: $id }, data: { paid: true, paymentDate: "${dateNow()}" }) {
       id
     }
   }

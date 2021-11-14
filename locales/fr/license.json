@@ -30,7 +30,7 @@
   "nb-area": "Nombre de lieux pour chaque signal",
   "wi-us": "Licences Wi-Us",
   "your-price": "Votre tarif",
-  "total": "Total de la commande",
+  "total": "Total de la facture",
   "actual-validity": "Validité actuelle",
   "nb-month": "Nombre de mois en plus",
   "nb-year": "Nombre d'années en plus",
@@ -67,5 +67,5 @@
   "item-name-ucheck-in-renew-yearly": "Renouvellement license annuelle pour UcheckIn",
   "date-purchase": "Date d'achat",
   "quantity": "Quantité",
-  "order-history": "Historique des commandes"
+  "invoice-history": "Historique des factures"
 }

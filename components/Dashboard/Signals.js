@@ -1,13 +1,14 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
-import Dashboard from '../Dashboard';
+import useTranslation from 'next-translate/useTranslation';
 
+import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
 import Button from '../Tables/Button';
 import {
+  LicensesApplications,
   LicensesDetailsSignal,
   LicensesLegendSignal,
 } from '../Tables/LicensesDetails';
@@ -26,6 +27,9 @@ const QUERY_SIGNALS = gql`
       licenses {
         id
         validity
+      }
+      applications: licenses {
+
         application {
           id
           name
@@ -69,9 +73,12 @@ export default function DashboardSignal() {
       [
         t('signal:active'),
         'active',
-        ({ cell: { value } }) => (
-          <Switch label={t('signal:active')} value={value} disabled />
-        ),
+        ({ cell: { value } }) => <Switch label={t('signal:active')} value={value} disabled />,
+      ],
+      [
+        t('application:applications'),
+        'applications',
+        ({ cell: { value } }) => <LicensesApplications licenses={value} />,
       ],
       [
         t('signal:licenses'),
