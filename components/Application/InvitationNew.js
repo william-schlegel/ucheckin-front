@@ -1,40 +1,34 @@
-import { useRef } from 'react';
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useMutation } from '@apollo/client';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useRef } from 'react';
 import SwitchComponent from 'react-switch';
 
-import Drawer, { DrawerFooter } from '../Drawer';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
-import FieldError from '../FieldError';
-import { CREATE_INVITATION_MUTATION } from './Queries';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonValidation from '../Buttons/ButtonValidation';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
+import FieldError from '../FieldError';
+import { Form, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
+import { CREATE_INVITATION_MUTATION } from './Queries';
 
 export default function InvitationNew({ appId, open, onClose }) {
   const { t } = useTranslation('application');
-  const [addInvitation, { loading, error }] = useMutation(
-    CREATE_INVITATION_MUTATION,
-    {
-      onCompleted: (item) => {
-        onClose(item.addInvitation);
-      },
-    }
-  );
+  const [addInvitation, { loading, error }] = useMutation(CREATE_INVITATION_MUTATION, {
+    onCompleted: (item) => {
+      onClose(item.addInvitation);
+    },
+  });
   const initialValues = useRef({
     email: '',
     canModifyApplication: false,
     canManageContent: true,
     canBuyLicenses: false,
   });
-  const {
-    inputs,
-    handleChange,
-    validate,
-    validationError,
-  } = useForm(initialValues.current, [{ field: 'email', check: 'isEmail' }]);
+  const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
+    { field: 'email', check: 'isEmail' },
+  ]);
 
   function handleNewInvitation() {
     if (!validate()) return;
@@ -63,27 +57,21 @@ export default function InvitationNew({ appId, open, onClose }) {
           <RowReadOnly>
             <Label>{t('can-manage-content')}</Label>
             <SwitchComponent
-              onChange={(value) =>
-                handleChange({ name: 'canManageContent', value })
-              }
+              onChange={(value) => handleChange({ name: 'canManageContent', value })}
               checked={inputs.canManageContent}
             />
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('can-modify-app')}</Label>
             <SwitchComponent
-              onChange={(value) =>
-                handleChange({ name: 'canModifyApplication', value })
-              }
+              onChange={(value) => handleChange({ name: 'canModifyApplication', value })}
               checked={inputs.canModifyApplication}
             />
           </RowReadOnly>
           <RowReadOnly>
             <Label>{t('can-buy-licenses')}</Label>
             <SwitchComponent
-              onChange={(value) =>
-                handleChange({ name: 'canBuyLicenses', value })
-              }
+              onChange={(value) => handleChange({ name: 'canBuyLicenses', value })}
               checked={inputs.canBuyLicenses}
             />
           </RowReadOnly>

@@ -1,6 +1,8 @@
+import PropTypes from 'prop-types';
 import SwitchComponent from 'react-switch';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
+
+import Switch3S from '../Switch3States';
 
 const SwitchContainer = styled.div`
   display: grid;
@@ -23,6 +25,24 @@ export default function Switch({ value, disabled, callBack }) {
 
 Switch.propTypes = {
   value: PropTypes.bool,
+  disabled: PropTypes.bool,
+  callBack: PropTypes.func,
+};
+
+export function Switch3States({ value = 'undefined', disabled, callBack }) {
+  return (
+    <SwitchContainer>
+      <Switch3S
+        onChange={(newVal) => typeof callBack === 'function' && callBack(newVal)}
+        value={value}
+        disabled={disabled}
+      />
+    </SwitchContainer>
+  );
+}
+
+Switch3States.propTypes = {
+  value: PropTypes.string,
   disabled: PropTypes.bool,
   callBack: PropTypes.func,
 };

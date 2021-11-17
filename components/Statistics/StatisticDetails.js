@@ -1,20 +1,13 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 
+import ButtonCancel from '../Buttons/ButtonCancel';
+import { formatDate } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonCancel from '../Buttons/ButtonCancel';
 import Loading from '../Loading';
-import { formatDate } from '../DatePicker';
-import {
-  Form,
-  FormBodyFull,
-  FormHeader,
-  FormTitle,
-  Label,
-  RowReadOnly,
-} from '../styles/Card';
+import { Form, FormBodyFull, FormHeader, FormTitle, Label, RowReadOnly } from '../styles/Card';
 import { STATISTIC_QUERY } from './Queries';
 
 export default function StatisticDetails({ open, onClose, id }) {
@@ -29,9 +22,7 @@ export default function StatisticDetails({ open, onClose, id }) {
     <Drawer onClose={onClose} open={open} title={t('statistic-details')}>
       <Form>
         <FormHeader>
-          <FormTitle>
-            {t('statistic')}
-          </FormTitle>
+          <FormTitle>{t('statistic')}</FormTitle>
         </FormHeader>
         <FormBodyFull>
           <RowReadOnly>

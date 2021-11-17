@@ -2,7 +2,8 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import { useToasts } from 'react-toast-notifications';
 
 import { perPage } from '../../config';
@@ -19,14 +20,16 @@ import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
 import InvoiceDetails from './InvoiceDetails';
+import InvoiceTemplate from './InvoiceTemplate';
 import {
   ALL_ORDERS_QUERY,
   CANCEL_ORDER_MUTATION,
+  ORDER_QUERY,
   PAGINATION_QUERY,
   PAY_ORDER_MUTATION,
 } from './Queries';
 
-export default function Orders() {
+export default function Invoices() {
   const router = useRouter();
   const { user } = useUser();
 
@@ -39,6 +42,7 @@ export default function Orders() {
   const [payOrderMutation, { error: errorPay }] = useMutation(PAY_ORDER_MUTATION, {
     refetchQueries: [{ query: ALL_ORDERS_QUERY }],
   });
+  const [queryInvoiceToPrint, { data: dataInvoiceToPrint }] = useLazyQuery(ORDER_QUERY);
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
   const { t } = useTranslation('invoice');
@@ -48,10 +52,13 @@ export default function Orders() {
 
   const searchFields = [
     { field: 'owner.name.contains', label: t('user'), type: 'text' },
-    { field: 'paid', label: t('paid'), type: 'switch' },
-    { field: 'canceled', label: t('canceled'), type: 'switch' },
+    { field: 'paid.equals', label: t('paid'), type: 'switch' },
+    { field: 'canceled.equals', label: t('canceled'), type: 'switch' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const [printInvoiceOk, setPrintInvoiceOk] = useState('');
+  const printRef = useRef();
+  const handlePrintInvoice = useReactToPrint({ content: () => printRef.current });
 
   useEffect(() => {
     const variables = {
@@ -121,8 +128,15 @@ export default function Orders() {
   }
 
   function printInvoice(id) {
-    console.log(`print id`, id);
+    queryInvoiceToPrint({ variables: { id } });
+    setPrintInvoiceOk(id);
   }
+  useEffect(() => {
+    if (printInvoiceOk === dataInvoiceToPrint?.order?.id) {
+      handlePrintInvoice();
+      setPrintInvoiceOk('');
+    }
+  }, [dataInvoiceToPrint, handlePrintInvoice, printInvoiceOk, setPrintInvoiceOk]);
 
   const actionButtons = [
     { type: 'view', action: viewOrder },
@@ -142,6 +156,12 @@ export default function Orders() {
       <Head>
         <title>{t('invoices')}</title>
       </Head>
+      {/* <InvoiceTemplate data={dataInvoiceToPrint?.order} ref={printRef} /> */}
+      {printInvoiceOk && (
+        <div style={{ display: 'none' }}>
+          <InvoiceTemplate data={dataInvoiceToPrint?.order} ref={printRef} />
+        </div>
+      )}
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       {showOrder && (

@@ -10,6 +10,7 @@ import ActionButton from './Buttons/ActionButton';
 import { SecondaryButtonStyled } from './styles/Button';
 import { BlockShort, Input, LabelShort } from './styles/Card';
 import { SearchFilterStyles } from './styles/PaginationStyles';
+import { Switch3States } from './Tables/Switch';
 import { useUser } from './User/Queries';
 
 export default function SearchField({ fields, onFilterChange, onClose, isAdmin, showFilter }) {
@@ -40,30 +41,31 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
   function handleChange(e) {
     let { value, name, type } = e.target ? e.target : e;
     let raz = false;
+    let vFilter;
     if (type === 'number') {
-      value = parseInt(value);
-      raz = value === 0;
+      vFilter = parseInt(value);
+      raz = vFilter === 0;
     }
     if (type === 'switch') {
-      value = !!value;
-      raz = !value;
+      vFilter = value === 'checked';
+      raz = value === 'undefined';
     }
     if (type === 'text') {
+      vFilter = value;
       raz = value === '';
     }
 
     const idFilter = filters.findIndex((f) => f.field === name);
     if (raz) {
-      const newFilter = filters.find((f) => f.field !== name);
-      if (newFilter) setFilters(newFilter);
-      else setFilters([]);
+      const newFilter = filters.filter((f) => f.field !== name);
+      setFilters(newFilter);
       return;
     }
     const nFilter = [...filters];
     if (idFilter < 0) {
-      nFilter.push({ field: name, value });
+      nFilter.push({ field: name, value: vFilter });
     } else {
-      nFilter[idFilter].value = value;
+      nFilter[idFilter].value = vFilter;
     }
     setFilters(nFilter);
   }
@@ -95,16 +97,16 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
                   />
                 )}
                 {field.type === 'switch' && (
-                  <Switch
+                  <Switch3States
                     id={field.field}
-                    onChange={(value) =>
+                    callBack={(value) =>
                       handleChange({
                         value,
                         name: field.field,
                         type: field.type,
                       })
                     }
-                    checked={!!filters.find((f) => f.field === field.field)?.value}
+                    value={filters.find((f) => f.field === field.field)?.value || 'undefined'}
                   />
                 )}
               </BlockShort>
@@ -143,16 +145,16 @@ export function ActualFilter({ fields, actualFilter = {} }) {
   function getFilter(af) {
     let v = Object.values(af[1]);
     let op = Object.keys(af[1]);
-    while (typeof v[0] !== 'string') {
+    while (typeof v[0] !== 'string' && typeof v[0] !== 'boolean') {
       op = Object.keys(v[0]);
       v = Object.values(v[0]);
     }
-    console.log(`op`, op);
     const fld = fields.find((f) => f.field.split('.')[0] === af[0]);
     let disp = v[0];
     if (op[0] === 'contains') disp = `* ${disp} *`;
     if (op[0] === 'lt' || op[0] === 'lte') disp = `< ${disp}`;
     if (op[0] === 'gt' || op[0] === 'gte') disp = `> ${disp}`;
+    if (typeof v[0] === 'boolean') disp = v[0] ? 'true' : 'false';
     return (
       <Badge key={af[0]}>
         <span>{fld?.label || af[0]}:</span>

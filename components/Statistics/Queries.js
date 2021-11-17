@@ -36,6 +36,8 @@ export const STATISTIC_QUERY = gql`
       model
       version
       chanel
+      uuid
+      extra
       application {
         id
         name

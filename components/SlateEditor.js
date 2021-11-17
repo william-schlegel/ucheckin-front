@@ -1,12 +1,12 @@
 /* eslint-disable no-restricted-syntax */
+import isHotkey from 'is-hotkey';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useCallback, useMemo } from 'react';
-import isHotkey from 'is-hotkey';
-import { Editable, withReact, Slate, useSlate } from 'slate-react';
 import { createEditor, Editor, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
+import { Editable, Slate, useSlate, withReact } from 'slate-react';
 import styled from 'styled-components';
-import useTranslation from 'next-translate/useTranslation';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -383,8 +383,7 @@ const BoxBtn = styled.div`
   align-items: center;
   justify-content: center;
   line-height: 1rem;
-  background-color: ${(props) =>
-    props.selected ? 'var(--grey)' : 'transparent'};
+  background-color: ${(props) => (props.selected ? 'var(--grey)' : 'transparent')};
 `;
 
 const ToggleButton = styled.div`

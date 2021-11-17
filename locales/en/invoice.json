@@ -28,5 +28,9 @@
   "paid": "Paid",
   "paid-the": "Paid ({{date}})",
   "not-paid": "Not paid",
-  "print": "Print the invoice"
+  "print": "Print the invoice",
+  "attention-to": "Attention to",
+  "for-payment": "With your kind payment by bank transfer to the order of Stimshop",
+  "bank-coordinates": "bank details",
+  "vat-number": "Intra-community VAT number {{vatNumber}}"
 }

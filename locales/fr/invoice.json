@@ -28,5 +28,9 @@
   "paid": "Payée",
   "paid-the": "Payée ({{date}})",
   "not-paid": "Non payée",
-  "print": "Imprimer la facture"
+  "print": "Imprimer la facture",
+  "attention-to": "A l'attention de",
+  "for-payment": "En votre aimable réglement par virement à réception à l'ordre de Stimshop",
+  "bank-coordinates": "coordonnées bancaires",
+  "vat-number": "N° de TVA intracommunautaire {{vatNumber}}"
 }

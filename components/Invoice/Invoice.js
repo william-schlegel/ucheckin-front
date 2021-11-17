@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { useEffect, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import styled from 'styled-components';
 
 import ButtonBack from '../Buttons/ButtonBack';
@@ -21,6 +23,7 @@ import Number from '../Tables/Number';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import Total from '../TotalCount';
+import InvoiceTemplate from './InvoiceTemplate';
 import { ORDER_QUERY } from './Queries';
 
 const Canceled = styled.span`
@@ -35,7 +38,7 @@ const Paid = styled.span`
   color: ${(props) => (props.paid ? 'green' : 'red')} !important;
 `;
 
-export default function Invoice({ id, backButton }) {
+export default function Invoice({ id, backButton, print, setPrint }) {
   const { loading, data } = useQuery(ORDER_QUERY, {
     variables: { id },
   });
@@ -54,63 +57,75 @@ export default function Invoice({ id, backButton }) {
     ],
     false
   );
+  const printRef = useRef();
+  const handlePrintInvoice = useReactToPrint({ content: () => printRef.current });
+
+  useEffect(() => {
+    if (print) {
+      handlePrintInvoice();
+      setPrint(false);
+    }
+  }, [print, handlePrintInvoice, setPrint]);
 
   if (loading) return <Loading />;
   if (!data) return null;
   return (
-    <Form>
-      <FormHeader>
-        <FormTitle>
-          {t('invoice')} <span>{data.order.number}</span>
-          {data.order.canceled && <Canceled>{t('canceled')}</Canceled>}
-          <Paid paid={data.order.paid}>
-            {data.order.paid
-              ? t('paid-the', { date: formatDate(data.order.paymentDate) })
-              : t('not-paid')}
-          </Paid>
-        </FormTitle>
-        {backButton && <ButtonBack route="/invoices" label={t('navigation:invoices')} />}
-      </FormHeader>
-      <FormBody>
-        <RowReadOnly>
-          <Label>{t('invoice-date')}</Label>
-          <ValidityDate value={data.order.orderDate} noColor />
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('user')}</Label>
-          <span>{data.order.owner.name}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('company')}</Label>
-          <span>{data.order.owner.company}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('address')}</Label>
-          <span>{data.order.owner.address}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('zip-code')}</Label>
-          <span>{data.order.owner.zipCode}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('city')}</Label>
-          <span>{data.order.owner.city}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('country')}</Label>
-          <span>{data.order.owner.country}</span>
-        </RowReadOnly>
-      </FormBody>
-      <FormBodyFull>
-        <Row>
-          <Table columns={columns} data={data.order.items} />
-        </Row>
-        <Total
-          vat={parseFloat(data.order.vatValue)}
-          value={{ amount: parseFloat(data.order.totalBrut) }}
-        />
-      </FormBodyFull>
-    </Form>
+    <>
+      {print && <InvoiceTemplate data={data.order} ref={printRef} />}
+      <Form>
+        <FormHeader>
+          <FormTitle>
+            {t('invoice')} <span>{data.order.number}</span>
+            {data.order.canceled && <Canceled>{t('canceled')}</Canceled>}
+            <Paid paid={data.order.paid}>
+              {data.order.paid
+                ? t('paid-the', { date: formatDate(data.order.paymentDate) })
+                : t('not-paid')}
+            </Paid>
+          </FormTitle>
+          {backButton && <ButtonBack route="/invoices" label={t('navigation:invoices')} />}
+        </FormHeader>
+        <FormBody>
+          <RowReadOnly>
+            <Label>{t('invoice-date')}</Label>
+            <ValidityDate value={data.order.orderDate} noColor />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('user')}</Label>
+            <span>{data.order.owner.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('company')}</Label>
+            <span>{data.order.owner.company}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('address')}</Label>
+            <span>{data.order.owner.address}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('zip-code')}</Label>
+            <span>{data.order.owner.zipCode}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('city')}</Label>
+            <span>{data.order.owner.city}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('country')}</Label>
+            <span>{data.order.owner.country}</span>
+          </RowReadOnly>
+        </FormBody>
+        <FormBodyFull>
+          <Row>
+            <Table columns={columns} data={data.order.items} />
+          </Row>
+          <Total
+            vat={parseFloat(data.order.vatValue)}
+            value={{ amount: parseFloat(data.order.totalBrut) }}
+          />
+        </FormBodyFull>
+      </Form>
+    </>
   );
 }
 

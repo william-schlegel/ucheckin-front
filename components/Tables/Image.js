@@ -15,12 +15,14 @@ const Img = styled.img`
   border-radius: ${(props) => (props.rounded ? `${props.size}px` : 0)};
 `;
 
-export default function Image({ image, size, ratio, border, rounded }) {
+export default function Image({ imageSrc, image, size, ratio, border, rounded }) {
   return (
     <ImgContainer>
       <Img
         src={
-          !image?.publicUrlTransformed
+          imageSrc
+            ? imageSrc
+            : !image?.publicUrlTransformed
             ? '/images/UNKNOWN.png'
             : image.publicUrlTransformed
         }

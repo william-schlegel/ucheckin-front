@@ -1,5 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 import ActionButton from '../Buttons/ActionButton';
 import ButtonCancel from '../Buttons/ButtonCancel';
@@ -9,12 +10,15 @@ import OrderContent from './Invoice';
 
 export default function OrderDetails({ open, onClose, id }) {
   const { t } = useTranslation('invoice');
+  const [print, setPrint] = useState(false);
 
-  function printInvoice() {}
+  function printInvoice() {
+    setPrint(true);
+  }
 
   return (
     <Drawer onClose={onClose} open={open} title={t('invoice-details')}>
-      <OrderContent id={id} />
+      <OrderContent id={id} print={print} setPrint={setPrint} />
       <DrawerFooter>
         <SecondaryButtonStyled onClick={printInvoice}>
           <ActionButton type="printer" size="25" />

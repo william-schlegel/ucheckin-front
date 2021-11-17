@@ -1,7 +1,8 @@
-import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+
 import Loading from './Loading';
 import selectTheme from './styles/selectTheme';
 
@@ -62,9 +63,7 @@ export function SearchUsers({ name, value, onChange, required }) {
       name={name}
       isMulti
       options={userList}
-      onChange={(us) =>
-        onChange({ name, value: us.map((u) => ({ id: u.value })) })
-      }
+      onChange={(us) => onChange({ name, value: us.map((u) => ({ id: u.value })) })}
       // className="basic-multi-select"
       // classNamePrefix="select"
     />
