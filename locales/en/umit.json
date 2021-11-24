@@ -39,5 +39,12 @@
   "width": "Width",
   "threshold": "Threshold",
   "settings": "Settings",
-  "umit": "UMIT"
+  "umit": "UMIT",
+  "measure-date": "Measure date",
+  "thickness": "Thickness",
+  "all": "All",
+  "start-date": "Since",
+  "end-date": "Until",
+  "measure-details": "Measure details",
+  "measure-name": "Sensor"
 }

@@ -18,103 +18,12 @@ export default function MeasureDetails({ open, onClose, id }) {
     variables: { id },
   });
   const { t } = useTranslation('umit');
-  const [points, setPoints] = useState([]);
-
-  useEffect(() => {
-    if (data?.umitMeasure?.points) setPoints(calculCourbe(data.umitMeasure.points));
-  }, [data?.umitMeasure?.points]);
 
   if (loading) return <Loading />;
   if (!data) return null;
   return (
     <Drawer onClose={onClose} open={open} title={t('measure-details')}>
-      <Form>
-        <FormHeader>
-          <FormTitle>
-            {t('measure-name')} <span>{data.umitMeasure.sensor?.name}</span>
-          </FormTitle>
-        </FormHeader>
-        <FormBodyFull>
-          <RowReadOnly>
-            <Label>{t('measure-date')}</Label>
-            <ValidityDate value={data.umitMeasure.measureDate} noColor />
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('thickness')}</Label>
-            <span
-              style={{
-                fontSize: '1.5rem',
-                color: data.umitMeasure.sensor?.alert
-                  ? data.umitMeasure.thickness < data.umitMeasure.sensor.alert
-                    ? 'red'
-                    : 'green'
-                  : 'black',
-              }}
-            >
-              {data.umitMeasure.thickness.toFixed(2)} mm
-            </span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <DessinCourbe points={points} dataMesure={data.umitMeasure} />
-          </RowReadOnly>
-        </FormBodyFull>
-      </Form>
-      <Form>
-        <FormBodyFull>
-          <RowReadOnly>
-            <Label>{t('company')}</Label>
-            <span>{data.umitMeasure.company}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('location')}</Label>
-            <span>{data.umitMeasure.location.name}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('building')}</Label>
-            <span>{data.umitMeasure.sensor?.building}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('unit')}</Label>
-            <span>{data.umitMeasure.sensor?.unit}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('ref')}</Label>
-            <span>{data.umitMeasure.sensor?.ref}</span>
-          </RowReadOnly>
-        </FormBodyFull>
-      </Form>
-      <Form>
-        <FormBodyFull>
-          <FormHeader>
-            <FormTitle>{t('settings')}</FormTitle>
-          </FormHeader>
-          <RowReadOnly>
-            <Label>{t('start')} A</Label>
-            <span>{data.umitMeasure.startA} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('width')} A</Label>
-            <span>{data.umitMeasure.widthA} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('threshold')} A</Label>
-            <span>{data.umitMeasure.thresholdA} %</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('start')} B</Label>
-            <span>{data.umitMeasure.startB} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('width')} B</Label>
-            <span>{data.umitMeasure.widthB} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('threshold')} B</Label>
-            <span>{data.umitMeasure.thresholdB} %</span>
-          </RowReadOnly>
-        </FormBodyFull>
-      </Form>
-
+      <MeasureContent data={data.umitMeasure} header />
       <DrawerFooter>
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}
@@ -128,3 +37,105 @@ MeasureDetails.propTypes = {
   onClose: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
 };
+
+export function MeasureContent({ data, header }) {
+  const { t } = useTranslation('umit');
+  const [points, setPoints] = useState([]);
+
+  useEffect(() => {
+    if (data?.points) setPoints(calculCourbe(data.points));
+  }, [data?.points]);
+
+  return (
+    <>
+      <Form>
+        {header && (
+          <FormHeader>
+            <FormTitle>
+              {t('measure-name')} <span>{data.sensor?.name}</span>
+            </FormTitle>
+          </FormHeader>
+        )}
+        <FormBodyFull>
+          <RowReadOnly>
+            <Label>{t('measure-date')}</Label>
+            <ValidityDate value={data.measureDate} noColor />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('thickness')}</Label>
+            <span
+              style={{
+                fontSize: '1.5rem',
+                color: data.sensor?.alert
+                  ? data.thickness < data.sensor.alert
+                    ? 'red'
+                    : 'green'
+                  : 'black',
+              }}
+            >
+              {data.thickness.toFixed(2)} mm
+            </span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <DessinCourbe points={points} dataMesure={data} />
+          </RowReadOnly>
+        </FormBodyFull>
+      </Form>
+      <Form>
+        <FormBodyFull>
+          <RowReadOnly>
+            <Label>{t('company')}</Label>
+            <span>{data.company}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('location')}</Label>
+            <span>{data.location.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('building')}</Label>
+            <span>{data.sensor?.building}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('unit')}</Label>
+            <span>{data.sensor?.unit}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('ref')}</Label>
+            <span>{data.sensor?.ref}</span>
+          </RowReadOnly>
+        </FormBodyFull>
+      </Form>
+      <Form>
+        <FormBodyFull>
+          <FormHeader>
+            <FormTitle>{t('settings')}</FormTitle>
+          </FormHeader>
+          <RowReadOnly>
+            <Label>{t('start')} A</Label>
+            <span>{data.startA} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('width')} A</Label>
+            <span>{data.widthA} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('threshold')} A</Label>
+            <span>{data.thresholdA} %</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('start')} B</Label>
+            <span>{data.startB} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('width')} B</Label>
+            <span>{data.widthB} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('threshold')} B</Label>
+            <span>{data.thresholdB} %</span>
+          </RowReadOnly>
+        </FormBodyFull>
+      </Form>
+    </>
+  );
+}

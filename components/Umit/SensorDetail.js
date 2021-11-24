@@ -20,103 +20,7 @@ export default function SensorDetails({ open, onClose, id }) {
   if (!data) return null;
   return (
     <Drawer onClose={onClose} open={open} title={t('sensor-details')}>
-      <Form>
-        <FormHeader>
-          <FormTitle>
-            {t('sensor-name')} <span>{data.umitSensor?.name}</span>
-          </FormTitle>
-        </FormHeader>
-        <FormBodyFull>
-          <RowReadOnly>
-            <Label>{t('company')}</Label>
-            <span>{data.umitSensor?.company}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('location')}</Label>
-            <span>{data.umitSensor?.location?.name}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('description')}</Label>
-            <span>{data.umitSensor?.description}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('building')}</Label>
-            <span>{data.umitSensor?.building}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('unit')}</Label>
-            <span>{data.umitSensor?.unit}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('ref')}</Label>
-            <span>{data.umitSensor?.ref}</span>
-          </RowReadOnly>
-        </FormBodyFull>
-      </Form>
-      <Form>
-        <FormBodyFull>
-          <RowReadOnly>
-            <Label>{t('last-measure')}</Label>
-            {data.umitSensor?.lastMeasureAt ? (
-              <ValidityDate value={data.umitSensor?.lastMeasureAt} noColor />
-            ) : (
-              t('never-settled')
-            )}
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('mac-address')}</Label>
-            <span>{data.umitSensor?.macAddress}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('frequency')}</Label>
-            <span>{parseFloat(data.umitSensor?.frequency)} MHz</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('material-name')}</Label>
-            <span>{data.umitSensor?.material?.name}</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('prop-speed')}</Label>
-            <span>{data.umitSensor?.propSpeed} m/s</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('alert')}</Label>
-            <span>{data.umitSensor?.alert} mm</span>
-          </RowReadOnly>
-        </FormBodyFull>
-      </Form>
-      <Form>
-        <FormBodyFull>
-          <FormHeader>
-            <FormTitle>{t('settings')}</FormTitle>
-          </FormHeader>
-          <RowReadOnly>
-            <Label>{t('start')} A</Label>
-            <span>{data.umitSensor?.startA} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('width')} A</Label>
-            <span>{data.umitSensor.widthA} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('threshold')} A</Label>
-            <span>{data.umitSensor?.thresholdA} %</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('start')} B</Label>
-            <span>{data.umitSensor?.startB} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('width')} B</Label>
-            <span>{data.umitSensor?.widthB} µs</span>
-          </RowReadOnly>
-          <RowReadOnly>
-            <Label>{t('threshold')} B</Label>
-            <span>{data.umitSensor?.thresholdB} %</span>
-          </RowReadOnly>
-        </FormBodyFull>
-      </Form>
-
+      <SensorContent data={data.umitSensor} header />
       <DrawerFooter>
         <ButtonCancel onClick={onClose} />
         {error && <DisplayError error={error} />}
@@ -130,3 +34,110 @@ SensorDetails.propTypes = {
   onClose: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
 };
+
+export function SensorContent({ data, header = false }) {
+  const { t } = useTranslation('umit');
+
+  return (
+    <>
+      <Form>
+        {header && (
+          <FormHeader>
+            <FormTitle>
+              {t('sensor-name')} <span>{data.name}</span>
+            </FormTitle>
+          </FormHeader>
+        )}
+        <FormBodyFull>
+          <RowReadOnly>
+            <Label>{t('company')}</Label>
+            <span>{data.company}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('location')}</Label>
+            <span>{data.location?.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('description')}</Label>
+            <span>{data.description}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('building')}</Label>
+            <span>{data.building}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('unit')}</Label>
+            <span>{data.unit}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('ref')}</Label>
+            <span>{data.ref}</span>
+          </RowReadOnly>
+        </FormBodyFull>
+      </Form>
+      <Form>
+        <FormBodyFull>
+          <RowReadOnly>
+            <Label>{t('last-measure')}</Label>
+            {data.lastMeasureAt ? (
+              <ValidityDate value={data.lastMeasureAt} noColor />
+            ) : (
+              t('never-settled')
+            )}
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('mac-address')}</Label>
+            <span>{data.macAddress}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('frequency')}</Label>
+            <span>{parseFloat(data.frequency)} MHz</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('material-name')}</Label>
+            <span>{data.material?.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('prop-speed')}</Label>
+            <span>{data.propSpeed} m/s</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('alert')}</Label>
+            <span>{data.alert} mm</span>
+          </RowReadOnly>
+        </FormBodyFull>
+      </Form>
+      <Form>
+        <FormBodyFull>
+          <FormHeader>
+            <FormTitle>{t('settings')}</FormTitle>
+          </FormHeader>
+          <RowReadOnly>
+            <Label>{t('start')} A</Label>
+            <span>{data.startA} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('width')} A</Label>
+            <span>{data.widthA} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('threshold')} A</Label>
+            <span>{data.thresholdA} %</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('start')} B</Label>
+            <span>{data.startB} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('width')} B</Label>
+            <span>{data.widthB} µs</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('threshold')} B</Label>
+            <span>{data.thresholdB} %</span>
+          </RowReadOnly>
+        </FormBodyFull>
+      </Form>
+    </>
+  );
+}

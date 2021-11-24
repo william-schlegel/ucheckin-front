@@ -11,6 +11,8 @@ import DashboardLicense from './Licenses';
 import DashboardNotification from './Notifications';
 import DashboardSignal from './Signals';
 import DashboardStatistics from './Statistics';
+import DashboardMeasure from './UmitMeasures';
+import DashboardSensor from './UmitSensors';
 import DashboardUser from './Users';
 
 export default function Dashboard() {
@@ -30,14 +32,24 @@ export default function Dashboard() {
       </FormHeader>
       <DashboardStyled>
         {user.role?.canManageUsers && <DashboardUser />}
-        <DashboardApplication />
-        <DashboardSignal />
-        <DashboardLicense />
-        <DashboardInvoice />
-        <DashboardNotification />
-        <DashboardEvent />
+        {user.canSeeAppMenu && (
+          <>
+            <DashboardApplication />
+            <DashboardSignal />
+            <DashboardLicense />
+            <DashboardInvoice />
+            <DashboardNotification />
+          </>
+        )}
+        {user.canSeeUcheckinMenu && <DashboardEvent />}
+        {user.canSeeUmitMenu && (
+          <>
+            <DashboardSensor />
+            <DashboardMeasure />
+          </>
+        )}
       </DashboardStyled>
-      <DashboardStatistics />
+      {user.canSeeAppMenu && <DashboardStatistics />}
     </>
   );
 }

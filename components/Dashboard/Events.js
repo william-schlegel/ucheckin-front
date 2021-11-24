@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
+import useTranslation from 'next-translate/useTranslation';
+
 import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
-
 import Loading from '../Loading';
 import Button from '../Tables/Button';
 import Image from '../Tables/Image';

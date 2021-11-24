@@ -8,6 +8,7 @@
   "action": "Action",
   "actions": "Actions",
   "license-type": "License type",
+  "license": "License",
   "new": "New",
   "delete": "Delete",
   "trash": "Delete",
