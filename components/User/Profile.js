@@ -8,6 +8,7 @@ import countryList from 'react-select-country-list';
 import { useToasts } from 'react-toast-notifications';
 
 import useForm from '../../lib/useForm';
+import ActionButton from '../Buttons/ActionButton';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -90,6 +91,14 @@ export default function Profile({ id, initialData }) {
     });
   }
 
+  function showSettings(e) {
+    e.preventDefault();
+    router.push({
+      pathname: `/settings/[id]`,
+      query: { id },
+    });
+  }
+
   async function handleValidation() {
     const newInputs = validate();
     if (!newInputs) return;
@@ -111,6 +120,9 @@ export default function Profile({ id, initialData }) {
             <HelpButton showHelp={toggleHelpVisibility} />
             <PrimaryButtonStyled role="button" onClick={showMyAccount}>
               {t('account-detail')}
+            </PrimaryButtonStyled>
+            <PrimaryButtonStyled role="button" onClick={showSettings}>
+              <ActionButton type="settings" />
             </PrimaryButtonStyled>
           </FormTitle>
           <ButtonBack route="/" label={t('navigation:home')} />

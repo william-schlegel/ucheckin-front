@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 
-import MyAccount from '../../components/User/Account';
-import { QUERY_ACCOUNT } from '../../components/User/Queries';
+import { QUERY_SETTINGS } from '../../components/User/Queries';
+import MySettings from '../../components/User/Settings';
 
 export default function Account({ id, initialData }) {
-  return <MyAccount id={id} initialData={initialData} />;
+  return <MySettings id={id} initialData={initialData} />;
 }
 
 Account.propTypes = {
@@ -16,8 +16,8 @@ Account.getInitialProps = async (ctx) => {
   const { apolloClient } = ctx;
   const { id } = ctx.query;
   const initialData = await apolloClient.query({
-    query: QUERY_ACCOUNT,
+    query: QUERY_SETTINGS,
     variables: { id },
   });
-  return { id, initialData: initialData.data.user };
+  return { id, initialData };
 };

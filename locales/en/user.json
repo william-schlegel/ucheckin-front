@@ -9,6 +9,7 @@
   "request-reset": "Request for reset",
   "title": "Profile",
   "profile": "My profile",
+  "account": "My account",
   "company": "Company",
   "address": "Address",
   "zip": "Zip code",
@@ -31,7 +32,8 @@
   "you-confirm": "Do you really want to delete this token?",
   "yes-delete": "Yes",
   "no-delete": "No",
-  "account-detail": "Account deetails",
+  "account-detail": "Account details",
+  "profile-detail": "Profile details",
   "users": "Users",
   "user": "User",
   "licenses": "My licenses",
@@ -43,5 +45,9 @@
   "link-success": "The reset request has been taken into account, check your email for the link",
   "invoicing-model": "Invoicing model",
   "online": "Online payment",
-  "invoice": "Invoice payment"
+  "invoice": "Invoice payment",
+  "display-options": "Display options for the user",
+  "umit-menu": "I am managing UMITs",
+  "ucheckin-menu": "I am using the UCheckIn SDK",
+  "app-menu": "I am using a mobile app SDK"
 }

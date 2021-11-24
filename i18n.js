@@ -23,6 +23,7 @@ module.exports = {
     'rgx:^/account': ['user', 'license', 'application'],
     'rgx:^/user': ['user', 'license'],
     'rgx:^/compte': ['user', 'license'],
+    'rgx:^/settings': ['user'],
     'rgx:^/license': ['license'],
     'rgx:^/price': ['license'],
     'rgx:^/invoice': ['invoice'],

@@ -35,6 +35,7 @@ export default function Materials() {
   const { t } = useTranslation('umit');
   const [newMaterial, setNewMaterial] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
+  const [materialId, setMaterialId] = useState('');
 
   useEffect(() => {
     const variables = {
@@ -74,6 +75,11 @@ export default function Materials() {
     setIsOpen(true);
   }
 
+  function editMaterial(id) {
+    setMaterialId(id);
+    setNewMaterial(true);
+  }
+
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
@@ -88,13 +94,16 @@ export default function Materials() {
         <HelpButton showHelp={toggleHelpVisibility} />
         <ButtonNew
           onClick={() => {
+            setMaterialId('');
             setNewMaterial(true);
           }}
         />
       </EntetePage>
 
       <Confirm />
-      {newMaterial && <MaterialNew open={!!newMaterial} onClose={() => setNewMaterial(false)} />}
+      {newMaterial && (
+        <MaterialNew open={!!newMaterial} onClose={() => setNewMaterial(false)} id={materialId} />
+      )}
       <Pagination
         page={page}
         error={errorPage}
@@ -108,7 +117,10 @@ export default function Materials() {
         data={data?.umitMaterials}
         error={error}
         loading={loading}
-        actionButtons={[{ type: 'trash', action: deleteMaterial }]}
+        actionButtons={[
+          { type: 'edit', action: editMaterial },
+          { type: 'trash', action: deleteMaterial },
+        ]}
       />
     </>
   );

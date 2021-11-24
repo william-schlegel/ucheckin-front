@@ -15,7 +15,7 @@ export default function Nav({ toggled }) {
     return (
       <NavStyles className="menu" toggled={toggled}>
         <ul>
-          {user.role?.canSeeAppMenu && (
+          {user.canSeeAppMenu && (
             <>
               <li>
                 <Link href="/sdk">{t('sdk')}</Link>
@@ -47,12 +47,12 @@ export default function Nav({ toggled }) {
               </li>
             </>
           )}
-          {user.role?.canSeeUcheckinMenu && (
+          {user.canSeeUcheckinMenu && (
             <li>
               <Link href="/events">{t('events')}</Link>
             </li>
           )}
-          {user.role?.canSeeUmitMenu && (
+          {user.canSeeUmitMenu && (
             <SubMenu label={t('umit')}>
               <ul>
                 <li className="sub-item">

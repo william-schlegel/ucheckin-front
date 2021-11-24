@@ -59,6 +59,14 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
       },
     });
   }
+  function showSettings() {
+    router.push({
+      pathname: `/settings/[id]`,
+      query: {
+        id: user.id,
+      },
+    });
+  }
 
   useOnClickOutside(refMenu, () => setShowUserMenu(false));
 
@@ -104,6 +112,9 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
                     </button>
                     <button type="button" onClick={showMyAccount}>
                       {t('account')}
+                    </button>
+                    <button type="button" onClick={showSettings}>
+                      {t('settings')}
                     </button>
                     <Signout />
                   </div>

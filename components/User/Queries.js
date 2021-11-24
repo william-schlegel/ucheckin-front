@@ -122,6 +122,22 @@ export const QUERY_PROFILE = gql`
   }
 `;
 
+export const QUERY_SETTINGS = gql`
+  query QUERY_SETTINGS($id: ID!) {
+    user(where: { id: $id }) {
+      id
+      canSeeUmitMenu
+      canSeeUcheckinMenu
+      canSeeAppMenu
+      role {
+        id
+        name
+        canManageUsers
+      }
+    }
+  }
+`;
+
 export const CREATE_USER_MUTATION = gql`
   mutation CUserUSER_MUTATION($ownerId: ID!) {
     createUser(data: { owner: { connect: { id: $ownerId } } }) {
@@ -160,6 +176,9 @@ export const CURRENT_USER_QUERY = gql`
         }
         country
         theme
+        canSeeUmitMenu
+        canSeeUcheckinMenu
+        canSeeAppMenu
         role {
           id
           canSeeOtherUsers
@@ -177,9 +196,6 @@ export const CURRENT_USER_QUERY = gql`
           canManageEvent
           canManageNotification
           canManageUmits
-          canSeeUmitMenu
-          canSeeUcheckinMenu
-          canSeeAppMenu
         }
       }
     }
@@ -230,6 +246,26 @@ export const UPDATE_PROFILE_MUTATION = gql`
         contact: $contact
         role: $role
         invoicingModel: $invoicingModel
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_SETTINGS_MUTATION = gql`
+  mutation UPDATE_SETTINGS_MUTATION(
+    $id: ID!
+    $canSeeUmitMenu: Boolean
+    $canSeeUcheckinMenu: Boolean
+    $canSeeAppMenu: Boolean
+  ) {
+    updateUser(
+      where: { id: $id }
+      data: {
+        canSeeUmitMenu: $canSeeUmitMenu
+        canSeeUcheckinMenu: $canSeeUcheckinMenu
+        canSeeAppMenu: $canSeeAppMenu
       }
     ) {
       id

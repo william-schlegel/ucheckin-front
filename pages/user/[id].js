@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import MyProfile from '../../components/User/Profile';
 import { QUERY_PROFILE } from '../../components/User/Queries';
 

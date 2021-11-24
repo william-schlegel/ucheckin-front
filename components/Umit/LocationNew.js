@@ -1,7 +1,7 @@
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { perPage } from '../../config';
 import useForm from '../../lib/useForm';
@@ -11,17 +11,38 @@ import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Form, FormBodyFull, Label, Row } from '../styles/Card';
-import { ALL_LOCATIONS_QUERY, CREATE_LOCATION_MUTATION } from './Queries';
+import {
+  ALL_LOCATIONS_QUERY,
+  CREATE_LOCATION_MUTATION,
+  LOCATION_QUERY,
+  UPDATE_LOCATION_MUTATION,
+} from './Queries';
 
-export default function LocationNew({ open, onClose }) {
-  const [createLocation, { loading, error }] = useMutation(CREATE_LOCATION_MUTATION, {
-    refetchQueries: [
-      {
-        query: ALL_LOCATIONS_QUERY,
-        variables: { skip: 0, take: perPage },
-      },
-    ],
-  });
+export default function LocationNew({ open, onClose, id }) {
+  const [queryLocation, { data, loading: loadingQuery, error: errorQuery }] =
+    useLazyQuery(LOCATION_QUERY);
+  const [createLocation, { loading: loadingCreate, error: errorCreate }] = useMutation(
+    CREATE_LOCATION_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: ALL_LOCATIONS_QUERY,
+          variables: { skip: 0, take: perPage },
+        },
+      ],
+    }
+  );
+  const [updateLocation, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_LOCATION_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: ALL_LOCATIONS_QUERY,
+          variables: { skip: 0, take: perPage },
+        },
+      ],
+    }
+  );
   const { t } = useTranslation('umit');
   const initialValues = useRef({
     name: '',
@@ -32,9 +53,42 @@ export default function LocationNew({ open, onClose }) {
     contact: '',
     telephone: '',
   });
-  const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
-    'name',
-  ]);
+  const { inputs, handleChange, validate, validationError, setInputs } = useForm(
+    initialValues.current,
+    ['name']
+  );
+
+  useEffect(() => {
+    if (id) queryLocation({ variables: { id } });
+  }, [id, queryLocation]);
+
+  useEffect(() => {
+    if (data) {
+      setInputs({
+        name: data.umitLocation.name,
+        address: data.umitLocation.address,
+        zipCode: data.umitLocation.zipCode,
+        city: data.umitLocation.city,
+        country: data.umitLocation.country,
+        contact: data.umitLocation.contact,
+        telephone: data.umitLocation.telephone,
+      });
+    }
+  }, [data, setInputs]);
+
+  function handleValidation() {
+    if (!validate()) return;
+    if (id) {
+      updateLocation({ variables: { where: { id }, data: inputs } }).catch((err) =>
+        alert(err.message)
+      );
+    } else {
+      createLocation({ variables: { data: inputs } }).catch((err) => alert(err.message));
+    }
+    onClose();
+  }
+
+  if (loadingQuery) return null;
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-location')}>
@@ -106,16 +160,11 @@ export default function LocationNew({ open, onClose }) {
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation
-          disabled={loading}
-          onClick={() => {
-            if (!validate()) return;
-            createLocation({ variables: { data: inputs } }).catch((err) => alert(err.message));
-            onClose();
-          }}
-        />
+        <ButtonValidation disabled={loadingCreate || loadingUpdate} onClick={handleValidation} />
         <ButtonCancel onClick={onClose} />
-        {error && <DisplayError error={error} />}
+        {errorCreate && <DisplayError error={errorCreate} />}
+        {errorUpdate && <DisplayError error={errorUpdate} />}
+        {errorQuery && <DisplayError error={errorQuery} />}
       </DrawerFooter>
     </Drawer>
   );

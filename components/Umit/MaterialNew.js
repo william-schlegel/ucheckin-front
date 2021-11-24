@@ -1,7 +1,7 @@
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import { perPage } from '../../config';
@@ -12,29 +12,76 @@ import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Form, FormBodyFull, Label, Row } from '../styles/Card';
-import { ALL_MATERIALS_QUERY, CREATE_MATERIAL_MUTATION } from './Queries';
+import {
+  ALL_MATERIALS_QUERY,
+  CREATE_MATERIAL_MUTATION,
+  MATERIAL_QUERY,
+  UPDATE_MATERIAL_MUTATION,
+} from './Queries';
 
-export default function MaterialNew({ open, onClose }) {
-  const [createMaterial, { loading, error }] = useMutation(CREATE_MATERIAL_MUTATION, {
-    refetchQueries: [
-      {
-        query: ALL_MATERIALS_QUERY,
-        variables: { skip: 0, take: perPage },
-      },
-    ],
-  });
+export default function MaterialNew({ open, onClose, id }) {
+  const [queryMaterial, { data, loading: loadingQuery, error: errorQuery }] =
+    useLazyQuery(MATERIAL_QUERY);
+  const [createMaterial, { loading: loadingCreate, error: errorCreate }] = useMutation(
+    CREATE_MATERIAL_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: ALL_MATERIALS_QUERY,
+          variables: { skip: 0, take: perPage },
+        },
+      ],
+    }
+  );
+  const [updateMaterial, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_MATERIAL_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: ALL_MATERIALS_QUERY,
+          variables: { skip: 0, take: perPage },
+        },
+      ],
+    }
+  );
+
   const { t } = useTranslation('umit');
   const initialValues = useRef({
     name: '',
     propSpeed: 5000,
   });
-  const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
-    'name',
-    { check: 'isNotNull', key: 'propSpeed' },
-  ]);
+  const { inputs, handleChange, validate, validationError, setInputs } = useForm(
+    initialValues.current,
+    ['name', { check: 'isNotNull', key: 'propSpeed' }]
+  );
+
+  useEffect(() => {
+    if (id) queryMaterial({ variables: { id } });
+  }, [id, queryMaterial]);
+
+  useEffect(() => {
+    if (data) {
+      console.log(`data`, data);
+      setInputs({ name: data.umitMaterial.name, propSpeed: data.umitMaterial.propSpeed });
+    }
+  }, [data, setInputs]);
+
+  function handleValidation() {
+    if (!validate()) return;
+    if (id) {
+      updateMaterial({ variables: { where: { id }, data: inputs } }).catch((err) =>
+        alert(err.message)
+      );
+    } else {
+      createMaterial({ variables: { data: inputs } }).catch((err) => alert(err.message));
+    }
+    onClose();
+  }
+
+  if (loadingQuery) return null;
 
   return (
-    <Drawer onClose={onClose} open={open} title={t('new-material')}>
+    <Drawer onClose={onClose} open={open} title={id ? t('new-material') : t('material')}>
       <Form>
         <FormBodyFull>
           <Row>
@@ -71,16 +118,11 @@ export default function MaterialNew({ open, onClose }) {
         </FormBodyFull>
       </Form>
       <DrawerFooter>
-        <ButtonValidation
-          disabled={loading}
-          onClick={() => {
-            if (!validate()) return;
-            createMaterial({ variables: { data: inputs } }).catch((err) => alert(err.message));
-            onClose();
-          }}
-        />
+        <ButtonValidation disabled={loadingCreate || loadingUpdate} onClick={handleValidation} />
         <ButtonCancel onClick={onClose} />
-        {error && <DisplayError error={error} />}
+        {errorCreate && <DisplayError error={errorCreate} />}
+        {errorUpdate && <DisplayError error={errorUpdate} />}
+        {errorQuery && <DisplayError error={errorQuery} />}
       </DrawerFooter>
     </Drawer>
   );
@@ -89,6 +131,7 @@ export default function MaterialNew({ open, onClose }) {
 MaterialNew.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
+  id: PropTypes.string,
 };
 
 const InputUnit = styled.div`

@@ -37,6 +37,7 @@ export default function Locations() {
   const [showLocation, setShowLocation] = useState('');
   const [newLocation, setNewLocation] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
+  const [locationId, setLocationId] = useState('');
 
   useEffect(() => {
     const variables = {
@@ -49,6 +50,11 @@ export default function Locations() {
 
   function viewLocation(id) {
     if (id) setShowLocation(id);
+  }
+
+  function editLocation(id) {
+    setLocationId(id);
+    setNewLocation(true);
   }
 
   const columns = useColumns([
@@ -92,6 +98,7 @@ export default function Locations() {
         <HelpButton showHelp={toggleHelpVisibility} />
         <ButtonNew
           onClick={() => {
+            setLocationId('');
             setNewLocation(true);
           }}
         />
@@ -105,7 +112,9 @@ export default function Locations() {
           id={showLocation}
         />
       )}
-      {newLocation && <LocationNew open={!!newLocation} onClose={() => setNewLocation(false)} />}
+      {newLocation && (
+        <LocationNew open={!!newLocation} onClose={() => setNewLocation(false)} id={locationId} />
+      )}
       <Pagination
         page={page}
         error={errorPage}
@@ -119,6 +128,7 @@ export default function Locations() {
         error={error}
         loading={loading}
         actionButtons={[
+          { type: 'edit', action: editLocation },
           { type: 'view', action: viewLocation },
           { type: 'trash', action: deleteLocation },
         ]}

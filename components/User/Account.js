@@ -1,40 +1,38 @@
-import { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/client';
-import useTranslation from 'next-translate/useTranslation';
-import { useClipboard } from 'use-clipboard-copy';
 import Router, { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
+import { useClipboard } from 'use-clipboard-copy';
 
-import DisplayError from '../ErrorMessage';
-import Loading from '../Loading';
-import {
-  Form,
-  FormBody,
-  FormFooter,
-  Row,
-  Label,
-  FormHeader,
-  FormTitle,
-  Block,
-  RowReadOnly,
-} from '../styles/Card';
-import {
-  useUser,
-  ADD_TOKEN_MUTATION,
-  DELETE_TOKEN_MUTATION,
-  QUERY_ACCOUNT,
-} from './Queries';
+import useConfirm from '../../lib/useConfirm';
 import useForm from '../../lib/useForm';
+import ActionButton from '../Buttons/ActionButton';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonNew from '../Buttons/ButtonNew';
-import { useHelp, Help, HelpButton } from '../Help';
-import Table, { useColumns } from '../Tables/Table';
-import { LicenseType, LicenseTypes } from '../Tables/LicenseType';
+import DisplayError from '../ErrorMessage';
+import { Help, HelpButton, useHelp } from '../Help';
+import Loading from '../Loading';
+import { PrimaryButtonStyled } from '../styles/Button';
+import {
+  Block,
+  Form,
+  FormBody,
+  FormBodyFull,
+  FormFooter,
+  FormHeader,
+  FormTitle,
+  Label,
+  Row,
+  RowReadOnly,
+} from '../styles/Card';
 import ApiKey from '../Tables/ApiKey';
+import { LicenseType, LicenseTypes } from '../Tables/LicenseType';
+import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import useConfirm from '../../lib/useConfirm';
+import { ADD_TOKEN_MUTATION, DELETE_TOKEN_MUTATION, QUERY_ACCOUNT, useUser } from './Queries';
 
 export default function Account({ id, initialData }) {
   const { t } = useTranslation('user');
@@ -62,11 +60,7 @@ export default function Account({ id, initialData }) {
     [
       ['id', 'id', 'hidden'],
       [t('application'), 'application.name'],
-      [
-        t('application:status'),
-        'status',
-        ({ cell: { value } }) => t(`application:${value}`),
-      ],
+      [t('application:status'), 'status', ({ cell: { value } }) => t(`application:${value}`)],
       [
         t('application:updated'),
         'updated',
@@ -89,11 +83,7 @@ export default function Account({ id, initialData }) {
       ],
       [t('application'), 'application.name'],
       [t('signal'), 'signal.name'],
-      [
-        t('validity'),
-        'validity',
-        ({ cell: { value } }) => <ValidityDate value={value} />,
-      ],
+      [t('validity'), 'validity', ({ cell: { value } }) => <ValidityDate value={value} />],
     ],
     false
   );
@@ -101,33 +91,30 @@ export default function Account({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_ACCOUNT, {
     variables: { id },
   });
-  const [
-    addTokenMutation,
-    { loading: tokenLoading, error: tokenError },
-  ] = useMutation(ADD_TOKEN_MUTATION, {
-    variables: { ownerId: id },
-    refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
-    onCompleted: (tokenData) => {
-      const newToken = tokenData.createToken.token;
-      clipboard.copy(newToken);
-      addToast(t('token-created', { token: newToken }), {
-        appearance: 'success',
-        autoDismiss: true,
-      });
-    },
-  });
-  const [deleteTokenMutation, { error: deleteTokenError }] = useMutation(
-    DELETE_TOKEN_MUTATION,
+  const [addTokenMutation, { loading: tokenLoading, error: tokenError }] = useMutation(
+    ADD_TOKEN_MUTATION,
     {
+      variables: { ownerId: id },
       refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
-      onCompleted: () => {
-        addToast(t('token-deleted'), {
+      onCompleted: (tokenData) => {
+        const newToken = tokenData.createToken.token;
+        clipboard.copy(newToken);
+        addToast(t('token-created', { token: newToken }), {
           appearance: 'success',
           autoDismiss: true,
         });
       },
     }
   );
+  const [deleteTokenMutation, { error: deleteTokenError }] = useMutation(DELETE_TOKEN_MUTATION, {
+    refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
+    onCompleted: () => {
+      addToast(t('token-deleted'), {
+        appearance: 'success',
+        autoDismiss: true,
+      });
+    },
+  });
 
   const router = useRouter();
   const { Confirm, setIsOpen, setArgs } = useConfirm({
@@ -174,23 +161,41 @@ export default function Account({ id, initialData }) {
     setIsOpen(true);
   }
 
+  function showMyProfile(e) {
+    e.preventDefault();
+    router.push({
+      pathname: `/user/[id]`,
+      query: { id },
+    });
+  }
+
+  function showSettings(e) {
+    e.preventDefault();
+    router.push({
+      pathname: `/settings/[id]`,
+      query: { id },
+    });
+  }
+
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   if (tokenError) return <DisplayError error={tokenError} />;
   if (deleteTokenError) return <DisplayError error={deleteTokenError} />;
   return (
     <>
-      <Help
-        contents={helpContent}
-        visible={helpVisible}
-        handleClose={toggleHelpVisibility}
-      />
+      <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       <Form>
         <FormHeader>
           <FormTitle>
-            {t('profile')} <span>{inputs.name}</span>
+            {t('account')} <span>{inputs.name}</span>
             <HelpButton showHelp={toggleHelpVisibility} />
+            <PrimaryButtonStyled role="button" onClick={showMyProfile}>
+              {t('profile-detail')}
+            </PrimaryButtonStyled>
+            <PrimaryButtonStyled role="button" onClick={showSettings}>
+              <ActionButton type="settings" />
+            </PrimaryButtonStyled>
           </FormTitle>
           <ButtonBack route="/" label={t('navigation:home')} />
         </FormHeader>
@@ -203,6 +208,8 @@ export default function Account({ id, initialData }) {
             <Label>{t('company')}</Label>
             <span>{inputs.company}</span>
           </RowReadOnly>
+        </FormBody>
+        <FormBodyFull>
           <Row>
             <Label>{t('owned-apps')}</Label>
             <Table
@@ -231,15 +238,9 @@ export default function Account({ id, initialData }) {
               columns={columnsToken}
               data={inputs.tokens}
               loading={loading}
-              actionButtons={
-                canEdit ? [{ type: 'trash', action: deleteToken }] : []
-              }
+              actionButtons={canEdit ? [{ type: 'trash', action: deleteToken }] : []}
               withPagination
             />
-            {/* <Block>
-              <ButtonNew onClick={addToken} disabled={tokenLoading} />
-              {tokenLoading && <Loading />}
-            </Block> */}
           </Row>
           <Row>
             <Label>{t('licenses')}</Label>
@@ -250,7 +251,7 @@ export default function Account({ id, initialData }) {
               withPagination
             />
           </Row>
-        </FormBody>
+        </FormBodyFull>
         <FormFooter>
           <ButtonCancel onClick={() => Router.back()} />
         </FormFooter>

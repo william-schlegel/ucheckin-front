@@ -22,6 +22,7 @@ import {
   Printer,
   Repeat,
   Search,
+  Settings,
   Square,
   Trash,
   UserCheck,
@@ -80,6 +81,7 @@ export default function ActionButton({ type, cb = () => {}, label, size = 24 }) 
       {type === 'map-pin' && <MapPin size={size} />}
       {type === 'chart' && <BarChart size={size} />}
       {type === 'printer' && <Printer size={size} />}
+      {type === 'settings' && <Settings size={size} />}
     </IconButtonStyles>
   );
 }
@@ -117,6 +119,7 @@ ActionButton.propTypes = {
     'map-pin',
     'chart',
     'printer',
+    'settings',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,

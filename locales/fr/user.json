@@ -9,6 +9,7 @@
   "request-reset": "Demander une réinitialisation",
   "title": "Profile",
   "profile": "Mon profile",
+  "account": "Mon compte",
   "company": "Société",
   "address": "Adresse",
   "zip": "Code postal",
@@ -32,6 +33,7 @@
   "yes-delete": "Oui",
   "no-delete": "Non",
   "account-detail": "Détails du compte",
+  "profile-detail": "Détails du profile",
   "users": "Utilisateurs",
   "user": "Utilisateur",
   "licenses": "Mes licences",
@@ -43,5 +45,9 @@
   "link-success": "La demande de réinitialisation a bien été prise en compte, vérifiez vos email pour le lien",
   "invoicing-model": "Modèle de facturation",
   "online": "Payment en ligne",
-  "invoice": "Payment sur facture"
+  "invoice": "Payment sur facture",
+  "display-options": "Options de l'utilisateur",
+  "umit-menu": "Je gère des UMITs",
+  "ucheckin-menu": "J'utilise le SDK UcheckIn",
+  "app-menu": "J'utilise un SDK d'application mobile"
 }
