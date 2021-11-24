@@ -66,7 +66,7 @@ const DashboardStyled = styled.div`
     }
   }
   h2 {
-    margin: 0;
+    margin: 0 !important;
     margin-bottom: 1rem;
     color: var(--secondary);
   }

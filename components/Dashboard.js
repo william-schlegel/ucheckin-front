@@ -26,12 +26,7 @@ export default function Dashboard({ title, total, count, children }) {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
           </svg>
         </HeaderButton>
       </HeaderStyle>
@@ -75,13 +70,15 @@ const Total = styled.h2`
     font-size: 2em;
     color: var(--primary);
     border: 1px solid var(--primary);
-    width: 1.5em;
+    min-width: 1.5em;
     height: 1.5em;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 2em;
     text-align: center;
+    margin-left: 0.5em;
+    padding: 0 0.5em;
   }
 `;
 
