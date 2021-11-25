@@ -42,7 +42,18 @@ const RichEditor = ({
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
   const { t } = useTranslation('common');
 
-  console.log(`value`, value);
+  // console.log(`value`, value);
+
+  function cleanup(val) {
+    const newV = [];
+    for (const v of val) {
+      if (v.type === 'heading-one') newV.push({ ...v, type: 'heading', level: 1 });
+      else if (v.type === 'heading-two') newV.push({ ...v, type: 'heading', level: 2 });
+      else newV.push(v);
+    }
+    console.log(`val`, newV);
+    return newV;
+  }
 
   return (
     <Box>
@@ -50,7 +61,7 @@ const RichEditor = ({
         editor={editor}
         value={value}
         onChange={(prev) => {
-          setValue(prev);
+          setValue(cleanup(prev));
         }}
       >
         <Toolbar>
@@ -210,6 +221,7 @@ const RichEditor = ({
             renderLeaf={renderLeaf}
             placeholder={placeholder || t('description')}
             spellCheck
+            // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
             onKeyDown={(event) => {
               for (const hotkey in HOTKEYS) {
@@ -243,6 +255,13 @@ export const Element = ({ attributes, children, element }) => {
       return <h1 {...attributes}>{children}</h1>;
     case 'heading-two':
       return <h2 {...attributes}>{children}</h2>;
+    case 'heading':
+      return element.level === 1 ? (
+        <h1 {...attributes}>{children}</h1>
+      ) : (
+        <h2 {...attributes}>{children}</h2>
+      );
+
     case 'list-item':
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':

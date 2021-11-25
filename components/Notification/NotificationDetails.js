@@ -1,11 +1,14 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
-
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Drawer, { DrawerFooter } from '../Drawer';
+
+import ActionButton from '../Buttons/ActionButton';
 import ButtonCancel from '../Buttons/ButtonCancel';
+import Drawer, { DrawerFooter } from '../Drawer';
+import DisplayError from '../ErrorMessage';
+import Loading from '../Loading';
 import {
   Block,
   Form,
@@ -16,13 +19,10 @@ import {
   RowReadOnly,
   Separator,
 } from '../styles/Card';
-import DisplayError from '../ErrorMessage';
-import Loading from '../Loading';
-import { NOTIFICATION_QUERY } from './Queries';
 import NotificationType from '../Tables/NotificationType';
 import ValidityDate from '../Tables/ValidityDate';
-import ActionButton from '../Buttons/ActionButton';
 import { Notif } from './Notification';
+import { NOTIFICATION_QUERY } from './Queries';
 
 export default function NotificationDetails({ open, onClose, id }) {
   const { loading, error, data } = useQuery(NOTIFICATION_QUERY, {
@@ -61,11 +61,7 @@ export default function NotificationDetails({ open, onClose, id }) {
               <span>{data.notification.application?.name}</span>
               <ActionButton
                 type="view"
-                cb={() =>
-                  router.push(
-                    `/application/${data.notification.application?.id}`
-                  )
-                }
+                cb={() => router.push(`/application/${data.notification.application?.id}`)}
                 label={t('navigation:application')}
               />
             </Block>
@@ -76,9 +72,7 @@ export default function NotificationDetails({ open, onClose, id }) {
               <span>{data.notification.signal?.name}</span>
               <ActionButton
                 type="signal"
-                cb={() =>
-                  router.push(`/signal/${data.notification.signal?.id}`)
-                }
+                cb={() => router.push(`/signal/${data.notification.signal?.id}`)}
                 label={t('common:signal')}
               />
             </Block>

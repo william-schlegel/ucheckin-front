@@ -11,6 +11,7 @@ import Select from 'react-select';
 import styled from 'styled-components';
 
 import { formatPrct } from '../../lib/formatNumber';
+import { serializeHtml } from '../../lib/serializeDocument';
 import useConfirm from '../../lib/useConfirm';
 import useForm from '../../lib/useForm';
 import ActionButton from '../Buttons/ActionButton';
@@ -556,7 +557,8 @@ export function Notif({
   }, [item]);
 
   useEffect(() => {
-    if (element) element.innerHTML = item.htmlContent.document;
+    if (element && item?.htmlContent?.document)
+      element.innerHTML = serializeHtml({ children: item.htmlContent.document });
   }, [element, item]);
 
   if (!item) return null;

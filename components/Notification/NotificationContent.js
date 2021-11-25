@@ -1,24 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
-import gql from 'graphql-tag';
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
-import Select from 'react-select';
-import { useDropzone } from 'react-dropzone';
-import SwitchComponent from 'react-switch';
+/* eslint-disable @next/next/no-img-element */
 import { useMutation, useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import Select from 'react-select';
+import SwitchComponent from 'react-switch';
 
-import Drawer, { DrawerFooter } from '../Drawer';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import { FormBodyFull, Label, Row, Form, RowReadOnly } from '../styles/Card';
 import useForm from '../../lib/useForm';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonValidation from '../Buttons/ButtonValidation';
 import Counter from '../Counter';
-import selectTheme from '../styles/selectTheme';
-import { UPDATE_NOTIFICATION_ITEM, CREATE_NOTIFICATION_ITEM } from './Queries';
+import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import { ImageSelection } from '../styles/ImageSelection';
 import RichEditor from '../SlateEditor';
+import { Form, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
+import { ImageSelection } from '../styles/ImageSelection';
+import selectTheme from '../styles/selectTheme';
+import { CREATE_NOTIFICATION_ITEM, NOTIFICATION_QUERY, UPDATE_NOTIFICATION_ITEM } from './Queries';
 
 const displayTypes = [
   { value: 'image', label: 'image' },
@@ -46,6 +47,12 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
     UPDATE_NOTIFICATION_ITEM,
     {
       onCompleted: (itm) => onClose(itm.updateNotificationItem),
+      refetchQueries: [
+        {
+          query: NOTIFICATION_QUERY,
+          variables: { id: notifId },
+        },
+      ],
     }
   );
   const [createNotificationItem, { error: errorCreateItem }] = useMutation(
@@ -56,9 +63,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   );
 
   const initialValues = useRef(item);
-  const { inputs, handleChange, validate, wasTouched } = useForm(
-    initialValues.current
-  );
+  const { inputs, handleChange, validate, wasTouched } = useForm(initialValues.current);
   const [image, setImage] = useState('');
 
   const onDrop = (acceptedFile) => {
@@ -81,21 +86,18 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
       const preview = URL.createObjectURL(item.image);
       inputs.image = Object.assign(item.image, { preview });
       setImage(preview);
-    } else if (item.image?.publicUrlTransformed)
-      setImage(item.image?.publicUrlTransformed);
+    } else if (item.image?.publicUrlTransformed) setImage(item.image?.publicUrlTransformed);
   }, [inputs, item]);
 
   function handleValidation() {
-    if (inputs.defaultNotification)
-      handleChange({ name: 'probability', value: 0 });
+    if (inputs.defaultNotification) handleChange({ name: 'probability', value: 0 });
     const newInputs = validate();
     if (newInputs) {
       if (wasTouched('htmlContent.document'))
         newInputs.htmlContent = newInputs.htmlContent.document;
-      newInputs.notification = { connect: { id: notifId } };
+      if (!item.id) newInputs.notification = { connect: { id: notifId } };
       console.log(`newInputs`, newInputs);
-      if (item.id)
-        updateNotificationItem({ variables: { id: item.id, data: newInputs } });
+      if (item.id) updateNotificationItem({ variables: { id: item.id, data: newInputs } });
       else createNotificationItem({ variables: { data: newInputs } });
     }
   }
@@ -115,9 +117,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               theme={selectTheme}
               className="select"
               value={displayTypes.find((d) => d.value === inputs.displayType)}
-              onChange={(d) =>
-                handleChange({ name: 'displayType', value: d.value })
-              }
+              onChange={(d) => handleChange({ name: 'displayType', value: d.value })}
               options={displayTypes}
             />
           </Row>
@@ -197,9 +197,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               <RowReadOnly>
                 <Label>{t('default')}</Label>
                 <SwitchComponent
-                  onChange={(value) =>
-                    handleChange({ name: 'defaultNotification', value })
-                  }
+                  onChange={(value) => handleChange({ name: 'defaultNotification', value })}
                   checked={inputs.defaultNotification}
                 />
               </RowReadOnly>
@@ -257,7 +255,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
 
 NotificationContent.propTypes = {
   open: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   item: PropTypes.object,
   notifId: PropTypes.string,
 };

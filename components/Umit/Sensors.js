@@ -55,7 +55,7 @@ export default function Sensors() {
       t('last-measure'),
       'lastMeasureAt',
       ({ cell: { value } }) => {
-        console.log(`value`, value);
+        // console.log(`value`, value);
         return value ? <ValidityDate value={value} noColor /> : t('never-settled');
       },
     ],

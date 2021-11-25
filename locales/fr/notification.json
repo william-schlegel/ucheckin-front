@@ -35,5 +35,6 @@
   "you-confirm-item": "Voulez-vous vraiment supprimer ce contenu ?",
   "you-confirm": "Voulez-vous vraiment supprimer cette notification ?",
   "yes-delete": "Oui",
-  "no-delete": "Non"
+  "no-delete": "Non",
+  "notification-placeholder": "texte à afficher dna la notification"
 }

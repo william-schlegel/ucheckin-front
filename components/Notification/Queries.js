@@ -158,6 +158,12 @@ export const CREATE_NOTIFICATION_ITEM = gql`
       image {
         publicUrlTransformed
       }
+      htmlContent {
+        document
+      }
+      videoLink
+      numberOfDisplay
+      delayBetweenDisplay
       probability
       defaultNotification
       quota
@@ -173,6 +179,13 @@ export const UPDATE_NOTIFICATION_ITEM = gql`
       image {
         publicUrlTransformed
       }
+      htmlContent {
+        document
+      }
+
+      videoLink
+      numberOfDisplay
+      delayBetweenDisplay
       probability
       defaultNotification
       quota
