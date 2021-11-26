@@ -29,12 +29,12 @@ export default function DessinCourbe({
 
   useEffect(() => {
     const el = document.getElementById(ID_CANVAS);
-    console.log(`el`, el);
+    // console.log(`el`, el);
     if (!el) return;
     const w = el.parentElement.clientWidth - 28;
     dim.current.width = parseInt(w);
     dim.current.height = parseInt(w * 0.66);
-    console.log(`dim`, dim.current);
+    // console.log(`dim`, dim.current);
   }, []);
 
   const handleCanvas = (canvas) => {
@@ -83,7 +83,7 @@ export default function DessinCourbe({
     // courbe
     ctx.beginPath();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#888';
+    ctx.strokeStyle = '#000';
     const ix = Math.floor(points.length / w);
     ctx.moveTo(offsetX, h - offsetY);
     for (let p = 1; p < points.length; p += ix) {

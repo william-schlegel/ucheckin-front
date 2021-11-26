@@ -78,5 +78,6 @@
   "no-null-value": "No null value",
   "chart": "Chart",
   "dollar": "Pay",
-  "printer": "Print"
+  "printer": "Print",
+  "settings": "Settings"
 }

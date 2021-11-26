@@ -78,5 +78,6 @@
   "no-null-value": "La valeur ne peut être nulle",
   "chart": "Graphique",
   "dollar": "Payer",
-  "printer": "Imprimer"
+  "printer": "Imprimer",
+  "settings": "Options"
 }

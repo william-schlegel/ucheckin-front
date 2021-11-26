@@ -57,13 +57,9 @@ export default function Dashboard() {
 const DashboardStyled = styled.div`
   display: flex;
   flex-wrap: wrap;
-  flex: 1 0 400px;
   gap: 1rem;
   & > * {
-    min-width: 30%;
-    @media (max-width: 1000px) {
-      width: 100%;
-    }
+    flex: 1 1 30em;
   }
   h2 {
     margin: 0 !important;

@@ -3,7 +3,6 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
-import { calculCourbe } from '../../lib/maths';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
@@ -43,7 +42,7 @@ export function MeasureContent({ data, header }) {
   const [points, setPoints] = useState([]);
 
   useEffect(() => {
-    if (data?.points) setPoints(calculCourbe(data.points));
+    if (data?.points) setPoints(data.points);
   }, [data?.points]);
 
   return (

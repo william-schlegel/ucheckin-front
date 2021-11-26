@@ -20,10 +20,8 @@ import Signup from './SignUp';
 export default function Users() {
   const router = useRouter();
 
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [queryUsers, { error, loading, data }] = useLazyQuery(ALL_USERS_QUERY);
 
   const page = parseInt(router.query.page) || 1;
@@ -54,6 +52,10 @@ export default function Users() {
 
   function userAccount(id) {
     if (id) router.push(`/account/${id}`);
+  }
+
+  function userSettings(id) {
+    if (id) router.push(`/settings/${id}`);
   }
 
   const columns = useColumns([
@@ -115,6 +117,7 @@ export default function Users() {
         actionButtons={[
           { type: 'user-profile', action: userProfile },
           { type: 'user-account', action: userAccount },
+          { type: 'settings', action: userSettings },
         ]}
       />
     </>
