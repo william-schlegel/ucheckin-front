@@ -7,6 +7,7 @@ import Select from 'react-select';
 import countryList from 'react-select-country-list';
 import { useToasts } from 'react-toast-notifications';
 
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ActionButton from '../Buttons/ActionButton';
 import ButtonBack from '../Buttons/ButtonBack';
@@ -42,8 +43,13 @@ export default function Profile({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_PROFILE, {
     variables: { id },
   });
-  const [updateProfile, { loading: loadingUpdate, error: errorUpdate }] =
-    useMutation(UPDATE_PROFILE_MUTATION);
+  const { setAction } = useAction();
+  const [updateProfile, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_PROFILE_MUTATION,
+    {
+      onCompleted: () => setAction(`update profile ${id}`),
+    }
+  );
   const { t } = useTranslation('user');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const { user } = useUser();

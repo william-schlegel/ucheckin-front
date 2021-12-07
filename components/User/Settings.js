@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import SwitchComponent from 'react-switch';
 import { useToasts } from 'react-toast-notifications';
 
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonBack from '../Buttons/ButtonBack';
 import ButtonCancel from '../Buttons/ButtonCancel';
@@ -33,8 +34,13 @@ export default function Profile({ id, initialData }) {
   const { loading, error, data } = useQuery(QUERY_SETTINGS, {
     variables: { id },
   });
-  const [updateProfile, { loading: loadingUpdate, error: errorUpdate }] =
-    useMutation(UPDATE_SETTINGS_MUTATION);
+  const { setAction } = useAction();
+  const [updateProfile, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
+    UPDATE_SETTINGS_MUTATION,
+    {
+      onCompleted: () => setAction(`update settings user ${id}`),
+    }
+  );
   const { t } = useTranslation('user');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const initialValues = useRef(initialData.data.user);

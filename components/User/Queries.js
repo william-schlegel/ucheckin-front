@@ -43,6 +43,7 @@ export const QUERY_ACCOUNT = gql`
       tokens {
         id
         token
+        createdAt
       }
       invitations {
         id
@@ -92,6 +93,7 @@ export const DELETE_TOKEN_MUTATION = gql`
   mutation DELETE_TOKEN_MUTATION($id: ID!) {
     deleteToken(where: { id: $id }) {
       id
+      token
     }
   }
 `;

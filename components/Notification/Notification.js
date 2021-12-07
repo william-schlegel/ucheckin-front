@@ -5,13 +5,14 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Code, PlusCircle, Youtube } from 'react-feather';
 import Select from 'react-select';
 import styled from 'styled-components';
 
 import { formatPrct } from '../../lib/formatNumber';
 import { serializeHtml } from '../../lib/serializeDocument';
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import useForm from '../../lib/useForm';
 import ActionButton from '../Buttons/ActionButton';
@@ -119,14 +120,20 @@ const makeData = (data) => {
   return newInputs;
 };
 
+let confirmCB = () => {};
+
 export default function Notification({ id, initialData }) {
   const router = useRouter();
+  const { setAction } = useAction();
 
   const [deleteNotification, { loading: loadingDelete, error: errorDelete }] = useMutation(
     DELETE_NOTIFICATION_MUTATION,
     {
       variables: { id },
-      onCompleted: () => {
+      onCompleted: (data) => {
+        setAction(
+          `delete notification ${data.deleteNotification.id} (${data.deleteNotification.name})`
+        );
         router.push('/notifications');
       },
     }
@@ -135,12 +142,18 @@ export default function Notification({ id, initialData }) {
     UPDATE_NOTIFICATION_MUTATION,
     {
       onCompleted: () => {
+        setAction(`update notification ${id}`);
         router.push('/notifications');
       },
     }
   );
-  const [deleteNotificationItem, { error: errorDeleteItem }] =
-    useMutation(DELETE_NOTIFICATION_ITEM);
+  const [deleteNotificationItem, { error: errorDeleteItem }] = useMutation(
+    DELETE_NOTIFICATION_ITEM,
+    {
+      onCompleted: (data) =>
+        setAction(`delete notification content ${data.deleteNotificationItem.id}`),
+    }
+  );
 
   const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
   const [querySignal, { data: dataSig }] = useLazyQuery(QUERY_SIGNAL_FROM_APP);
@@ -164,7 +177,6 @@ export default function Notification({ id, initialData }) {
   const [showItem, setShowItem] = useState(false);
   const [nbNotif, setNbNotif] = useState(initialValues.current.items.length || 1);
 
-  const [confirmCB, setConfirmCB] = useState(() => {});
   const { Confirm, setIsOpen, setArgs } = useConfirm({
     title: t('confirm-delete'),
     message: t('you-confirm'),
@@ -213,7 +225,8 @@ export default function Notification({ id, initialData }) {
   }
 
   function handleDeleteNotif(idNotif) {
-    setConfirmCB((idN) => {
+    confirmCB = (idN) => {
+      if (!idN) return;
       if (inputs.items[idN].id) {
         deleteNotificationItem({
           variables: { id: inputs.items[idN].id },
@@ -223,7 +236,7 @@ export default function Notification({ id, initialData }) {
       newItems.splice(idN, 1);
       setItem(null);
       setInputs((prev) => ({ ...prev, items: newItems }));
-    });
+    };
     setArgs(idNotif);
     setIsOpen(true);
   }
@@ -242,7 +255,7 @@ export default function Notification({ id, initialData }) {
 
   function handleDeleteNotification(e) {
     e.preventDefault();
-    setConfirmCB(deleteNotification);
+    confirmCB = deleteNotification;
     setArgs({
       update: (cache, payload) => cache.evict(cache.identify(payload.data.deleteNotification)),
       variables: { id },

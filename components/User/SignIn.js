@@ -4,6 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRef, useState } from 'react';
 import { LogIn, UserPlus, XCircle } from 'react-feather';
 
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import { IconButtonStyles } from '../Buttons/ActionButton';
 import Error from '../ErrorMessage';
@@ -25,11 +26,17 @@ export default function SignInForm() {
     initialState.current,
     [{ field: 'email', check: 'isEmail' }, 'password']
   );
+  const { setAction } = useAction();
+
   const [signin, { data }] = useMutation(SIGNIN_MUTATION, {
     variables: inputs,
     // refetch the currently logged in user
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
-    onCompleted: () => router.push('/'),
+    onCompleted: (data) => {
+      console.log(`data`, data);
+      setAction('login', data?.authenticateUserWithPassword?.item?.id);
+      router.push('/');
+    },
   });
   const [showSignUp, setShowSignup] = useState(false);
   const [showReset, setShowReset] = useState(false);

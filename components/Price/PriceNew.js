@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import SwitchComponent from 'react-switch';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -18,6 +19,7 @@ import { LicenseType, useLicenseName } from '../Tables/LicenseType';
 import { ALL_PRICES_QUERY, CREATE_PRICE_MUTATION } from './Queries';
 
 export default function PriceNew({ open, onClose }) {
+  const { setAction } = useAction();
   const [createPrice, { loading, error }] = useMutation(CREATE_PRICE_MUTATION, {
     refetchQueries: [
       {
@@ -25,6 +27,7 @@ export default function PriceNew({ open, onClose }) {
         variables: { skip: 0, take: perPage },
       },
     ],
+    onCompleted: (data) => setAction(`create price ${data.createLicensePrice.id}`),
   });
   const { licenseTypes } = useLicenseName();
   const { t } = useTranslation('license');

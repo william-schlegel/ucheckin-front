@@ -184,5 +184,5 @@ export function LicensesLegendSignal() {
 
 export function LicensesApplications({ licenses }) {
   if (!Array.isArray(licenses)) return null;
-  return <div>{licenses.map((l) => l.application.name).join(', ')}</div>;
+  return <div>{licenses.map((l) => l.application?.name).join(', ')}</div>;
 }

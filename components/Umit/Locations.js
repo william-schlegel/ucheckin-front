@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
@@ -23,13 +24,16 @@ import {
 
 export default function Locations() {
   const router = useRouter();
-
+  const { setAction } = useAction();
   const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
     useLazyQuery(PAGINATION_LOCATION_QUERY);
   const [queryLocations, { error, loading, data }] = useLazyQuery(ALL_LOCATIONS_QUERY);
   const [deleteLocationMutation, { error: errorDelete }] = useMutation(DELETE_LOCATION_MUTATION, {
     refetchQueries: [{ query: ALL_LOCATIONS_QUERY }],
-    onCompleted: () => router.reload(),
+    onCompleted: (data) => {
+      setAction(`delete location ${data.deleteUmitLocation.id} (${data.deleteUmitLocation.name})`);
+      router.reload();
+    },
   });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;

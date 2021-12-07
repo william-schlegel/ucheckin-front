@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import Select from 'react-select';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -17,6 +18,7 @@ import { useLicenseName } from '../Tables/LicenseType';
 import { ALL_APPLICATIONS_QUERY, CREATE_APPLICATION_MUTATION } from './Queries';
 
 export default function ApplicationNew({ open, onClose }) {
+  const { setAction } = useAction();
   const [createApplication, { loading, error }] = useMutation(CREATE_APPLICATION_MUTATION, {
     refetchQueries: [
       {
@@ -24,6 +26,7 @@ export default function ApplicationNew({ open, onClose }) {
         variables: { skip: 0, take: perPage },
       },
     ],
+    onCompleted: (data) => setAction(`create application ${data.createApplication.id}`),
   });
   const { t } = useTranslation('application');
   const initialValues = useRef({

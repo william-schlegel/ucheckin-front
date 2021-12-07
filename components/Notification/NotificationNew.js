@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import Select from 'react-select';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -19,6 +20,7 @@ import { ALL_NOTIFICATIONS_QUERY, CREATE_NOTIFICATION_MUTATION } from './Queries
 
 export default function NotificationNew({ open, onClose }) {
   const router = useRouter();
+  const { setAction } = useAction();
   const [createNotification, { loading, error }] = useMutation(CREATE_NOTIFICATION_MUTATION, {
     refetchQueries: [
       {
@@ -27,6 +29,7 @@ export default function NotificationNew({ open, onClose }) {
       },
     ],
     onCompleted: (item) => {
+      setAction(`create notification item ${item.createNotification.id}`);
       router.push(`/notification/${item.createNotification.id}`);
     },
   });

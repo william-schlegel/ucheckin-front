@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
 import { useClipboard } from 'use-clipboard-copy';
 
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import useForm from '../../lib/useForm';
 import ActionButton from '../Buttons/ActionButton';
@@ -39,7 +40,7 @@ export default function Account({ id, initialData }) {
   const clipboard = useClipboard({
     copiedTimeout: 1000,
   });
-  const clipboardCopied = clipboard.copied;
+  // const clipboardCopied = clipboard.copied;
 
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('profile');
   const { user } = useUser();
@@ -47,6 +48,7 @@ export default function Account({ id, initialData }) {
   const { inputs, setInputs } = useForm(initialValues.current);
   const [canEdit, setCanEdit] = useState(false);
   const { addToast } = useToasts();
+  const { setAction } = useAction();
   const columnsApplication = useColumns([
     ['id', 'id', 'hidden'],
     [t('common:name'), 'name'],
@@ -72,6 +74,7 @@ export default function Account({ id, initialData }) {
   const columnsToken = useColumns([
     ['id', 'id', 'hidden'],
     [t('token'), 'token', ({ cell: { value } }) => <ApiKey apiKey={value} />],
+    [t('created-at'), 'createdAt', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
   ]);
   const columnsLicenses = useColumns(
     [
@@ -108,7 +111,8 @@ export default function Account({ id, initialData }) {
   );
   const [deleteTokenMutation, { error: deleteTokenError }] = useMutation(DELETE_TOKEN_MUTATION, {
     refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
-    onCompleted: () => {
+    onCompleted: (data) => {
+      setAction(`delete token ${data.deleteToken.token} for account ${id}`);
       addToast(t('token-deleted'), {
         appearance: 'success',
         autoDismiss: true,
@@ -125,13 +129,13 @@ export default function Account({ id, initialData }) {
     callback: (args) => deleteTokenMutation(args),
   });
 
-  useEffect(() => {
-    if (clipboardCopied)
-      addToast(t('common:copied'), {
-        appearance: 'success',
-        autoDismiss: true,
-      });
-  }, [clipboardCopied, t, addToast]);
+  // useEffect(() => {
+  //   if (clipboardCopied)
+  //     addToast(t('common:copied'), {
+  //       appearance: 'success',
+  //       autoDismiss: true,
+  //     });
+  // }, [clipboardCopied, t, addToast]);
 
   useEffect(() => {
     if (data && user) {

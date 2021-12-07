@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
 
+import useAction from '../../lib/useAction';
 import useFindUser from '../../lib/useFindUser';
 import useForm from '../../lib/useForm';
 import useVat from '../../lib/useVat';
@@ -32,7 +33,10 @@ import LicensePrice, { usePrice } from './LicensePrice';
 import { UPDATE_LICENSE_MUTATION, useFindLicense } from './Queries';
 
 export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId, signalId }) {
-  const [updateLicense, { loading, error }] = useMutation(UPDATE_LICENSE_MUTATION);
+  const { setAction } = useAction();
+  const [updateLicense, { loading, error }] = useMutation(UPDATE_LICENSE_MUTATION, {
+    onCompleted: () => setAction(`update license ${licenseId}`),
+  });
   const { license, licenseLoading, licenseError } = useFindLicense(licenseId);
   const { user } = useFindUser(ownerId);
   const { application } = useFindApplication(appId);

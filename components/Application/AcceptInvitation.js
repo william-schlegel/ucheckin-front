@@ -1,16 +1,17 @@
-import { useRef } from 'react';
-import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/client';
-
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/dist/client/router';
-import {
-  CHECK_INVITATION_TOKEN,
-  CREATE_ACCOUNT_INVITATION,
-  UPDATE_INVITATION,
-} from './Queries';
-import Loading from '../Loading';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useRef } from 'react';
+
+import useAction from '../../lib/useAction';
+import useForm from '../../lib/useForm';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonNew from '../Buttons/ButtonNew';
+import ButtonValidation from '../Buttons/ButtonValidation';
 import DisplayError from '../ErrorMessage';
+import FieldError from '../FieldError';
+import Loading from '../Loading';
 import {
   Form,
   FormBody,
@@ -24,36 +25,39 @@ import {
   Row,
   RowReadOnly,
 } from '../styles/Card';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import ButtonNew from '../Buttons/ButtonNew';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import FieldError from '../FieldError';
-import useForm from '../../lib/useForm';
+import { CHECK_INVITATION_TOKEN, CREATE_ACCOUNT_INVITATION, UPDATE_INVITATION } from './Queries';
 
 export default function AcceptInvitation({ token }) {
   const router = useRouter();
   const { data, loading, error } = useQuery(CHECK_INVITATION_TOKEN, {
     variables: { token },
   });
-  const [
-    updateInvitationStatus,
-    { error: errorUpdate, loading: loadingUpdate },
-  ] = useMutation(UPDATE_INVITATION, { onCompleted: () => router.push('/') });
-  const [
-    createAccountInvitation,
-    { error: errorCreate, loading: loadingCreate },
-  ] = useMutation(CREATE_ACCOUNT_INVITATION, {
-    onCompleted: () => router.push('/login'),
-  });
+  const [updateInvitationStatus, { error: errorUpdate, loading: loadingUpdate }] = useMutation(
+    UPDATE_INVITATION,
+    {
+      onCompleted: () => {
+        router.push('/');
+      },
+    }
+  );
+  const { setAction } = useAction();
+  const [createAccountInvitation, { error: errorCreate, loading: loadingCreate }] = useMutation(
+    CREATE_ACCOUNT_INVITATION,
+    {
+      onCompleted: (data) => {
+        setAction(`accept invitation ${data.createAccountInvitation.id}`);
+        router.push('/login');
+      },
+    }
+  );
   const { t } = useTranslation('application');
   const invitation = data?.invitations[0] || { user: {}, application: {} };
   const initialValues = useRef({ name: '', company: '', password: '' });
-  const {
-    inputs,
-    handleChange,
-    validate,
-    validationError,
-  } = useForm(initialValues.current, ['name', 'company', 'password']);
+  const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
+    'name',
+    'company',
+    'password',
+  ]);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

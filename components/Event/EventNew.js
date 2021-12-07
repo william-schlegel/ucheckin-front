@@ -1,21 +1,23 @@
-import { useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useRef } from 'react';
 
+import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
+import useForm from '../../lib/useForm';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import ButtonValidation from '../Buttons/ButtonValidation';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonValidation from '../Buttons/ButtonValidation';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import { ALL_EVENTS_QUERY, CREATE_EVENT_MUTATION } from './Queries';
-import { FormBodyFull, Label, Row, Form } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import { perPage } from '../../config';
 import FieldError from '../FieldError';
+import { Form, FormBodyFull, Label, Row } from '../styles/Card';
+import { ALL_EVENTS_QUERY, CREATE_EVENT_MUTATION } from './Queries';
 
 export default function EventNew({ open, onClose }) {
   const router = useRouter();
+  const { setAction } = useAction();
   const [createEvent, { loading, error }] = useMutation(CREATE_EVENT_MUTATION, {
     refetchQueries: [
       {
@@ -24,6 +26,7 @@ export default function EventNew({ open, onClose }) {
       },
     ],
     onCompleted: (item) => {
+      setAction(`create event ${item.createEvent.id}`);
       router.push(`/event/${item.createEvent.id}`);
     },
   });
@@ -31,12 +34,9 @@ export default function EventNew({ open, onClose }) {
   const initialValues = useRef({
     name: '',
   });
-  const {
-    inputs,
-    handleChange,
-    validate,
-    validationError,
-  } = useForm(initialValues.current, ['name']);
+  const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
+    'name',
+  ]);
 
   function handleValidation() {
     if (!validate()) return;

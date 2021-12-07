@@ -10,6 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import Select from 'react-select';
 import styled from 'styled-components';
 
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import useForm from '../../lib/useForm';
 import ActionButton from '../Buttons/ActionButton';
@@ -56,11 +57,13 @@ const QUERY_APP_FROM_USER = gql`
 
 export default function Event({ id, initialData }) {
   const router = useRouter();
+  const { setAction } = useAction();
   const [deleteEvent, { loading: loadingDelete, error: errorDelete }] = useMutation(
     DELETE_EVENT_MUTATION,
     {
       variables: { id },
-      onCompleted: () => {
+      onCompleted: (data) => {
+        setAction(`delete event ${data.deleteEvent.id} (${data.deleteEvent.name})`);
         router.push('/events');
       },
     }
@@ -69,6 +72,7 @@ export default function Event({ id, initialData }) {
     UPDATE_EVENT_MUTATION,
     {
       onCompleted: () => {
+        setAction(`update event ${id}`);
         router.push('/events');
       },
     }

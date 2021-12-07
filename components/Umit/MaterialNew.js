@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -22,6 +23,7 @@ import {
 export default function MaterialNew({ open, onClose, id }) {
   const [queryMaterial, { data, loading: loadingQuery, error: errorQuery }] =
     useLazyQuery(MATERIAL_QUERY);
+  const { setAction } = useAction();
   const [createMaterial, { loading: loadingCreate, error: errorCreate }] = useMutation(
     CREATE_MATERIAL_MUTATION,
     {
@@ -31,6 +33,7 @@ export default function MaterialNew({ open, onClose, id }) {
           variables: { skip: 0, take: perPage },
         },
       ],
+      onCompleted: (data) => setAction(`create material ${data.createUmitMaterial.id}`),
     }
   );
   const [updateMaterial, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
@@ -42,6 +45,7 @@ export default function MaterialNew({ open, onClose, id }) {
           variables: { skip: 0, take: perPage },
         },
       ],
+      onCompleted: (data) => setAction(`create material ${data.updateUmitMaterial.id}`),
     }
   );
 

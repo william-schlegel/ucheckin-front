@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
@@ -24,13 +25,14 @@ import { ALL_EVENTS_QUERY, DELETE_EVENT_MUTATION, PAGINATION_QUERY } from './Que
 export default function Events() {
   const router = useRouter();
   const { user } = useUser();
-
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const { setAction } = useAction();
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [queryEvents, { error, loading, data }] = useLazyQuery(ALL_EVENTS_QUERY);
-  const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION);
+  const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION, {
+    onCompleted: (data) =>
+      setAction(`delete event ${data.deleteEvent.id} (${data.deleteEvent.name})`),
+  });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
   const { t } = useTranslation('event');

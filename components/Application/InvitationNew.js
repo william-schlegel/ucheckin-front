@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import SwitchComponent from 'react-switch';
 
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -15,8 +16,10 @@ import { CREATE_INVITATION_MUTATION } from './Queries';
 
 export default function InvitationNew({ appId, open, onClose }) {
   const { t } = useTranslation('application');
+  const { setAction } = useAction();
   const [addInvitation, { loading, error }] = useMutation(CREATE_INVITATION_MUTATION, {
     onCompleted: (item) => {
+      setAction(`create invitation ${item.addInvitation.id}`);
       onClose(item.addInvitation);
     },
   });

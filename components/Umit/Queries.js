@@ -240,6 +240,7 @@ export const UPDATE_MATERIAL_MUTATION = gql`
   ) {
     updateUmitMaterial(where: $where, data: $data) {
       id
+      name
     }
   }
 `;
@@ -248,6 +249,7 @@ export const DELETE_LOCATION_MUTATION = gql`
   mutation DELETE_LOCATION_MUTATION($where: UmitLocationWhereUniqueInput!) {
     deleteUmitLocation(where: $where) {
       id
+      name
     }
   }
 `;
@@ -256,6 +258,7 @@ export const DELETE_MATERIAL_MUTATION = gql`
   mutation DELETE_MATERIAL_MUTATION($where: UmitMaterialWhereUniqueInput!) {
     deleteUmitMaterial(where: $where) {
       id
+      name
     }
   }
 `;
@@ -264,6 +267,7 @@ export const DELETE_SENSOR_MUTATION = gql`
   mutation DELETE_SENSOR_MUTATION($where: UmitSensorWhereUniqueInput!) {
     deleteUmitSensor(where: $where) {
       id
+      name
     }
   }
 `;

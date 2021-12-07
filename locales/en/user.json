@@ -49,5 +49,6 @@
   "display-options": "Display options for the user",
   "umit-menu": "I am managing UMITs",
   "ucheckin-menu": "I am using the UCheckIn SDK",
-  "app-menu": "I am using a mobile app SDK"
+  "app-menu": "I am using a mobile app SDK",
+  "created-at": "Created the"
 }

@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
@@ -22,13 +23,17 @@ import {
 
 export default function Materials() {
   const router = useRouter();
-
+  const { setAction } = useAction();
   const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
     useLazyQuery(PAGINATION_MATERIAL_QUERY);
   const [queryMaterials, { error, loading, data }] = useLazyQuery(ALL_MATERIALS_QUERY);
   const [deleteMaterialMutation, { error: errorDelete }] = useMutation(DELETE_MATERIAL_MUTATION, {
     refetchQueries: [{ query: ALL_MATERIALS_QUERY }],
-    onCompleted: () => router.reload(),
+    onCompleted: (data) => {
+      setAction(`delete material ${data.deleteUmitMaterial.id} (${data.deleteUmitMaterial.name})`);
+
+      router.reload();
+    },
   });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;

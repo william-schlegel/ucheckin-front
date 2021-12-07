@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import DisplayError from '../ErrorMessage';
 import { Help, HelpButton, useHelp } from '../Help';
@@ -19,13 +20,16 @@ import SensorDetail from './SensorDetail';
 
 export default function Sensors() {
   const router = useRouter();
-
+  const { setAction } = useAction();
   const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
     useLazyQuery(PAGINATION_SENSOR_QUERY);
   const [querySensors, { error, loading, data }] = useLazyQuery(ALL_SENSORS_QUERY);
   const [deleteSensorMutation, { error: errorDelete }] = useMutation(DELETE_SENSOR_MUTATION, {
     refetchQueries: [{ query: ALL_SENSORS_QUERY }],
-    onCompleted: () => router.reload(),
+    onCompleted: (data) => {
+      setAction(`delete sensor ${data.deleteUmitSensor.id} (${data.deleteUmitSensor.name})`);
+      router.reload();
+    },
   });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;

@@ -1,14 +1,12 @@
 import { useMutation } from '@apollo/client';
-import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 
+import useAction from '../../lib/useAction';
 import useErrorMessage from '../../lib/useErrorMessage';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import Loading from '../Loading';
-import {
-  UPDATE_PROFILE_MUTATION,
-  UPDATE_PROFILE_PHOTO_MUTATION,
-} from './Queries';
+import { UPDATE_PROFILE_MUTATION, UPDATE_PROFILE_PHOTO_MUTATION } from './Queries';
 
 function update(cache, payload) {
   cache.evict(cache.identify(payload.data.updateUser));
@@ -16,16 +14,15 @@ function update(cache, payload) {
 
 export function UpdatePhoto({ id, photo, onSuccess }) {
   const { t } = useTranslation('common');
+  const { setAction } = useAction();
   const displayError = useErrorMessage();
-  const [updatePhoto, { loading, error }] = useMutation(
-    UPDATE_PROFILE_PHOTO_MUTATION,
-    {
-      variables: {
-        id,
-        photo,
-      },
-    }
-  );
+  const [updatePhoto, { loading, error }] = useMutation(UPDATE_PROFILE_PHOTO_MUTATION, {
+    variables: {
+      id,
+      photo,
+    },
+    onCompleted: () => setAction(`update photo user ${id}`),
+  });
 
   function handleValidation() {
     const res = updatePhoto({
@@ -56,9 +53,10 @@ UpdatePhoto.propTypes = {
 export function UpdateProfile({ id, updatedProfile, onSuccess }) {
   const { t } = useTranslation('user');
   const displayError = useErrorMessage();
-  const [updateProfile, { loading, error }] = useMutation(
-    UPDATE_PROFILE_MUTATION
-  );
+  const { setAction } = useAction();
+  const [updateProfile, { loading, error }] = useMutation(UPDATE_PROFILE_MUTATION, {
+    onCompleted: () => setAction(`update profile user ${id}`),
+  });
   const variables = { id, ...updatedProfile, role: updatedProfile.role.id };
 
   function handleValidation() {

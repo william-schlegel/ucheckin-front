@@ -8,11 +8,7 @@ export const PAGINATION_PRICE_QUERY = gql`
   }
 `;
 export const ALL_PRICES_QUERY = gql`
-  query ALL_LICENSES_PRICES_QUERY(
-    $skip: Int = 0
-    $take: Int
-    $where: LicensePriceWhereInput
-  ) {
+  query ALL_LICENSES_PRICES_QUERY($skip: Int = 0, $take: Int, $where: LicensePriceWhereInput) {
     licensePrices(take: $take, skip: $skip, where: $where) {
       id
       users {
@@ -53,9 +49,7 @@ export const PRICE_QUERY = gql`
           id
           name
           logo {
-            publicUrlTransformed(
-              transformation: { width: "100", height: "100" }
-            )
+            publicUrlTransformed(transformation: { width: "100", height: "100" })
           }
         }
         monthly

@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
 import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
@@ -23,11 +24,16 @@ import { ALL_NOTIFICATIONS_QUERY, DELETE_NOTIFICATION_MUTATION, PAGINATION_QUERY
 
 export default function Notifications() {
   const router = useRouter();
-
+  const { setAction } = useAction();
   const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
     useLazyQuery(PAGINATION_QUERY);
   const [queryNotifications, { error, loading, data }] = useLazyQuery(ALL_NOTIFICATIONS_QUERY);
-  const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION);
+  const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION, {
+    onCompleted: (data) =>
+      setAction(
+        `delete notification ${data.deleteNotification.id} (${data.deleteNotification.name})`
+      ),
+  });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
   const { t } = useTranslation('notification');

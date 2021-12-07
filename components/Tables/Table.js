@@ -268,21 +268,22 @@ function TablePagination({
 }) {
   const { t } = useTranslation('common');
   if (pageCount <= 1) return null;
+  console.log(`pageCount`, { page, pageCount });
   return (
     <PaginationContainer>
-      <button type="button" disabled={page <= 0} onClick={() => gotoPage(0)}>
+      <button type="button" disabled={!!(page <= 0)} onClick={() => gotoPage(0)}>
         <ChevronsLeft />
       </button>
       <button type="button" disabled={!canPreviousPage} onClick={() => previousPage()}>
         <ChevronLeft />
       </button>
-      <span>{t('pagination', { page: page + 1, pageCount })}</span>
+      <span>{t('pagination', { page: page + 1, cnt: pageCount })}</span>
       <button type="button" disabled={!canNextPage} onClick={() => nextPage()}>
         <ChevronRight />
       </button>
       <button
         type="button"
-        disabled={page >= pageCount - 1}
+        disabled={!!(page >= pageCount - 1)}
         onClick={() => gotoPage(pageCount - 1)}
       >
         <ChevronsRight />
@@ -318,7 +319,8 @@ const PaginationContainer = styled.div`
       transform: scale(1.2);
     }
 
-    &[aria-disabled='true'] {
+    &[aria-disabled='true'],
+    &[disabled] {
       color: grey;
       pointer-events: none;
     }

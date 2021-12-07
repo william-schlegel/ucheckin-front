@@ -8,6 +8,7 @@ import { useDropzone } from 'react-dropzone';
 import Select from 'react-select';
 import SwitchComponent from 'react-switch';
 
+import useAction from '../../lib/useAction';
 import useForm from '../../lib/useForm';
 import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonValidation from '../Buttons/ButtonValidation';
@@ -38,6 +39,7 @@ const QUERY_NOTIF_PARENT = gql`
 
 export default function NotificationContent({ open, onClose, item, notifId }) {
   const { t } = useTranslation('notification');
+  const { setAction } = useAction();
   const {
     data: notification,
     error: errorNotification,
@@ -46,7 +48,10 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   const [updateNotificationItem, { error: errorUpdateItem }] = useMutation(
     UPDATE_NOTIFICATION_ITEM,
     {
-      onCompleted: (itm) => onClose(itm.updateNotificationItem),
+      onCompleted: (itm) => {
+        setAction(`update notification item ${itm.createNotificationItem.id}`);
+        onClose(itm.updateNotificationItem);
+      },
       refetchQueries: [
         {
           query: NOTIFICATION_QUERY,
@@ -58,7 +63,10 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
   const [createNotificationItem, { error: errorCreateItem }] = useMutation(
     CREATE_NOTIFICATION_ITEM,
     {
-      onCompleted: (itm) => onClose(itm.createNotificationItem),
+      onCompleted: (itm) => {
+        setAction(`create notification item ${itm.createNotificationItem.id}`);
+        onClose(itm.createNotificationItem);
+      },
     }
   );
 
