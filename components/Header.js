@@ -4,7 +4,7 @@ import Link from 'next/link';
 import setLanguage from 'next-translate/setLanguage';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Flag from 'react-country-flag';
 import { Menu, Moon, Sun, User } from 'react-feather';
 import styled from 'styled-components';
@@ -29,6 +29,7 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
   const router = useRouter();
   const { user } = useUser();
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('main');
+
   const ob = ['toggle-help', 'toggle-theme', 'toggle-language', 'my-profile'];
   if (user.canSeeAppMenu)
     ob.push(
@@ -41,7 +42,20 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
     );
   if (user.canSeeUcheckinMenu) ob.push('menu-events');
   if (user.canSeeUmitMenu) ob.push('menu-umit');
-  const { Overlay, Highligh, setShow } = useOnboarding(ob);
+  const { Overlay, Highligh, start } = useOnboarding(ob);
+  const {
+    Overlay: OverlayFA,
+    Highligh: HighlighFA,
+    start: startFA,
+  } = useOnboarding(['first-help']);
+
+  useEffect(() => {
+    const visited = localStorage.getItem('visited');
+    if (!visited) {
+      setTimeout(() => startFA(), 1000);
+      localStorage.setItem('visited', new Date().toISOString());
+    }
+  }, []);
 
   const toggleTheme = useCallback(() => {
     setDarkTheme(!darkTheme);
@@ -89,6 +103,8 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
     <>
       <Overlay />
       <Highligh />
+      <OverlayFA />
+      <HighlighFA />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <HeaderStyles menuState={menuState}>
         <div className="bar">
@@ -100,7 +116,7 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
             <Link href="/">Ucheck In</Link>
           </Logo>
           <div className="sub-bar">
-            <ActionButton type="book" label={t('tutoriel')} cb={() => setShow(true)} />
+            <ActionButton type="book" label={t('tutoriel')} cb={start} id="first-help" />
             <HelpButton showHelp={toggleHelpVisibility} id="toggle-help" />
             <button type="button" onClick={toggleTheme} id="toggle-theme">
               {darkTheme ? <Sun /> : <Moon />}
