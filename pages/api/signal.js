@@ -13,13 +13,9 @@ export default function handler(req, res) {
 
   if (mode === 0) {
     if (signal.length !== 5)
-      return res
-        .status(400)
-        .json({ error: `Signal ${volume} must have 5 hex characters` });
+      return res.status(400).json({ error: `Signal ${volume} must have 5 hex characters` });
     if (volume > 1)
-      return res
-        .status(400)
-        .json({ error: `Volume ${volume} must be between 0 and 1` });
+      return res.status(400).json({ error: `Volume ${volume} must be between 0 and 1` });
   } else {
     return res.status(400).json({ error: `mode ${mode} not implemented yet` });
   }
@@ -95,8 +91,7 @@ export default function handler(req, res) {
     for (let i = 0; i < r; i += 1) {
       let val = 0;
       for (let ii = 0; ii < n; ii += 1)
-        if (((ii + 1) & (2 ** i)) === 2 ** i)
-          val = parseInt(val, 10) ^ parseInt(result[ii], 10);
+        if (((ii + 1) & (2 ** i)) === 2 ** i) val = parseInt(val, 10) ^ parseInt(result[ii], 10);
       result[2 ** i - 1] = val;
     }
     // console.log(`res2`, result);
@@ -278,10 +273,7 @@ export default function handler(req, res) {
     }
 
     for (let i = 0; i < signalComplet.length; i += 1) {
-      signalComplet[i] = parseInt(
-        ((signalComplet[i] * volume) / max) * wavParam,
-        10
-      );
+      signalComplet[i] = parseInt(((signalComplet[i] * volume) / max) * wavParam, 10);
     }
     return saveFile(signalComplet).then(({ url, fileName }) =>
       res.status(200).json({ url, fileName })

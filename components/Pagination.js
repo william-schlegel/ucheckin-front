@@ -1,15 +1,15 @@
 import Link from 'next/link';
-import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { ArrowLeft, ArrowRight } from 'react-feather';
+import styled from 'styled-components';
 
-import { PaginationStyles } from './styles/PaginationStyles';
-import DisplayError from './ErrorMessage';
 import { perPage } from '../config';
-import { ButtonStyled } from './styles/Button';
 import ActionButton from './Buttons/ActionButton';
+import DisplayError from './ErrorMessage';
 import Loading from './Loading';
+import { ButtonStyled } from './styles/Button';
+import { PaginationStyles } from './styles/PaginationStyles';
 
 const PaginationBlock = styled.div`
   display: flex;
@@ -37,11 +37,7 @@ export default function Pagination({
             <ArrowLeft /> {t('prev')}
           </a>
         </Link>
-        {count ? (
-          <p>{t('pagecount', { page, count: pageCount })}</p>
-        ) : (
-          <p>...</p>
-        )}
+        {count ? <p>{t('pagecount', { page, count: pageCount })}</p> : <p>...</p>}
         {count ? <p> {t('itemcount', { count })}</p> : <p>...</p>}
         <Link href={`/${pageRef}/${page + 1}`}>
           <a aria-disabled={page >= pageCount}>

@@ -2,6 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
   BarChart,
+  BookOpen,
   Calendar,
   Check,
   ChevronLeft,
@@ -49,12 +50,13 @@ export const IconButtonStyles = styled.a.attrs((props) => ({
   }
 `;
 
-export default function ActionButton({ type, cb = () => {}, label, size = 24 }) {
+export default function ActionButton({ type, cb = () => {}, label, size = 24, id }) {
   const { t } = useTranslation('common');
   return (
-    <IconButtonStyles key={type} type="button" onClick={cb} title={label || t(type)}>
+    <IconButtonStyles key={type} type="button" onClick={cb} title={label || t(type)} id={id}>
       {type === 'add-license' && <Volume2 size={size} />}
       {type === 'back' && <ChevronLeft size={size} />}
+      {type === 'book' && <BookOpen size={size} />}
       {type === 'check' && <Check size={size} />}
       {(type === 'clone' || type === 'repeat') && <Repeat size={size} />}
       {type === 'copy' && <Copy size={size} />}
@@ -95,6 +97,7 @@ ActionButton.propTypes = {
     'close',
     'date',
     'back',
+    'book',
     'trash',
     'plus',
     'help',
@@ -124,4 +127,5 @@ ActionButton.propTypes = {
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,
   size: PropTypes.number,
+  id: PropTypes.string,
 };

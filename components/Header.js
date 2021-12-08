@@ -9,7 +9,9 @@ import Flag from 'react-country-flag';
 import { Menu, Moon, Sun, User } from 'react-feather';
 import styled from 'styled-components';
 
+import useOnboarding from '../lib/useOnboarding';
 import useOnClickOutside from '../lib/useOnClickOutside';
+import ActionButton from './Buttons/ActionButton';
 import { Help, HelpButton, useHelp } from './Help';
 import { useUser } from './User/Queries';
 import Signout from './User/SignOut';
@@ -27,6 +29,19 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
   const router = useRouter();
   const { user } = useUser();
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('main');
+  const ob = ['toggle-help', 'toggle-theme', 'toggle-language', 'my-profile'];
+  if (user.canSeeAppMenu)
+    ob.push(
+      'menu-sdk',
+      'menu-application',
+      'menu-licenses',
+      'menu-signals',
+      'menu-invoices',
+      'menu-notifications'
+    );
+  if (user.canSeeUcheckinMenu) ob.push('menu-events');
+  if (user.canSeeUmitMenu) ob.push('menu-umit');
+  const { Overlay, Highligh, setShow } = useOnboarding(ob);
 
   const toggleTheme = useCallback(() => {
     setDarkTheme(!darkTheme);
@@ -72,6 +87,8 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
 
   return (
     <>
+      <Overlay />
+      <Highligh />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <HeaderStyles menuState={menuState}>
         <div className="bar">
@@ -83,11 +100,12 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
             <Link href="/">Ucheck In</Link>
           </Logo>
           <div className="sub-bar">
-            <HelpButton showHelp={toggleHelpVisibility} />
-            <button type="button" onClick={toggleTheme}>
+            <ActionButton type="book" label={t('tutoriel')} cb={() => setShow(true)} />
+            <HelpButton showHelp={toggleHelpVisibility} id="toggle-help" />
+            <button type="button" onClick={toggleTheme} id="toggle-theme">
               {darkTheme ? <Sun /> : <Moon />}
             </button>
-            <button type="button" onClick={toggleFlag}>
+            <button type="button" onClick={toggleFlag} id="toggle-language">
               <Flag
                 svg
                 countryCode={Flags[flag].country}
@@ -97,7 +115,12 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
             </button>
             {user?.id && (
               <>
-                <button type="button" className="button-label" onClick={toggleUserMenu}>
+                <button
+                  type="button"
+                  className="button-label"
+                  onClick={toggleUserMenu}
+                  id="my-profile"
+                >
                   {user?.photo?.publicUrlTransformed ? (
                     <img className="avatar" src={user.photo.publicUrlTransformed} alt={user.name} />
                   ) : (
@@ -188,7 +211,8 @@ const HeaderStyles = styled.header`
     justify-content: flex-end;
     align-items: stretch;
     .button-label,
-    button {
+    button,
+    a {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -201,6 +225,8 @@ const HeaderStyles = styled.header`
       border-radius: 5px;
       border: transparent none;
       transition: background-color 300ms ease-in-out;
+    }
+    button {
       &:hover {
         background-color: var(--secondary);
       }

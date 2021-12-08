@@ -1,21 +1,19 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import { useLazyQuery } from '@apollo/client';
-import { useToasts } from 'react-toast-notifications';
+import gql from 'graphql-tag';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useToasts } from 'react-toast-notifications';
 import remarkGfm from 'remark-gfm';
-
 import styled from 'styled-components';
+
 import ActionButton from './Buttons/ActionButton';
 
 const QUERY_HELP = gql`
   query QUERY_HELP($key: String!, $lang: String!) {
     helps(
-      where: {
-        AND: [{ key: { equals: $key } }, { language: { equals: $lang } }]
-      }
+      where: { AND: [{ key: { equals: $key } }, { language: { equals: $lang } }] }
       orderBy: { step: asc }
     ) {
       id
@@ -90,9 +88,9 @@ Help.propTypes = {
  * Help button to activate the help window
  * @param {function} showHelp toggle the state of visibility of the window, this function is provided by the hook useHelp
  */
-export function HelpButton({ showHelp }) {
+export function HelpButton({ showHelp, id }) {
   const { t } = useTranslation('common');
-  return <ActionButton type="help" label={t('common:help')} cb={showHelp} />;
+  return <ActionButton type="help" label={t('common:help')} cb={showHelp} id={id} />;
 }
 
 HelpButton.propTypes = {
@@ -138,8 +136,7 @@ export function useHelp(key) {
 }
 
 const Wrapper = styled.div`
-  --grid-template: ${(props) =>
-    parseInt(props.nbStep) > 1 ? '1fr 4fr' : '1fr'};
+  --grid-template: ${(props) => (parseInt(props.nbStep) > 1 ? '1fr 4fr' : '1fr')};
   position: fixed;
   z-index: 4002;
   box-sizing: border-box;

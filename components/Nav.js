@@ -11,22 +11,23 @@ import SignOut from './User/SignOut';
 export default function Nav({ toggled }) {
   const { user } = useUser();
   const { t } = useTranslation('navigation');
+
   if (user?.id)
     return (
       <NavStyles className="menu" toggled={toggled}>
         <ul>
           {user.canSeeAppMenu && (
             <>
-              <li>
+              <li id="menu-sdk">
                 <Link href="/sdk">{t('sdk')}</Link>
               </li>
-              <li>
+              <li id="menu-application">
                 <Link href="/applications">{t('applications')}</Link>
               </li>
-              <li>
+              <li id="menu-licenses">
                 <Link href="/licenses">{t('licenses')}</Link>
               </li>
-              <li>
+              <li id="menu-signals">
                 <Link href="/signals">{t('signals')}</Link>
               </li>
               {user.role?.canManagePrice && (
@@ -34,7 +35,7 @@ export default function Nav({ toggled }) {
                   <Link href="/prices">{t('prices')}</Link>
                 </li>
               )}
-              <li>
+              <li id="menu-invoices">
                 <Link href="/invoices">{t('invoices')}</Link>
               </li>
               {(user.role?.canSeeOtherUsers || user.role?.canManageUsers) && (
@@ -42,18 +43,18 @@ export default function Nav({ toggled }) {
                   <Link href="/users">{t('users')}</Link>
                 </li>
               )}
-              <li>
+              <li id="menu-notifications">
                 <Link href="/notifications">{t('notifications')}</Link>
               </li>
             </>
           )}
           {user.canSeeUcheckinMenu && (
-            <li>
+            <li id="menu-events">
               <Link href="/events">{t('events')}</Link>
             </li>
           )}
           {user.canSeeUmitMenu && (
-            <SubMenu label={t('umit')}>
+            <SubMenu label={t('umit')} id="menu-umit">
               <ul>
                 <li className="sub-item">
                   <Link href="/umit/measures">{t('measures')}</Link>
@@ -69,9 +70,6 @@ export default function Nav({ toggled }) {
                 </li>
               </ul>
             </SubMenu>
-            // <li>
-            //   <Link href="/umit">{t('umit')}</Link>
-            // </li>
           )}
           <li className="bottom">
             <div>
@@ -85,7 +83,7 @@ export default function Nav({ toggled }) {
   return null;
 }
 
-function SubMenu({ label, children }) {
+function SubMenu({ label, children, id }) {
   const [toggle, setToggle] = useState(false);
 
   function handleClick() {
@@ -93,7 +91,7 @@ function SubMenu({ label, children }) {
   }
 
   return (
-    <li>
+    <li id={id}>
       <button className="sub-menu" onKeyPress={handleClick} onClick={handleClick}>
         {label}
         <HeaderButton toggle={toggle}>

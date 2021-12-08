@@ -220,9 +220,9 @@ export default function Licenses() {
           id: l.id,
           trialLicense: l.trialLicense,
           signal: l.signal?.name,
-          application: l.application.name,
-          owner: l.owner.name,
-          licenseType: l.licenseType.id,
+          application: l.application?.name,
+          owner: l.owner?.name,
+          licenseType: l.licenseType?.id,
           valid: l.valid,
           validity: l.validity,
         }))}
