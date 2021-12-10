@@ -6,7 +6,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 
-import client from '../apollo-client';
 import { Help, HelpButton, useHelp } from '../components/Help';
 import { ButtonStyled } from '../components/styles/Button';
 import { Block, FormBodyFull, FormHeader, FormTitle, H2 } from '../components/styles/Card';
@@ -53,6 +52,16 @@ export default function Sdk({ initialData = [] }) {
 }
 
 Sdk.propTypes = { initialData: PropTypes.array };
+
+Sdk.getInitialProps = async (ctx) => {
+  const { apolloClient } = ctx;
+  const res = await apolloClient.query({
+    query: QUERY_SDK,
+  });
+  return {
+    initialData: res.data.sdks,
+  };
+};
 
 const SdkBlockStyled = styled.div`
   display: block;
@@ -135,13 +144,3 @@ function SdkBlock({ sdkData }) {
 }
 
 SdkBlock.propTypes = { sdkData: PropTypes.object };
-
-export async function getServerSideProps() {
-  const { data } = await client.query({ query: QUERY_SDK });
-  // console.log(`data.sdks`, data.sdks);
-  return {
-    props: {
-      initialData: data.sdks,
-    },
-  };
-}
