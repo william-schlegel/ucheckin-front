@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
@@ -5,17 +6,42 @@ import styled from 'styled-components';
 
 import { formatMoney, formatNumber, formatPrct } from '../../lib/formatNumber';
 import { formatDate } from '../DatePicker';
+import DisplayError from '../ErrorMessage';
 import Table from '../styles/Table';
 import Image from '../Tables/Image';
 
+const QUERY_STIMSHOP = gql`
+  query QUERY_STIMSHOP($key: String!) {
+    stimshops(where: { key: { equals: $key } }) {
+      id
+      key
+      logo {
+        publicUrlTransformed(transformation: { width: "800" })
+      }
+      city
+      vatNumber
+      footer
+      bankDetails
+    }
+  }
+`;
+
 const InvoiceTemplate = forwardRef(function Template(props, ref) {
   const { t } = useTranslation('invoice');
+  const { data: dataStim, error: errorStim } = useQuery(QUERY_STIMSHOP, {
+    variables: { key: 'stimshop' },
+  });
 
   if (!props.data) return null;
+  if (!dataStim) return null;
+
   const { data } = props;
+  const stim = dataStim.stimshops[0];
+
+  if (errorStim) return <DisplayError error={errorStim} />;
   return (
     <InvoiceBody ref={ref}>
-      <Image imageSrc="/images/stimshop.png" size={100} ratio={557 / 121} />
+      <Image imageSrc={stim.logo.publicUrlTransformed} size={100} ratio={5} />
       <Header>
         <div className="address">
           <p>{data.owner.company}</p>
@@ -28,7 +54,9 @@ const InvoiceTemplate = forwardRef(function Template(props, ref) {
           <p>
             {t('attention-to')} {data.owner.name}
           </p>
-          <p>Paris, {formatDate(data.orderDate)}</p>
+          <p>
+            {stim.city}, {formatDate(data.orderDate)}
+          </p>
           <strong>
             {t('invoice')} : {data.number}
           </strong>
@@ -53,10 +81,7 @@ const InvoiceTemplate = forwardRef(function Template(props, ref) {
               <td className="right">{formatNumber(item.quantity)}</td>
               <td className="right">{formatNumber(item.nbArea)}</td>
               <td className="right"> {formatMoney(item.unitPrice)}</td>
-              <td className="right">
-                {' '}
-                {formatMoney(item.unitPrice * item.quantity * item.nbArea)}
-              </td>
+              <td className="right">{formatMoney(item.unitPrice * item.quantity * item.nbArea)}</td>
             </tr>
           ))}
         </tbody>
@@ -86,16 +111,15 @@ const InvoiceTemplate = forwardRef(function Template(props, ref) {
           <div>
             <p>{t('for-payment')}</p>
             <p className="bank">
-              <strong>{t('bank-coordinates')}</strong> : BANQUE POPULAIRE - IBAN FR76 1020 7009 9922
-              2108 9500 526
+              <strong>{t('bank-coordinates')}</strong> : {stim.bankDetails}
             </p>
           </div>
         )}
         <div className="footer">
-          <p>{t('vat-number', { vatNumber: 'FR 55 793 966 128' })}</p>
-          <p>STIMSHOP - 3B rue Taylor - CS20004 - 75481 Paris Cedex 10</p>
-          <p>Tél.: +33 (0)1 85 64 10 63 - www.wi-us.eu - contact@stimshop.com</p>
-          <p>SAS au Capital de 163.100 € - RCS Paris 793 966 128 - NAF 7311Z</p>
+          <p>{t('vat-number', { vatNumber: stim.vatNumber })}</p>
+          {stim.footer.split('\n').map((l) => (
+            <p key={l}>{l}</p>
+          ))}
         </div>
       </Footer>
     </InvoiceBody>

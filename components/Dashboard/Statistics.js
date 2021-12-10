@@ -2,7 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/dist/client/router';
 import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import Select from 'react-select';
 import styled from 'styled-components';
@@ -102,7 +102,7 @@ export default function DashboardStatistics() {
   const [queryStat, { error, loading, data }] = useLazyQuery(QUERY_STATISTICS);
   const [dtDeb, setDtDeb] = useState(dateInMonth(-1));
   const [dtFin, setDtFin] = useState(dateNow());
-  const [applications, setApplications] = useState([{ value: 'all', label: t('all') }]);
+  const applications = useRef([{ value: 'all', label: t('all') }]);
   const [application, setApplication] = useState(0);
   const [dataGraph, setDataGraph] = useState({});
 
@@ -113,27 +113,31 @@ export default function DashboardStatistics() {
   useEffect(() => {
     const apps = new Map();
     if (data) {
-      apps.set(applications[0].value, applications[0].label);
+      apps.set(applications.current[0].value, applications.current[0].label);
       for (const a of data.signalDetections) {
         apps.set(a.application.id, a.application.name);
       }
-      setApplications(Array.from(apps).map((a) => ({ value: a[0], label: a[1] })));
+      applications.current = Array.from(apps).map((a) => ({ value: a[0], label: a[1] }));
     }
   }, [data]);
 
   useEffect(() => {
     if (!data) return;
-    const os = reduceData(data.signalDetections, 'os', applications[application].value);
-    const model = reduceData(data.signalDetections, 'model', applications[application].value);
+    const os = reduceData(data.signalDetections, 'os', applications.current[application].value);
+    const model = reduceData(
+      data.signalDetections,
+      'model',
+      applications.current[application].value
+    );
     const apps = reduceData(
       data.signalDetections,
       'application.name',
-      applications[application].value
+      applications.current[application].value
     );
     const signals = reduceData(
       data.signalDetections,
       'signal.name',
-      applications[application].value
+      applications.current[application].value
     );
     setDataGraph({ os, model, apps, signals });
   }, [data, setDataGraph, application]);
@@ -151,17 +155,18 @@ export default function DashboardStatistics() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-              }}>
+              }}
+            >
               <RowFull>
                 <Label>{t('application')}</Label>
                 <Select
                   theme={selectTheme}
                   className="select"
-                  value={applications[application]}
+                  value={applications.current[application]}
                   onChange={(sel) =>
-                    setApplication(applications.findIndex((a) => a.value === sel.value))
+                    setApplication(applications.current.findIndex((a) => a.value === sel.value))
                   }
-                  options={applications}
+                  options={applications.current}
                 />
               </RowFull>
               <RowFull>

@@ -24,6 +24,25 @@ const Table = styled.table`
       background: var(--off-white);
     }
   }
+  @media print {
+    table {
+      page-break-inside: auto;
+    }
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+    td {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+    thead {
+      display: table-header-group;
+    }
+    tfoot {
+      display: table-footer-group;
+    }
+  }
 `;
 
 export default Table;
