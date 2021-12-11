@@ -336,7 +336,7 @@ function toggleBlock(editor, format) {
 const BlockButton = ({ format, children }) => {
   const editor = useSlate();
   return (
-    <BoxBtn selected={isMarkActive(editor, format)}>
+    <BoxBtn selected={isBlockActive(editor, format)}>
       <ToggleButton
         value={format}
         selected={isBlockActive(editor, format)}
@@ -402,12 +402,12 @@ const BoxBtn = styled.div`
   align-items: center;
   justify-content: center;
   line-height: 1rem;
-  background-color: ${(props) => (props.selected ? 'var(--grey)' : 'transparent')};
+  background-color: ${(props) => (props.selected ? 'black' : 'transparent')};
 `;
 
 const ToggleButton = styled.div`
   border-color: var(--grey);
-  background-color: transparent;
+  background-color: ${(props) => (props.selected ? 'black' : 'transparent')};
   color: ${(props) => (props.selected ? 'var(--off-white)' : 'var(--grey)')};
 `;
 

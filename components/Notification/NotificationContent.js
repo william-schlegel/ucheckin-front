@@ -49,7 +49,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
     UPDATE_NOTIFICATION_ITEM,
     {
       onCompleted: (itm) => {
-        setAction(`update notification item ${itm.createNotificationItem.id}`);
+        setAction(`update notification item ${itm.updateNotificationItem.id}`);
         onClose(itm.updateNotificationItem);
       },
       refetchQueries: [
@@ -209,45 +209,33 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
                   checked={inputs.defaultNotification}
                 />
               </RowReadOnly>
-              {!inputs.defaultNotification && (
-                <Row>
-                  <Counter
-                    input={inputs.probability}
-                    min={1}
-                    max={100}
-                    name="probability"
-                    handleChange={handleChange}
-                    label={t('probability')}
-                    fullWidth
-                  />
-                </Row>
-              )}
-            </>
-          )}
-          {notification.notification.type === 'instant-win' && (
-            <>
-              <RowReadOnly>
-                <Label>{t('default')}</Label>
-                <SwitchComponent
-                  onChange={(value) => handleChange({ name: 'default', value })}
-                  checked={inputs.default}
+              <Row>
+                <Counter
+                  input={inputs.probability}
+                  min={1}
+                  max={100}
+                  name="probability"
+                  handleChange={handleChange}
+                  label={t('probability')}
+                  fullWidth
                 />
-              </RowReadOnly>
-              {!inputs.default && (
-                <Row>
-                  <Counter
-                    input={inputs.quota}
-                    min={1}
-                    max={100}
-                    name="quota"
-                    handleChange={handleChange}
-                    label={t('quota')}
-                    fullWidth
-                  />
-                </Row>
-              )}
+              </Row>
             </>
           )}
+          {notification.notification.type === 'instant-win' && !inputs.defaultNotification && (
+            <Row>
+              <Counter
+                input={inputs.quota}
+                min={1}
+                max={100}
+                name="quota"
+                handleChange={handleChange}
+                label={t('quota')}
+                fullWidth
+              />
+            </Row>
+          )}
+
           {/* defaultNotification quota */}
         </FormBodyFull>
       </Form>

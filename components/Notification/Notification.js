@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Code, PlusCircle, Youtube } from 'react-feather';
 import Select from 'react-select';
 import styled from 'styled-components';
@@ -21,7 +21,7 @@ import ButtonCancel from '../Buttons/ButtonCancel';
 import ButtonDelete from '../Buttons/ButtonDelete';
 import ButtonValidation from '../Buttons/ButtonValidation';
 import Counter from '../Counter';
-import DatePicker from '../DatePicker';
+import DatePicker, { dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Help, HelpButton, useHelp } from '../Help';
@@ -53,7 +53,7 @@ import {
   UPDATE_NOTIFICATION_MUTATION,
 } from './Queries';
 
-const QUERY_APP_FROM_USER = gql`
+export const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
     applications(where: { owner: { id: { equals: $user } } }) {
       id
@@ -62,7 +62,7 @@ const QUERY_APP_FROM_USER = gql`
   }
 `;
 
-const QUERY_SIGNAL_FROM_APP = gql`
+export const QUERY_SIGNAL_FROM_APP = gql`
   query QUERY_SIGNAL_FROM_APP($appId: ID!) {
     signals(where: { licenses: { some: { application: { id: { equals: $appId } } } } }) {
       id
@@ -70,6 +70,8 @@ const QUERY_SIGNAL_FROM_APP = gql`
     }
   }
 `;
+
+let confirmCB = () => {};
 
 const defaultItem = {
   displayType: '',
@@ -83,45 +85,6 @@ const defaultItem = {
   defaultNotification: false,
   quota: 0,
 };
-
-const makeItem = (itm) => {
-  const item = {
-    id: itm.id,
-    displayType: itm.displayType,
-    image: itm.image,
-    imageLink: itm.imageLink,
-    htmlContent: itm.htmlContent,
-    videoLink: itm.videoLink,
-    numberOfDisplay: itm.numberOfDisplay || 0,
-    delayBetweenDisplay: itm.delayBetweenDisplay || 0,
-    probability: itm.probability || 0,
-    defaultNotification: !!itm.defaultNotification,
-    quota: itm.quota || 0,
-  };
-  return item;
-};
-// make mutable object
-const makeData = (data) => {
-  const dN = data.notification;
-  const newInputs = {
-    name: dN.name || '',
-    displayName: dN.displayName || '',
-    type: dN.type,
-    owner: { id: dN.owner?.id, name: dN.owner?.name },
-    application: { id: dN.application?.id, name: dN.application?.name },
-    signal: { id: dN.signal?.id, name: dN.signal?.name },
-    startDate: dN.startDate,
-    endDate: dN.endDate,
-    items: [],
-  };
-  for (const nItem of dN.items) {
-    newInputs.items.push(makeItem(nItem));
-  }
-  return newInputs;
-};
-
-let confirmCB = () => {};
-
 export default function Notification({ id, initialData }) {
   const router = useRouter();
   const { setAction } = useAction();
@@ -162,7 +125,7 @@ export default function Notification({ id, initialData }) {
   const { user } = useUser();
   const { t } = useTranslation('notification');
   const { notificationTypesOptions } = useNotificationName();
-  const initialValues = useRef(makeData(initialData.data));
+  const initialValues = useRef(initialData.data.notification);
   const { inputs, handleChange, setInputs, validate, validationError, wasTouched } = useForm(
     initialValues.current,
     ['name', 'displayName', 'owner.id', 'application.id', 'signal.id']
@@ -175,7 +138,7 @@ export default function Notification({ id, initialData }) {
   const [selectedItem, setSelectedItem] = useState(0);
   const [item, setItem] = useState({});
   const [showItem, setShowItem] = useState(false);
-  const [nbNotif, setNbNotif] = useState(initialValues.current.items.length || 1);
+  const [nbNotif, setNbNotif] = useState(initialValues.current.items?.length || 1);
 
   const { Confirm, setIsOpen, setArgs } = useConfirm({
     title: t('confirm-delete'),
@@ -245,9 +208,11 @@ export default function Notification({ id, initialData }) {
     if (newItem.id) {
       const idItem = inputs.items.findIndex((i) => i.id === newItem.id);
       if (idItem >= 0) {
-        inputs.items[idItem] = makeItem(newItem);
+        inputs.items[idItem] = newItem;
       } else {
-        inputs.items.push(makeItem(newItem));
+        const items = [...inputs.items];
+        items.push(newItem);
+        setInputs({ ...inputs, items });
       }
     }
     setShowItem(false);
@@ -367,7 +332,7 @@ export default function Notification({ id, initialData }) {
                     <SearchUser
                       required
                       name="owner.id"
-                      value={inputs.owner.id}
+                      value={inputs.owner?.id}
                       onChange={handleChangeUser}
                     />
                     <FieldError error={validationError['owner.id']} />
@@ -393,7 +358,7 @@ export default function Notification({ id, initialData }) {
                       <Label htmlFor="startDate">{t('start-date')} </Label>
                       <DatePicker
                         id="startDate"
-                        ISOStringValue={inputs.startDate}
+                        ISOStringValue={inputs.startDate || dateNow()}
                         onChange={(dt) =>
                           handleChange({
                             name: 'startDate',
@@ -408,7 +373,7 @@ export default function Notification({ id, initialData }) {
                       <Label htmlFor="endDate">{t('end-date')} </Label>
                       <DatePicker
                         id="endDate"
-                        ISOStringValue={inputs.endDate}
+                        ISOStringValue={inputs.endDate || dateNow()}
                         onChange={(dt) =>
                           handleChange({
                             name: 'endDate',
@@ -424,7 +389,7 @@ export default function Notification({ id, initialData }) {
                       theme={selectTheme}
                       className="select"
                       required
-                      value={optionsAppUser.find((n) => n.value === inputs.application.id)}
+                      value={optionsAppUser.find((n) => n.value === inputs.application?.id)}
                       onChange={(sel) => handleChangeApp(sel)}
                       options={optionsAppUser}
                     />
@@ -436,7 +401,7 @@ export default function Notification({ id, initialData }) {
                       className="select"
                       theme={selectTheme}
                       required
-                      value={optionsSignals.find((n) => n.value === inputs.signal.id)}
+                      value={optionsSignals.find((n) => n.value === inputs.signal?.id)}
                       onChange={(n) =>
                         handleChange({
                           name: 'signal.id',
@@ -460,11 +425,11 @@ export default function Notification({ id, initialData }) {
                   </RowReadOnly>
                   <RowReadOnly>
                     <Label>{t('common:owner')}</Label>
-                    <span>{inputs.owner.name}</span>
+                    <span>{inputs.owner?.name}</span>
                   </RowReadOnly>
                   <RowReadOnly>
                     <Label>{t('type')}</Label>
-                    <span>{NotificationType(inputs.type)}</span>
+                    {inputs.type && <span>{NotificationType(inputs.type)}</span>}
                   </RowReadOnly>
                   {inputs.type && (
                     <RowFull>
@@ -481,11 +446,11 @@ export default function Notification({ id, initialData }) {
                   </RowReadOnly>
                   <RowReadOnly>
                     <Label>{t('application')}</Label>
-                    <span>{inputs.application.name}</span>
+                    <span>{inputs.application?.name}</span>
                   </RowReadOnly>
                   <RowReadOnly>
                     <Label>{t('signal')}</Label>
-                    <span>{inputs.signal.name}</span>
+                    <span>{inputs.signal?.name}</span>
                   </RowReadOnly>
                 </>
               )}
@@ -499,7 +464,7 @@ export default function Notification({ id, initialData }) {
                 <Row>
                   <Counter
                     input={nbNotif}
-                    min={Math.max(inputs.items.length || 0, 2)}
+                    min={Math.max(inputs.items?.length || 0, 2)}
                     max={10}
                     handleChange={(value) => setNbNotif(value.value)}
                     label={t('nb-notif')}
@@ -508,29 +473,33 @@ export default function Notification({ id, initialData }) {
                 </Row>
               )}
               <Row>
-                <NotifContainer>
-                  {inputs.items.map((it, index) => (
-                    <Notif
-                      key={`NOTIF-${index}`}
-                      typeNotif={inputs.type}
-                      item={it}
-                      onClick={() => setSelectedItem(index)}
-                      withDetails
-                      deleteNotif={() => handleDeleteNotif(index)}
-                      editNotif={() => handleEditNotif(index)}
-                      total={totalPrct()}
-                    />
-                  ))}
-                  {inputs.items.length < nbNotif && <AddNotif onClick={addContent} />}
-                </NotifContainer>
+                {Array.isArray(inputs.items) && (
+                  <NotifContainer>
+                    {inputs.items.map((it, index) => (
+                      <Notif
+                        key={`NOTIF-${index}`}
+                        typeNotif={inputs.type}
+                        item={it}
+                        onClick={() => setSelectedItem(index)}
+                        withDetails
+                        deleteNotif={() => handleDeleteNotif(index)}
+                        editNotif={() => handleEditNotif(index)}
+                        total={totalPrct()}
+                      />
+                    ))}
+                    {inputs.items.length < nbNotif && <AddNotif onClick={addContent} />}
+                  </NotifContainer>
+                )}{' '}
               </Row>
             </FormBodyFull>
           </div>
-          <div>
-            <Phone>
-              <Notif item={inputs.items[selectedItem]} type={inputs.type} />
-            </Phone>
-          </div>
+          {Array.isArray(inputs.items) && (
+            <div>
+              <Phone>
+                <Notif item={inputs.items[selectedItem]} type={inputs.type} />
+              </Phone>
+            </div>
+          )}
         </NotificationContainer>
         <FormFooter>
           {canEdit && id && (
@@ -565,7 +534,7 @@ export function Notif({
   const { t } = useTranslation('notification');
 
   useEffect(() => {
-    const el = document.getElementById('html-content-container');
+    const el = document.getElementById(`html-content-container-${item.id}`);
     setElement(el);
   }, [item]);
 
@@ -587,7 +556,7 @@ export function Notif({
               <Code size={64} />
             </div>
           ) : (
-            <div id="html-content-container" />
+            <div id={`html-content-container-${item.id}`} />
           )}
         </div>
       )}

@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
+
 import {
-  PrimaryButtonStyled,
   NewButtonStyledBlock,
-  SecondaryButtonStyled,
   NewButtonStyledBlockSecondary,
+  PrimaryButtonStyled,
+  SecondaryButtonStyled,
 } from '../styles/Button';
 
 export default function Button({ action, label, value, block, secondary }) {
@@ -13,20 +14,12 @@ export default function Button({ action, label, value, block, secondary }) {
         {label}
       </NewButtonStyledBlockSecondary>
     ) : (
-      <NewButtonStyledBlock onClick={() => action(value)}>
-        {label}
-      </NewButtonStyledBlock>
+      <NewButtonStyledBlock onClick={() => action(value)}>{label}</NewButtonStyledBlock>
     );
   return secondary ? (
-    <SecondaryButtonStyled onClick={() => action(value)}>
-      {' '}
-      {label}{' '}
-    </SecondaryButtonStyled>
+    <SecondaryButtonStyled onClick={() => action(value)}> {label} </SecondaryButtonStyled>
   ) : (
-    <PrimaryButtonStyled onClick={() => action(value)}>
-      {' '}
-      {label}{' '}
-    </PrimaryButtonStyled>
+    <PrimaryButtonStyled onClick={() => action(value)}> {label} </PrimaryButtonStyled>
   );
 }
 

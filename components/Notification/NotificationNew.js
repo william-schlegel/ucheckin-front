@@ -1,8 +1,8 @@
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 
 import { perPage } from '../../config';
@@ -16,6 +16,8 @@ import FieldError from '../FieldError';
 import { Form, FormBodyFull, Label, Row } from '../styles/Card';
 import selectTheme from '../styles/selectTheme';
 import { useNotificationName } from '../Tables/NotificationType';
+import { useUser } from '../User/Queries';
+import { QUERY_APP_FROM_USER, QUERY_SIGNAL_FROM_APP } from './Notification';
 import { ALL_NOTIFICATIONS_QUERY, CREATE_NOTIFICATION_MUTATION } from './Queries';
 
 export default function NotificationNew({ open, onClose }) {
@@ -38,14 +40,58 @@ export default function NotificationNew({ open, onClose }) {
   const initialValues = useRef({
     name: '',
     type: 'simple',
+    appId: '',
+    signalId: '',
   });
   const { inputs, handleChange, validate, validationError } = useForm(initialValues.current, [
     'name',
+    'appId',
+    'signalId',
   ]);
+  const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
+  const [querySignal, { data: dataSig }] = useLazyQuery(QUERY_SIGNAL_FROM_APP);
+  const [optionsAppUser, setOptionsAppUser] = useState([]);
+  const [optionsSignals, setOptionsSignals] = useState([]);
+  const { user } = useUser();
+
+  useEffect(() => {
+    queryAppUser({ variables: { user: user.id } });
+    setOptionsSignals([]);
+  }, [user, queryAppUser]);
+
+  useEffect(() => {
+    if (dataApp?.applications) {
+      setOptionsAppUser(dataApp.applications.map((d) => ({ value: d.id, label: d.name })));
+      setOptionsSignals([]);
+    }
+  }, [dataApp, setOptionsAppUser]);
+
+  function handleChangeApp(app) {
+    handleChange({
+      name: 'appId',
+      value: app?.value,
+    });
+    if (app?.value) {
+      querySignal({ variables: { appId: app.value } });
+    }
+  }
+
+  useEffect(() => {
+    if (dataSig?.signals) {
+      setOptionsSignals(dataSig.signals.map((d) => ({ value: d.id, label: d.name })));
+    }
+  }, [dataSig, setOptionsSignals]);
 
   function handleValidation() {
     if (!validate()) return;
-    createNotification({ variables: inputs }).catch((err) => alert(err.message));
+    createNotification({
+      variables: {
+        name: inputs.name,
+        type: inputs.type,
+        application: { connect: { id: inputs.appId } },
+        signal: { connect: { id: inputs.signalId } },
+      },
+    }).catch((err) => alert(err.message));
     onClose();
   }
 
@@ -83,6 +129,35 @@ export default function NotificationNew({ open, onClose }) {
               <span>{t(`${inputs.type}-desc`)}</span>
             </Row>
           )}
+          <Row>
+            <Label required>{t('application')}</Label>
+            <Select
+              theme={selectTheme}
+              className="select"
+              required
+              value={optionsAppUser.find((n) => n.value === inputs.applicationId)}
+              onChange={(sel) => handleChangeApp(sel)}
+              options={optionsAppUser}
+            />
+            <FieldError error={validationError['applicationId']} />
+          </Row>
+          <Row>
+            <Label required>{t('signal')}</Label>
+            <Select
+              className="select"
+              theme={selectTheme}
+              required
+              value={optionsSignals.find((n) => n.value === inputs.signalId)}
+              onChange={(n) =>
+                handleChange({
+                  name: 'signalId',
+                  value: n.value,
+                })
+              }
+              options={optionsSignals}
+            />
+          </Row>
+          <FieldError error={validationError['signalId']} />
         </FormBodyFull>
       </Form>
       <DrawerFooter>
