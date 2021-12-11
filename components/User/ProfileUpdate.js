@@ -21,7 +21,7 @@ export function UpdatePhoto({ id, photo, onSuccess }) {
       id,
       photo,
     },
-    onCompleted: () => setAction(`update photo user ${id}`),
+    onCompleted: () => setAction('update', 'user', id, 'photo'),
   });
 
   function handleValidation() {
@@ -55,7 +55,7 @@ export function UpdateProfile({ id, updatedProfile, onSuccess }) {
   const displayError = useErrorMessage();
   const { setAction } = useAction();
   const [updateProfile, { loading, error }] = useMutation(UPDATE_PROFILE_MUTATION, {
-    onCompleted: () => setAction(`update profile user ${id}`),
+    onCompleted: () => setAction('update', 'user', id, 'profile'),
   });
   const variables = { id, ...updatedProfile, role: updatedProfile.role.id };
 

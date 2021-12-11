@@ -112,7 +112,7 @@ export default function Account({ id, initialData }) {
   const [deleteTokenMutation, { error: deleteTokenError }] = useMutation(DELETE_TOKEN_MUTATION, {
     refetchQueries: [{ query: QUERY_ACCOUNT, variables: { id } }],
     onCompleted: (data) => {
-      setAction(`delete token ${data.deleteToken.token} for account ${id}`);
+      setAction('delete', 'token', data.deleteToken.token, `for account ${id}`);
       addToast(t('token-deleted'), {
         appearance: 'success',
         autoDismiss: true,

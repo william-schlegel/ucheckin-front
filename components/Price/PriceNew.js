@@ -27,7 +27,7 @@ export default function PriceNew({ open, onClose }) {
         variables: { skip: 0, take: perPage },
       },
     ],
-    onCompleted: (data) => setAction(`create price ${data.createLicensePrice.id}`),
+    onCompleted: (data) => setAction('create', 'price', data.createLicensePrice.id),
   });
   const { licenseTypes } = useLicenseName();
   const { t } = useTranslation('license');

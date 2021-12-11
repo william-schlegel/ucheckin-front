@@ -45,7 +45,7 @@ export default function AcceptInvitation({ token }) {
     CREATE_ACCOUNT_INVITATION,
     {
       onCompleted: (data) => {
-        setAction(`accept invitation ${data.createAccountInvitation.id}`);
+        setAction('accept', 'invitation', data.createAccountInvitation.id);
         router.push('/login');
       },
     }

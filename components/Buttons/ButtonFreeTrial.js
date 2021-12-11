@@ -27,7 +27,7 @@ export default function ButtonFreeTrial({ ownerId, appId, onSuccess, onError }) 
           variables: { skip: 0, take: perPage },
         },
       ],
-      onCompleted: () => setAction(`create trial for app ${appId}`),
+      onCompleted: () => setAction('create', 'trial for app', appId),
     }
   );
   const { t } = useTranslation('license');

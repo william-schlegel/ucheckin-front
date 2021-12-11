@@ -14,7 +14,7 @@ export default function SignOut() {
   const { t } = useTranslation('navigation');
 
   async function handleClick() {
-    setAction('logout');
+    setAction('login', 'logout');
     await signout();
     router.push('/');
   }

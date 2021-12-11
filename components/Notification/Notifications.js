@@ -30,9 +30,7 @@ export default function Notifications() {
   const [queryNotifications, { error, loading, data }] = useLazyQuery(ALL_NOTIFICATIONS_QUERY);
   const [deleteNotification] = useMutation(DELETE_NOTIFICATION_MUTATION, {
     onCompleted: (data) =>
-      setAction(
-        `delete notification ${data.deleteNotification.id} (${data.deleteNotification.name})`
-      ),
+      setAction('delete', 'notification', data.deleteNotification.id, data.deleteNotification.name),
   });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;

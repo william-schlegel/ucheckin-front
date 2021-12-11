@@ -47,7 +47,7 @@ export default function Profile({ id, initialData }) {
   const [updateProfile, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
     UPDATE_PROFILE_MUTATION,
     {
-      onCompleted: () => setAction(`update profile ${id}`),
+      onCompleted: () => setAction('update', 'user', id, 'profile'),
     }
   );
   const { t } = useTranslation('user');

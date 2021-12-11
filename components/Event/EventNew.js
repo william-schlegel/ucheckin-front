@@ -26,7 +26,7 @@ export default function EventNew({ open, onClose }) {
       },
     ],
     onCompleted: (item) => {
-      setAction(`create event ${item.createEvent.id}`);
+      setAction('create', 'event', item.createEvent.id);
       router.push(`/event/${item.createEvent.id}`);
     },
   });

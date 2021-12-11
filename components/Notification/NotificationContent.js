@@ -49,7 +49,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
     UPDATE_NOTIFICATION_ITEM,
     {
       onCompleted: (itm) => {
-        setAction(`update notification item ${itm.updateNotificationItem.id}`);
+        setAction('update', 'notification item', itm.updateNotificationItem.id);
         onClose(itm.updateNotificationItem);
       },
       refetchQueries: [
@@ -64,7 +64,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
     CREATE_NOTIFICATION_ITEM,
     {
       onCompleted: (itm) => {
-        setAction(`create notification item ${itm.createNotificationItem.id}`);
+        setAction('create', 'notification item', itm.createNotificationItem.id);
         onClose(itm.createNotificationItem);
       },
     }

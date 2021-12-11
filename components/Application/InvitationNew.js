@@ -19,7 +19,7 @@ export default function InvitationNew({ appId, open, onClose }) {
   const { setAction } = useAction();
   const [addInvitation, { loading, error }] = useMutation(CREATE_INVITATION_MUTATION, {
     onCompleted: (item) => {
-      setAction(`create invitation ${item.addInvitation.id}`);
+      setAction('create', 'invitation', item.addInvitation.id);
       onClose(item.addInvitation);
     },
   });

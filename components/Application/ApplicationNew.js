@@ -26,7 +26,7 @@ export default function ApplicationNew({ open, onClose }) {
         variables: { skip: 0, take: perPage },
       },
     ],
-    onCompleted: (data) => setAction(`create application ${data.createApplication.id}`),
+    onCompleted: (data) => setAction('create', 'application', data.createApplication.id),
   });
   const { t } = useTranslation('application');
   const initialValues = useRef({

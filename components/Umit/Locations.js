@@ -31,7 +31,7 @@ export default function Locations() {
   const [deleteLocationMutation, { error: errorDelete }] = useMutation(DELETE_LOCATION_MUTATION, {
     refetchQueries: [{ query: ALL_LOCATIONS_QUERY }],
     onCompleted: (data) => {
-      setAction(`delete location ${data.deleteUmitLocation.id} (${data.deleteUmitLocation.name})`);
+      setAction('delete', 'location', data.deleteUmitLocation.id, data.deleteUmitLocation.name);
       router.reload();
     },
   });

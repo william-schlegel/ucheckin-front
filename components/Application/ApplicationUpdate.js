@@ -13,7 +13,7 @@ function update(cache, payload) {
 export default function UpdateApplication({ id, updatedApp, onSuccess }) {
   const { setAction } = useAction();
   const [updateApplication, { loading, error }] = useMutation(UPDATE_APPLICATION_MUTATION, {
-    onCompleted: (data) => setAction(`update application ${data.updateApplication.id}`),
+    onCompleted: (data) => setAction('update', 'application', data.updateApplication.id),
   });
 
   const { name, apiKey, owner, invitations, licenseTypes } = updatedApp;

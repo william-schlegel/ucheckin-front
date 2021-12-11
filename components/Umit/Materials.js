@@ -30,7 +30,7 @@ export default function Materials() {
   const [deleteMaterialMutation, { error: errorDelete }] = useMutation(DELETE_MATERIAL_MUTATION, {
     refetchQueries: [{ query: ALL_MATERIALS_QUERY }],
     onCompleted: (data) => {
-      setAction(`delete material ${data.deleteUmitMaterial.id} (${data.deleteUmitMaterial.name})`);
+      setAction('delete', 'material', data.deleteUmitMaterial.id, data.deleteUmitMaterial.name);
 
       router.reload();
     },

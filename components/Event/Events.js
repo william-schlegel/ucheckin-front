@@ -30,8 +30,7 @@ export default function Events() {
     useLazyQuery(PAGINATION_QUERY);
   const [queryEvents, { error, loading, data }] = useLazyQuery(ALL_EVENTS_QUERY);
   const [deleteEvent] = useMutation(DELETE_EVENT_MUTATION, {
-    onCompleted: (data) =>
-      setAction(`delete event ${data.deleteEvent.id} (${data.deleteEvent.name})`),
+    onCompleted: (data) => setAction('delete', 'event', data.deleteEvent.id, data.deleteEvent.name),
   });
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;

@@ -95,7 +95,10 @@ export default function Notification({ id, initialData }) {
       variables: { id },
       onCompleted: (data) => {
         setAction(
-          `delete notification ${data.deleteNotification.id} (${data.deleteNotification.name})`
+          'delete',
+          'notification',
+          data.deleteNotification.id,
+          data.deleteNotification.name
         );
         router.push('/notifications');
       },
@@ -105,7 +108,7 @@ export default function Notification({ id, initialData }) {
     UPDATE_NOTIFICATION_MUTATION,
     {
       onCompleted: () => {
-        setAction(`update notification ${id}`);
+        setAction('update', 'notification', id);
         router.push('/notifications');
       },
     }
@@ -114,7 +117,7 @@ export default function Notification({ id, initialData }) {
     DELETE_NOTIFICATION_ITEM,
     {
       onCompleted: (data) =>
-        setAction(`delete notification content ${data.deleteNotificationItem.id}`),
+        setAction('delete', 'notification item', data.deleteNotificationItem.id),
     }
   );
 

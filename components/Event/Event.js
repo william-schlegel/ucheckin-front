@@ -63,7 +63,7 @@ export default function Event({ id, initialData }) {
     {
       variables: { id },
       onCompleted: (data) => {
-        setAction(`delete event ${data.deleteEvent.id} (${data.deleteEvent.name})`);
+        setAction('delete', 'event', data.deleteEvent.id, data.deleteEvent.name);
         router.push('/events');
       },
     }
@@ -72,7 +72,7 @@ export default function Event({ id, initialData }) {
     UPDATE_EVENT_MUTATION,
     {
       onCompleted: () => {
-        setAction(`update event ${id}`);
+        setAction('update', 'event', id);
         router.push('/events');
       },
     }

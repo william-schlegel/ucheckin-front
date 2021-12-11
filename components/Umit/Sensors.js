@@ -27,7 +27,7 @@ export default function Sensors() {
   const [deleteSensorMutation, { error: errorDelete }] = useMutation(DELETE_SENSOR_MUTATION, {
     refetchQueries: [{ query: ALL_SENSORS_QUERY }],
     onCompleted: (data) => {
-      setAction(`delete sensor ${data.deleteUmitSensor.id} (${data.deleteUmitSensor.name})`);
+      setAction('delete', 'sensor', data.deleteUmitSensor.id, data.deleteUmitSensor.name);
       router.reload();
     },
   });

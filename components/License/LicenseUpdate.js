@@ -35,7 +35,7 @@ import { UPDATE_LICENSE_MUTATION, useFindLicense } from './Queries';
 export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId, signalId }) {
   const { setAction } = useAction();
   const [updateLicense, { loading, error }] = useMutation(UPDATE_LICENSE_MUTATION, {
-    onCompleted: () => setAction(`update license ${licenseId}`),
+    onCompleted: () => setAction('update', 'license', licenseId),
   });
   const { license, licenseLoading, licenseError } = useFindLicense(licenseId);
   const { user } = useFindUser(ownerId);

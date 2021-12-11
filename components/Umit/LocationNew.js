@@ -32,7 +32,7 @@ export default function LocationNew({ open, onClose, id }) {
           variables: { skip: 0, take: perPage },
         },
       ],
-      onCompleted: (data) => setAction(`create location ${data.createUmitLocation.id}`),
+      onCompleted: (data) => setAction('create', 'location', data.createUmitLocation.id),
     }
   );
   const [updateLocation, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
@@ -44,7 +44,7 @@ export default function LocationNew({ open, onClose, id }) {
           variables: { skip: 0, take: perPage },
         },
       ],
-      onCompleted: (data) => setAction(`update notification content ${data.updateUmitLocation.id}`),
+      onCompleted: (data) => setAction('update', 'location', data.updateUmitLocation.id),
     }
   );
   const { t } = useTranslation('umit');

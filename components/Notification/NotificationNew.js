@@ -31,7 +31,7 @@ export default function NotificationNew({ open, onClose }) {
       },
     ],
     onCompleted: (item) => {
-      setAction(`create notification item ${item.createNotification.id}`);
+      setAction('create', 'notification item', item.createNotification.id);
       router.push(`/notification/${item.createNotification.id}`);
     },
   });

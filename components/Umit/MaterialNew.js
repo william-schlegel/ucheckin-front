@@ -33,7 +33,7 @@ export default function MaterialNew({ open, onClose, id }) {
           variables: { skip: 0, take: perPage },
         },
       ],
-      onCompleted: (data) => setAction(`create material ${data.createUmitMaterial.id}`),
+      onCompleted: (data) => setAction('create', 'material', data.createUmitMaterial.id),
     }
   );
   const [updateMaterial, { loading: loadingUpdate, error: errorUpdate }] = useMutation(
@@ -45,7 +45,7 @@ export default function MaterialNew({ open, onClose, id }) {
           variables: { skip: 0, take: perPage },
         },
       ],
-      onCompleted: (data) => setAction(`create material ${data.updateUmitMaterial.id}`),
+      onCompleted: (data) => setAction('create', 'material', data.updateUmitMaterial.id),
     }
   );
 

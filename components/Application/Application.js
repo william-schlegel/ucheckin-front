@@ -66,9 +66,7 @@ export default function Application({ id, initialData }) {
         },
       ],
       onCompleted: (data) => {
-        setAction(
-          `delete application ${data.deleteApplication.id} (${data.deleteApplication.name})`
-        );
+        setAction('delete', 'application', data.deleteApplication.id, data.deleteApplication.name);
         router.push('/applications');
       },
     }
@@ -83,7 +81,7 @@ export default function Application({ id, initialData }) {
         },
       ],
       onCompleted: () => {
-        setAction(`update application ${data.updateApplication.id}`);
+        setAction('update', 'application', data.updateApplication.id);
         router.push('/applications');
       },
     }
@@ -106,7 +104,7 @@ export default function Application({ id, initialData }) {
   const [showAddInvit, setShowAddInvit] = useState(false);
   const [deleteInvitation, { error: errorDI }] = useMutation(DELETE_INVITATION, {
     onCompleted: (item) => {
-      setAction(`delete invitation ${item.deleteInvitation.id}`);
+      setAction('delete', 'invitation', item.deleteInvitation.id);
       const invitations = inputs.invitations.filter((i) => i.id !== item.deleteInvitation.id);
       setInputs((prev) => ({ ...prev, invitations }));
     },

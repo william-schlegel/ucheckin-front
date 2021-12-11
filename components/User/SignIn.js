@@ -33,9 +33,14 @@ export default function SignInForm() {
     // refetch the currently logged in user
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
     onCompleted: (data) => {
-      console.log(`data`, data);
-      setAction('login', data?.authenticateUserWithPassword?.item?.id);
-      router.push('/');
+      setAction(
+        'login',
+        'login',
+        data?.authenticateUserWithPassword?.item?.id,
+        navigator?.userAgent,
+        data?.authenticateUserWithPassword?.item?.id
+      );
+      setTimeout(() => router.push('/'), 1000);
     },
   });
   const [showSignUp, setShowSignup] = useState(false);
