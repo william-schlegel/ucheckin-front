@@ -55,7 +55,7 @@ export default function Invoices() {
     { field: 'paid.equals', label: t('paid'), type: 'switch' },
     { field: 'canceled.equals', label: t('canceled'), type: 'switch' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
   const [printInvoiceOk, setPrintInvoiceOk] = useState('');
   const printRef = useRef();
   const handlePrintInvoice = useReactToPrint({ content: () => printRef.current });
@@ -187,7 +187,7 @@ export default function Invoices() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageOrder}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.orders}

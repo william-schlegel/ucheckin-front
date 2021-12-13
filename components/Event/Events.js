@@ -42,7 +42,7 @@ export default function Events() {
     { field: 'name.contains', label: t('name'), type: 'text' },
     { field: 'description.contains', label: t('description'), type: 'text' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
   const [newEvent, setNewEvent] = useState(false);
 
   function handleCloseNewEvent() {
@@ -146,7 +146,7 @@ export default function Events() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageEvent}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.events}

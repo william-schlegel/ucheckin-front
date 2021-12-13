@@ -91,8 +91,11 @@ export default function Licenses() {
   const [selectedLicense, setSelectedLicense] = useState({});
   const [showUpdateLicense, setShowUpdateLicense] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('license');
-  const searchFields = [{ field: 'owner.name.contains', label: t('common:owner'), type: 'text' }];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const searchFields = [
+    { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
+    // { field: 'valid.equals', label: 'valid', type: 'switch' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
@@ -213,7 +216,7 @@ export default function Licenses() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageLicense}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={state.licenses.map((l) => ({

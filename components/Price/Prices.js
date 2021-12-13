@@ -25,10 +25,8 @@ export default function Prices() {
   const router = useRouter();
   const { user } = useUser();
 
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_PRICE_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_PRICE_QUERY);
   const [queryPrices, { error, loading, data }] = useLazyQuery(ALL_PRICES_QUERY);
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
@@ -39,7 +37,7 @@ export default function Prices() {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('license-price');
 
   const searchFields = [{ field: 'owner.name.contains', label: t('common:owner'), type: 'text' }];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
@@ -112,7 +110,7 @@ export default function Prices() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManagePrice}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.licensePrices}
@@ -132,7 +130,8 @@ function Check() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
-      }}>
+      }}
+    >
       <CheckCircle style={{ color: 'green' }} />
     </div>
   );

@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { Search } from 'react-feather';
+import { Search, X } from 'react-feather';
 import Switch from 'react-switch';
 import styled from 'styled-components';
 
@@ -70,6 +70,18 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
     setFilters(nFilter);
   }
 
+  function handleSearch() {
+    onFilterChange(filters);
+    closeSearch();
+  }
+
+  function getSwitchFilterValue(field) {
+    const flt = filters.find((f) => f.field === field.field);
+    let ret = 'undefined';
+    if (typeof flt?.value === 'boolean') ret = flt.value ? 'checked' : 'unchecked';
+    return ret;
+  }
+
   return (
     <>
       {isAdmin && (
@@ -106,13 +118,13 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
                         type: field.type,
                       })
                     }
-                    value={filters.find((f) => f.field === field.field)?.value || 'undefined'}
+                    value={getSwitchFilterValue(field)}
                   />
                 )}
               </BlockShort>
             ))}
             <BlockShort>
-              <SecondaryButtonStyled onClick={() => onFilterChange(filters)}>
+              <SecondaryButtonStyled onClick={handleSearch}>
                 <Search />
                 <span>{t('start-search')}</span>
               </SecondaryButtonStyled>
@@ -141,7 +153,7 @@ SearchField.propTypes = {
   showFilter: PropTypes.bool,
 };
 
-export function ActualFilter({ fields, actualFilter = {} }) {
+export function ActualFilter({ fields, actualFilter = {}, removeFilters = () => {} }) {
   function getFilter(af) {
     let v = Object.values(af[1]);
     let op = Object.keys(af[1]);
@@ -168,6 +180,11 @@ export function ActualFilter({ fields, actualFilter = {} }) {
       {actualFilter.AND
         ? actualFilter.AND.map((af) => getFilter(Object.entries(af)[0]))
         : Object.entries(actualFilter).map((af) => getFilter(af))}
+      {Object.entries(actualFilter).length > 0 ? (
+        <Badge onClick={removeFilters}>
+          <X size={24} />
+        </Badge>
+      ) : null}
     </BadgeList>
   );
 }
@@ -201,7 +218,11 @@ export function useFilter() {
     });
   }
 
-  return { showFilter, setShowFilter, filters, handleNewFilter };
+  function resetFilters() {
+    setFilters(null);
+  }
+
+  return { showFilter, setShowFilter, filters, handleNewFilter, resetFilters };
 }
 
 const SwitchContainer = styled.div`

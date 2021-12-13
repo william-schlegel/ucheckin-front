@@ -42,8 +42,9 @@ export default function Notifications() {
   const searchFields = [
     { field: 'name.contains', label: t('name'), type: 'text' },
     { field: 'displayName.contains', label: t('display-name'), type: 'text' },
+    { field: 'signal.name.contains', label: t('signal'), type: 'text' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
   const [newNotification, setNewNotification] = useState(false);
   const { Confirm, setIsOpen, setArgs } = useConfirm({
     title: t('confirm-delete'),
@@ -150,7 +151,7 @@ export default function Notifications() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageNotification}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.notifications}

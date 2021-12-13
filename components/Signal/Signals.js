@@ -42,7 +42,7 @@ export default function Signals() {
     { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
     { field: 'active.equals', label: t('active'), type: 'switch' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
@@ -153,7 +153,7 @@ export default function Signals() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageSignal}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.signals}

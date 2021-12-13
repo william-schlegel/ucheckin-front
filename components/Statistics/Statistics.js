@@ -19,10 +19,8 @@ import StatisticDetails from './StatisticDetails';
 
 export default function Statistics() {
   const router = useRouter();
-  const [
-    queryPagination,
-    { error: errorPage, loading: loadingPage, data: dataPage },
-  ] = useLazyQuery(PAGINATION_QUERY);
+  const [queryPagination, { error: errorPage, loading: loadingPage, data: dataPage }] =
+    useLazyQuery(PAGINATION_QUERY);
   const [queryStatistics, { error, loading, data }] = useLazyQuery(ALL_STATISTICS_QUERY);
 
   const page = parseInt(router.query.page) || 1;
@@ -36,7 +34,7 @@ export default function Statistics() {
     { field: 'date.gte', label: t('start-date'), type: 'date' },
     { field: 'date.lte', label: t('end-date'), type: 'date' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
@@ -101,7 +99,7 @@ export default function Statistics() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageStatistic}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.statistics}

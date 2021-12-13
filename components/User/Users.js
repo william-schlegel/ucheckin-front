@@ -34,7 +34,7 @@ export default function Users() {
     { field: 'email.contains', label: t('common:email'), type: 'text' },
     { field: 'company.contains', label: t('company'), type: 'text' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
@@ -108,7 +108,7 @@ export default function Users() {
         onClose={() => setShowFilter(false)}
         onFilterChange={handleNewFilter}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.users}

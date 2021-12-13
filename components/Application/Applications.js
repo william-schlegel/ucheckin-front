@@ -40,7 +40,7 @@ export default function Applications() {
     { field: 'name.contains', label: t('common:name'), type: 'text' },
     { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter } = useFilter();
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
@@ -140,7 +140,7 @@ export default function Applications() {
         onFilterChange={handleNewFilter}
         isAdmin={user.role?.canManageApplication}
       />
-      <ActualFilter fields={searchFields} actualFilter={filters} />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data.applications}
