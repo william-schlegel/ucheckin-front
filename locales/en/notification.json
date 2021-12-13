@@ -36,5 +36,6 @@
   "you-confirm": "Do you really want to delete this notification?",
   "yes-delete": "Yes",
   "no-delete": "No",
-  "notification-placeholder": "text to display in the notification"
+  "notification-placeholder": "text to display in the notification",
+  "icon": "Notification icon"
 }

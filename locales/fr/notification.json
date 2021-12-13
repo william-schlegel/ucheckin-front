@@ -36,5 +36,6 @@
   "you-confirm": "Voulez-vous vraiment supprimer cette notification ?",
   "yes-delete": "Oui",
   "no-delete": "Non",
-  "notification-placeholder": "texte à afficher dna la notification"
+  "notification-placeholder": "texte à afficher dna la notification",
+  "icon": "Icon notification"
 }

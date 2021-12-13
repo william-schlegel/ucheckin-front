@@ -29,13 +29,16 @@ export const ALL_NOTIFICATIONS_QUERY = gql`
         id
         name
       }
+      icon {
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
+      }
       items {
         id
         name
         displayType
-        #   image {
-        #     publicUrlTransformed(transformation: { width: "200", height: "200" })
-        #   }
+        icon {
+          publicUrlTransformed(transformation: { width: "200", height: "200" })
+        }
       }
     }
   }
@@ -62,13 +65,23 @@ export const NOTIFICATION_QUERY = gql`
         id
         name
       }
+      icon {
+        publicUrlTransformed(transformation: { width: "200", height: "200" })
+      }
       items {
+        icon {
+          publicUrlTransformed(transformation: { width: "200", height: "200" })
+        }
+
         id
         displayType
         image {
           publicUrlTransformed(transformation: { width: "200", height: "400" })
         }
         imageLink
+        icon {
+          publicUrlTransformed(transformation: { width: "200", height: "200" })
+        }
         htmlContent {
           document
         }
@@ -103,6 +116,7 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
     $owner: UserRelateToOneForUpdateInput
     $application: ApplicationRelateToOneForUpdateInput
     $signal: SignalRelateToOneForUpdateInput
+    $icon: Upload
   ) {
     updateNotification(
       where: { id: $id }
@@ -115,6 +129,7 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
         endDate: $endDate
         application: $application
         signal: $signal
+        icon: $icon
       }
     ) {
       id
@@ -132,6 +147,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
     $owner: UserRelateToOneForCreateInput
     $application: ApplicationRelateToOneForCreateInput
     $signal: SignalRelateToOneForCreateInput
+    $icon: Upload
   ) {
     createNotification(
       data: {
@@ -143,6 +159,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
         endDate: $endDate
         application: $application
         signal: $signal
+        icon: $icon
       }
     ) {
       id

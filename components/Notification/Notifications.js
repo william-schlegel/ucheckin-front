@@ -14,6 +14,7 @@ import Loading from '../Loading';
 import Pagination from '../Pagination';
 import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
+import Image from '../Tables/Image';
 import NotificationType from '../Tables/NotificationType';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
@@ -74,6 +75,7 @@ export default function Notifications() {
 
   const columns = useColumns([
     ['id', 'id', 'hidden'],
+    [t('icon'), 'icon', ({ cell: { value } }) => <Image image={value} size={40} />],
     [t('name'), 'name'],
     [t('display-name'), 'displayName'],
     [t('type'), 'type', ({ cell: { value } }) => <NotificationType notification={value} />],

@@ -19,6 +19,7 @@ import {
   RowReadOnly,
   Separator,
 } from '../styles/Card';
+import Image from '../Tables/Image';
 import NotificationType from '../Tables/NotificationType';
 import ValidityDate from '../Tables/ValidityDate';
 import { Notif } from './Notification';
@@ -43,6 +44,10 @@ export default function NotificationDetails({ open, onClose, id }) {
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
+          <RowReadOnly>
+            <Label>{t('icon')}</Label>
+            <Image image={data.notification.icon} size={100} border />
+          </RowReadOnly>
           <RowReadOnly>
             <Label>{t('name')}</Label>
             <span>{data.notification.name}</span>

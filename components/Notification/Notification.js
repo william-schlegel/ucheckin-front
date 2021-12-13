@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { useLazyQuery, useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
+import isEmpty from 'lodash.isempty';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { Code, PlusCircle, Youtube } from 'react-feather';
 import Select from 'react-select';
 import styled from 'styled-components';
@@ -41,8 +43,10 @@ import {
   RowReadOnly,
   Separator,
 } from '../styles/Card';
+import { ImageSelection } from '../styles/ImageSelection';
 import Phone from '../styles/Phone';
 import selectTheme from '../styles/selectTheme';
+import Image from '../Tables/Image';
 import NotificationType, { useNotificationName } from '../Tables/NotificationType';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
@@ -150,6 +154,21 @@ export default function Notification({ id, initialData }) {
     noLabel: t('no-delete'),
   });
 
+  const onDrop = (acceptedFile) => {
+    const file = acceptedFile[0];
+    const preview = URL.createObjectURL(file);
+    handleChange({
+      name: 'icon',
+      value: Object.assign(file, { publicUrlTransformed: preview }),
+    });
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: 'image/jpeg, image/png',
+    multiple: false,
+  });
+
   useEffect(() => {
     if (userRole) {
       setCanEdit(userRole?.canManageApplication || notifOwnerId === userId);
@@ -241,6 +260,7 @@ export default function Notification({ id, initialData }) {
       newInputs.application = { connect: { id: newInputs.application.id } };
     if (wasTouched('signal.id')) newInputs.signal = { connect: { id: newInputs.signal.id } };
     newInputs.id = id;
+    if (isEmpty(newInputs.icon)) delete newInputs.icon;
     return updateNotification({
       update: (cache, payload) => cache.evict(cache.identify(payload.data.updateNotification)),
       variables: newInputs,
@@ -415,6 +435,17 @@ export default function Notification({ id, initialData }) {
                     />
                   </Row>
                   <FieldError error={validationError['signal.id']} />
+                  <Row>
+                    <IconContainer>
+                      <ImageSelection>
+                        <div {...getRootProps({ className: 'dropzone' })}>
+                          <input {...getInputProps()} />
+                          <p>{t('icon')} (512x512px)</p>
+                        </div>
+                      </ImageSelection>
+                      <Image image={inputs.icon} size={100} border />
+                    </IconContainer>
+                  </Row>
                 </>
               ) : (
                 <>
@@ -454,6 +485,9 @@ export default function Notification({ id, initialData }) {
                   <RowReadOnly>
                     <Label>{t('signal')}</Label>
                     <span>{inputs.signal?.name}</span>
+                  </RowReadOnly>
+                  <RowReadOnly>
+                    <Image image={inputs.icon} size={100} border />
                   </RowReadOnly>
                 </>
               )}
@@ -522,6 +556,13 @@ Notification.propTypes = {
   id: PropTypes.string,
   initialData: PropTypes.object,
 };
+
+const IconContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr minmax(100px, 1fr);
+  align-items: center;
+  width: 100%;
+`;
 
 export function Notif({
   item,
