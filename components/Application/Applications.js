@@ -48,7 +48,7 @@ export default function Applications() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryApplications({ variables });
   }, [filters, queryPagination, queryApplications, page]);
 

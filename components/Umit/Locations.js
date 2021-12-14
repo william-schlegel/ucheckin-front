@@ -48,7 +48,7 @@ export default function Locations() {
       skip: (page - 1) * perPage,
       take: perPage,
     };
-    queryPagination();
+    queryPagination({ variables });
     queryLocations({ variables });
   }, [queryPagination, queryLocations, page]);
 

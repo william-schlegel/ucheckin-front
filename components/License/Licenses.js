@@ -93,6 +93,8 @@ export default function Licenses() {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('license');
   const searchFields = [
     { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
+    { field: 'signal.name.contains', label: t('associated-signal'), type: 'text' },
+    { field: 'application.name.contains', label: t('associated-application'), type: 'text' },
     // { field: 'valid.equals', label: 'valid', type: 'switch' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
@@ -103,7 +105,7 @@ export default function Licenses() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryLicenses({ variables });
   }, [filters, queryPagination, queryLicenses, page]);
 

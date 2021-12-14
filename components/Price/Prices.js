@@ -45,7 +45,7 @@ export default function Prices() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryPrices({ variables });
   }, [filters, queryPagination, queryPrices, page]);
 

@@ -40,6 +40,7 @@ export default function Signals() {
   const searchFields = [
     { field: 'name.contains', label: t('signal'), type: 'text' },
     { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
+    { field: 'notification.name.contains', label: t('notification'), type: 'text' },
     { field: 'active.equals', label: t('active'), type: 'switch' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
@@ -50,7 +51,7 @@ export default function Signals() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     querySignals({ variables });
   }, [filters, queryPagination, querySignals, page]);
 

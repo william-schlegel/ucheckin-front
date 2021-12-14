@@ -55,7 +55,7 @@ export default function Events() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryEvents({ variables });
   }, [filters, queryPagination, queryEvents, page]);
 

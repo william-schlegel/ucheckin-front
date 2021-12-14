@@ -42,7 +42,7 @@ export default function Statistics() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryStatistics({ variables });
   }, [filters, queryPagination, queryStatistics, page]);
 

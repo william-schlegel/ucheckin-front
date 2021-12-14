@@ -47,7 +47,7 @@ export default function Materials() {
       skip: (page - 1) * perPage,
       take: perPage,
     };
-    queryPagination();
+    queryPagination({ variables });
     queryMaterials({ variables });
   }, [queryPagination, queryMaterials, page]);
 

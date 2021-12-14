@@ -11,9 +11,11 @@ import DisplayError from '../ErrorMessage';
 import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
+import { useUser } from '../User/Queries';
 import { ALL_SENSORS_QUERY, DELETE_SENSOR_MUTATION, PAGINATION_SENSOR_QUERY } from './Queries';
 import SensorChart from './SensorChart';
 import SensorDetail from './SensorDetail';
@@ -37,15 +39,25 @@ export default function Sensors() {
   const [showSensor, setShowSensor] = useState('');
   const [showChart, setShowChart] = useState('');
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
+  const { user } = useUser();
+  const searchFields = [
+    { field: 'company.contains', label: t('company'), type: 'text' },
+    { field: 'name.contains', label: t('sensor-name'), type: 'text' },
+    { field: 'building.contains', label: t('building'), type: 'text' },
+    { field: 'unit.contains', label: t('unit'), type: 'text' },
+    { field: 'ref.contains', label: t('ref'), type: 'text' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useEffect(() => {
     const variables = {
       skip: (page - 1) * perPage,
       take: perPage,
     };
-    queryPagination();
+    if (filters) variables.where = filters;
+    queryPagination({ variables });
     querySensors({ variables });
-  }, [queryPagination, querySensors, page]);
+  }, [queryPagination, querySensors, page, filters]);
 
   const columns = useColumns([
     ['id', 'id', 'hidden'],
@@ -121,7 +133,17 @@ export default function Sensors() {
         loading={loadingPage}
         count={count}
         pageRef="umit/sensors"
+        withFilter
+        setShowFilter={setShowFilter}
       />
+      <SearchField
+        fields={searchFields}
+        showFilter={showFilter}
+        onClose={() => setShowFilter(false)}
+        onFilterChange={handleNewFilter}
+        isAdmin={user.role?.canManageUmit}
+      />
+      <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
       <Table
         columns={columns}
         data={data?.umitSensors}

@@ -12,11 +12,13 @@ import DisplayError from '../ErrorMessage';
 import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
 import Pagination from '../Pagination';
+import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import { Block, FormBody, Label, RowFull } from '../styles/Card';
 import EntetePage from '../styles/EntetePage';
 import selectTheme from '../styles/selectTheme';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
+import { useUser } from '../User/Queries';
 import MeasureDetails from './MeasureDetail';
 import { ALL_LOCATIONS_QUERY, ALL_MEASURES_QUERY, PAGINATION_MEASURE_QUERY } from './Queries';
 
@@ -35,6 +37,15 @@ export default function Measures() {
   const [locations, setLocations] = useState([{ value: 'all', label: t('all') }]);
   const [location, setLocation] = useState(0);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
+  const { user } = useUser();
+  const searchFields = [
+    { field: 'company.contains', label: t('company'), type: 'text' },
+    { field: 'sensor.name.contains', label: t('sensor-name'), type: 'text' },
+    { field: 'sensor.building.contains', label: t('building'), type: 'text' },
+    { field: 'sensor.unit.contains', label: t('unit'), type: 'text' },
+    { field: 'sensor.ref.contains', label: t('ref'), type: 'text' },
+  ];
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 
   useQuery(ALL_LOCATIONS_QUERY, {
     onCompleted: (data) =>
@@ -66,10 +77,10 @@ export default function Measures() {
     if (locations[location].value !== 'all') {
       variables.where.AND.push({ location: { id: { equals: locations[location].value } } });
     }
-    console.log(`variables`, variables);
-    queryPagination();
+    if (filters) variables.where.AND.push(filters);
+    queryPagination({ variables });
     queryMeasures({ variables });
-  }, [queryPagination, queryMeasures, page, location, locations, dtDeb, dtFin]);
+  }, [queryPagination, queryMeasures, page, location, locations, dtDeb, dtFin, filters]);
 
   const columns = useColumns([
     ['id', 'id', 'hidden'],
@@ -124,54 +135,65 @@ export default function Measures() {
         <HelpButton showHelp={toggleHelpVisibility} />
       </EntetePage>
       <MeasureLayout>
-        <FormBody style={{ display: 'flex', width: '100%', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', minWidth: '30%', alignItems: 'center' }}>
-            <Label>{t('location')}</Label>
-            <Select
-              theme={selectTheme}
-              className="select"
-              value={locations[location]}
-              onChange={(sel) => setLocation(locations.findIndex((a) => a.value === sel.value))}
-              options={locations}
-            />
-          </div>
-          <RowFull>
-            <Block>
-              <Label htmlFor="startDate">{t('start-date')} </Label>
-              <DatePicker
-                id="startDate"
-                ISOStringValue={dtDeb}
-                onChange={(dt) => setDtDeb(dt.toISOString())}
-              />
-            </Block>
-          </RowFull>
-          <RowFull>
-            <Block>
-              <Label htmlFor="endDate">{t('end-date')} </Label>
-              <DatePicker
-                id="endDate"
-                ISOStringValue={dtFin}
-                onChange={(dt) => setDtFin(dt.toISOString())}
-              />
-            </Block>
-          </RowFull>
-        </FormBody>
         <div>
-          <Pagination
-            page={page}
-            error={errorPage}
-            loading={loadingPage}
-            count={count}
-            pageRef="umit/measures"
-          />
-          <Table
-            columns={columns}
-            data={data?.umitMeasures}
-            error={error}
-            loading={loading}
-            actionButtons={[{ type: 'view', action: viewMeasure }]}
-          />
+          <FormBody style={{ display: 'flex', width: '100%', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', minWidth: '30%', alignItems: 'center' }}>
+              <Label>{t('location')}</Label>
+              <Select
+                theme={selectTheme}
+                className="select"
+                value={locations[location]}
+                onChange={(sel) => setLocation(locations.findIndex((a) => a.value === sel.value))}
+                options={locations}
+              />
+            </div>
+            <RowFull>
+              <Block>
+                <Label htmlFor="startDate">{t('start-date')} </Label>
+                <DatePicker
+                  id="startDate"
+                  ISOStringValue={dtDeb}
+                  onChange={(dt) => setDtDeb(dt.toISOString())}
+                />
+              </Block>
+            </RowFull>
+            <RowFull>
+              <Block>
+                <Label htmlFor="endDate">{t('end-date')} </Label>
+                <DatePicker
+                  id="endDate"
+                  ISOStringValue={dtFin}
+                  onChange={(dt) => setDtFin(dt.toISOString())}
+                />
+              </Block>
+            </RowFull>
+          </FormBody>
         </div>
+        <Pagination
+          page={page}
+          error={errorPage}
+          loading={loadingPage}
+          count={count}
+          pageRef="umit/measures"
+          withFilter
+          setShowFilter={setShowFilter}
+        />
+        <SearchField
+          fields={searchFields}
+          showFilter={showFilter}
+          onClose={() => setShowFilter(false)}
+          onFilterChange={handleNewFilter}
+          isAdmin={user.role?.canManageUmit}
+        />
+        <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
+
+        <Table
+          columns={columns}
+          data={data?.umitMeasures}
+          error={error}
+          loading={loading}
+          actionButtons={[{ type: 'view', action: viewMeasure }]}
+        />
       </MeasureLayout>
     </>
   );

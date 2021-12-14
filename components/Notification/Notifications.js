@@ -61,7 +61,7 @@ export default function Notifications() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryNotifications({ variables });
   }, [filters, queryPagination, queryNotifications, page]);
 

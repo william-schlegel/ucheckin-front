@@ -52,6 +52,7 @@ export default function Invoices() {
 
   const searchFields = [
     { field: 'owner.name.contains', label: t('user'), type: 'text' },
+    { field: 'number.contains', label: t('number'), type: 'text' },
     { field: 'paid.equals', label: t('paid'), type: 'switch' },
     { field: 'canceled.equals', label: t('canceled'), type: 'switch' },
   ];
@@ -66,7 +67,7 @@ export default function Invoices() {
       take: perPage,
     };
     if (filters) variables.where = filters;
-    queryPagination({ variables: filters });
+    queryPagination({ variables });
     queryOrders({ variables });
   }, [filters, queryPagination, queryOrders, page]);
 

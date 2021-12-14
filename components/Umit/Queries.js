@@ -1,26 +1,26 @@
 import gql from 'graphql-tag';
 
 export const PAGINATION_LOCATION_QUERY = gql`
-  query PAGINATION_LOCATION_QUERY {
-    count: umitLocationsCount
+  query PAGINATION_LOCATION_QUERY($where: UmitLocationWhereInput) {
+    count: umitLocationsCount(where: $where)
   }
 `;
 
 export const PAGINATION_MATERIAL_QUERY = gql`
-  query PAGINATION_MATERIAL_QUERY {
-    count: umitMaterialsCount
+  query PAGINATION_MATERIAL_QUERY($where: UmitMaterialWhereInput) {
+    count: umitMaterialsCount(where: $where)
   }
 `;
 
 export const PAGINATION_SENSOR_QUERY = gql`
-  query PAGINATION_SENSOR_QUERY {
-    count: umitSensorsCount
+  query PAGINATION_SENSOR_QUERY($where: UmitSensorWhereInput) {
+    count: umitSensorsCount(where: $where)
   }
 `;
 
 export const PAGINATION_MEASURE_QUERY = gql`
-  query PAGINATION_MEASURE_QUERY {
-    count: umitMeasuresCount
+  query PAGINATION_MEASURE_QUERY($where: UmitMeasureWhereInput) {
+    count: umitMeasuresCount(where: $where)
   }
 `;
 
