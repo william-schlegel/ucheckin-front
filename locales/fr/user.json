@@ -50,5 +50,14 @@
   "umit-menu": "Je gère des UMITs",
   "ucheckin-menu": "J'utilise le SDK UcheckIn",
   "app-menu": "J'utilise un SDK d'application mobile",
-  "created-at": "Créé le"
+  "created-at": "Créé le",
+  "reset-pwd": "Réinitialisation de votre mot de passe",
+  "reset-pwd-success": "Mot de passe réinitialisé avec succès, vous pouvez maintenant vous reconnecter",
+  "reset-email": "Votre email",
+  "reset-new-password": "Nouveau mot de passe",
+  "reset-verify-password": "Confirmez votre mot de passe",
+  "verify-password": "Votre mot de passe (de nouveau)",
+  "reset-request": "Réinitialiser le mot de passe",
+  "reset-token-error": "Erreur, vous devez fournir un token valide",
+  "reset-err-pwd": "Les mots de passe doivent etre identiques"
 }

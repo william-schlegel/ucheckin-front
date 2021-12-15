@@ -50,5 +50,14 @@
   "umit-menu": "I am managing UMITs",
   "ucheckin-menu": "I am using the UCheckIn SDK",
   "app-menu": "I am using a mobile app SDK",
-  "created-at": "Created the"
+  "created-at": "Created the",
+  "reset-pwd": "Password reinitialization",
+  "reset-pwd-success": "Password successfully reinitialized, you can login now",
+  "reset-email": "Your email",
+  "reset-new-password": "New password",
+  "reset-verify-password": "Confirmation of your password",
+  "verify-password": "Your password (again)",
+  "reset-request": "Reset your password",
+  "reset-token-error": "Error, your token is not valid",
+  "reset-err-pwd": "Passwords must be the same"
 }

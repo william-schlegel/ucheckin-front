@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import AcceptInvitation from '../components/Application/AcceptInvitation';
 
 export default function ResetPage({ query }) {
