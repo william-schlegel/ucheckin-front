@@ -46,5 +46,7 @@
   "start-date": "Since",
   "end-date": "Until",
   "measure-details": "Measure details",
-  "measure-name": "Sensor"
+  "measure-name": "Sensor",
+  "confirm-delete-measure": "Confirm the removal of this measure",
+  "you-confirm-measure": "You are going to delete a measure, the data will be permanently lost. Do you confirm?"
 }

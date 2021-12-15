@@ -271,3 +271,12 @@ export const DELETE_SENSOR_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_MEASURE_MUTATION = gql`
+  mutation DELETE_MEASURE_MUTATION($where: UmitMeasureWhereUniqueInput!) {
+    deleteUmitMeasure(where: $where) {
+      id
+      name
+    }
+  }
+`;

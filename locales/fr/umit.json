@@ -46,5 +46,7 @@
   "start-date": "Depuis le",
   "end-date": "Jusqu'au",
   "measure-details": "Détails de la mesure",
-  "measure-name": "Capeur relevé"
+  "measure-name": "Capeur relevé",
+  "confirm-delete-measure": "Confirmez la suppression de cette mesure",
+  "you-confirm-measure": "Vous allez supprimer une mesure, les données seront définitivement perdues. Confirmez-vous ?"
 }

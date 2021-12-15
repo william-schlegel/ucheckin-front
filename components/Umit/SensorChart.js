@@ -50,13 +50,17 @@ export default function SensorChart({ open, onClose, id }) {
 
   useEffect(() => {
     const d = emptyChart;
-    if (data) {
-      for (const m of data.umitMeasures) {
-        d.labels.push(formatDate(m.measureDate));
-        d.datasets[0].data.push(m.thickness);
-        d.datasets[1].data.push(data.umitSensor.alert);
-      }
+    console.log(`data`, data);
+    if (!data?.umitMeasures || !data?.umitMeasures?.length) return;
+    d.labels = [];
+    d.datasets[0].data = [];
+    d.datasets[1].data = [];
+    for (const m of data.umitMeasures) {
+      d.labels.push(formatDate(m.measureDate));
+      d.datasets[0].data.push(m.thickness);
+      d.datasets[1].data.push(data.umitSensor.alert);
     }
+
     console.log(`d`, d);
     setDataChart(d);
   }, [data]);
@@ -73,13 +77,7 @@ export default function SensorChart({ open, onClose, id }) {
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
-          <Line
-            id={ID_CHART}
-            data={dataChart}
-            // width={dim.current.width}
-            // height={dim.current.height}
-            // style={{ width: '100%', height: '100%' }}
-          />
+          <Line id={ID_CHART} data={dataChart} />
         </FormBodyFull>
       </Form>
 

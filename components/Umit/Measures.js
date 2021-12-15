@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
@@ -7,6 +7,8 @@ import Select from 'react-select';
 import styled from 'styled-components';
 
 import { perPage } from '../../config';
+import useAction from '../../lib/useAction';
+import useConfirm from '../../lib/useConfirm';
 import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
 import { Help, HelpButton, useHelp } from '../Help';
@@ -20,7 +22,12 @@ import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
 import MeasureDetails from './MeasureDetail';
-import { ALL_LOCATIONS_QUERY, ALL_MEASURES_QUERY, PAGINATION_MEASURE_QUERY } from './Queries';
+import {
+  ALL_LOCATIONS_QUERY,
+  ALL_MEASURES_QUERY,
+  DELETE_MEASURE_MUTATION,
+  PAGINATION_MEASURE_QUERY,
+} from './Queries';
 
 export default function Measures() {
   const router = useRouter();
@@ -38,6 +45,7 @@ export default function Measures() {
   const [location, setLocation] = useState(0);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umit');
   const { user } = useUser();
+  const { setAction } = useAction();
   const searchFields = [
     { field: 'company.contains', label: t('company'), type: 'text' },
     { field: 'sensor.name.contains', label: t('sensor-name'), type: 'text' },
@@ -46,6 +54,25 @@ export default function Measures() {
     { field: 'sensor.ref.contains', label: t('ref'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
+  const [deleteMeasure] = useMutation(DELETE_MEASURE_MUTATION, {
+    refetchQueries: [
+      {
+        query: ALL_MEASURES_QUERY,
+        variables: { skip: 0, take: perPage },
+      },
+    ],
+    onCompleted: (data) => {
+      setAction('delete', 'measure', data.deleteUmitMeasure.id);
+      router.push('/umit/measures');
+    },
+  });
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete-measure'),
+    message: t('you-confirm-measure'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteMeasure(args),
+  });
 
   useQuery(ALL_LOCATIONS_QUERY, {
     onCompleted: (data) =>
@@ -115,6 +142,11 @@ export default function Measures() {
     if (id) setShowMeasure(id);
   }
 
+  function handleDeleteMeasure(id) {
+    setArgs({ variables: { where: { id } } });
+    setIsOpen(true);
+  }
+
   function handleCloseShowMeasure() {
     setShowMeasure('');
   }
@@ -129,6 +161,7 @@ export default function Measures() {
       <Head>
         <title>{t('measures')}</title>
       </Head>
+      <Confirm />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <EntetePage>
         <h3>{t('measures')}</h3>
@@ -192,7 +225,10 @@ export default function Measures() {
           data={data?.umitMeasures}
           error={error}
           loading={loading}
-          actionButtons={[{ type: 'view', action: viewMeasure }]}
+          actionButtons={[
+            { type: 'view', action: viewMeasure },
+            { type: 'trash', action: handleDeleteMeasure },
+          ]}
         />
       </MeasureLayout>
     </>
