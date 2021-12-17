@@ -1,3 +1,4 @@
+import { isDate } from 'lodash';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -7,8 +8,9 @@ import styled from 'styled-components';
 
 import transformField from '../lib/transformField';
 import ActionButton from './Buttons/ActionButton';
+import DatePicker, { dateNow, formatDate } from './DatePicker';
 import { SecondaryButtonStyled } from './styles/Button';
-import { BlockShort, Input, LabelShort } from './styles/Card';
+import { BlockShort, FormBody, Input, LabelShort } from './styles/Card';
 import { SearchFilterStyles } from './styles/PaginationStyles';
 import { Switch3States } from './Tables/Switch';
 import { useUser } from './User/Queries';
@@ -54,6 +56,13 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
       vFilter = value;
       raz = value === '';
     }
+    if (type === 'date') {
+      console.log(`search filter value`, value);
+      if (isDate(value)) vFilter = value.toISOString();
+      else vFilter = dateNow();
+      console.log(`vFilter`, vFilter);
+      raz = value === '';
+    }
 
     const idFilter = filters.findIndex((f) => f.field === name);
     if (raz) {
@@ -82,6 +91,11 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
     return ret;
   }
 
+  function getDateValue(field) {
+    const flt = filters.find((f) => f.field === field.field);
+    return flt?.value || dateNow();
+  }
+
   return (
     <>
       {isAdmin && (
@@ -96,33 +110,49 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
             <BlockShort>
               <span>{t('filters')}</span>
             </BlockShort>
-            {fields.map((field) => (
-              <BlockShort key={field.field}>
-                <LabelShort htmlFor={field.field}>{field.label}</LabelShort>
-                {field.type === 'text' && (
-                  <Input
-                    type="text"
-                    id={field.field}
-                    name={field.field}
-                    value={filters.find((f) => f.field === field.field)?.value || ''}
-                    onChange={handleChange}
-                  />
-                )}
-                {field.type === 'switch' && (
-                  <Switch3States
-                    id={field.field}
-                    callBack={(value) =>
-                      handleChange({
-                        value,
-                        name: field.field,
-                        type: field.type,
-                      })
-                    }
-                    value={getSwitchFilterValue(field)}
-                  />
-                )}
-              </BlockShort>
-            ))}
+            <FormBody columns={Math.min(4, fields.length)}>
+              {fields.map((field) => (
+                <BlockShort key={field.field}>
+                  <LabelShort htmlFor={field.field}>{field.label}</LabelShort>
+                  {field.type === 'text' && (
+                    <Input
+                      type="text"
+                      id={field.field}
+                      name={field.field}
+                      value={filters.find((f) => f.field === field.field)?.value || ''}
+                      onChange={handleChange}
+                    />
+                  )}
+                  {field.type === 'switch' && (
+                    <Switch3States
+                      id={field.field}
+                      callBack={(value) =>
+                        handleChange({
+                          value,
+                          name: field.field,
+                          type: field.type,
+                        })
+                      }
+                      value={getSwitchFilterValue(field)}
+                    />
+                  )}
+                  {field.type === 'date' && (
+                    <DatePicker
+                      id={field.field}
+                      ISOStringValue={getDateValue(field)}
+                      onChange={(value) =>
+                        handleChange({
+                          name: field.field,
+                          type: field.type,
+                          value,
+                        })
+                      }
+                      UTC
+                    />
+                  )}
+                </BlockShort>
+              ))}
+            </FormBody>
             <BlockShort>
               <SecondaryButtonStyled onClick={handleSearch}>
                 <Search />
@@ -155,6 +185,7 @@ SearchField.propTypes = {
 
 export function ActualFilter({ fields, actualFilter = {}, removeFilters = () => {} }) {
   function getFilter(af) {
+    console.log(`af`, af);
     let v = Object.values(af[1]);
     let op = Object.keys(af[1]);
     while (typeof v[0] !== 'string' && typeof v[0] !== 'boolean') {
@@ -163,12 +194,15 @@ export function ActualFilter({ fields, actualFilter = {}, removeFilters = () => 
     }
     const fld = fields.find((f) => f.field.split('.')[0] === af[0]);
     let disp = v[0];
+    if (af[0] === 'date') disp = formatDate(new Date(v[0]));
     if (op[0] === 'contains') disp = `* ${disp} *`;
-    if (op[0] === 'lt' || op[0] === 'lte') disp = `< ${disp}`;
-    if (op[0] === 'gt' || op[0] === 'gte') disp = `> ${disp}`;
+    if (op[0] === 'lt') disp = `< ${disp}`;
+    if (op[0] === 'gt') disp = `> ${disp}`;
+    if (op[0] === 'lte') disp = `<= ${disp}`;
+    if (op[0] === 'gte') disp = `>= ${disp}`;
     if (typeof v[0] === 'boolean') disp = v[0] ? 'true' : 'false';
     return (
-      <Badge key={af[0]}>
+      <Badge key={`${af[0]}-${v}`}>
         <span>{fld?.label || af[0]}:</span>
         <strong>{disp}</strong>
       </Badge>

@@ -31,8 +31,12 @@ export default function Statistics() {
   const { user } = useUser();
 
   const searchFields = [
-    { field: 'date.gte', label: t('start-date'), type: 'date' },
-    { field: 'date.lte', label: t('end-date'), type: 'date' },
+    { field: 'date.gte', label: t('date'), type: 'date' },
+    { field: 'date.lte', label: t('date'), type: 'date' },
+    { field: 'os.contains', label: t('os'), type: 'text' },
+    { field: 'model.contains', label: t('model'), type: 'text' },
+    { field: 'application.name.contains', label: t('application'), type: 'text' },
+    { field: 'signal.name.contains', label: t('signal'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
 

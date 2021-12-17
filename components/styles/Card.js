@@ -87,7 +87,7 @@ export const Form = styled.form`
 
 export const FormBody = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(${(props) => props.columns || 2}, 1fr);
   grid-gap: 0.5rem 1rem;
   .select {
     font-size: 1.25rem;

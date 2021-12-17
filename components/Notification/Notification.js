@@ -578,7 +578,7 @@ export function Notif({
   const { t } = useTranslation('notification');
 
   useEffect(() => {
-    const el = document.getElementById(`html-content-container-${item.id}`);
+    const el = document.getElementById(`html-content-container-${item?.id}`);
     setElement(el);
   }, [item]);
 

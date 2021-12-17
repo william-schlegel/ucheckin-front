@@ -11,7 +11,11 @@ export default function DatePicker({ ISOStringValue, onChange }) {
   return (
     <Datepicker
       selected={new Date(ISOStringValue)}
-      onChange={onChange}
+      onChange={(dt) => {
+        const value = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 12);
+        console.log(`DatePicker`, value);
+        onChange(value);
+      }}
       locale={lang === 'fr' ? 'fr' : 'en-US'}
       dateFormat={lang === 'fr' ? 'dd/MM/yyyy' : 'MM/dd/yyyy'}
     />
