@@ -14,7 +14,8 @@ import Loading from '../Loading';
 import { Block, DashboardCard, FormBody, H2, Label, RowFull } from '../styles/Card';
 import selectTheme from '../styles/selectTheme';
 
-const DONUT_SIZE = 250;
+const DONUT_HEIGHT = 250;
+const DONUT_WIDTH = 350;
 const COLOR_SCHEME = [
   '#ff0000',
   '#ff8700',
@@ -27,6 +28,16 @@ const COLOR_SCHEME = [
   '#580aff',
   '#be0aff',
 ];
+
+const OPTIONS = {
+  plugins: {
+    legend: {
+      position: 'right',
+      align: 'middle',
+    },
+  },
+  responsive: true,
+};
 
 export const QUERY_STATISTICS = gql`
   query QUERY_STATISTICS($dtDeb: DateTime!, $dtFin: DateTime!) {
@@ -193,77 +204,87 @@ export default function DashboardStatistics() {
             </div>
             <div>&nbsp;</div>
           </FormBody>
-          <Content style={{ flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <ContentGraph>
             <div>
               {dataGraph.os && (
-                <>
+                <Graph>
                   <h3>{t('statistic:os')}</h3>
                   <Doughnut
                     data={dataGraph.os}
-                    width={DONUT_SIZE}
-                    height={DONUT_SIZE}
+                    width={DONUT_WIDTH}
+                    height={DONUT_HEIGHT}
                     style={{
-                      width: `${DONUT_SIZE}px`,
-                      height: `${DONUT_SIZE}px`,
+                      width: `${DONUT_WIDTH}px`,
+                      height: `${DONUT_HEIGHT}px`,
                     }}
+                    options={OPTIONS}
                   />
-                </>
+                </Graph>
               )}
             </div>
             <div>
               {dataGraph.model && (
-                <>
+                <Graph>
                   <h3>{t('statistic:model')}</h3>
                   <Doughnut
                     data={dataGraph.model}
-                    width={DONUT_SIZE}
-                    height={DONUT_SIZE}
+                    width={DONUT_WIDTH}
+                    height={DONUT_HEIGHT}
                     style={{
-                      width: `${DONUT_SIZE}px`,
-                      height: `${DONUT_SIZE}px`,
+                      width: `${DONUT_WIDTH}px`,
+                      height: `${DONUT_HEIGHT}px`,
                     }}
+                    options={OPTIONS}
                   />
-                </>
+                </Graph>
               )}
             </div>
             <div>
               {dataGraph.apps && (
-                <>
+                <Graph>
                   <h3>{t('statistic:applications')}</h3>
                   <Doughnut
                     data={dataGraph.apps}
-                    width={DONUT_SIZE}
-                    height={DONUT_SIZE}
+                    width={DONUT_WIDTH}
+                    height={DONUT_HEIGHT}
                     style={{
-                      width: `${DONUT_SIZE}px`,
-                      height: `${DONUT_SIZE}px`,
+                      width: `${DONUT_WIDTH}px`,
+                      height: `${DONUT_HEIGHT}px`,
                     }}
+                    options={OPTIONS}
                   />
-                </>
+                </Graph>
               )}
             </div>
             <div>
               {dataGraph.apps && (
-                <>
+                <Graph>
                   <h3>{t('statistic:signals')}</h3>
                   <Doughnut
                     data={dataGraph.signals}
-                    width={DONUT_SIZE}
-                    height={DONUT_SIZE}
+                    width={DONUT_WIDTH}
+                    height={DONUT_HEIGHT}
                     style={{
-                      width: `${DONUT_SIZE}px`,
-                      height: `${DONUT_SIZE}px`,
+                      width: `${DONUT_WIDTH}px`,
+                      height: `${DONUT_HEIGHT}px`,
                     }}
+                    options={OPTIONS}
                   />
-                </>
+                </Graph>
               )}
             </div>
-          </Content>
+          </ContentGraph>
         </Content>
       </DashboardCard>
     </div>
   );
 }
+
+const Graph = styled.div`
+  border: 1px solid var(--light-grey);
+  padding: 0 2rem;
+  border-radius: 5px;
+`;
 
 const Content = styled.div`
   display: flex;
@@ -272,4 +293,9 @@ const Content = styled.div`
     text-align: center;
     color: var(--primary);
   }
+`;
+
+const ContentGraph = styled(Content)`
+  flex-wrap: wrap;
+  justify-content: start;
 `;
