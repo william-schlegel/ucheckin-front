@@ -171,7 +171,7 @@ export default function Licenses() {
   return (
     <>
       <Head>
-        <title>{t('licenses')}</title>
+        <title>UCheck In - {t('licenses')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {showLicense && (

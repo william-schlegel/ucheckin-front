@@ -103,7 +103,7 @@ export default function Applications() {
   return (
     <>
       <Head>
-        <title>{t('applications')}</title>
+        <title>Ucheck In - {t('applications')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <ApplicationNew open={newApp} onClose={handleCloseNewApp} />

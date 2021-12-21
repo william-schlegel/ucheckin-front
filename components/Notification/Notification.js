@@ -296,7 +296,9 @@ export default function Notification({ id, initialData }) {
   return (
     <>
       <Head>
-        <title>{t('notification')}</title>
+        <title>
+          UCheck In - {t('notification')} {inputs.name}
+        </title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm cb={confirmCB} />

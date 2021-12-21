@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
@@ -71,6 +72,11 @@ export default function Invoice({ id, backButton, print, setPrint }) {
   if (!data) return null;
   return (
     <>
+      <Head>
+        <title>
+          UCheck In - {t('invoice')} {data.order.number}
+        </title>
+      </Head>
       {print && <InvoiceTemplate data={data.order} ref={printRef} />}
       <Form>
         <FormHeader>

@@ -114,7 +114,7 @@ export default function Notifications() {
   return (
     <>
       <Head>
-        <title>{t('notifications')}</title>
+        <title>UCheck In - {t('notifications')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />

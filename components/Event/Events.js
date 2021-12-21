@@ -113,7 +113,7 @@ export default function Events() {
   return (
     <>
       <Head>
-        <title>{t('events')}</title>
+        <title>UCheck In - {t('events')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />

@@ -80,7 +80,7 @@ export default function Users() {
   return (
     <>
       <Head>
-        <title>{t('users')}</title>
+        <title>UCheck In - {t('users')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Signup open={newUser} onClose={handleCloseNewUser} />

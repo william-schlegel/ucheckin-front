@@ -128,7 +128,7 @@ export default function Signals() {
   return (
     <>
       <Head>
-        <title>{t('signals')}</title>
+        <title>UCheck In - {t('signals')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {showSignal && (

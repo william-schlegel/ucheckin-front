@@ -94,7 +94,7 @@ export default function Locations() {
   return (
     <>
       <Head>
-        <title>{t('locations')}</title>
+        <title>UCheck In - {t('locations')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <EntetePage>

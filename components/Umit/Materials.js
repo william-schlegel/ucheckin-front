@@ -91,7 +91,7 @@ export default function Materials() {
   return (
     <>
       <Head>
-        <title>{t('materials')}</title>
+        <title>UCheck In - {t('materials')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <EntetePage>

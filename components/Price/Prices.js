@@ -78,7 +78,7 @@ export default function Prices() {
   return (
     <>
       <Head>
-        <title>{t('license-prices')}</title>
+        <title>UCheck In - {t('license-prices')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {showPrice && (

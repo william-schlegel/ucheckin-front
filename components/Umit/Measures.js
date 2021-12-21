@@ -159,7 +159,7 @@ export default function Measures() {
         <MeasureDetails open={!!showMeasure} onClose={handleCloseShowMeasure} id={showMeasure} />
       )}
       <Head>
-        <title>{t('measures')}</title>
+        <title>UCheck In - {t('measures')}</title>
       </Head>
       <Confirm />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />

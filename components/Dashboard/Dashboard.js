@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import styled from 'styled-components';
 
@@ -21,6 +22,9 @@ export default function Dashboard() {
   const { user } = useUser();
   return (
     <>
+      <Head>
+        <title>UCheck In - {t('dashboard')}</title>
+      </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <FormHeader>
         <FormTitle>

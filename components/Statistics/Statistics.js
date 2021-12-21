@@ -73,7 +73,7 @@ export default function Statistics() {
   return (
     <>
       <Head>
-        <title>{t('statistics')}</title>
+        <title>UCheck In - {t('statistics')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {showStatistic && (

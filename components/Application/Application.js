@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import isEmpty from 'lodash.isempty';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -227,6 +228,11 @@ export default function Application({ id, initialData }) {
 
   return (
     <>
+      <Head>
+        <title>
+          UCheck In - {t('application')} {inputs.name}
+        </title>
+      </Head>
       <Confirm />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {id && inputs.owner.id && (

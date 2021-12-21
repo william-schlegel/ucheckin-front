@@ -155,7 +155,7 @@ export default function Invoices() {
   return (
     <>
       <Head>
-        <title>{t('invoices')}</title>
+        <title>UCheck In - {t('invoices')}</title>
       </Head>
       {/* <InvoiceTemplate data={dataInvoiceToPrint?.order} ref={printRef} /> */}
       {printInvoiceOk && (

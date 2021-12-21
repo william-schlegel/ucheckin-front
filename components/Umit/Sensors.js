@@ -113,7 +113,7 @@ export default function Sensors() {
   return (
     <>
       <Head>
-        <title>{t('sensors')}</title>
+        <title>UCheck In - {t('sensors')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <EntetePage>

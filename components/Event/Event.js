@@ -194,7 +194,9 @@ export default function Event({ id, initialData }) {
   return (
     <>
       <Head>
-        <title>{t('event')}</title>
+        <title>
+          UCheck In - {t('event')} {inputs.name}
+        </title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />

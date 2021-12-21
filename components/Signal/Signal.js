@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 
@@ -31,6 +32,11 @@ export default function Signal({ id }) {
 
   return (
     <>
+      <Head>
+        <title>
+          UCheck In - {t('signal')} {data.signal.name}
+        </title>
+      </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Form>
         <FormHeader>

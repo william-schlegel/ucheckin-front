@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
+import Head from 'next/head';
 import Router, { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -187,6 +188,11 @@ export default function Account({ id, initialData }) {
   if (deleteTokenError) return <DisplayError error={deleteTokenError} />;
   return (
     <>
+      <Head>
+        <title>
+          UCheck In - {t('account')} {inputs.name}
+        </title>
+      </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Confirm />
       <Form>
