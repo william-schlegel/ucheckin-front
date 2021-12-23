@@ -36,6 +36,11 @@ export function dateInMonth(nbMonth = 1) {
   return new Date(dt.getFullYear(), dt.getMonth() + nbMonth, dt.getDate()).toISOString();
 }
 
+export function dateInDay(nbDay = 1) {
+  const dt = new Date();
+  return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + nbDay).toISOString();
+}
+
 export function formatDate(dt, locale) {
   if (!dt) return '';
   const options = { day: '2-digit', month: 'long', year: 'numeric' };

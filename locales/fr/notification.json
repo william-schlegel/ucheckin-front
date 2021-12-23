@@ -37,5 +37,6 @@
   "yes-delete": "Oui",
   "no-delete": "Non",
   "notification-placeholder": "texte à afficher dna la notification",
-  "icon": "Icon notification"
+  "icon": "Icon notification",
+  "event": "Evénement attaché"
 }

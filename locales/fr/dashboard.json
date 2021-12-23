@@ -44,5 +44,8 @@
   "applications": "Applications",
   "signals": "Signaux",
   "all": "Toutes",
-  "stat-details": "Détails des statistiques"
+  "stat-details": "Détails des statistiques",
+  "nb-detect_0": "Pas de détection",
+  "nb-detect_1": "1 détection",
+  "nb-detect_other": "{{count}} détections"
 }

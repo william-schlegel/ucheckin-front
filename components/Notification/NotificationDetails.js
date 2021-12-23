@@ -83,6 +83,17 @@ export default function NotificationDetails({ open, onClose, id }) {
             </Block>
           </RowReadOnly>
           <RowReadOnly>
+            <Block>
+              <Label>{t('event')}</Label>
+              <span>{data.notification.event?.name}</span>
+              <ActionButton
+                type="view"
+                cb={() => router.push(`/event/${data.notification.event?.id}`)}
+                label={t('navigation:event')}
+              />
+            </Block>
+          </RowReadOnly>
+          <RowReadOnly>
             <Label>{t('start-date')}</Label>
             <ValidityDate value={data.notification.startDate} after />
           </RowReadOnly>

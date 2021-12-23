@@ -34,6 +34,7 @@ import {
   H2,
   Label,
   Row,
+  RowFull,
   RowReadOnly,
 } from '../styles/Card';
 import { ImageSelection } from '../styles/ImageSelection';
@@ -379,7 +380,8 @@ export default function Event({ id, initialData }) {
                       <Image image={inputs.imageEvent} size={100} ratio={480 / 320} border />
                     </HomeImageContainer>
                   </Row>
-                  <Row>
+                  <Row />
+                  <RowFull>
                     <Label htmlFor="eventDescription" required>
                       {t('event-description')}
                     </Label>
@@ -395,7 +397,7 @@ export default function Event({ id, initialData }) {
                       placeholder={t('description-placeholder')}
                     />
                     <FieldError error={validationError.eventDescription} />
-                  </Row>
+                  </RowFull>
                 </>
               ) : (
                 <>

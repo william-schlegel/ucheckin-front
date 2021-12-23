@@ -59,6 +59,10 @@ export const EVENT_QUERY = gql`
       eventDescription {
         document
       }
+      notifications {
+        id
+        name
+      }
     }
   }
 `;

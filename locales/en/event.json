@@ -24,5 +24,6 @@
   "image-home": "Home screen image",
   "image-event": "Event image",
   "location": "Event location",
-  "preview": "Preview"
+  "preview": "Preview",
+  "notifications": "Attached notifications"
 }

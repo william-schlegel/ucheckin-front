@@ -57,6 +57,15 @@ import {
   UPDATE_NOTIFICATION_MUTATION,
 } from './Queries';
 
+export const QUERY_EVENT_FROM_USER = gql`
+  query QUERY_EVENT_FROM_USER($user: ID!) {
+    events(where: { owner: { id: { equals: $user } } }) {
+      id
+      name
+    }
+  }
+`;
+
 export const QUERY_APP_FROM_USER = gql`
   query QUERY_APP_FROM_USER($user: ID!) {
     applications(where: { owner: { id: { equals: $user } } }) {
@@ -127,6 +136,7 @@ export default function Notification({ id, initialData }) {
 
   const [queryAppUser, { data: dataApp }] = useLazyQuery(QUERY_APP_FROM_USER);
   const [querySignal, { data: dataSig }] = useLazyQuery(QUERY_SIGNAL_FROM_APP);
+  const [queryEvtUser, { data: dataEvt }] = useLazyQuery(QUERY_EVENT_FROM_USER);
 
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('notification');
   const { user } = useUser();
@@ -140,6 +150,7 @@ export default function Notification({ id, initialData }) {
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
   const notifOwnerId = initialData.data?.notification?.owner?.id;
+  const [optionsEvtUser, setOptionsEvtUser] = useState([]);
   const [optionsAppUser, setOptionsAppUser] = useState([]);
   const [optionsSignals, setOptionsSignals] = useState([]);
   const [selectedItem, setSelectedItem] = useState(0);
@@ -183,6 +194,12 @@ export default function Notification({ id, initialData }) {
   }, [dataApp, setOptionsAppUser]);
 
   useEffect(() => {
+    if (dataEvt?.events) {
+      setOptionsEvtUser(dataEvt.events.map((d) => ({ value: d.id, label: d.name })));
+    }
+  }, [dataEvt, setOptionsEvtUser]);
+
+  useEffect(() => {
     if (dataSig?.signals) {
       setOptionsSignals(dataSig.signals.map((d) => ({ value: d.id, label: d.name })));
     }
@@ -193,6 +210,7 @@ export default function Notification({ id, initialData }) {
   function handleChangeUser(value) {
     const uId = value.value;
     queryAppUser({ variables: { user: uId } });
+    queryEvtUser({ variables: { user: uId } });
     setOptionsSignals([]);
     handleChange(value);
   }
@@ -259,6 +277,7 @@ export default function Notification({ id, initialData }) {
     if (wasTouched('application.id'))
       newInputs.application = { connect: { id: newInputs.application.id } };
     if (wasTouched('signal.id')) newInputs.signal = { connect: { id: newInputs.signal.id } };
+    if (wasTouched('event.id')) newInputs.event = { connect: { id: newInputs.event.id } };
     newInputs.id = id;
     if (isEmpty(newInputs.icon)) delete newInputs.icon;
     return updateNotification({
@@ -284,10 +303,13 @@ export default function Notification({ id, initialData }) {
 
   useEffect(() => {
     const uId = initialData?.data?.notification?.owner?.id;
-    if (uId) queryAppUser({ variables: { user: uId } });
+    if (uId) {
+      queryAppUser({ variables: { user: uId } });
+      queryEvtUser({ variables: { user: uId } });
+    }
     const appId = initialData?.data?.notification?.application?.id;
     if (appId) querySignal({ variables: { appId } });
-  }, [initialData, queryAppUser, querySignal]);
+  }, [initialData, queryAppUser, querySignal, queryEvtUser]);
 
   if (errorDelete) return <DisplayError error={errorDelete} />;
   if (errorUpdate) return <DisplayError error={errorUpdate} />;
@@ -438,6 +460,23 @@ export default function Notification({ id, initialData }) {
                   </Row>
                   <FieldError error={validationError['signal.id']} />
                   <Row>
+                    <Label required>{t('event')}</Label>
+                    <Select
+                      theme={selectTheme}
+                      className="select"
+                      required
+                      value={optionsEvtUser.find((n) => n.value === inputs.event?.id)}
+                      onChange={(n) =>
+                        handleChange({
+                          name: 'event.id',
+                          value: n.value,
+                        })
+                      }
+                      options={optionsEvtUser}
+                    />
+                    <FieldError error={validationError['application.id']} />
+                  </Row>
+                  <Row>
                     <IconContainer>
                       <ImageSelection>
                         <div {...getRootProps({ className: 'dropzone' })}>
@@ -487,6 +526,10 @@ export default function Notification({ id, initialData }) {
                   <RowReadOnly>
                     <Label>{t('signal')}</Label>
                     <span>{inputs.signal?.name}</span>
+                  </RowReadOnly>
+                  <RowReadOnly>
+                    <Label>{t('event')}</Label>
+                    <span>{inputs.event?.name}</span>
                   </RowReadOnly>
                   <RowReadOnly>
                     <Image image={inputs.icon} size={100} border />

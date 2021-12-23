@@ -81,6 +81,7 @@ export default function Notifications() {
     [t('type'), 'type', ({ cell: { value } }) => <NotificationType notification={value} />],
     [t('application'), 'application.name'],
     [t('signal'), 'signal.name'],
+    [t('event'), 'event.name'],
     [t('start-date'), 'startDate', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
     [t('end-date'), 'endDate', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
   ]);

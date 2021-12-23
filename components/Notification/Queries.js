@@ -29,6 +29,10 @@ export const ALL_NOTIFICATIONS_QUERY = gql`
         id
         name
       }
+      event {
+        id
+        name
+      }
       icon {
         publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
@@ -62,6 +66,10 @@ export const NOTIFICATION_QUERY = gql`
         name
       }
       signal {
+        id
+        name
+      }
+      event {
         id
         name
       }
@@ -116,6 +124,7 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
     $owner: UserRelateToOneForUpdateInput
     $application: ApplicationRelateToOneForUpdateInput
     $signal: SignalRelateToOneForUpdateInput
+    $event: EventRelateToOneForUpdateInput
     $icon: Upload
   ) {
     updateNotification(
@@ -129,6 +138,7 @@ export const UPDATE_NOTIFICATION_MUTATION = gql`
         endDate: $endDate
         application: $application
         signal: $signal
+        event: $event
         icon: $icon
       }
     ) {
@@ -147,6 +157,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
     $owner: UserRelateToOneForCreateInput
     $application: ApplicationRelateToOneForCreateInput
     $signal: SignalRelateToOneForCreateInput
+    $event: EventRelateToOneForCreateInput
     $icon: Upload
   ) {
     createNotification(
@@ -159,6 +170,7 @@ export const CREATE_NOTIFICATION_MUTATION = gql`
         endDate: $endDate
         application: $application
         signal: $signal
+        event: $event
         icon: $icon
       }
     ) {

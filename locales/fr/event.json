@@ -24,5 +24,6 @@
   "image-home": "Image de l'écran d'accueil",
   "image-event": "Image de l'évenement",
   "location": "Lieu de l'événement",
-  "preview": "Prévisualisation"
+  "preview": "Prévisualisation",
+  "notifications": "Notifications attachées"
 }

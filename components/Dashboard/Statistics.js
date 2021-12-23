@@ -8,10 +8,10 @@ import Select from 'react-select';
 import styled from 'styled-components';
 
 import ButtonNew from '../Buttons/ButtonNew';
-import DatePicker, { dateInMonth, dateNow } from '../DatePicker';
+import DatePicker, { dateInDay, dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import { Block, DashboardCard, FormBody, H2, Label, RowFull } from '../styles/Card';
+import { Block, DashboardCard, FormBody, H2, H3, Label, RowFull } from '../styles/Card';
 import selectTheme from '../styles/selectTheme';
 
 const DONUT_HEIGHT = 250;
@@ -111,7 +111,7 @@ export default function DashboardStatistics() {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const [queryStat, { error, loading, data }] = useLazyQuery(QUERY_STATISTICS);
-  const [dtDeb, setDtDeb] = useState(dateInMonth(-1));
+  const [dtDeb, setDtDeb] = useState(dateInDay(-7));
   const [dtFin, setDtFin] = useState(dateNow());
   const applications = useRef([{ value: 'all', label: t('all') }]);
   const [application, setApplication] = useState(0);
@@ -200,6 +200,7 @@ export default function DashboardStatistics() {
                   />
                 </Block>
               </RowFull>
+              <H3>{t('nb-detect', { count: data?.signalDetections?.length })}</H3>
               <ButtonNew label={t('stat-details')} onClick={() => router.push('/statistics')} />
             </div>
             <div>&nbsp;</div>

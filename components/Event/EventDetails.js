@@ -1,10 +1,13 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 
-import Drawer, { DrawerFooter } from '../Drawer';
+import ActionButton from '../Buttons/ActionButton';
 import ButtonCancel from '../Buttons/ButtonCancel';
+import Drawer, { DrawerFooter } from '../Drawer';
+import DisplayError from '../ErrorMessage';
+import Loading from '../Loading';
 import {
   Block,
   Form,
@@ -15,14 +18,12 @@ import {
   Label,
   RowReadOnly,
 } from '../styles/Card';
-import DisplayError from '../ErrorMessage';
-import Loading from '../Loading';
-import { EVENT_QUERY } from './Queries';
-import ValidityDate from '../Tables/ValidityDate';
-import ActionButton from '../Buttons/ActionButton';
-import EventHome from './EventHome';
-import EventContent from './EventContent';
 import Phone from '../styles/Phone';
+import Table, { useColumns } from '../Tables/Table';
+import ValidityDate from '../Tables/ValidityDate';
+import EventContent from './EventContent';
+import EventHome from './EventHome';
+import { EVENT_QUERY } from './Queries';
 
 export default function EventDetails({ open, onClose, id }) {
   const { loading, error, data } = useQuery(EVENT_QUERY, {
@@ -30,6 +31,14 @@ export default function EventDetails({ open, onClose, id }) {
   });
   const { t } = useTranslation('event');
   const router = useRouter();
+  const columns = useColumns([
+    ['id', 'id', 'hidden'],
+    [t('name'), 'name'],
+  ]);
+
+  function viewNotification(id) {
+    router.push(`/notification/${id}`);
+  }
 
   if (loading) return <Loading />;
   if (error) return <DisplayError />;
@@ -43,11 +52,6 @@ export default function EventDetails({ open, onClose, id }) {
           </FormTitle>
         </FormHeader>
         <FormBodyFull>
-          <RowReadOnly>
-            <Label>{t('name')}</Label>
-            <span>{data.event.name}</span>
-          </RowReadOnly>
-          <H3>{t('home')}</H3>
           <RowReadOnly>
             <Label>{t('publish-start')}</Label>
             <ValidityDate value={data.event.publishStart} after />
@@ -66,13 +70,17 @@ export default function EventDetails({ open, onClose, id }) {
               <span>{data.event.application?.name}</span>
               <ActionButton
                 type="view"
-                cb={() =>
-                  router.push(`/application/${data.event.application?.id}`)
-                }
+                cb={() => router.push(`/application/${data.event.application?.id}`)}
                 label={t('navigation:application')}
               />
             </Block>
           </RowReadOnly>
+          <H3>{t('notifications')}</H3>
+          <Table
+            columns={columns}
+            data={data?.event?.notifications}
+            actionButtons={[{ type: 'view', action: viewNotification }]}
+          />
         </FormBodyFull>
       </Form>
       <DrawerFooter>
