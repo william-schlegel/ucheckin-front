@@ -47,5 +47,7 @@
   "stat-details": "Statistics details",
   "nb-detect_0": "No detection",
   "nb-detect_1": "1 detection",
-  "nb-detect_other": "{{count}} detections"
+  "nb-detect_other": "{{count}} detections",
+  "label": "Label",
+  "value": "Value"
 }

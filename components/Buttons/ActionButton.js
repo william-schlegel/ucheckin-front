@@ -40,6 +40,7 @@ export const IconButtonStyles = styled.a.attrs((props) => ({
 }))`
   display: flex;
   align-items: center;
+  cursor: pointer;
   margin: 0;
   height: 100%;
   background-color: transparent;

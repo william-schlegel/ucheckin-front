@@ -9,9 +9,10 @@ const NumberStyle = styled.div`
   justify-content: flex-end;
   width: 100%;
   gap: 0.5em;
+  ${(props) => (props.color ? `background-color: ${props.color};` : '')}
 `;
 
-export default function Number({ value, money, percentage, unit }) {
+export default function Number({ value, money, percentage, unit, color }) {
   if (!value) return null;
   let displayValue = value.toString();
   if (isNaN(value)) return (displayValue = '#NAN');
@@ -20,7 +21,7 @@ export default function Number({ value, money, percentage, unit }) {
     if (percentage) displayValue = formatPrct(value);
   }
   return (
-    <NumberStyle>
+    <NumberStyle color={color}>
       <span>{displayValue}</span>
       <span>{unit}</span>
     </NumberStyle>

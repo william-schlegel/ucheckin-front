@@ -4,18 +4,22 @@ import { useRouter } from 'next/dist/client/router';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useRef, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import { Grid, PieChart } from 'react-feather';
 import Select from 'react-select';
 import styled from 'styled-components';
 
+import { IconButtonStyles } from '../Buttons/ActionButton';
 import ButtonNew from '../Buttons/ButtonNew';
 import DatePicker, { dateInDay, dateNow } from '../DatePicker';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import { Block, DashboardCard, FormBody, H2, H3, Label, RowFull } from '../styles/Card';
+import { Block, DashboardCard, FormBody, H2, Label, RowFull } from '../styles/Card';
 import selectTheme from '../styles/selectTheme';
+import NumberField from '../Tables/Number';
+import Table, { useColumns } from '../Tables/Table';
 
 const DONUT_HEIGHT = 250;
-const DONUT_WIDTH = 350;
+const DONUT_WIDTH = 300;
 const COLOR_SCHEME = [
   '#ff0000',
   '#ff8700',
@@ -32,6 +36,7 @@ const COLOR_SCHEME = [
 const OPTIONS = {
   plugins: {
     legend: {
+      display: false,
       position: 'right',
       align: 'middle',
     },
@@ -200,80 +205,18 @@ export default function DashboardStatistics() {
                   />
                 </Block>
               </RowFull>
-              <H3>{t('nb-detect', { count: data?.signalDetections?.length })}</H3>
+              <H2 style={{ textAlign: 'center' }}>
+                {t('nb-detect', { count: data?.signalDetections?.length })}
+              </H2>
               <ButtonNew label={t('stat-details')} onClick={() => router.push('/statistics')} />
             </div>
             <div>&nbsp;</div>
           </FormBody>
           <ContentGraph>
-            <div>
-              {dataGraph.os && (
-                <Graph>
-                  <h3>{t('statistic:os')}</h3>
-                  <Doughnut
-                    data={dataGraph.os}
-                    width={DONUT_WIDTH}
-                    height={DONUT_HEIGHT}
-                    style={{
-                      width: `${DONUT_WIDTH}px`,
-                      height: `${DONUT_HEIGHT}px`,
-                    }}
-                    options={OPTIONS}
-                  />
-                </Graph>
-              )}
-            </div>
-            <div>
-              {dataGraph.model && (
-                <Graph>
-                  <h3>{t('statistic:model')}</h3>
-                  <Doughnut
-                    data={dataGraph.model}
-                    width={DONUT_WIDTH}
-                    height={DONUT_HEIGHT}
-                    style={{
-                      width: `${DONUT_WIDTH}px`,
-                      height: `${DONUT_HEIGHT}px`,
-                    }}
-                    options={OPTIONS}
-                  />
-                </Graph>
-              )}
-            </div>
-            <div>
-              {dataGraph.apps && (
-                <Graph>
-                  <h3>{t('statistic:applications')}</h3>
-                  <Doughnut
-                    data={dataGraph.apps}
-                    width={DONUT_WIDTH}
-                    height={DONUT_HEIGHT}
-                    style={{
-                      width: `${DONUT_WIDTH}px`,
-                      height: `${DONUT_HEIGHT}px`,
-                    }}
-                    options={OPTIONS}
-                  />
-                </Graph>
-              )}
-            </div>
-            <div>
-              {dataGraph.apps && (
-                <Graph>
-                  <h3>{t('statistic:signals')}</h3>
-                  <Doughnut
-                    data={dataGraph.signals}
-                    width={DONUT_WIDTH}
-                    height={DONUT_HEIGHT}
-                    style={{
-                      width: `${DONUT_WIDTH}px`,
-                      height: `${DONUT_HEIGHT}px`,
-                    }}
-                    options={OPTIONS}
-                  />
-                </Graph>
-              )}
-            </div>
+            <StatData title={t('statistic:os')} data={dataGraph.os} />
+            <StatData title={t('statistic:model')} data={dataGraph.model} />
+            <StatData title={t('statistic:applications')} data={dataGraph.apps} />
+            <StatData title={t('statistic:signals')} data={dataGraph.signals} />
           </ContentGraph>
         </Content>
       </DashboardCard>
@@ -281,18 +224,79 @@ export default function DashboardStatistics() {
   );
 }
 
+function StatData({ title, data }) {
+  const [table, setTable] = useState(false);
+  const [dataTbl, setDataTbl] = useState([]);
+  const { t } = useTranslation('dashboard');
+
+  useEffect(() => {
+    if (data)
+      setDataTbl(
+        data.datasets[0].data.map((d, i) => ({
+          label: data.labels[i],
+          value: [d, data.datasets[0].backgroundColor[i]],
+        }))
+      );
+  }, [data]);
+
+  const columns = useColumns(
+    [
+      [t('label'), 'label'],
+      [
+        t('value'),
+        'value',
+        ({ cell: { value } }) => <NumberField value={value[0].toFixed(0)} color={value[1]} />,
+      ],
+    ],
+    false
+  );
+
+  return (
+    <div>
+      {data && (
+        <Graph>
+          <h3>
+            {title}
+            <IconButtonStyles type="button" onClick={() => setTable((prev) => !prev)}>
+              {table ? <PieChart size={16} /> : <Grid size={16} />}
+            </IconButtonStyles>
+          </h3>
+          {table ? (
+            <Table columns={columns} data={dataTbl} />
+          ) : (
+            <Doughnut
+              data={data}
+              width={DONUT_WIDTH}
+              height={DONUT_HEIGHT}
+              style={{
+                width: `${DONUT_WIDTH}px`,
+                height: `${DONUT_HEIGHT}px`,
+              }}
+              options={OPTIONS}
+            />
+          )}{' '}
+        </Graph>
+      )}
+    </div>
+  );
+}
+
 const Graph = styled.div`
   border: 1px solid var(--light-grey);
-  padding: 0 2rem;
+  padding: 0 1rem;
   border-radius: 5px;
 `;
 
 const Content = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   h3 {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.5em;
     color: var(--primary);
+    border-bottom: 1px solid var(--light-grey);
   }
 `;
 
