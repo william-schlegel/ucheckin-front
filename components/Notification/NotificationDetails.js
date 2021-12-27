@@ -102,6 +102,10 @@ export default function NotificationDetails({ open, onClose, id }) {
             <ValidityDate value={data.notification.endDate} />
           </RowReadOnly>
           <RowReadOnly>
+            <Label>{t('delay-between-display')}</Label>
+            <span>{data.notification.delayBetweenDisplay}</span>
+          </RowReadOnly>
+          <RowReadOnly>
             <Label>{t('nb-notif')}</Label>
             <span>{data.notification.items.length}</span>
           </RowReadOnly>

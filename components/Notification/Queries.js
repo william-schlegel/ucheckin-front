@@ -76,6 +76,7 @@ export const NOTIFICATION_QUERY = gql`
       icon {
         publicUrlTransformed(transformation: { width: "200", height: "200" })
       }
+      delayBetweenDisplay
       items {
         icon {
           publicUrlTransformed(transformation: { width: "200", height: "200" })
@@ -95,7 +96,6 @@ export const NOTIFICATION_QUERY = gql`
         }
         videoLink
         numberOfDisplay
-        delayBetweenDisplay
         probability
         defaultNotification
         quota
@@ -114,66 +114,16 @@ export const DELETE_NOTIFICATION_MUTATION = gql`
 `;
 
 export const UPDATE_NOTIFICATION_MUTATION = gql`
-  mutation UPDATE_NOTIFICATION_MUTATION(
-    $id: ID!
-    $name: String
-    $displayName: String
-    $type: String
-    $startDate: DateTime
-    $endDate: DateTime
-    $owner: UserRelateToOneForUpdateInput
-    $application: ApplicationRelateToOneForUpdateInput
-    $signal: SignalRelateToOneForUpdateInput
-    $event: EventRelateToOneForUpdateInput
-    $icon: Upload
-  ) {
-    updateNotification(
-      where: { id: $id }
-      data: {
-        name: $name
-        displayName: $displayName
-        owner: $owner
-        type: $type
-        startDate: $startDate
-        endDate: $endDate
-        application: $application
-        signal: $signal
-        event: $event
-        icon: $icon
-      }
-    ) {
+  mutation UPDATE_NOTIFICATION_MUTATION($id: ID!, $data: NotificationUpdateInput!) {
+    updateNotification(where: { id: $id }, data: $data) {
       id
     }
   }
 `;
 
 export const CREATE_NOTIFICATION_MUTATION = gql`
-  mutation CREATE_NOTIFICATION_MUTATION(
-    $name: String!
-    $displayName: String
-    $type: String
-    $startDate: DateTime
-    $endDate: DateTime
-    $owner: UserRelateToOneForCreateInput
-    $application: ApplicationRelateToOneForCreateInput
-    $signal: SignalRelateToOneForCreateInput
-    $event: EventRelateToOneForCreateInput
-    $icon: Upload
-  ) {
-    createNotification(
-      data: {
-        name: $name
-        displayName: $displayName
-        owner: $owner
-        type: $type
-        startDate: $startDate
-        endDate: $endDate
-        application: $application
-        signal: $signal
-        event: $event
-        icon: $icon
-      }
-    ) {
+  mutation CREATE_NOTIFICATION_MUTATION($data: NotificationCreateInput!) {
+    createNotification(data: $data) {
       id
     }
   }
@@ -192,7 +142,6 @@ export const CREATE_NOTIFICATION_ITEM = gql`
       }
       videoLink
       numberOfDisplay
-      delayBetweenDisplay
       probability
       defaultNotification
       quota
@@ -214,7 +163,6 @@ export const UPDATE_NOTIFICATION_ITEM = gql`
 
       videoLink
       numberOfDisplay
-      delayBetweenDisplay
       probability
       defaultNotification
       quota

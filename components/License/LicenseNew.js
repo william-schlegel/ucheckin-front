@@ -165,7 +165,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId, withSignal }
   if (userError) return <DisplayError error={userError} />;
   if (applicationError) return <DisplayError error={applicationError} />;
 
-  console.log(`inputs.signalId`, inputs.signalId);
+  // console.log(`inputs.signalId`, inputs.signalId);
 
   return (
     <Drawer onClose={onClose} open={open} title={t('new-licenses')}>

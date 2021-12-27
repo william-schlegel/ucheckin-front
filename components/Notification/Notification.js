@@ -93,7 +93,6 @@ const defaultItem = {
   htmlContent: { document: undefined },
   videoLink: 'https://youtu.be/',
   numberOfDisplay: 0,
-  delayBetweenDisplay: 1,
   probability: 50,
   defaultNotification: false,
   quota: 0,
@@ -278,11 +277,11 @@ export default function Notification({ id, initialData }) {
       newInputs.application = { connect: { id: newInputs.application.id } };
     if (wasTouched('signal.id')) newInputs.signal = { connect: { id: newInputs.signal.id } };
     if (wasTouched('event.id')) newInputs.event = { connect: { id: newInputs.event.id } };
-    newInputs.id = id;
+    // newInputs.id = id;
     if (isEmpty(newInputs.icon)) delete newInputs.icon;
     return updateNotification({
       update: (cache, payload) => cache.evict(cache.identify(payload.data.updateNotification)),
-      variables: newInputs,
+      variables: { id, data: newInputs },
     });
   }
 
@@ -476,6 +475,7 @@ export default function Notification({ id, initialData }) {
                     />
                     <FieldError error={validationError['application.id']} />
                   </Row>
+                  <Row />
                   <Row>
                     <IconContainer>
                       <ImageSelection>
@@ -486,6 +486,15 @@ export default function Notification({ id, initialData }) {
                       </ImageSelection>
                       <Image image={inputs.icon} size={100} border />
                     </IconContainer>
+                  </Row>
+                  <Row>
+                    <Counter
+                      input={inputs.delayBetweenDisplay}
+                      min={0}
+                      name="delayBetweenDisplay"
+                      handleChange={handleChange}
+                      label={t('delay-between-display')}
+                    />
                   </Row>
                 </>
               ) : (
@@ -533,6 +542,10 @@ export default function Notification({ id, initialData }) {
                   </RowReadOnly>
                   <RowReadOnly>
                     <Image image={inputs.icon} size={100} border />
+                  </RowReadOnly>
+                  <RowReadOnly>
+                    <Label>{t('delay-between-display')}</Label>
+                    <span>{inputs.delayBetweenDisplay}</span>
                   </RowReadOnly>
                 </>
               )}

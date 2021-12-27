@@ -55,7 +55,7 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
       setTimeout(() => startFA(), 1000);
       localStorage.setItem('visited', new Date().toISOString());
     }
-  }, []);
+  });
 
   const toggleTheme = useCallback(() => {
     setDarkTheme(!darkTheme);

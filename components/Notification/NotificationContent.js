@@ -189,7 +189,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               fullWidth
             />
           </Row>
-          <Row>
+          {/* <Row>
             <Counter
               input={inputs.delayBetweenDisplay}
               min={0}
@@ -198,7 +198,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
               label={t('delay-between-display')}
               fullWidth
             />
-          </Row>
+          </Row> */}
           {(notification.notification.type === 'random-draw' ||
             notification.notification.type === 'instant-win') && (
             <>

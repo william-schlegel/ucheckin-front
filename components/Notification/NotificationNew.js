@@ -86,10 +86,12 @@ export default function NotificationNew({ open, onClose }) {
     if (!validate()) return;
     createNotification({
       variables: {
-        name: inputs.name,
-        type: inputs.type,
-        application: { connect: { id: inputs.appId } },
-        signal: { connect: { id: inputs.signalId } },
+        data: {
+          name: inputs.name,
+          type: inputs.type,
+          application: { connect: { id: inputs.appId } },
+          signal: { connect: { id: inputs.signalId } },
+        },
       },
     }).catch((err) => alert(err.message));
     onClose();

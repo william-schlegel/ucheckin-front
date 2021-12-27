@@ -235,7 +235,7 @@ export default function Application({ id, initialData }) {
       </Head>
       <Confirm />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
-      {id && inputs.owner.id && (
+      {id && inputs.owner.id && showAddLicense && (
         <LicenseNew
           open={showAddLicense}
           onClose={handleCloseNewLicense}
