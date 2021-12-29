@@ -92,7 +92,6 @@ export const FormBody = styled.div`
   .select {
     font-size: 1.25rem;
     width: 100%;
-    z-index: 100;
   }
   input,
   textarea,

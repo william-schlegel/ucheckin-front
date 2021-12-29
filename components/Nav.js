@@ -2,88 +2,123 @@ import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  ChevronDown,
+  ChevronRight,
+  Code,
+  Cpu,
+  DollarSign,
+  Minimize2,
+  Printer,
+  Speaker,
+  Users,
+  Volume2,
+} from 'react-feather';
 import styled from 'styled-components';
 
 import Footer from './Footer';
 import { useUser } from './User/Queries';
 import SignOut from './User/SignOut';
 
-export default function Nav({ toggled }) {
+const SZ_ICON = [16, 24];
+const MENUS = [
+  { menu: 'app', label: 'sdk', route: '/sdk', icon: (sz) => <Code size={sz} /> },
+  {
+    menu: 'app',
+    label: 'applications',
+    route: '/applications',
+    icon: (sz) => <Cpu size={sz} />,
+  },
+  { menu: 'app', label: 'licenses', route: '/licenses', icon: (sz) => <Activity size={sz} /> },
+  { menu: 'app', label: 'signals', route: '/signals', icon: (sz) => <Volume2 size={sz} /> },
+  { menu: 'price', label: 'prices', route: '/prices', icon: (sz) => <DollarSign size={sz} /> },
+  { menu: 'app', label: 'invoices', route: '/invoices', icon: (sz) => <Printer size={sz} /> },
+  { menu: 'user', label: 'users', route: '/users', icon: (sz) => <Users size={sz} /> },
+  {
+    menu: 'app',
+    label: 'notifications',
+    route: '/notifications',
+    icon: (sz) => <AlertTriangle size={sz} />,
+  },
+  { menu: 'event', label: 'events', route: '/events', icon: (sz) => <Speaker size={sz} /> },
+  {
+    menu: 'umit',
+    label: 'umit',
+    sub: [
+      { route: '/umit/measures', label: 'measures' },
+      { route: '/umit/sensors', label: 'sensors' },
+      { route: '/umit/locations', label: 'locations' },
+      { route: '/umit/materials', label: 'materials' },
+    ],
+    icon: (sz) => <Minimize2 size={sz} />,
+  },
+];
+
+export default function Nav({ toggled, reduced, setReduced }) {
   const { user } = useUser();
   const { t } = useTranslation('navigation');
 
-  if (user?.id)
-    return (
-      <NavStyles className="menu" toggled={toggled}>
-        <ul>
-          {user.canSeeAppMenu && (
-            <>
-              <li id="menu-sdk">
-                <Link href="/sdk">{t('sdk')}</Link>
+  if (!user?.id) return <div>Loading...</div>;
+
+  const menuOk = {
+    app: user.canSeeAppMenu,
+    price: user.role?.canManagePrice,
+    user: user.role?.canSeeOtherUsers || user.role?.canManageUsers,
+    event: user.canSeeUcheckinMenu,
+    umit: user.canSeeUmitMenu,
+  };
+
+  return (
+    <NavStyles className="menu" toggled={toggled} reduced={reduced}>
+      <BtnReduce onClick={() => setReduced((prev) => !prev)} reduced={reduced}>
+        <ArrowLeft size={SZ_ICON[0]} />
+      </BtnReduce>
+      <ul>
+        {MENUS.map(
+          (m) =>
+            menuOk[m.menu] &&
+            (m.sub ? (
+              <SubMenu
+                key={m.label}
+                label={reduced ? '' : t(m.label)}
+                id={`menu-${m.label}`}
+                icon={m.icon(SZ_ICON[reduced ? 1 : 0])}
+                reduced={reduced}
+              >
+                <ul>
+                  {m.sub.map((s) => (
+                    <li key={s.label} className="sub-item">
+                      <Link href={s.route}>{t(s.label)}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </SubMenu>
+            ) : (
+              <li key={m.label} id={`menu-${m.label}`}>
+                <Link href={m.route}>
+                  <a>
+                    {m.icon(SZ_ICON[reduced ? 1 : 0])}
+                    {!reduced && t(m.label)}
+                  </a>
+                </Link>
               </li>
-              <li id="menu-application">
-                <Link href="/applications">{t('applications')}</Link>
-              </li>
-              <li id="menu-licenses">
-                <Link href="/licenses">{t('licenses')}</Link>
-              </li>
-              <li id="menu-signals">
-                <Link href="/signals">{t('signals')}</Link>
-              </li>
-              {user.role?.canManagePrice && (
-                <li>
-                  <Link href="/prices">{t('prices')}</Link>
-                </li>
-              )}
-              <li id="menu-invoices">
-                <Link href="/invoices">{t('invoices')}</Link>
-              </li>
-              {(user.role?.canSeeOtherUsers || user.role?.canManageUsers) && (
-                <li>
-                  <Link href="/users">{t('users')}</Link>
-                </li>
-              )}
-              <li id="menu-notifications">
-                <Link href="/notifications">{t('notifications')}</Link>
-              </li>
-            </>
-          )}
-          {user.canSeeUcheckinMenu && (
-            <li id="menu-events">
-              <Link href="/events">{t('events')}</Link>
-            </li>
-          )}
-          {user.canSeeUmitMenu && (
-            <SubMenu label={t('umit')} id="menu-umit">
-              <ul>
-                <li className="sub-item">
-                  <Link href="/umit/measures">{t('measures')}</Link>
-                </li>
-                <li className="sub-item">
-                  <Link href="/umit/sensors">{t('sensors')}</Link>
-                </li>
-                <li className="sub-item">
-                  <Link href="/umit/locations">{t('locations')}</Link>
-                </li>
-                <li className="sub-item">
-                  <Link href="/umit/materials">{t('materials')}</Link>
-                </li>
-              </ul>
-            </SubMenu>
-          )}
-          <li className="bottom">
-            <div>
-              <SignOut />
-              <Footer />
-            </div>
-          </li>
-        </ul>
-      </NavStyles>
-    );
-  return null;
+            ))
+        )}
+        <li className="bottom">
+          <div>
+            <SignOut reduced={reduced} />
+            {!reduced && <Footer />}
+          </div>
+        </li>
+      </ul>
+    </NavStyles>
+  );
 }
 
-function SubMenu({ label, children, id }) {
+function SubMenu({ label, children, id, icon, reduced }) {
   const [toggle, setToggle] = useState(false);
 
   function handleClick() {
@@ -93,16 +128,12 @@ function SubMenu({ label, children, id }) {
   return (
     <li id={id}>
       <button className="sub-menu" onKeyPress={handleClick} onClick={handleClick}>
-        {label}
+        <div className="label">
+          {icon}
+          {label}
+        </div>
         <HeaderButton toggle={toggle}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-          </svg>
+          {reduced ? <ChevronRight size={24} /> : <ChevronDown size={24} />}
         </HeaderButton>
       </button>
       {toggle && children}
@@ -113,6 +144,19 @@ function SubMenu({ label, children, id }) {
 Nav.propTypes = {
   toggled: PropTypes.bool,
 };
+
+const BtnReduce = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 5px 0;
+  transform: rotate(${(props) => (props.reduced ? '180deg' : '0deg')});
+  transition: transform 200ms;
+  &:hover,
+  &:focus {
+    background-color: var(--secondary);
+  }
+`;
 
 const HeaderButton = styled.li`
   width: 1em;
@@ -129,10 +173,11 @@ const HeaderButton = styled.li`
 `;
 
 const NavStyles = styled.nav`
+  position: relative;
+  padding: 0;
   grid-area: menu;
   width: 100%;
   margin: 0;
-  padding: 0;
   font-size: 1.25rem;
   border-right: var(--light-grey) solid 1px;
   background-color: var(--primary);
@@ -149,7 +194,7 @@ const NavStyles = styled.nav`
     button {
       color: white;
       font-size: 1.1rem;
-      padding: 1rem 3rem;
+      padding: 1rem 2rem;
       width: 100%;
       display: flex;
       align-items: flex-start;
@@ -175,6 +220,13 @@ const NavStyles = styled.nav`
     }
     li {
       list-style: none;
+      position: relative;
+      a,
+      .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
       &.bottom {
         border-top: var(--light-grey) solid 1px;
         /* outline: var(--light-grey) solid 1px; */
@@ -182,8 +234,23 @@ const NavStyles = styled.nav`
         margin-top: auto;
         padding-bottom: 0;
       }
+      ${(props) =>
+        props.reduced
+          ? `
+      ul {
+        position: absolute;
+        left: 100px;
+        top: 0;
+        height: auto;
+        z-index: 100;
+        background-color: var(--primary);
+        border: solid 1px white;
+        border-radius: 5px;
+      }
+      `
+          : ''}
       &.sub-item {
-        padding-left: 1em;
+        padding-left: ${(props) => (props.reduced ? '0' : '1em')};
         a,
         button {
           font-size: 0.8em;

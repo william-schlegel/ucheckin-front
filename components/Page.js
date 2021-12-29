@@ -14,10 +14,20 @@ function Page({ children }) {
   const [darkTheme, setDarkTheme] = useState(false);
   const [updateTheme] = useMutation(UPDATE_THEME);
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
     setDarkTheme(user.theme === 'dark');
   }, [user]);
+
+  useEffect(() => {
+    const red = localStorage.getItem('menu-reduced') === '1';
+    setReduced(red);
+  }, [setReduced]);
+
+  useEffect(() => {
+    localStorage.setItem('menu-reduced', reduced ? '1' : '0');
+  }, [reduced]);
 
   function handleChangeTheme(dkTheme) {
     setDarkTheme(dkTheme);
@@ -29,7 +39,7 @@ function Page({ children }) {
   return (
     <ThemeProvider theme={{ mode: darkTheme ? 'dark' : 'light' }}>
       <ToastProvider>
-        <MainScreen toggled={toggleMenu}>
+        <MainScreen toggled={toggleMenu} reduced={reduced}>
           <GlobalStyles />
           <Header
             darkTheme={darkTheme}
@@ -37,7 +47,7 @@ function Page({ children }) {
             menuState={toggleMenu}
             onClickMenu={() => setToggleMenu((prev) => !prev)}
           />
-          <Nav toggled={toggleMenu} />
+          <Nav toggled={toggleMenu} reduced={reduced} setReduced={setReduced} />
           <InnerStyles>{children}</InnerStyles>
         </MainScreen>
       </ToastProvider>
@@ -156,7 +166,7 @@ const InnerStyles = styled.div`
 
 const MainScreen = styled.div`
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: ${(props) => (props.reduced ? '96px' : '300px')} 1fr;
   grid-template-rows: 96px 1fr;
   grid-template-areas:
     'header header'
