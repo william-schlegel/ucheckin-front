@@ -13,5 +13,6 @@
   "statistic": "Détection",
   "chanel": "Canal",
   "uuid": "UUID",
-  "extra": "Data client"
+  "extra": "Data client",
+  "version": "Version"
 }

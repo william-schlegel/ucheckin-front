@@ -41,10 +41,10 @@ export default function Dashboard() {
             <DashboardApplication />
             <DashboardSignal />
             <DashboardLicense />
-            <DashboardInvoice />
             <DashboardNotification />
           </>
         )}
+        {user.role?.canSeeOrder && <DashboardInvoice />}
         {user.canSeeUcheckinMenu && <DashboardEvent />}
         {user.canSeeUmitMenu && (
           <>

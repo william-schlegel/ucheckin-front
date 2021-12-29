@@ -32,14 +32,9 @@ export default function Header({ darkTheme, setDarkTheme, menuState, onClickMenu
 
   const ob = ['toggle-help', 'toggle-theme', 'toggle-language', 'my-profile'];
   if (user.canSeeAppMenu)
-    ob.push(
-      'menu-sdk',
-      'menu-application',
-      'menu-licenses',
-      'menu-signals',
-      'menu-invoices',
-      'menu-notifications'
-    );
+    ob.push('menu-sdk', 'menu-applications', 'menu-licenses', 'menu-signals', 'menu-notifications');
+  if (user.role?.canSeeOrder) ob.push('menu-invoices');
+
   if (user.canSeeUcheckinMenu) ob.push('menu-events');
   if (user.canSeeUmitMenu) ob.push('menu-umit');
   const { Overlay, Highligh, start } = useOnboarding(ob);

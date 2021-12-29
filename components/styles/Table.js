@@ -25,6 +25,8 @@ const Table = styled.table`
     }
   }
   @media print {
+    font-size: 10px;
+    margin-bottom: 0;
     table {
       page-break-inside: auto;
     }
@@ -41,6 +43,10 @@ const Table = styled.table`
     }
     tfoot {
       display: table-footer-group;
+    }
+    td,
+    th {
+      padding: 5px;
     }
   }
 `;

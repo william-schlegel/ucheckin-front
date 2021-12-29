@@ -305,21 +305,6 @@ const ROLE_QUERY = gql`
 
 export function useUser() {
   const { data, error, loading } = useQuery(CURRENT_USER_QUERY);
-  // const [user, setUser] = useState({});
-  // const [authenticated, setAuthenticated] = useState(false);
-
-  // console.log(`data`, data);
-  // useEffect(() => {
-  //   if (!loading) {
-  //     if (data && !data.authenticatedItem) {
-  //       setAuthenticated(false);
-  //     }
-  //     if (data?.authenticatedItem) {
-  //       setAuthenticated(true);
-  //       setUser(data.authenticatedItem);
-  //     }
-  //   }
-  // }, [data, loading]);
 
   const user = data?.authenticatedItem || {};
   const authenticated = !!data?.authenticatedItem;

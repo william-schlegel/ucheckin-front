@@ -35,14 +35,14 @@ const MENUS = [
   { menu: 'app', label: 'licenses', route: '/licenses', icon: (sz) => <Activity size={sz} /> },
   { menu: 'app', label: 'signals', route: '/signals', icon: (sz) => <Volume2 size={sz} /> },
   { menu: 'price', label: 'prices', route: '/prices', icon: (sz) => <DollarSign size={sz} /> },
-  { menu: 'app', label: 'invoices', route: '/invoices', icon: (sz) => <Printer size={sz} /> },
-  { menu: 'user', label: 'users', route: '/users', icon: (sz) => <Users size={sz} /> },
   {
     menu: 'app',
     label: 'notifications',
     route: '/notifications',
     icon: (sz) => <AlertTriangle size={sz} />,
   },
+  { menu: 'invoice', label: 'invoices', route: '/invoices', icon: (sz) => <Printer size={sz} /> },
+  { menu: 'user', label: 'users', route: '/users', icon: (sz) => <Users size={sz} /> },
   { menu: 'event', label: 'events', route: '/events', icon: (sz) => <Speaker size={sz} /> },
   {
     menu: 'umit',
@@ -61,7 +61,7 @@ export default function Nav({ toggled, reduced, setReduced }) {
   const { user } = useUser();
   const { t } = useTranslation('navigation');
 
-  if (!user?.id) return <div>Loading...</div>;
+  if (!user?.id) return <div>&nbsp;</div>;
 
   const menuOk = {
     app: user.canSeeAppMenu,
@@ -69,6 +69,7 @@ export default function Nav({ toggled, reduced, setReduced }) {
     user: user.role?.canSeeOtherUsers || user.role?.canManageUsers,
     event: user.canSeeUcheckinMenu,
     umit: user.canSeeUmitMenu,
+    invoice: user.role?.canSeeOrder,
   };
 
   return (

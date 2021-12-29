@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
 import useTranslation from 'next-translate/useTranslation';
-import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 import styled from 'styled-components';
 
@@ -26,7 +25,7 @@ const QUERY_STIMSHOP = gql`
   }
 `;
 
-const InvoiceTemplate = forwardRef(function Template(props, ref) {
+const InvoiceTemplate = function Template(props, ref) {
   const { t } = useTranslation('invoice');
   const { data: dataStim, error: errorStim } = useQuery(QUERY_STIMSHOP, {
     variables: { key: 'stimshop' },
@@ -124,12 +123,11 @@ const InvoiceTemplate = forwardRef(function Template(props, ref) {
       </Footer>
     </InvoiceBody>
   );
-});
+};
 
 const InvoiceBody = styled.div`
   margin: 0;
-  padding: 5rem 2rem;
-  /* font-size: 1.25rem; */
+  padding: 3rem;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -145,7 +143,7 @@ const InvoiceBody = styled.div`
 const Footer = styled.div`
   margin-top: auto;
   .footer {
-    margin-top: 2rem;
+    margin-top: 1rem;
     text-align: center;
   }
   .bank {
@@ -176,7 +174,7 @@ const Header = styled.div`
 `;
 
 const Total = styled.div`
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-left: 50%;
   p {
     display: flex;
@@ -189,8 +187,4 @@ const Total = styled.div`
   }
 `;
 
-InvoiceTemplate.propTypes = {
-  data: PropTypes.object,
-};
-
-export default InvoiceTemplate;
+export default forwardRef(InvoiceTemplate);
