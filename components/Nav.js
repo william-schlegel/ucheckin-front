@@ -156,6 +156,7 @@ const BtnReduce = styled.div`
   &:focus {
     background-color: var(--secondary);
   }
+  color: white;
 `;
 
 const HeaderButton = styled.li`
@@ -185,9 +186,7 @@ const NavStyles = styled.nav`
   /* max-width: fit-content; */
   ul {
     display: flex;
-    flex-grow: 1;
     flex-direction: column;
-    height: 100%;
     padding: 0;
     margin: 0;
     a,
@@ -233,6 +232,9 @@ const NavStyles = styled.nav`
         padding: 1rem 0;
         margin-top: auto;
         padding-bottom: 0;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
       }
       ${(props) =>
         props.reduced
