@@ -163,7 +163,9 @@ export default function DashboardStatistics() {
   return (
     <div style={{ width: '100%', marginTop: '1rem' }}>
       <DashboardCard>
-        <H2>{t('statistics')}</H2>
+        <H2>
+          {t('statistics')} - {t('nb-detect', { count: data?.signalDetections?.length })}
+        </H2>
         <Content>
           <FormBody style={{ display: 'flex', flexDirection: 'column' }}>
             <div
@@ -205,19 +207,13 @@ export default function DashboardStatistics() {
                   />
                 </Block>
               </RowFull>
-              <H2 style={{ textAlign: 'center' }}>
-                {t('nb-detect', { count: data?.signalDetections?.length })}
-              </H2>
               <ButtonNew label={t('stat-details')} onClick={() => router.push('/statistics')} />
             </div>
-            <div>&nbsp;</div>
           </FormBody>
-          <ContentGraph>
-            <StatData title={t('statistic:os')} data={dataGraph.os} />
-            <StatData title={t('statistic:model')} data={dataGraph.model} />
-            <StatData title={t('statistic:applications')} data={dataGraph.apps} />
-            <StatData title={t('statistic:signals')} data={dataGraph.signals} />
-          </ContentGraph>
+          <StatData title={t('statistic:os')} data={dataGraph.os} />
+          <StatData title={t('statistic:model')} data={dataGraph.model} />
+          <StatData title={t('statistic:applications')} data={dataGraph.apps} />
+          <StatData title={t('statistic:signals')} data={dataGraph.signals} />
         </Content>
       </DashboardCard>
     </div>
@@ -288,8 +284,15 @@ const Graph = styled.div`
 `;
 
 const Content = styled.div`
-  display: flex;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, calc(${DONUT_WIDTH}px + 1rem));
   gap: 0.5rem;
+  /* display: flex;
+  flex-wrap: wrap;
+  > * {
+    flex: 1 0 calc(${DONUT_WIDTH}px + 1rem);
+  } */
   h3 {
     display: flex;
     justify-content: space-between;
@@ -298,9 +301,4 @@ const Content = styled.div`
     color: var(--primary);
     border-bottom: 1px solid var(--light-grey);
   }
-`;
-
-const ContentGraph = styled(Content)`
-  flex-wrap: wrap;
-  justify-content: start;
 `;
