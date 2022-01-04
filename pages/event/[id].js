@@ -19,7 +19,6 @@ Event.getInitialProps = async (ctx) => {
     query: EVENT_QUERY,
     variables: { id },
   });
-  console.log(`Event initialData`, initialData);
   return {
     id,
     initialData,

@@ -91,9 +91,12 @@ export default function Event({ id, initialData }) {
   const [canEdit, setCanEdit] = useState(false);
   const { role: userRole, id: userId } = user;
   const eventOwnerId = initialValues.current?.owner?.id || user.id;
-  console.log(`eventOwnerId`, eventOwnerId);
   const [optionsAppUser, setOptionsAppUser] = useState([]);
   const [showMap, setShowMap] = useState(false);
+  const [loc, setLoc] = useState({
+    lat: initialData.data.event.lat,
+    lng: initialData.data.event.lng,
+  });
 
   const onDropHome = (acceptedFile) => {
     const file = acceptedFile[0];
@@ -164,6 +167,10 @@ export default function Event({ id, initialData }) {
     const newInputs = validate();
     if (!newInputs) return;
 
+    if (wasTouched('location')) {
+      newInputs.lat = loc.lat;
+      newInputs.lng = loc.lng;
+    }
     if (wasTouched('owner.id')) newInputs.owner = { connect: { id: newInputs.owner.id } };
     if (wasTouched('application.id'))
       newInputs.application = { connect: { id: newInputs.application.id } };
@@ -182,6 +189,11 @@ export default function Event({ id, initialData }) {
       name: 'application.id',
       value: app?.value,
     });
+  }
+
+  function handleLoc(loc, lat, lng) {
+    handleChange({ name: 'location', type: 'text', value: loc });
+    setLoc({ lat, lng });
   }
 
   useEffect(() => {
@@ -204,11 +216,9 @@ export default function Event({ id, initialData }) {
       {showMap && (
         <EventMap
           location={inputs.location}
-          lat={initialValues.current.lat}
-          lng={initialValues.current.lng}
-          setLocation={(loc) => {
-            console.log(`loc`, loc);
-          }}
+          lat={inputs.lat}
+          lng={inputs.lng}
+          setLocation={handleLoc}
           open={showMap}
           onClose={() => setShowMap(false)}
         />
@@ -252,9 +262,11 @@ export default function Event({ id, initialData }) {
                         name="location"
                         value={inputs.location}
                         onChange={handleChange}
+                        disabled={true}
                       />
                       <ActionButton type="map-pin" cb={() => setShowMap(true)} />
                     </Block>
+                    <FieldError error={validationError.location} />
                   </Row>
                   {eventOwnerId === userId ? (
                     <Row>
@@ -338,6 +350,7 @@ export default function Event({ id, initialData }) {
                       value={inputs.description}
                       onChange={handleChange}
                     />
+                    <FieldError error={validationError.description} />
                   </Row>
                   <Row>
                     <Block>
@@ -385,6 +398,7 @@ export default function Event({ id, initialData }) {
                     <Label htmlFor="eventDescription" required>
                       {t('event-description')}
                     </Label>
+                    <FieldError error={validationError.eventDescription} />
                     <RichEditor
                       id="eventDescription"
                       value={initialValues.current.eventDescription?.document}
@@ -396,7 +410,6 @@ export default function Event({ id, initialData }) {
                       }
                       placeholder={t('description-placeholder')}
                     />
-                    <FieldError error={validationError.eventDescription} />
                   </RowFull>
                 </>
               ) : (
@@ -445,7 +458,7 @@ export default function Event({ id, initialData }) {
 }
 
 Event.propTypes = {
-  id: PropTypes.object,
+  id: PropTypes.string,
   initialData: PropTypes.object,
 };
 

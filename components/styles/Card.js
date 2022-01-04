@@ -104,6 +104,9 @@ export const FormBody = styled.div`
       outline: 0;
       border-color: var(--primary);
     }
+    &:disabled {
+      background-color: var(--light-grey);
+    }
   }
   input[type='number'] {
     text-align: right;

@@ -51,7 +51,7 @@ const RichEditor = ({
       else if (v.type === 'heading-two') newV.push({ ...v, type: 'heading', level: 2 });
       else newV.push(v);
     }
-    console.log(`val`, newV);
+    // console.log(`val`, newV);
     return newV;
   }
 
