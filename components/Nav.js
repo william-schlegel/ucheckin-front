@@ -265,7 +265,7 @@ const NavStyles = styled.nav`
       }
     }
   }
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-menu)) {
     width: 100%;
     padding: 0;
     margin: 0;

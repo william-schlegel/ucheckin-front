@@ -720,7 +720,7 @@ AddNotif.propTypes = {
 const NotificationContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 400px;
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     grid-template-columns: 1fr;
   }
 `;
@@ -751,7 +751,7 @@ const NotifContainer = styled.div`
   grid-template-columns: repeat(8, 1fr);
   grid-gap: 20px;
   width: 100%;
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     grid-template-columns: repeat(3, 1fr);
   }
 `;

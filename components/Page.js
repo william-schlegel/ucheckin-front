@@ -85,6 +85,8 @@ const colors = theme('mode', {
     --bg-card: rgba(0, 0, 0, 0.02);
     --bs-drawer: 1px 0px 7px rgba(0, 0, 0, 0.5);
     --drop-shadow: 0 0 5px #000;
+    --bg-disabled: var(--light-grey);
+    --disabled: var(--grey);
   `,
   dark: css`
     --green: #20c05c;
@@ -110,6 +112,8 @@ const colors = theme('mode', {
     --bg-card: rgba(255, 255, 255, 0.02);
     --bs-drawer: 1px 0px 7px rgba(255, 255, 255, 0.5);
     --drop-shadow: 0 0 5px #fff;
+    --bg-disabled: var(--grey);
+    --disabled: var(--light-grey);
   `,
 });
 
@@ -118,6 +122,7 @@ const GlobalStyles = createGlobalStyle`
     ${colors}
     --break-menu: 1000px;
     --break-form: 1000px;
+    --break-screen: 1000px;
   }
 
   html {
@@ -173,7 +178,7 @@ const MainScreen = styled.div`
     'menu content';
   min-height: 100vh;
   width: 100%;
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     grid-template-columns: 1fr;
     grid-template-rows: ${(props) => (props.toggled ? 'auto' : '96px')} auto 1fr;
     grid-template-areas:

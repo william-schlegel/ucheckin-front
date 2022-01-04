@@ -51,7 +51,7 @@ export default function EventMap({ open, onClose, location, setLocation, lat, ln
   return (
     <Drawer onClose={onClose} open={open} title={t('location')}>
       <Wrapper apiKey={APIKey} render={render} libraries={['places']}>
-        <Form onSubmit={(e) => e.preventDefault}>
+        <Form onSubmit={(e) => e.preventDefault()}>
           <FormBody>
             <RowFull>
               <Label htmlFor="location" required>

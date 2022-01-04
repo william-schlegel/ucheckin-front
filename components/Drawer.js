@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useRef } from 'react';
 import styled from 'styled-components';
 
 import ActionButton from './Buttons/ActionButton';
@@ -43,7 +43,7 @@ const DrawerStyled = styled.div`
     transform: translateX(0);
   }
   overflow: auto;
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     width: 95%;
   }
 `;

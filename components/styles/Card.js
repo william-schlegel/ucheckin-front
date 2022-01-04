@@ -18,7 +18,7 @@ export const Row = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     grid-column: 1 / span 2;
   }
 `;
@@ -105,7 +105,8 @@ export const FormBody = styled.div`
       border-color: var(--primary);
     }
     &:disabled {
-      background-color: var(--light-grey);
+      background-color: var(--bg-disabled);
+      color: var(--disabled);
     }
   }
   input[type='number'] {

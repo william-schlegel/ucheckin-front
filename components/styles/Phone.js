@@ -1,7 +1,7 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import Select from 'react-select';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 
 import selectTheme from './selectTheme';
 
@@ -72,7 +72,7 @@ const PhoneStyled = styled.div`
       }
     }
   }
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     display: none;
   }
 `;

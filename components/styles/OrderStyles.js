@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const OrderStyles = styled.div`
-  max-width: 1000px;
+  max-width: var(--break-screen);
   margin: 0 auto;
   border: 1px solid var(--off-white);
   box-shadow: var(--bs);

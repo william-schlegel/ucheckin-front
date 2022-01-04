@@ -187,7 +187,7 @@ const Logo = styled.h1`
     height: 70px;
     width: auto;
   }
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     width: 100%;
   }
 `;
@@ -198,7 +198,7 @@ const HeaderStyles = styled.header`
   .nav-toggle {
     display: none;
   }
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     .nav-toggle {
       color: white;
       display: inline-block;
@@ -210,7 +210,7 @@ const HeaderStyles = styled.header`
     grid-template-columns: auto 1fr;
     justify-content: space-between;
     align-items: stretch;
-    @media (max-width: 1000px) {
+    @media (max-width: var(--break-screen)) {
       grid-template-columns: 1fr;
       grid-template-rows: 1fr 1fr;
       border: none;
@@ -282,7 +282,7 @@ const HeaderStyles = styled.header`
         }
       }
     }
-    @media (max-width: 1000px) {
+    @media (max-width: var(--break-screen)) {
       justify-content: flex-start;
       align-items: stretch;
       justify-content: space-evenly;

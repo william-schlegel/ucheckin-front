@@ -478,7 +478,7 @@ const EventContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 400px;
   grid-gap: 1rem;
-  @media (max-width: 1000px) {
+  @media (max-width: var(--break-screen)) {
     grid-template-columns: 1fr;
   }
 `;
