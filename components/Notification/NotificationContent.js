@@ -16,7 +16,7 @@ import Counter from '../Counter';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import RichEditor from '../SlateEditor';
+import RichEditor from '../slate/SlateEditor';
 import { Form, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
 import { ImageSelection } from '../styles/ImageSelection';
 import selectTheme from '../styles/selectTheme';
