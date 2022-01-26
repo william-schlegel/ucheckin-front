@@ -23,7 +23,7 @@ import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Help, HelpButton, useHelp } from '../Help';
 import { SearchUser } from '../SearchUser';
-import RichEditor from '../SlateEditor';
+import RichEditor from '../slate/SlateEditor';
 import {
   Block,
   Form,
