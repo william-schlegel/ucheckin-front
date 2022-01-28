@@ -107,10 +107,10 @@ export default function Profile({ id, initialData }) {
         </FormHeader>
         <FormBody>
           <RowReadOnly>
-            <Label>{t('umit-menu')}</Label>
+            <Label>{t('app-menu')}</Label>
             <SwitchComponent
-              onChange={(value) => handleChange({ name: 'canSeeUmitMenu', value })}
-              checked={inputs.canSeeUmitMenu}
+              onChange={(value) => handleChange({ name: 'canSeeAppMenu', value })}
+              checked={inputs.canSeeAppMenu}
             />
           </RowReadOnly>
           <RowReadOnly>
@@ -121,10 +121,10 @@ export default function Profile({ id, initialData }) {
             />
           </RowReadOnly>
           <RowReadOnly>
-            <Label>{t('app-menu')}</Label>
+            <Label>{t('umit-menu')}</Label>
             <SwitchComponent
-              onChange={(value) => handleChange({ name: 'canSeeAppMenu', value })}
-              checked={inputs.canSeeAppMenu}
+              onChange={(value) => handleChange({ name: 'canSeeUmitMenu', value })}
+              checked={inputs.canSeeUmitMenu}
             />
           </RowReadOnly>
         </FormBody>

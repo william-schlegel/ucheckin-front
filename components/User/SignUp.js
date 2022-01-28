@@ -1,17 +1,18 @@
-import useTranslation from 'next-translate/useTranslation';
-import { useRef } from 'react';
 import { useMutation } from '@apollo/client';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-
+import { useRef } from 'react';
 import { UserPlus } from 'react-feather';
-import { Form, FormBodyFull, Row, FormFooter, Label } from '../styles/Card';
+import SwitchComponent from 'react-switch';
+
 import useForm from '../../lib/useForm';
-import Error from '../ErrorMessage';
-import Drawer from '../Drawer';
-import { PrimaryButtonStyled } from '../styles/Button';
 import { IconButtonStyles } from '../Buttons/ActionButton';
-import { CURRENT_USER_QUERY, SIGNUP_MUTATION } from './Queries';
+import Drawer from '../Drawer';
+import Error from '../ErrorMessage';
 import FieldError from '../FieldError';
+import { PrimaryButtonStyled } from '../styles/Button';
+import { Form, FormBodyFull, FormFooter, Label, Row, RowReadOnly } from '../styles/Card';
+import { CURRENT_USER_QUERY, SIGNUP_MUTATION } from './Queries';
 
 export default function SignUp({ open, onClose }) {
   const { t } = useTranslation('user');
@@ -20,21 +21,21 @@ export default function SignUp({ open, onClose }) {
     name: '',
     password: '',
     company: '',
+    canSeeAppMenu: true,
+    canSeeUcheckinMenu: false,
+    canSeeUmitMenu: false,
   });
-  const {
-    inputs,
-    handleChange,
-    resetForm,
-    validate,
-    validationError,
-  } = useForm(initialState.current, [
-    'name',
-    'company',
-    { field: 'password', check: 'isPassword' },
-    { field: 'email', chack: 'isEmail' },
-  ]);
+  const { inputs, handleChange, resetForm, validate, validationError } = useForm(
+    initialState.current,
+    [
+      'name',
+      'company',
+      { field: 'password', check: 'isPassword' },
+      { field: 'email', chack: 'isEmail' },
+    ]
+  );
   const [signup, { error }] = useMutation(SIGNUP_MUTATION, {
-    variables: inputs,
+    variables: { data: inputs },
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
   async function handleSubmit(e) {
@@ -70,7 +71,7 @@ export default function SignUp({ open, onClose }) {
               type="text"
               name="company"
               required
-              autoComplete="company"
+              autoComplete="organization"
               value={inputs.company}
               onChange={handleChange}
             />
@@ -98,12 +99,33 @@ export default function SignUp({ open, onClose }) {
               type="password"
               name="password"
               required
-              autoComplete="password"
+              autoComplete="current-password"
               value={inputs.password}
               onChange={handleChange}
             />
             <FieldError error={validationError.password} />
           </Row>
+          <RowReadOnly>
+            <Label>{t('app-menu')}</Label>
+            <SwitchComponent
+              onChange={(value) => handleChange({ name: 'canSeeAppMenu', value })}
+              checked={inputs.canSeeAppMenu}
+            />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('ucheckin-menu')}</Label>
+            <SwitchComponent
+              onChange={(value) => handleChange({ name: 'canSeeUcheckinMenu', value })}
+              checked={inputs.canSeeUcheckinMenu}
+            />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('umit-menu')}</Label>
+            <SwitchComponent
+              onChange={(value) => handleChange({ name: 'canSeeUmitMenu', value })}
+              checked={inputs.canSeeUmitMenu}
+            />
+          </RowReadOnly>
         </FormBodyFull>
         <FormFooter>
           <PrimaryButtonStyled type="submit">
