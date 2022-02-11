@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import { UserPlus } from 'react-feather';
 import SwitchComponent from 'react-switch';
+import { useToasts } from 'react-toast-notifications';
 
 import useForm from '../../lib/useForm';
 import { IconButtonStyles } from '../Buttons/ActionButton';
@@ -31,18 +32,29 @@ export default function SignUp({ open, onClose }) {
       'name',
       'company',
       { field: 'password', check: 'isPassword' },
-      { field: 'email', chack: 'isEmail' },
+      { field: 'email', check: 'isEmail' },
     ]
   );
+  const { addToast } = useToasts();
+
   const [signup, { error }] = useMutation(SIGNUP_MUTATION, {
     variables: { data: inputs },
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    onCompleted: (data) => {
+      console.log('data', data);
+      addToast(t('account-created', { email: data.createUser.email }), {
+        appearance: 'success',
+        autoDismiss: 30,
+      });
+    },
   });
+
   async function handleSubmit(e) {
     e.preventDefault(); // stop the form from submitting
     if (!validate()) return;
     await signup().catch(console.error);
     resetForm();
+    onClose();
   }
   return (
     <Drawer onClose={onClose} open={open} title={t('signup')}>

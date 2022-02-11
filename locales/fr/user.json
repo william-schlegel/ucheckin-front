@@ -59,5 +59,6 @@
   "verify-password": "Votre mot de passe (de nouveau)",
   "reset-request": "Réinitialiser le mot de passe",
   "reset-token-error": "Erreur, vous devez fournir un token valide",
-  "reset-err-pwd": "Les mots de passe doivent etre identiques"
+  "reset-err-pwd": "Les mots de passe doivent etre identiques",
+  "account-created": "Un compte a été créé pour l'email {{email}}. Vous pouvez maintenant vous connecter"
 }

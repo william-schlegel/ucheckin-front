@@ -59,5 +59,6 @@
   "verify-password": "Your password (again)",
   "reset-request": "Reset your password",
   "reset-token-error": "Error, your token is not valid",
-  "reset-err-pwd": "Passwords must be the same"
+  "reset-err-pwd": "Passwords must be the same",
+  "account-created": "An account has been created for {{email}}. You can now connect to the application."
 }
