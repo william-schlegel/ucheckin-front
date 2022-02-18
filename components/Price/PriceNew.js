@@ -14,7 +14,17 @@ import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import { TableStyled } from '../License/LicensePrice';
 import { SearchUsers } from '../SearchUser';
-import { Block, Form, FormBody, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
+import SegmentedControl from '../SegmentedControl';
+import {
+  Block,
+  Form,
+  FormBody,
+  FormBodyFull,
+  Label,
+  Row,
+  RowFull,
+  RowReadOnly,
+} from '../styles/Card';
 import { LicenseType, useLicenseName } from '../Tables/LicenseType';
 import { ALL_PRICES_QUERY, CREATE_PRICE_MUTATION } from './Queries';
 
@@ -37,6 +47,7 @@ export default function PriceNew({ open, onClose }) {
     validAfter: dateDay(),
     validUntil: dateInMonth(12),
     observation: '',
+    type: 'license',
   });
   const { inputs, handleChange } = useForm(initialValues.current);
 
@@ -48,24 +59,33 @@ export default function PriceNew({ open, onClose }) {
       validUntil: inputs.validUntil,
     };
     if (inputs.users.length) {
-      data.users = { connect: inputs.users.map((u) => ({ id: u.value })) };
+      data.users = { connect: inputs.users.map((u) => ({ id: u.id })) };
     }
 
-    const prices = new Map();
-    licenseTypes.forEach((lt) => {
-      const price = prices.get(lt.id) || { id: lt.id };
-      if (inputs[`${lt.id}:monthly`]) price.monthly = inputs[`${lt.id}:monthly`];
-      if (inputs[`${lt.id}:yearly`]) price.yearly = inputs[`${lt.id}:yearly`];
-      prices.set(lt.id, price);
-    });
     const createPrices = [];
-    prices.forEach((p) => {
-      createPrices.push({
-        licenseType: { connect: { id: p.id } },
-        monthly: p.monthly.toString(),
-        yearly: p.yearly.toString(),
+    if (inputs.type === 'license') {
+      const prices = new Map();
+      licenseTypes.forEach((lt) => {
+        const price = prices.get(lt.id) || { id: lt.id };
+        if (inputs[`${lt.id}:monthly`]) price.monthly = inputs[`${lt.id}:monthly`];
+        if (inputs[`${lt.id}:yearly`]) price.yearly = inputs[`${lt.id}:yearly`];
+        prices.set(lt.id, price);
       });
-    });
+      prices.forEach((p) => {
+        createPrices.push({
+          type: 'license',
+          licenseType: { connect: { id: p.id } },
+          monthly: p.monthly.toString(),
+          yearly: p.yearly.toString(),
+        });
+      });
+    }
+    if (inputs.type === 'umix') {
+      createPrices.push({
+        type: 'umix',
+        unitPrice: inputs.unitPrice.toString(),
+      });
+    }
 
     data.items = {
       create: createPrices,
@@ -79,6 +99,17 @@ export default function PriceNew({ open, onClose }) {
     <Drawer onClose={onClose} open={open} title={t('new-price')}>
       <Form>
         <FormBody>
+          <RowFull>
+            <SegmentedControl
+              options={[
+                { label: t('license'), value: 'license' },
+                { label: t('umix'), value: 'umix' },
+                { label: t('hbeacon'), value: 'hbeacon', disabled: true },
+              ]}
+              value={inputs.type}
+              onChange={(value) => handleChange({ name: 'type', value })}
+            />
+          </RowFull>
           <Row>
             <Label htmlFor="validAfter">{t('valid-after')}</Label>
             <Block>
@@ -137,7 +168,7 @@ export default function PriceNew({ open, onClose }) {
             </Block>
           </Row>
           <Row>
-            {licenseTypes.length && (
+            {inputs.type === 'license' && licenseTypes.length && (
               <TableStyled>
                 <thead>
                   <tr>
@@ -172,6 +203,17 @@ export default function PriceNew({ open, onClose }) {
                   ))}
                 </tbody>
               </TableStyled>
+            )}
+            {(inputs.type === 'umix' || inputs.type === 'hbeacon') && (
+              <>
+                <Label>{t('unit-price')}</Label>
+                <input
+                  type="number"
+                  name={'unitPrice'}
+                  value={inputs.unitPrice || '0'}
+                  onChange={handleChange}
+                />
+              </>
             )}
           </Row>
         </FormBodyFull>

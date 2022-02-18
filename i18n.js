@@ -15,6 +15,7 @@ module.exports = {
       'event',
       'statistic',
       'umit',
+      'umix',
     ],
     'rgx:^/sdk': ['sdk'],
     'rgx:^/application': ['application', 'license'],
@@ -33,6 +34,7 @@ module.exports = {
     'rgx:^/accept-invitation': ['application'],
     'rgx:^/statistic': ['statistic'],
     'rgx:^/umit': ['umit'],
+    'rgx:^/umix': ['umix'],
     'rgx:^/reset': ['user'],
   },
 };

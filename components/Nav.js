@@ -55,6 +55,12 @@ const MENUS = [
     ],
     icon: (sz) => <Minimize2 size={sz} />,
   },
+  {
+    menu: 'umix',
+    label: 'umix',
+    route: '/umixes',
+    icon: (sz) => <Cpu size={sz} />,
+  },
 ];
 
 export default function Nav({ toggled, reduced, setReduced }) {
@@ -70,6 +76,8 @@ export default function Nav({ toggled, reduced, setReduced }) {
     event: user.canSeeUcheckinMenu,
     umit: user.canSeeUmitMenu,
     invoice: user.role?.canSeeOrder,
+    umix: user.canSeeUmixMenu,
+    hbeacon: user.canSeeHBeaconMenu,
   };
 
   return (

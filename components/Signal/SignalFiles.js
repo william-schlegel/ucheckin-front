@@ -1,10 +1,15 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
-import { useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
+import { useRef, useState } from 'react';
 import Select from 'react-select';
 import { useToasts } from 'react-toast-notifications';
 
+import useForm from '../../lib/useForm';
+import AudioPlayer from '../Audio/AudioPlayer';
+import CancelButton from '../Buttons/ButtonCancel';
+import NewButton from '../Buttons/ButtonNew';
+import ValidationButton from '../Buttons/ButtonValidation';
 import {
   Block,
   Form,
@@ -16,15 +21,10 @@ import {
   RowFull,
   RowReadOnly,
 } from '../styles/Card';
-import useForm from '../../lib/useForm';
-import Table, { useColumns } from '../Tables/Table';
-import Chanel, { useChanel } from '../Tables/Chanel';
-import NewButton from '../Buttons/ButtonNew';
-import ValidationButton from '../Buttons/ButtonValidation';
-import { MUTATION_ADD_SIGNAL_FILE, SIGNAL_QUERY } from './Queries';
-import CancelButton from '../Buttons/ButtonCancel';
-import AudioPlayer from '../Audio/AudioPlayer';
 import selectTheme from '../styles/selectTheme';
+import Chanel, { useChanel } from '../Tables/Chanel';
+import Table, { useColumns } from '../Tables/Table';
+import { MUTATION_ADD_SIGNAL_FILE, SIGNAL_QUERY } from './Queries';
 
 export default function SignalFiles({ signalId, signalCode, files }) {
   const { t } = useTranslation('signal');
@@ -220,9 +220,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
                 className="select"
                 id="chanel"
                 value={chanelOptions.find((ch) => ch.value === inputs.chanel)}
-                onChange={(e) =>
-                  handleChange({ value: e.value, name: 'chanel' })
-                }
+                onChange={(e) => handleChange({ value: e.value, name: 'chanel' })}
                 options={chanelOptions}
               />
             </RowFull>

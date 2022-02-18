@@ -14,6 +14,7 @@ import DashboardSignal from './Signals';
 import DashboardStatistics from './Statistics';
 import DashboardMeasure from './UmitMeasures';
 import DashboardSensor from './UmitSensors';
+import DashboardUmixes from './Umixes';
 import DashboardUser from './Users';
 
 export default function Dashboard() {
@@ -52,6 +53,7 @@ export default function Dashboard() {
             <DashboardMeasure />
           </>
         )}
+        {user.canSeeUmixMenu && <DashboardUmixes />}
       </DashboardStyled>
       {user.canSeeAppMenu && <DashboardStatistics />}
     </>

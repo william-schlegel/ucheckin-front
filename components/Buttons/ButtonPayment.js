@@ -22,11 +22,13 @@ export default function ButtonPayment({
   disabled,
   purchaseFunction,
   data,
-  onSuccess,
-  onError,
+  onSuccess = () => console.log('Success'),
+  onError = (error) => console.error(error),
+  validationFunction,
   invoicingModel,
 }) {
   const { t } = useTranslation('common');
+
   if (invoicingModel === 'invoice') {
     if (disabled) return null;
     return (
@@ -34,8 +36,16 @@ export default function ButtonPayment({
         <SecondaryButtonStyled
           type="button"
           onClick={() => {
-            purchaseFunction({ variables: { ...data, token: 'invoice' } });
-            onSuccess();
+            let paymentData = data;
+            if (typeof validationFunction === 'function') {
+              paymentData = validationFunction();
+              if (!paymentData) {
+                onError(t('data-error'));
+                return;
+              }
+            }
+            purchaseFunction({ variables: { ...paymentData, token: 'invoice' } });
+            if (typeof onSuccess === 'function') onSuccess();
           }}
         >
           <IconButtonStyles>
@@ -56,6 +66,7 @@ export default function ButtonPayment({
             onError={onError}
             purchaseFunction={purchaseFunction}
             data={data}
+            validationFunction={validationFunction}
           />
         </Elements>
       )}
@@ -64,10 +75,11 @@ export default function ButtonPayment({
 }
 
 ButtonPayment.propTypes = {
-  onSuccess: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func,
+  onError: PropTypes.func,
   disabled: PropTypes.bool,
   purchaseFunction: PropTypes.func,
+  validationFunction: PropTypes.func,
   data: PropTypes.object,
   invoicingModel: PropTypes.string,
 };
@@ -83,7 +95,7 @@ const CheckoutFormStyles = styled.form`
   width: 100%;
 `;
 
-function PaymentForm({ onSuccess, onError, purchaseFunction, data }) {
+function PaymentForm({ onSuccess, onError, purchaseFunction, data, validationFunction }) {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const stripe = useStripe();
@@ -103,12 +115,21 @@ function PaymentForm({ onSuccess, onError, purchaseFunction, data }) {
       onError();
       return;
     }
+    let paymentData = data;
+    if (typeof validationFunction === 'function') {
+      paymentData = validationFunction();
+      if (!paymentData) {
+        onError(t('data-error'));
+        return;
+      }
+    }
+
     const order = purchaseFunction({
-      variables: { ...data, token: paymentMethod.id },
+      variables: { ...paymentData, token: paymentMethod.id },
     });
     setLoading(false);
     nProgress.done();
-    onSuccess(order.id);
+    if (typeof onSuccess === 'function') onSuccess(order.id);
   }
 
   return (
@@ -131,4 +152,5 @@ PaymentForm.propTypes = {
   data: PropTypes.object,
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
+  validationFunction: PropTypes.func,
 };

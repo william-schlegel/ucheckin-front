@@ -112,14 +112,43 @@ export const PURCHASE_LICENSE_MUTATION = gql`
   }
 `;
 
+export const PURCHASE_PRODUCT_MUTATION = gql`
+  mutation PURCHASE_PRODUCT_MUTATION(
+    $ownerId: ID!
+    $priceItemId: ID!
+    $quantity: Int!
+    $productType: String!
+    $productName: String!
+    $productDescription: String!
+    $token: String!
+    $expectedAmountBrut: Float!
+    $vatId: ID
+  ) {
+    purchaseNewProduct(
+      ownerId: $ownerId
+      priceItemId: $priceItemId
+      quantity: $quantity
+      productType: $productType
+      productName: $productName
+      productDescription: $productDescription
+      token: $token
+      expectedAmountBrut: $expectedAmountBrut
+      vatId: $vatId
+    ) {
+      id
+    }
+  }
+`;
+
 export const LICENSE_PRICE_QUERY = gql`
-  query LICENSE_PRICE_QUERY($dayDate: DateTime!, $owner: ID!) {
+  query LICENSE_PRICE_QUERY($dayDate: DateTime!, $owner: ID!, $type: String!) {
     prices: licensePrices(
       where: {
         AND: [
           { OR: [{ default: { equals: true } }, { users: { some: { id: { equals: $owner } } } }] }
           { validAfter: { lt: $dayDate } }
           { validUntil: { gte: $dayDate } }
+          { items: { some: { type: { equals: $type } } } }
         ]
       }
       orderBy: [{ validAfter: desc }]
@@ -135,6 +164,7 @@ export const LICENSE_PRICE_QUERY = gql`
         }
         monthly
         yearly
+        unitPrice
       }
       users {
         id

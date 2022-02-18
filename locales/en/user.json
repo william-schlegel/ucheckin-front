@@ -50,6 +50,8 @@
   "umit-menu": "I am managing UMITs",
   "ucheckin-menu": "I am using the UCheckIn SDK",
   "app-menu": "I am using a mobile app SDK",
+  "umix-menu": "I am using UMIX device",
+  "hbeacon-menu": "I am using HBeacon device",
   "created-at": "Created the",
   "reset-pwd": "Password reinitialization",
   "reset-pwd-success": "Password successfully reinitialized, you can login now",

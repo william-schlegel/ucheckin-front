@@ -28,7 +28,7 @@ import {
   Separator,
 } from '../styles/Card';
 import { LicenseType } from '../Tables/LicenseType';
-import Total from '../TotalCount';
+import { TotalLicenses } from '../TotalCount';
 import LicensePrice, { usePrice } from './LicensePrice';
 import { UPDATE_LICENSE_MUTATION, useFindLicense } from './Queries';
 
@@ -48,7 +48,7 @@ export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId
     yearLicense: 0,
   });
   const { inputs, handleChange, resetForm } = useForm(initialValues.current);
-  const { price } = usePrice(ownerId);
+  const { price } = usePrice(ownerId, 'license');
   const { vat } = useVat(ownerId);
   const [newValidity, setNewValidity] = useState(dateDay());
   const validityDate = license?.validity;
@@ -197,7 +197,7 @@ export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId
             <Label>{t('new-validity')}</Label>
             <span>{formatDate(newValidity)}</span>
           </RowReadOnly>
-          <Total value={total} vat={parseFloat(vat.value)} />
+          <TotalLicenses value={total} vat={parseFloat(vat.value)} />
         </FormBodyFull>
       </Form>
       <DrawerFooter>

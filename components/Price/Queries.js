@@ -18,6 +18,7 @@ export const ALL_PRICES_QUERY = gql`
       default
       validAfter
       validUntil
+      observation
       owner {
         id
         name
@@ -45,6 +46,7 @@ export const PRICE_QUERY = gql`
       }
       items {
         id
+        type
         licenseType {
           id
           name
@@ -54,6 +56,7 @@ export const PRICE_QUERY = gql`
         }
         monthly
         yearly
+        unitPrice
       }
     }
   }

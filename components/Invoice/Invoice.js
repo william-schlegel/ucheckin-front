@@ -23,7 +23,7 @@ import { LicenseType } from '../Tables/LicenseType';
 import Number from '../Tables/Number';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
-import Total from '../TotalCount';
+import { TotalLicenses } from '../TotalCount';
 import InvoiceTemplate from './InvoiceTemplate';
 import { ORDER_QUERY } from './Queries';
 
@@ -125,7 +125,7 @@ export default function Invoice({ id, backButton, print, setPrint }) {
           <Row>
             <Table columns={columns} data={data.order.items} />
           </Row>
-          <Total
+          <TotalLicenses
             vat={parseFloat(data.order.vatValue)}
             value={{ amount: parseFloat(data.order.totalBrut) }}
           />

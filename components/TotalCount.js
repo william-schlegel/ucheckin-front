@@ -6,6 +6,93 @@ import styled from 'styled-components';
 import { formatMoney, formatPrct } from '../lib/formatNumber';
 import { Block, H2, Label, Row, RowReadOnly } from './styles/Card';
 
+export function TotalLicenses({ value, vat }) {
+  const { t } = useTranslation('license');
+  return (
+    <>
+      <Row>
+        <Block>
+          {value.licenses > 0 && <span>{t('total-license', { count: value.licenses })}</span>}
+          {value.signals > 0 && <span>{t('total-signal', { count: value.signals })}</span>}
+        </Block>
+      </Row>
+      <TotalStyled>
+        <RowReadOnly>
+          <Label>{t('common:net-amount')}</Label>
+          <span className="number">{formatMoney(value.amount)}</span>
+        </RowReadOnly>
+        <RowReadOnly>
+          <Label>{t('common:vat', { percentage: formatPrct(vat) })}</Label>
+          <span className="number">{formatMoney(value.amount * vat)}</span>
+        </RowReadOnly>
+        <RowReadOnly>
+          <H2 className="label">{t('common:taxed-amount')}</H2>
+          <span className="number big">
+            <AnimationStyles>
+              <TransitionGroup>
+                <CSSTransition
+                  unmountOnExit
+                  className="count"
+                  classNames="count"
+                  key={JSON.stringify(value)}
+                  timeout={{ enter: 400, exit: 400 }}
+                >
+                  <span className="total">{formatMoney(value.amount * (1 + vat))}</span>
+                </CSSTransition>
+              </TransitionGroup>
+            </AnimationStyles>
+          </span>
+        </RowReadOnly>
+      </TotalStyled>
+    </>
+  );
+}
+TotalLicenses.propTypes = {
+  value: PropTypes.object,
+  vat: PropTypes.number,
+};
+
+export function TotalProduct({ qty, unitPrice, vat }) {
+  const { t } = useTranslation('umix');
+  const amount = qty * unitPrice;
+  return (
+    <TotalStyled>
+      <RowReadOnly>
+        <Label>{t('common:net-amount')}</Label>
+        <span className="number">{formatMoney(amount)}</span>
+      </RowReadOnly>
+      <RowReadOnly>
+        <Label>{t('common:vat', { percentage: formatPrct(vat) })}</Label>
+        <span className="number">{formatMoney(amount * vat)}</span>
+      </RowReadOnly>
+      <RowReadOnly>
+        <H2 className="label">{t('common:taxed-amount')}</H2>
+        <span className="number big">
+          <AnimationStyles>
+            <TransitionGroup>
+              <CSSTransition
+                unmountOnExit
+                className="count"
+                classNames="count"
+                key={'KEY'}
+                timeout={{ enter: 400, exit: 400 }}
+              >
+                <span className="total">{formatMoney(amount * (1 + vat))}</span>
+              </CSSTransition>
+            </TransitionGroup>
+          </AnimationStyles>
+        </span>
+      </RowReadOnly>
+    </TotalStyled>
+  );
+}
+
+TotalProduct.propTypes = {
+  qty: PropTypes.number,
+  unitPrice: PropTypes.number,
+  vat: PropTypes.number,
+};
+
 const TotalStyled = styled.div`
   display: flex;
   flex-direction: column;
@@ -48,50 +135,3 @@ const AnimationStyles = styled.span`
     transform: scale(4) rotateX(0.5turn);
   }
 `;
-
-export default function Total({ value, vat }) {
-  const { t } = useTranslation('license');
-  return (
-    <>
-      <Row>
-        <Block>
-          {value.licenses > 0 && <span>{t('total-license', { count: value.licenses })}</span>}
-          {value.signals > 0 && <span>{t('total-signal', { count: value.signals })}</span>}
-        </Block>
-      </Row>
-      <TotalStyled>
-        <RowReadOnly>
-          <Label>{t('common:net-amount')}</Label>
-          <span className="number">{formatMoney(value.amount)}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <Label>{t('common:vat', { percentage: formatPrct(vat) })}</Label>
-          <span className="number">{formatMoney(value.amount * vat)}</span>
-        </RowReadOnly>
-        <RowReadOnly>
-          <H2 className="label">{t('common:taxed-amount')}</H2>
-          <span className="number big">
-            <AnimationStyles>
-              <TransitionGroup>
-                <CSSTransition
-                  unmountOnExit
-                  className="count"
-                  classNames="count"
-                  key={JSON.stringify(value)}
-                  timeout={{ enter: 400, exit: 400 }}
-                >
-                  <span className="total">{formatMoney(value.amount * (1 + vat))}</span>
-                </CSSTransition>
-              </TransitionGroup>
-            </AnimationStyles>
-          </span>
-        </RowReadOnly>
-      </TotalStyled>
-    </>
-  );
-}
-
-Total.propTypes = {
-  value: PropTypes.object,
-  vat: PropTypes.number,
-};

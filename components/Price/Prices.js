@@ -56,11 +56,8 @@ export default function Prices() {
   const columns = useColumns([
     ['id', 'id', 'hidden'],
     [t('default'), 'default', ({ cell: { value } }) => (value ? <Check /> : null)],
-    [
-      t('users'),
-      'users',
-      ({ cell: { value } }) => <Badges labels={value} />, // value.map((u) => <Badge label={u.name} />),
-    ],
+    [t('users'), 'users', ({ cell: { value } }) => <Badges labels={value} />],
+    [t('observations'), 'observation'],
     [t('valid-after'), 'validAfter', ({ cell: { value } }) => <ValidityDate value={value} after />],
     [t('valid-until'), 'validUntil', ({ cell: { value } }) => <ValidityDate value={value} />],
   ]);

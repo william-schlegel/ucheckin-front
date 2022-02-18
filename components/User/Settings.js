@@ -127,6 +127,20 @@ export default function Profile({ id, initialData }) {
               checked={inputs.canSeeUmitMenu}
             />
           </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('umix-menu')}</Label>
+            <SwitchComponent
+              onChange={(value) => handleChange({ name: 'canSeeUmixMenu', value })}
+              checked={inputs.canSeeUmixMenu}
+            />
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('hbeacon-menu')}</Label>
+            <SwitchComponent
+              onChange={(value) => handleChange({ name: 'canSeeHBeaconMenu', value })}
+              checked={inputs.canSeeHBeaconMenu}
+            />
+          </RowReadOnly>
         </FormBody>
         <FormFooter>
           {id && <ButtonValidation disabled={loadingUpdate} onClick={handleValidation} update />}

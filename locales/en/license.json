@@ -22,8 +22,9 @@
   "license-valid": "{{count}} license is valid.",
   "license-valid_0": "You have no valid license.",
   "license-valid_other": "{{count}} licenses are valid.",
-  "by-month": "Number of month",
-  "by-year": "Number of year",
+  "by-month": "By month",
+  "by-year": "By year",
+  "by-unit": "By unit",
   "ucheck-in": "Number of Ucheck-In licenses (one license per signal and per explotation area)",
   "nb-signal": "Number of different signals",
   "nb-license": "License duration",
@@ -67,5 +68,8 @@
   "item-name-ucheck-in-renew-yearly": "Renew yearly license for UcheckIn",
   "date-purchase": "Purchase date",
   "quantity": "Quantity",
-  "invoice-history": "Invoice history"
+  "invoice-history": "Invoice history",
+  "umix": "UMIX",
+  "hbeacon": "HBeacon",
+  "unit-price": "Unit price"
 }

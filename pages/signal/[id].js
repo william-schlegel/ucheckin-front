@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import ViewSignal from '../../components/Signal/Signal';
 
 export default function Signal({ query }) {

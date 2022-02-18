@@ -12,7 +12,7 @@ const Container = styled.div`
 
 const TOLERANCE = 5;
 
-export default function ValidityDate({ value, after, noColor, dateColor = 'inherit' }) {
+export default function ValidityDate({ value, after, noColor, dateColor = 'inherit', withTime }) {
   const now = new Date();
   const limit = new Date(value);
   const tolerance = new Date(value);
@@ -28,7 +28,7 @@ export default function ValidityDate({ value, after, noColor, dateColor = 'inher
   }
   return (
     <Container>
-      <span style={{ color }}>{formatDate(value)}</span>
+      <span style={{ color }}>{formatDate(value, undefined, withTime)}</span>
     </Container>
   );
 }
@@ -40,4 +40,7 @@ ValidityDate.defaultProps = {
 ValidityDate.propTypes = {
   value: PropTypes.string,
   after: PropTypes.bool,
+  noColor: PropTypes.bool,
+  dteColor: PropTypes.string,
+  withTime: PropTypes.bool,
 };

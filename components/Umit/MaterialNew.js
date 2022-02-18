@@ -56,7 +56,7 @@ export default function MaterialNew({ open, onClose, id }) {
   });
   const { inputs, handleChange, validate, validationError, setInputs } = useForm(
     initialValues.current,
-    ['name', { check: 'isNotNull', key: 'propSpeed' }]
+    ['name', { check: 'isNotNull', field: 'propSpeed' }]
   );
 
   useEffect(() => {

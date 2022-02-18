@@ -15,7 +15,7 @@ export default function Switch({ value, disabled, callBack }) {
   return (
     <SwitchContainer>
       <SwitchComponent
-        onChange={() => typeof callBack === 'function' && callBack(value)}
+        onChange={(checked) => typeof callBack === 'function' && callBack(checked)}
         checked={!!value}
         disabled={disabled}
       />

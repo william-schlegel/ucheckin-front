@@ -5,19 +5,24 @@ import Datepicker, { registerLocale } from 'react-datepicker'; // './Datepiker/D
 
 registerLocale('fr', fr);
 
-export default function DatePicker({ ISOStringValue, onChange }) {
+export default function DatePicker({ ISOStringValue, onChange, withTime }) {
   const { lang } = useTranslation();
 
   return (
     <Datepicker
       selected={new Date(ISOStringValue)}
       onChange={(dt) => {
-        const value = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 12);
-        console.log(`DatePicker`, value);
-        onChange(value);
+        if (withTime) {
+          onChange(dt);
+        } else {
+          const value = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 12);
+          console.log(`DatePicker`, value);
+          onChange(value);
+        }
       }}
       locale={lang === 'fr' ? 'fr' : 'en-US'}
-      dateFormat={lang === 'fr' ? 'dd/MM/yyyy' : 'MM/dd/yyyy'}
+      dateFormat={`${lang === 'fr' ? 'dd/MM/yyyy' : 'MM/dd/yyyy'}${withTime ? ' HH:mm' : ''}`}
+      showTimeSelect={withTime}
     />
   );
 }
@@ -41,9 +46,14 @@ export function dateInDay(nbDay = 1) {
   return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + nbDay).toISOString();
 }
 
-export function formatDate(dt, locale) {
+export function formatDate(dt, locale, withTime) {
   if (!dt) return '';
   const options = { day: '2-digit', month: 'long', year: 'numeric' };
+  if (withTime) {
+    options.hour = '2-digit';
+    options.minute = '2-digit';
+    options.second = '2-digit';
+  }
   const formatter = Intl.DateTimeFormat(locale, options);
   return formatter.format(new Date(dt));
 }
@@ -51,4 +61,5 @@ export function formatDate(dt, locale) {
 DatePicker.propTypes = {
   ISOStringValue: PropTypes.string,
   onChange: PropTypes.func,
+  withTime: PropTypes.bool,
 };

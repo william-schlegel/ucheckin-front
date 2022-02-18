@@ -1,27 +1,19 @@
-import PropTypes from 'prop-types';
-import useTranslation from 'next-translate/useTranslation';
 import { useQuery } from '@apollo/client';
+import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import { formatMoney } from '../../lib/formatNumber';
+import ButtonCancel from '../Buttons/ButtonCancel';
+import { formatDate } from '../DatePicker';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
-import ButtonCancel from '../Buttons/ButtonCancel';
-import Loading from '../Loading';
-import {
-  Block,
-  Form,
-  FormBody,
-  FormBodyFull,
-  Label,
-  Row,
-  RowReadOnly,
-} from '../styles/Card';
-import { PRICE_QUERY } from './Queries';
-import { formatDate } from '../DatePicker';
 import { TableStyled } from '../License/LicensePrice';
-import { formatMoney } from '../../lib/formatNumber';
-import { LicenseType } from '../Tables/LicenseType';
+import Loading from '../Loading';
+import { Block, Form, FormBody, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
 import Badges from '../Tables/Badges';
+import { LicenseType } from '../Tables/LicenseType';
+import { PRICE_QUERY } from './Queries';
 
 const DefaultStyled = styled.div`
   display: block;
@@ -83,16 +75,20 @@ export default function PriceDetails({ open, onClose, id }) {
                   <th>{t('price')}</th>
                   <th>{t('by-month')}</th>
                   <th>{t('by-year')}</th>
+                  <th>{t('by-unit')}</th>
                 </tr>
               </thead>
               <tbody>
                 {price?.items.map((p) => (
                   <tr key={p.id}>
                     <td>
-                      <LicenseType license={p.licenseType.id} />
+                      {p.type === 'license' && <LicenseType license={p.licenseType.id} />}
+                      {p.type === 'umix' && <div>{t('umix')}</div>}
+                      {p.type === 'hbeacon' && <div>{t('hbeacon')}</div>}
                     </td>
                     <td>{formatMoney(p.monthly, lang)}</td>
                     <td>{formatMoney(p.yearly, lang)}</td>
+                    <td>{formatMoney(p.unitPrice, lang)}</td>
                   </tr>
                 ))}
               </tbody>

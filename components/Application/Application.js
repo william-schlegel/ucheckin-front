@@ -81,7 +81,7 @@ export default function Application({ id, initialData }) {
           variables: { skip: 0, take: perPage },
         },
       ],
-      onCompleted: () => {
+      onCompleted: (data) => {
         setAction('update', 'application', data.updateApplication.id);
         router.push('/applications');
       },

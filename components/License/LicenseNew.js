@@ -20,7 +20,7 @@ import { Block, Form, FormBodyFull, H3, Label, Row, RowReadOnly, Separator } fro
 import { LicenseContainer } from '../styles/License';
 import selectTheme from '../styles/selectTheme';
 import { LicenseType } from '../Tables/LicenseType';
-import Total from '../TotalCount';
+import { TotalLicenses } from '../TotalCount';
 import LicensePrice, { usePrice } from './LicensePrice';
 import { PURCHASE_LICENSE_MUTATION } from './Queries';
 
@@ -70,7 +70,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId, withSignal }
   const { t } = useTranslation('license');
 
   const { inputs, handleChange, resetForm } = useForm(initialValues);
-  const { price } = usePrice(ownerId);
+  const { price } = usePrice(ownerId, 'license');
 
   const [state, dispatch] = useReducer(reducer, {
     amount: 0,
@@ -101,7 +101,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId, withSignal }
   }
 
   function handleError(error) {
-    console.log(`error`, error);
+    console.error(`error`, error);
   }
 
   useEffect(() => {
@@ -246,7 +246,7 @@ export default function LicenseNew({ open, onClose, appId, ownerId, withSignal }
               </FormBodyFull>
             </LicenseContainer>
           ))}
-          <Total value={state} vat={parseFloat(vat.value)} />
+          <TotalLicenses value={state} vat={parseFloat(vat.value)} />
         </FormBodyFull>
       </Form>
       <DrawerFooter>

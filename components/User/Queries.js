@@ -131,6 +131,8 @@ export const QUERY_SETTINGS = gql`
       canSeeUmitMenu
       canSeeUcheckinMenu
       canSeeAppMenu
+      canSeeUmixMenu
+      canSeeHBeaconMenu
       role {
         id
         name
@@ -181,6 +183,8 @@ export const CURRENT_USER_QUERY = gql`
         canSeeUmitMenu
         canSeeUcheckinMenu
         canSeeAppMenu
+        canSeeUmixMenu
+        canSeeHBeaconMenu
         role {
           id
           canSeeOtherUsers
@@ -198,6 +202,7 @@ export const CURRENT_USER_QUERY = gql`
           canManageEvent
           canManageNotification
           canManageUmits
+          canManageAllUmix
         }
       }
     }
@@ -261,6 +266,8 @@ export const UPDATE_SETTINGS_MUTATION = gql`
     $canSeeUmitMenu: Boolean
     $canSeeUcheckinMenu: Boolean
     $canSeeAppMenu: Boolean
+    $canSeeUmixMenu: Boolean
+    $canSeeHBeaconMenu: Boolean
   ) {
     updateUser(
       where: { id: $id }
@@ -268,6 +275,8 @@ export const UPDATE_SETTINGS_MUTATION = gql`
         canSeeUmitMenu: $canSeeUmitMenu
         canSeeUcheckinMenu: $canSeeUcheckinMenu
         canSeeAppMenu: $canSeeAppMenu
+        canSeeUmixMenu: $canSeeUmixMenu
+        canSeeHBeaconMenu: $canSeeHBeaconMenu
       }
     ) {
       id
