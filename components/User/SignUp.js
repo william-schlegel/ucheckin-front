@@ -41,7 +41,6 @@ export default function SignUp({ open, onClose }) {
     variables: { data: inputs },
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
     onCompleted: (data) => {
-      console.log('data', data);
       addToast(t('account-created', { email: data.createUser.email }), {
         appearance: 'success',
         autoDismiss: 30,

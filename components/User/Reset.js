@@ -1,8 +1,10 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
+import { useRouter } from 'next/dist/client/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 
 import useForm from '../../lib/useForm';
 import Error from '../ErrorMessage';
@@ -31,8 +33,18 @@ export default function Reset({ token }) {
     initialState.current,
     [{ field: 'email', check: 'isEmail' }, 'password', 'verifyPassword']
   );
+  const { addToast } = useToasts();
+  const router = useRouter();
   const [reset, { data, error }] = useMutation(RESET_MUTATION, {
     variables: { email: inputs.email, password: inputs.password, token },
+    onCompleted: (data) => {
+      if (data?.redeemUserPasswordResetToken === null)
+        addToast(t('reset-pwd-success'), {
+          appearance: 'success',
+          autoDismiss: 30,
+        });
+      router.push('/login');
+    },
   });
   const successfulError = data?.redeemUserPasswordResetToken?.code
     ? data?.redeemUserPasswordResetToken
@@ -107,7 +119,6 @@ export default function Reset({ token }) {
               {t('reset-request')}
             </PrimaryButtonStyled>
             <Error error={error || successfulError || errPwd} />
-            {data?.redeemUserPasswordResetToken === null && <p>{t('rest-pwd-success')}</p>}
           </FormFooter>
         </FormBodyFull>
       </Form>

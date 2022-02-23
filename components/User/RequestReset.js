@@ -4,6 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import { XCircle } from 'react-feather';
+import { useToasts } from 'react-toast-notifications';
 
 import useForm from '../../lib/useForm';
 import { IconButtonStyles } from '../Buttons/ActionButton';
@@ -22,22 +23,28 @@ const REQUEST_RESET_MUTATION = gql`
 
 export default function RequestReset({ open, onClose }) {
   const { t } = useTranslation('user');
-  const initialState = useRef({
-    email: '',
-  });
-  const { inputs, handleChange, resetForm, validate, validationError } = useForm(initialState, [
-    { field: 'email', check: 'isEmail' },
-  ]);
-  const [signup, { data, error }] = useMutation(REQUEST_RESET_MUTATION, {
+  const initialState = useRef({ email: '' });
+  const { addToast } = useToasts();
+  const { inputs, handleChange, resetForm, validate, validationError } = useForm(
+    initialState.current,
+    [{ field: 'email', check: 'isEmail' }]
+  );
+  const [requestReset, { data, error }] = useMutation(REQUEST_RESET_MUTATION, {
     variables: inputs,
+    onCompleted: () => {
+      addToast(t('reset-requested', { email: inputs.email }), {
+        appearance: 'success',
+        autoDismiss: 30,
+      });
+    },
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
   async function handleSubmit(e) {
     e.preventDefault(); // stop the form from submitting
     if (!validate()) return;
-    await signup().catch(console.error);
+    await requestReset().catch(console.error);
     resetForm();
-    // Send the email and password to the graphqlAPI
+    onClose();
   }
   return (
     <Drawer onClose={onClose} open={open} title={t('reset-password')}>

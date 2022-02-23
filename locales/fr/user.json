@@ -62,5 +62,6 @@
   "reset-request": "Réinitialiser le mot de passe",
   "reset-token-error": "Erreur, vous devez fournir un token valide",
   "reset-err-pwd": "Les mots de passe doivent etre identiques",
-  "account-created": "Un compte a été créé pour l'email {{email}}. Vous pouvez maintenant vous connecter"
+  "account-created": "Un compte a été créé pour l'email {{email}}. Vous pouvez maintenant vous connecter",
+  "reset-requested": "La demande de réinitialisation du mot de passe pour le compte {{email}} a été validée, surveillez votre email pour le message de réinitialisation"
 }
