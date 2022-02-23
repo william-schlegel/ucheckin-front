@@ -42,6 +42,7 @@ import { LicenseTypes, useLicenseName } from '../Tables/LicenseType';
 import { useUser } from '../User/Queries';
 import InvitationNew from './InvitationNew';
 import InvitationTable from './InvitationTable';
+import NotificationsTable from './NotificationsTable';
 import {
   ALL_APPLICATIONS_QUERY,
   APPLICATION_QUERY,
@@ -59,7 +60,6 @@ export default function Application({ id, initialData }) {
   const [deleteApplication, { loading: loadingDelete, error: errorDelete }] = useMutation(
     DELETE_APPLICATION_MUTATION,
     {
-      variables: { id },
       refetchQueries: [
         {
           query: ALL_APPLICATIONS_QUERY,
@@ -118,6 +118,18 @@ export default function Application({ id, initialData }) {
     callback: (args) => deleteInvitation(args),
   });
 
+  const {
+    Confirm: ConfirmDel,
+    setIsOpen: setIsOpenDel,
+    setArgs: setArgsDel,
+  } = useConfirm({
+    title: t('confirm-delete-application'),
+    message: t('you-confirm-application'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteApplication(args),
+  });
+
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.application?.owner?.id;
   const [licenseTypeChanged, setLicenseTypeChanged] = useState(false);
@@ -142,6 +154,7 @@ export default function Application({ id, initialData }) {
         })),
         invitations: data.application.invitations,
         licenses: data.application.licenses,
+        notifications: data.application.notifications,
       });
     }
   }, [setInputs, data]);
@@ -175,7 +188,14 @@ export default function Application({ id, initialData }) {
   }
 
   function handleDeleteApplication() {
-    deleteApplication({ variables: { id } });
+    const variables = {
+      id,
+      idInvitations: data.application.invitations.map((p) => ({ id: p.id })),
+      idLicenses: data.application.licenses.map((p) => ({ id: p.id })),
+      idNotifications: data.application.notifications.map((p) => ({ id: p.id })),
+    };
+    setArgsDel({ variables });
+    setIsOpenDel(true);
   }
 
   function handleUpdateApplication() {
@@ -234,6 +254,7 @@ export default function Application({ id, initialData }) {
         </title>
       </Head>
       <Confirm />
+      <ConfirmDel />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {id && inputs.owner.id && showAddLicense && (
         <LicenseNew
@@ -348,6 +369,10 @@ export default function Application({ id, initialData }) {
                 <ButtonNew onClick={() => setShowAddInvit(true)} />
               </Block>
             )}
+          </Row>
+          <Row>
+            <Label>{t('notifications')}</Label>
+            <NotificationsTable notifications={inputs.notifications} />
           </Row>
           <RowFull>
             <Label>{t('licenses')}</Label>

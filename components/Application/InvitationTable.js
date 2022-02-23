@@ -15,23 +15,14 @@ export default function InvitationTable({ invitations, actionButtons }) {
         'status',
         ({ cell: { value } }) => <InvitationStatus value={value} />,
       ],
-      [
-        t('updated'),
-        'updated',
-        ({ cell: { value } }) => <ValidityDate value={value} noColor />,
-      ],
+      [t('updated'), 'updated', ({ cell: { value } }) => <ValidityDate value={value} noColor />],
     ],
     !!actionButtons
   );
 
   return (
     <>
-      <Table
-        columns={columns}
-        data={invitations}
-        actionButtons={actionButtons}
-        withPagination
-      />
+      <Table columns={columns} data={invitations} actionButtons={actionButtons} withPagination />
     </>
   );
 }

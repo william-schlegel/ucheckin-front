@@ -1,11 +1,13 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
 import { perPage } from '../../config';
+import useConfirm from '../../lib/useConfirm';
 import ButtonNew from '../Buttons/ButtonNew';
+import Drawer from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import { Help, HelpButton, useHelp } from '../Help';
 import Loading from '../Loading';
@@ -14,7 +16,8 @@ import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
 import Avatar from '../Tables/Avatar';
 import Table, { useColumns } from '../Tables/Table';
-import { ALL_USERS_QUERY, PAGINATION_QUERY } from './Queries';
+import Actions from './Actions';
+import { ALL_USERS_QUERY, DELETE_USER, PAGINATION_QUERY } from './Queries';
 import Signup from './SignUp';
 
 export default function Users() {
@@ -26,6 +29,11 @@ export default function Users() {
 
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
+  const [deleteUser, { error: errorDelete }] = useMutation(DELETE_USER, {
+    onCompleted: (data) => {
+      console.log('data', data);
+    },
+  });
   const { t } = useTranslation('user');
   const [newUser, setNewUser] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('user');
@@ -35,6 +43,15 @@ export default function Users() {
     { field: 'company.contains', label: t('company'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
+  const { Confirm, setIsOpen, setArgs } = useConfirm({
+    title: t('confirm-delete-user'),
+    message: t('you-confirm-delete-user'),
+    yesLabel: t('yes-delete'),
+    noLabel: t('no-delete'),
+    callback: (args) => deleteUser(args),
+  });
+  const [showActions, setShowActions] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState('');
 
   useEffect(() => {
     const variables = {
@@ -58,6 +75,16 @@ export default function Users() {
     if (id) router.push(`/settings/${id}`);
   }
 
+  function userView(id) {
+    setSelectedUserId(id);
+    setShowActions(true);
+  }
+
+  function userDelete(id) {
+    setArgs({ variables: { id } });
+    setIsOpen(true);
+  }
+
   const columns = useColumns([
     ['id', 'id', 'hidden'],
     [
@@ -77,13 +104,18 @@ export default function Users() {
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
+  if (errorDelete) return <DisplayError error={errorDelete} />;
   return (
     <>
       <Head>
         <title>UCheck In - {t('users')}</title>
       </Head>
+      <Confirm />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <Signup open={newUser} onClose={handleCloseNewUser} />
+      <Drawer open={showActions && selectedUserId} onClose={() => setShowActions(false)}>
+        <Actions userId={selectedUserId} />
+      </Drawer>
       <EntetePage>
         <h3>{t('users')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />
@@ -118,6 +150,8 @@ export default function Users() {
           { type: 'user-profile', action: userProfile },
           { type: 'user-account', action: userAccount },
           { type: 'settings', action: userSettings },
+          { type: 'view', action: userView },
+          { type: 'trash', action: userDelete },
         ]}
       />
     </>

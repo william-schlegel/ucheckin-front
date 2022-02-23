@@ -312,6 +312,77 @@ const ROLE_QUERY = gql`
   }
 `;
 
+export const DELETE_USER = gql`
+  mutation DELETE_USER(
+    $userId: ID!
+    $idApps: [ApplicationWhereUniqueInput!]!
+    $idSignals: [SignalWhereUniqueInput!]!
+    $idSignalFiles: [SignalFileWhereUniqueInput!]!
+    $idLicenses: [LicenseWhereUniqueInput!]!
+    $idTokens: [TokenWhereUniqueInput!]!
+    $idNotifications: [NotificationWhereUniqueInput!]!
+    $idNotificationItems: [NotificationItemWhereUniqueInput!]!
+    $idPrices: [LicensePriceWhereUniqueInput!]!
+    $idPriceItems: [LicensePriceItemWhereUniqueInput!]!
+    $idInvitations: [InvitationWhereUniqueInput!]!
+    $idActions: [UserActionWhereUniqueInput!]!
+    $idEvents: [EventWhereUniqueInput!]!
+  ) {
+    deleteUser(where: { id: $id }) {
+      id
+      name
+    }
+    deleteApplications(where: $idApps) {
+      id
+    }
+    deleteSignals(where: $idSignals) {
+      id
+    }
+    deleteSignalFiles(where: $idSignalFiles) {
+      id
+    }
+    deleteLicenses(where: $idLicenses) {
+      id
+    }
+    deleteTokens(where: $idTokens) {
+      id
+    }
+    deleteNotifications(where: $idNotifications) {
+      id
+    }
+    deleteNotificationItems(where: $idNotificationItems) {
+      id
+    }
+    deleteLicensePrices(where: $idPrices) {
+      id
+    }
+    deleteLicensePriceItemss(where: $idPriceItems) {
+      id
+    }
+    deleteInvitations(where: $idInvitations) {
+      id
+    }
+    deleteUserActions(where: $idActions) {
+      id
+    }
+    deleteEvents(where: $idEvents) {
+      id
+    }
+  }
+`;
+
+export const QUERY_USER_ACTIONS = gql`
+  query QUERY_USER_ACTIONS($id: ID!) {
+    userActions(where: { user: { id: { equals: $id } } }, orderBy: { dateAction: desc }) {
+      id
+      dateAction
+      name
+      itemType
+      itemData
+    }
+  }
+`;
+
 export function useUser() {
   const { data, error, loading } = useQuery(CURRENT_USER_QUERY);
 

@@ -25,6 +25,8 @@ export default function SignUp({ open, onClose }) {
     canSeeAppMenu: true,
     canSeeUcheckinMenu: false,
     canSeeUmitMenu: false,
+    canSeeUmixMenu: false,
+    canSeeHBeaconMenu: false,
   });
   const { inputs, handleChange, resetForm, validate, validationError } = useForm(
     initialState.current,

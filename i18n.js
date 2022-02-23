@@ -18,7 +18,7 @@ module.exports = {
       'umix',
     ],
     'rgx:^/sdk': ['sdk'],
-    'rgx:^/application': ['application', 'license'],
+    'rgx:^/application': ['application', 'license', 'notification'],
     'rgx:^/signal': ['signal', 'license'],
     'rgx:^/profile': ['user', 'license'],
     'rgx:^/account': ['user', 'license', 'application'],

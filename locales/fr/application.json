@@ -29,6 +29,8 @@
   "can-buy-licenses": "L'invité peut acheter ou renouveler des licenses",
   "confirm-delete-invitation": "Vous allez supprimer une invitation",
   "you-confirm-invitation": "L'invité ne pourra plus accéder à votre application à moins de le réinviter de nouveau",
+  "confirm-delete-application": "Vous allez supprimer cette application",
+  "you-confirm-application": "La suppression de l'application supprimera également\n\n* les invitations associées,\n* les licences attachées,\n* les notifications attachées\n\nLA SUPPRESSION EST IRREVERSIBLE",
   "yes-delete": "Oui, supprimer",
   "no-delete": "Non, ne pas supprimer",
   "accept-invitation": "Accepter l'invitation",
@@ -37,5 +39,6 @@
   "invited-user": "En tant que cet utilisateur",
   "need-account": "Mais vous devez créer un compte pour l'accepter",
   "create-account": "Créer un compte pour moi",
-  "invalid-token": "Cette invitation n'est pas ou plus valable"
+  "invalid-token": "Cette invitation n'est pas ou plus valable",
+  "notifications": "Notifications"
 }

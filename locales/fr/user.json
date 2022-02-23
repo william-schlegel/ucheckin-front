@@ -63,5 +63,10 @@
   "reset-token-error": "Erreur, vous devez fournir un token valide",
   "reset-err-pwd": "Les mots de passe doivent etre identiques",
   "account-created": "Un compte a été créé pour l'email {{email}}. Vous pouvez maintenant vous connecter",
-  "reset-requested": "La demande de réinitialisation du mot de passe pour le compte {{email}} a été validée, surveillez votre email pour le message de réinitialisation"
+  "reset-requested": "La demande de réinitialisation du mot de passe pour le compte {{email}} a été validée, surveillez votre email pour le message de réinitialisation",
+  "confirm-delete-user": "Confirmez la suppression de cet utilisateur",
+  "you-confirm-delete-user": "La suppression de cet utilisateur supprimera également :\n\n* Ses applications,\n* signaux,\n* licenses,\n* notifications,\n* événements \n* et toutes les données attachées à son compte.\n\nLA SUPPRESSION EST IRREVERSIBLE",
+  "action-name": "Action",
+  "action-type": "Type",
+  "action-data": "Données"
 }

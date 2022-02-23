@@ -29,6 +29,8 @@
   "can-buy-licenses": "The guest can buy or renew licenses",
   "confirm-delete-invitation": "You are going to delete an invitation",
   "you-confirm-invitation": "The guest will no longuer have access to your application unless you invite him again",
+  "confirm-delete-application": "You will delete this application",
+  "you-confirm-application": "Removing the application will also remove\n\n* attached invitations,\n* attached licenses,\n* attached notifications\n\nTHE DELETION IS IRREVERSIBLE",
   "yes-delete": "Yes, delete",
   "no-delete": "No, do not delete",
   "accept-invitation": "Accept the invitation",
@@ -37,5 +39,6 @@
   "invited-user": "As this user",
   "need-account": "But you must create an account to accept it",
   "create-account": "Create an account for me",
-  "invalid-token": "This invitation is not or no more active"
+  "invalid-token": "This invitation is not or no more active",
+  "notifications": "Notifications"
 }

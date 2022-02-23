@@ -40,6 +40,17 @@ export const APPLICATION_QUERY = gql`
         }
         nbArea
       }
+      notifications {
+        id
+        name
+        displayName
+        signal {
+          id
+          name
+        }
+        startDate
+        endDate
+      }
     }
   }
 `;
@@ -88,10 +99,24 @@ export const CREATE_APPLICATION_MUTATION = gql`
 `;
 
 export const DELETE_APPLICATION_MUTATION = gql`
-  mutation DELETE_APPLICATION_MUTATION($id: ID!) {
+  mutation DELETE_APPLICATION_MUTATION(
+    $id: ID!
+    $idInvitations: [InvitationWhereUniqueInput!]!
+    $idLicenses: [LicenseWhereUniqueInput!]!
+    $idNotifications: [NotificationWhereUniqueInput!]!
+  ) {
     deleteApplication(where: { id: $id }) {
       id
       name
+    }
+    deleteInvitations(where: $idInvitations) {
+      id
+    }
+    deleteLicenses(where: $idLicenses) {
+      id
+    }
+    deleteNotifications(where: $idNotifications) {
+      id
     }
   }
 `;

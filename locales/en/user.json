@@ -63,5 +63,10 @@
   "reset-token-error": "Error, your token is not valid",
   "reset-err-pwd": "Passwords must be the same",
   "account-created": "An account has been created for {{email}}. You can now connect to the application.",
-  "reset-requested": "The password reset request for the {{email}} account has been validated, watch your email for the reset message"
+  "reset-requested": "The password reset request for the {{email}} account has been validated, watch your email for the reset message",
+  "confirm-delete-user": "Confirm the deletion of this user",
+  "you-confirm-delete-user": "Deleting this user will also delete: \nhis or her applications,\nsignals,\nawards,\nnotifications,\nevents,\nand all data attached to his or her account.\nDELETION IS IRREVERSIBLE",
+  "action-name": "Action",
+  "action-type": "Type",
+  "action-data": "Data"
 }
