@@ -110,25 +110,7 @@ export default function Application({ id, initialData }) {
       setInputs((prev) => ({ ...prev, invitations }));
     },
   });
-  const { Confirm, setIsOpen, setArgs } = useConfirm({
-    title: t('confirm-delete-invitation'),
-    message: t('you-confirm-invitation'),
-    yesLabel: t('yes-delete'),
-    noLabel: t('no-delete'),
-    callback: (args) => deleteInvitation(args),
-  });
-
-  const {
-    Confirm: ConfirmDel,
-    setIsOpen: setIsOpenDel,
-    setArgs: setArgsDel,
-  } = useConfirm({
-    title: t('confirm-delete-application'),
-    message: t('you-confirm-application'),
-    yesLabel: t('yes-delete'),
-    noLabel: t('no-delete'),
-    callback: (args) => deleteApplication(args),
-  });
+  const { Confirm, setIsOpen, setArgs, setConfirmContent } = useConfirm({});
 
   const { role: userRole, id: userId } = user;
   const appOwnerId = data?.application?.owner?.id;
@@ -183,19 +165,33 @@ export default function Application({ id, initialData }) {
   }
 
   function delInvitation(invitationId) {
+    setConfirmContent({
+      title: t('confirm-delete-invitation'),
+      message: t('you-confirm-invitation'),
+      yesLabel: t('yes-delete'),
+      noLabel: t('no-delete'),
+      callback: (args) => deleteInvitation(args),
+    });
     setArgs({ variables: { invitationId } });
     setIsOpen(true);
   }
 
   function handleDeleteApplication() {
+    setConfirmContent({
+      title: t('confirm-delete-application'),
+      message: t('you-confirm-application'),
+      yesLabel: t('yes-delete'),
+      noLabel: t('no-delete'),
+      callback: (args) => deleteApplication(args),
+    });
     const variables = {
       id,
       idInvitations: data.application.invitations.map((p) => ({ id: p.id })),
       idLicenses: data.application.licenses.map((p) => ({ id: p.id })),
       idNotifications: data.application.notifications.map((p) => ({ id: p.id })),
     };
-    setArgsDel({ variables });
-    setIsOpenDel(true);
+    setArgs({ variables });
+    setIsOpen(true);
   }
 
   function handleUpdateApplication() {
@@ -254,7 +250,6 @@ export default function Application({ id, initialData }) {
         </title>
       </Head>
       <Confirm />
-      <ConfirmDel />
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       {id && inputs.owner.id && showAddLicense && (
         <LicenseNew

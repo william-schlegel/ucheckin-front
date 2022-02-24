@@ -30,7 +30,7 @@
   "confirm-delete-invitation": "Vous allez supprimer une invitation",
   "you-confirm-invitation": "L'invité ne pourra plus accéder à votre application à moins de le réinviter de nouveau",
   "confirm-delete-application": "Vous allez supprimer cette application",
-  "you-confirm-application": "La suppression de l'application supprimera également\n\n* les invitations associées,\n* les licences attachées,\n* les notifications attachées\n\nLA SUPPRESSION EST IRREVERSIBLE",
+  "you-confirm-application": "La suppression de l'application supprimera également\n\n* les invitations associées,\n* les licences attachées,\n* les notifications attachées\n\n⚠️ LA SUPPRESSION EST IRREVERSIBLE ⚠️",
   "yes-delete": "Oui, supprimer",
   "no-delete": "Non, ne pas supprimer",
   "accept-invitation": "Accepter l'invitation",

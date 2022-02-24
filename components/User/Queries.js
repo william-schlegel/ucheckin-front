@@ -327,8 +327,11 @@ export const DELETE_USER = gql`
     $idInvitations: [InvitationWhereUniqueInput!]!
     $idActions: [UserActionWhereUniqueInput!]!
     $idEvents: [EventWhereUniqueInput!]!
+    $idUmixes: [UmixWhereUniqueInput!]!
+    $idUmixPls: [UmixPlaylistItemWhereUniqueInput!]!
+    $idUmixStatuses: [UmixStatusWhereUniqueInput!]!
   ) {
-    deleteUser(where: { id: $id }) {
+    deleteUser(where: { id: $userId }) {
       id
       name
     }
@@ -356,7 +359,7 @@ export const DELETE_USER = gql`
     deleteLicensePrices(where: $idPrices) {
       id
     }
-    deleteLicensePriceItemss(where: $idPriceItems) {
+    deleteLicensePriceItems(where: $idPriceItems) {
       id
     }
     deleteInvitations(where: $idInvitations) {
@@ -367,6 +370,68 @@ export const DELETE_USER = gql`
     }
     deleteEvents(where: $idEvents) {
       id
+    }
+    deleteUmixes(where: $idUmixes) {
+      id
+    }
+    deleteUmixPlaylistItems(where: $idUmixPls) {
+      id
+    }
+    deleteUmixStatuses(where: $idUmixStatuses) {
+      id
+    }
+  }
+`;
+
+export const QUERY_USER_IDS = gql`
+  query QUERY_USER_IDS($userId: ID!) {
+    user(where: { id: $userId }) {
+      id
+      ownedApps {
+        id
+      }
+      ownedSignals {
+        id
+        files {
+          id
+        }
+      }
+      ownedLicenses {
+        id
+      }
+      tokens {
+        id
+      }
+      ownedNotifications {
+        id
+        items {
+          id
+        }
+      }
+      invitations {
+        id
+      }
+      specialPrice {
+        id
+        items {
+          id
+        }
+      }
+      actions {
+        id
+      }
+    }
+    events(where: { owner: { id: { equals: $userId } } }) {
+      id
+    }
+    umixes(where: { owner: { id: { equals: $userId } } }) {
+      id
+      playlistItems {
+        id
+      }
+      status {
+        id
+      }
     }
   }
 `;

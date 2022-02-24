@@ -12,12 +12,18 @@ import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Form, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
-import { CREATE_INVITATION_MUTATION } from './Queries';
+import { APPLICATION_QUERY, CREATE_INVITATION_MUTATION } from './Queries';
 
 export default function InvitationNew({ appId, open, onClose }) {
   const { t } = useTranslation('application');
   const { setAction } = useAction();
   const [addInvitation, { loading, error }] = useMutation(CREATE_INVITATION_MUTATION, {
+    refetchQueries: [
+      {
+        query: APPLICATION_QUERY,
+        variables: { id: appId },
+      },
+    ],
     onCompleted: (item) => {
       setAction('create', 'invitation', item.addInvitation.id);
       onClose(item.addInvitation);

@@ -17,7 +17,7 @@ import EntetePage from '../styles/EntetePage';
 import Avatar from '../Tables/Avatar';
 import Table, { useColumns } from '../Tables/Table';
 import Actions from './Actions';
-import { ALL_USERS_QUERY, DELETE_USER, PAGINATION_QUERY } from './Queries';
+import { ALL_USERS_QUERY, DELETE_USER, PAGINATION_QUERY, QUERY_USER_IDS } from './Queries';
 import Signup from './SignUp';
 
 export default function Users() {
@@ -33,6 +33,12 @@ export default function Users() {
     onCompleted: (data) => {
       console.log('data', data);
     },
+    refetchQueries: [
+      {
+        query: ALL_USERS_QUERY,
+        variables: { skip: 0, take: perPage },
+      },
+    ],
   });
   const { t } = useTranslation('user');
   const [newUser, setNewUser] = useState(false);
@@ -43,13 +49,20 @@ export default function Users() {
     { field: 'company.contains', label: t('company'), type: 'text' },
   ];
   const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
-  const { Confirm, setIsOpen, setArgs } = useConfirm({
-    title: t('confirm-delete-user'),
-    message: t('you-confirm-delete-user'),
-    yesLabel: t('yes-delete'),
-    noLabel: t('no-delete'),
-    callback: (args) => deleteUser(args),
+  const [queryUserIds, { error: errorQueryIds }] = useLazyQuery(QUERY_USER_IDS, {
+    onCompleted: (data) => {
+      setConfirmContent({
+        title: t('confirm-delete-user-2'),
+        message: t('you-confirm-delete-user-2'),
+        yesLabel: t('yes-delete'),
+        noLabel: t('no-delete'),
+        callback: (args) => deleteUserAccount(args),
+      });
+      setArgs(data);
+      setIsOpen(true);
+    },
   });
+  const { Confirm, setIsOpen, setArgs, setConfirmContent } = useConfirm({});
   const [showActions, setShowActions] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState('');
 
@@ -80,9 +93,41 @@ export default function Users() {
     setShowActions(true);
   }
 
-  function userDelete(id) {
-    setArgs({ variables: { id } });
+  async function userDelete(id) {
+    setConfirmContent({
+      title: t('confirm-delete-user'),
+      message: t('you-confirm-delete-user'),
+      yesLabel: t('yes-delete'),
+      noLabel: t('no-delete'),
+      callback: (args) => queryUserIds(args),
+    });
+    setArgs({ variables: { userId: id } });
     setIsOpen(true);
+  }
+
+  function deleteUserAccount(data) {
+    const variables = {
+      userId: data.user.id,
+      idApps: data.user.ownedApps.map((p) => ({ id: p.id })),
+      idSignals: data.user.ownedSignals.map((p) => ({ id: p.id })),
+      idSignalFiles: data.user.ownedSignals.map((p) => p.files.map((f) => ({ id: f.id }))).flat(),
+      idLicenses: data.user.ownedLicenses.map((p) => ({ id: p.id })),
+      idTokens: data.user.tokens.map((p) => ({ id: p.id })),
+      idNotifications: data.user.ownedNotifications.map((p) => ({ id: p.id })),
+      idNotificationItems: data.user.ownedNotifications
+        .map((p) => p.items.map((f) => ({ id: f.id })))
+        .flat(),
+      idPrices: data.user.specialPrice.map((p) => ({ id: p.id })),
+      idPriceItems: data.user.specialPrice.map((p) => p.items.map((f) => ({ id: f.id }))).flat(),
+      idInvitations: data.user.invitations.map((p) => ({ id: p.id })),
+      idActions: data.user.actions.map((p) => ({ id: p.id })),
+      idEvents: data.events.map((p) => ({ id: p.id })),
+      idUmixes: data.umixes.map((p) => ({ id: p.id })),
+      idUmixPls: data.umixes.map((p) => p.playlistItems.map((f) => ({ id: f.id }))).flat(),
+      idUmixStatuses: data.umixes.map((p) => p.status.map((f) => ({ id: f.id }))).flat(),
+    };
+    console.log('variables', variables);
+    deleteUser({ variables });
   }
 
   const columns = useColumns([
@@ -105,6 +150,7 @@ export default function Users() {
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
   if (errorDelete) return <DisplayError error={errorDelete} />;
+  if (errorQueryIds) return <DisplayError error={errorQueryIds} />;
   return (
     <>
       <Head>

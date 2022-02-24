@@ -65,7 +65,9 @@
   "account-created": "Un compte a été créé pour l'email {{email}}. Vous pouvez maintenant vous connecter",
   "reset-requested": "La demande de réinitialisation du mot de passe pour le compte {{email}} a été validée, surveillez votre email pour le message de réinitialisation",
   "confirm-delete-user": "Confirmez la suppression de cet utilisateur",
-  "you-confirm-delete-user": "La suppression de cet utilisateur supprimera également :\n\n* Ses applications,\n* signaux,\n* licenses,\n* notifications,\n* événements \n* et toutes les données attachées à son compte.\n\nLA SUPPRESSION EST IRREVERSIBLE",
+  "you-confirm-delete-user": "La suppression de cet utilisateur supprimera également :\n\n* Ses applications,\n* signaux,\n* licenses,\n* notifications,\n* événements \n* et toutes les données attachées à son compte.\n\n⚠️ LA SUPPRESSION EST IRREVERSIBLE ⚠️",
+  "confirm-delete-user-2": "Confirmez cette suppression permanente",
+  "you-confirm-delete-user-2": "🔴 LA SUPPRESSION EST PERMANENTE IRREVERSIBLE 🔴",
   "action-name": "Action",
   "action-type": "Type",
   "action-data": "Données"
