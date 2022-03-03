@@ -17,6 +17,16 @@ const HOTKEYS = {
   'mod+u': 'underline',
   'mod+`': 'code',
 };
+function cleanup(val) {
+  const newV = [];
+  for (const v of val) {
+    if (v.type === 'heading-one') newV.push({ ...v, type: 'heading', level: 1 });
+    else if (v.type === 'heading-two') newV.push({ ...v, type: 'heading', level: 2 });
+    else newV.push(v);
+  }
+  // console.log(`val`, newV);
+  return newV;
+}
 
 const RichEditor = ({
   value = [{ type: 'paragraph', children: [{ text: '' }] }],
@@ -29,17 +39,6 @@ const RichEditor = ({
   const { t } = useTranslation('common');
 
   // console.log(`value`, value);
-
-  function cleanup(val) {
-    const newV = [];
-    for (const v of val) {
-      if (v.type === 'heading-one') newV.push({ ...v, type: 'heading', level: 1 });
-      else if (v.type === 'heading-two') newV.push({ ...v, type: 'heading', level: 2 });
-      else newV.push(v);
-    }
-    // console.log(`val`, newV);
-    return newV;
-  }
 
   return (
     <Box>
@@ -85,8 +84,10 @@ export const Element = ({ attributes, children, element }) => {
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
-    case 'bulleted-list':
+    case 'unordered-list':
       return <ul {...attributes}>{children}</ul>;
+    case 'ordered-list':
+      return <ol {...attributes}>{children}</ol>;
     case 'heading-one':
       return <h1 {...attributes}>{children}</h1>;
     case 'heading-two':
@@ -100,6 +101,8 @@ export const Element = ({ attributes, children, element }) => {
 
     case 'list-item':
       return <li {...attributes}>{children}</li>;
+    case 'list-item-content':
+      return children;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
     case 'link':
