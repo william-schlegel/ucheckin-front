@@ -23,7 +23,8 @@ import DisplayError from '../ErrorMessage';
 import FieldError from '../FieldError';
 import { Help, HelpButton, useHelp } from '../Help';
 import { SearchUser } from '../SearchUser';
-import RichEditor from '../slate/SlateEditor';
+// import RichEditor from '../slate/SlateEditor';
+import KsEditor from '../slate/KsEditor';
 import {
   Block,
   Form,
@@ -399,7 +400,7 @@ export default function Event({ id, initialData }) {
                       {t('event-description')}
                     </Label>
                     <FieldError error={validationError.eventDescription} />
-                    <RichEditor
+                    {/* <RichEditor
                       id="eventDescription"
                       value={initialValues.current.eventDescription?.document}
                       setValue={(value) =>
@@ -409,6 +410,16 @@ export default function Event({ id, initialData }) {
                         })
                       }
                       placeholder={t('description-placeholder')}
+                    /> */}
+                    <KsEditor
+                      id="eventDescription"
+                      value={initialValues.current.eventDescription?.document}
+                      setValue={(value) =>
+                        handleChange({
+                          name: 'eventDescription.document',
+                          value,
+                        })
+                      }
                     />
                   </RowFull>
                 </>

@@ -244,7 +244,7 @@ export default function handler(req, res) {
     return new Promise((resolve, reject) => {
       s3.upload(params, (err, data) => {
         if (err) {
-          console.log(`err`, err);
+          console.error(`err`, err);
           reject(err);
         } else {
           resolve({ url: data.Location, fileName: params.Key });
@@ -254,7 +254,7 @@ export default function handler(req, res) {
   }
 
   if (mode === 0) {
-    console.log(`signal`, signal);
+    // console.log(`signal`, signal);
     const encoded = encodeMessage(signal);
     const buffSignal = createSignal(encoded[0]);
     const intervSpl = parseInt((interval / 1000) * fe);

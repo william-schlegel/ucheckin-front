@@ -65,7 +65,7 @@ export default function MaterialNew({ open, onClose, id }) {
 
   useEffect(() => {
     if (data) {
-      console.log(`data`, data);
+      // console.log(`data`, data);
       setInputs({ name: data.umitMaterial.name, propSpeed: data.umitMaterial.propSpeed });
     }
   }, [data, setInputs]);

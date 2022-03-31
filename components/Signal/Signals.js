@@ -121,7 +121,7 @@ export default function Signals() {
   function handleCloseShowSignal() {
     setShowSignal('');
   }
-  console.log(`data signals`, data);
+  // console.log(`data signals`, data);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

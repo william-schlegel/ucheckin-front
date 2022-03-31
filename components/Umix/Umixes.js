@@ -122,7 +122,7 @@ export default function Umixes() {
   function handleCloseShowUmix() {
     setShowUmix('');
   }
-  console.log(`data umixes`, data);
+  // console.log(`data umixes`, data);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

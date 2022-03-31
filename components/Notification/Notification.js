@@ -459,11 +459,10 @@ export default function Notification({ id, initialData }) {
                   </Row>
                   <FieldError error={validationError['signal.id']} />
                   <Row>
-                    <Label required>{t('event')}</Label>
+                    <Label>{t('event')}</Label>
                     <Select
                       theme={selectTheme}
                       className="select"
-                      required
                       value={optionsEvtUser.find((n) => n.value === inputs.event?.id)}
                       onChange={(n) =>
                         handleChange({

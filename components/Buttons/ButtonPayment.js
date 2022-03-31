@@ -22,7 +22,7 @@ export default function ButtonPayment({
   disabled,
   purchaseFunction,
   data,
-  onSuccess = () => console.log('Success'),
+  onSuccess = () => console.info('Payment Success'),
   onError = (error) => console.error(error),
   validationFunction,
   invoicingModel,

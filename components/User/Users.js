@@ -30,9 +30,6 @@ export default function Users() {
   const page = parseInt(router.query.page) || 1;
   const count = dataPage?.count;
   const [deleteUser, { error: errorDelete }] = useMutation(DELETE_USER, {
-    onCompleted: (data) => {
-      console.log('data', data);
-    },
     refetchQueries: [
       {
         query: ALL_USERS_QUERY,
@@ -126,7 +123,7 @@ export default function Users() {
       idUmixPls: data.umixes.map((p) => p.playlistItems.map((f) => ({ id: f.id }))).flat(),
       idUmixStatuses: data.umixes.map((p) => p.status.map((f) => ({ id: f.id }))).flat(),
     };
-    console.log('variables', variables);
+    // console.log('variables', variables);
     deleteUser({ variables });
   }
 

@@ -16,7 +16,8 @@ import Counter from '../Counter';
 import Drawer, { DrawerFooter } from '../Drawer';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
-import RichEditor from '../slate/SlateEditor';
+// import RichEditor from '../slate/SlateEditor';
+import KsEditor from '../slate/KsEditor';
 import { Form, FormBodyFull, Label, Row, RowReadOnly } from '../styles/Card';
 import { ImageSelection } from '../styles/ImageSelection';
 import selectTheme from '../styles/selectTheme';
@@ -104,7 +105,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
       if (wasTouched('htmlContent.document'))
         newInputs.htmlContent = newInputs.htmlContent.document;
       if (!item.id) newInputs.notification = { connect: { id: notifId } };
-      console.log(`newInputs`, newInputs);
+      // console.log(`newInputs`, newInputs);
       if (item.id) updateNotificationItem({ variables: { id: item.id, data: newInputs } });
       else createNotificationItem({ variables: { data: newInputs } });
     }
@@ -154,7 +155,7 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
           )}
           {inputs.displayType === 'html' && (
             <Row>
-              <RichEditor
+              {/* <RichEditor
                 id="eventDescription"
                 value={initialValues.current.htmlContent?.document}
                 setValue={(value) =>
@@ -164,6 +165,16 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
                   })
                 }
                 placeholder={t('notification-placeholder')}
+              /> */}
+              <KsEditor
+                id="eventDescription"
+                value={initialValues.current.htmlContent?.document}
+                setValue={(value) =>
+                  handleChange({
+                    name: 'htmlContent.document',
+                    value,
+                  })
+                }
               />
             </Row>
           )}

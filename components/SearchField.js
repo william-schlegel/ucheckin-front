@@ -57,10 +57,10 @@ export default function SearchField({ fields, onFilterChange, onClose, isAdmin, 
       raz = value === '';
     }
     if (type === 'date') {
-      console.log(`search filter value`, value);
+      // console.log(`search filter value`, value);
       if (isDate(value)) vFilter = value.toISOString();
       else vFilter = dateNow();
-      console.log(`vFilter`, vFilter);
+      // console.log(`vFilter`, vFilter);
       raz = value === '';
     }
 
@@ -185,7 +185,7 @@ SearchField.propTypes = {
 
 export function ActualFilter({ fields, actualFilter = {}, removeFilters = () => {} }) {
   function getFilter(af) {
-    console.log(`af`, af);
+    // console.log(`af`, af);
     let v = Object.values(af[1]);
     let op = Object.keys(af[1]);
     while (typeof v[0] !== 'string' && typeof v[0] !== 'boolean') {

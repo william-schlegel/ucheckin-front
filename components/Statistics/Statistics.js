@@ -66,7 +66,7 @@ export default function Statistics() {
   function handleCloseShowStatistic() {
     setShowStatistic('');
   }
-  console.log(`data statistics`, data);
+  // console.log(`data statistics`, data);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;

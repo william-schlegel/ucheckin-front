@@ -50,7 +50,7 @@ export default function SensorChart({ open, onClose, id }) {
 
   useEffect(() => {
     const d = emptyChart;
-    console.log(`data`, data);
+    // console.log(`data`, data);
     if (!data?.umitMeasures || !data?.umitMeasures?.length) return;
     d.labels = [];
     d.datasets[0].data = [];
@@ -61,7 +61,7 @@ export default function SensorChart({ open, onClose, id }) {
       d.datasets[1].data.push(data.umitSensor.alert);
     }
 
-    console.log(`d`, d);
+    // console.log(`d`, d);
     setDataChart(d);
   }, [data]);
 

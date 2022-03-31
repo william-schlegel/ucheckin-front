@@ -36,6 +36,7 @@ const DrawerStyled = styled.div`
   right: 0;
   width: 40%;
   z-index: 201;
+  isolation: isolate;
   box-shadow: var(--bs-drawer);
   transform: translateX(100%);
   transition: transform 500ms ease-in-out;

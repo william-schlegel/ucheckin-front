@@ -26,7 +26,7 @@ export default function EventMap({ open, onClose, location, setLocation, lat, ln
   };
 
   if (locationRef.current && !autoComplete) {
-    console.log(`locationRef`, locationRef.current);
+    // console.log(`locationRef`, locationRef.current);
     autoComplete = new window.google.maps.places.Autocomplete(locationRef.current, {
       fields: ['geometry', 'formatted_address'],
       types: ['address'],
@@ -36,14 +36,14 @@ export default function EventMap({ open, onClose, location, setLocation, lat, ln
 
   async function handlePlace() {
     const address = autoComplete.getPlace();
-    console.log(`address`, address);
+    // console.log(`address`, address);
     setNewLoc(address.formatted_address);
     if (address.geometry) {
       const newCent = {
         lat: address.geometry.location.lat(),
         lng: address.geometry.location.lng(),
       };
-      console.log(`newCent`, newCent);
+      // console.log(`newCent`, newCent);
       setCenter(newCent);
     }
   }
@@ -125,7 +125,7 @@ function Map({ center, zoom }) {
         })
       );
     if (marker) {
-      console.log(`center`, center);
+      // console.log(`center`, center);
       marker.setOptions({ position: center });
       marker.setVisible(true);
     }

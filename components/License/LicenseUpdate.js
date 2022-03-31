@@ -75,7 +75,7 @@ export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId
   }
 
   function handleError(error) {
-    console.log(`error`, error);
+    console.error(`error`, error);
   }
 
   useEffect(() => {

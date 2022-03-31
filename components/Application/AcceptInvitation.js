@@ -64,18 +64,18 @@ export default function AcceptInvitation({ token }) {
 
   function handleAcceptInvitation() {
     updateInvitationStatus({ variables: { token, accept: true } });
-    console.log('accepted');
+    console.info('invitation accepted');
   }
 
   function handleRefuseInvitation() {
     updateInvitationStatus({ variables: { token, accept: false } });
-    console.log('refused');
+    console.info('invitation refused');
   }
 
   function handleCreateAccount() {
     if (!validate()) return;
     createAccountInvitation({ variables: { token, ...inputs } });
-    console.log('create account');
+    console.info('create account');
   }
 
   if (!invitation.id) return <H2>{t('invalid-token')}</H2>;

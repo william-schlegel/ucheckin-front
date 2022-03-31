@@ -16,7 +16,7 @@ export default function DatePicker({ ISOStringValue, onChange, withTime }) {
           onChange(dt);
         } else {
           const value = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 12);
-          console.log(`DatePicker`, value);
+          // console.log(`DatePicker`, value);
           onChange(value);
         }
       }}

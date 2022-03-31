@@ -268,7 +268,7 @@ function TablePagination({
 }) {
   const { t } = useTranslation('common');
   if (pageCount <= 1) return null;
-  console.log(`pageCount`, { page, pageCount });
+  // console.log(`pageCount`, { page, pageCount });
   return (
     <PaginationContainer>
       <button type="button" disabled={!!(page <= 0)} onClick={() => gotoPage(0)}>

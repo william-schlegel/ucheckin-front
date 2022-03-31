@@ -116,7 +116,7 @@ export default function Umix({ id, initialData }) {
   function handleValidation() {
     const newInputs = validate();
     if (!newInputs) return;
-    console.log('newInputs', newInputs);
+    // console.log('newInputs', newInputs);
     if (isEmpty(newInputs)) {
       router.push('/umixes');
       return;
@@ -139,6 +139,7 @@ export default function Umix({ id, initialData }) {
   }
 
   function deletePlaylistItem(id) {
+    // TODO: delete playlist item
     console.log('id', id);
   }
 

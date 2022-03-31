@@ -20,7 +20,7 @@ export default function Switch3S({ value, onChange, disabled }) {
         newVal = 'unchecked';
         break;
     }
-    console.log(`newVal`, newVal);
+    // console.log(`newVal`, newVal);
     setSwitchValue(newVal);
     onChange(newVal);
   }

@@ -66,7 +66,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
       mode: 0,
     }).toString();
     const res = await fetch(`/api/signal?${searchString}`, { method: 'GET' });
-    console.log(`res`, res);
+    // console.log(`res`, res);
     const { url, fileName } = await res.json();
     if (res.status === 200) {
       addToast(t('file-created', { fileName }), {
@@ -82,7 +82,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
           fileName,
         },
       };
-      console.log(`variables`, variables);
+      // console.log(`variables`, variables);
       createFile(variables);
     } else {
       addToast(res.error || res.statusText, { appearance: 'error' });

@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 
 export default function handler(req, res) {
   const { file } = req.query; // fichier à downloader
-  console.log(`file`, file);
+  // console.log(`file`, file);
   const credentials = new AWS.Credentials({
     accessKeyId: process.env.NEXT_AWS_ID,
     secretAccessKey: process.env.NEXT_AWS_SECRET,
@@ -18,7 +18,7 @@ export default function handler(req, res) {
   };
 
   const preSignedUrl = s3.getSignedUrl('getObject', params);
-  console.log(`preSignedUrl`, preSignedUrl);
+  // console.log(`preSignedUrl`, preSignedUrl);
 
   return res.status(200).json({ url: preSignedUrl });
 }
