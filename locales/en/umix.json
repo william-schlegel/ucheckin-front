@@ -26,5 +26,6 @@
   "duration": "Emission duration",
   "type-signal": "Signal type",
   "signal": "Signal code",
-  "play-at": "Play at"
+  "play-at": "Play at",
+  "unassigned": "Unassigned"
 }

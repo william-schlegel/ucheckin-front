@@ -157,7 +157,7 @@ export default function Umix({ id, initialData }) {
         </FormHeader>
         <Drawer open={showAdd} onClose={() => setShowAdd(false)}>
           <NewPlaylistItem
-            ownerId={inputs.owner.id}
+            ownerId={inputs.owner?.id}
             umixId={inputs.id}
             onClose={() => setShowAdd(false)}
           />
@@ -203,7 +203,7 @@ export default function Umix({ id, initialData }) {
                 <SearchUser
                   required
                   name="owner.id"
-                  value={inputs.owner.id}
+                  value={inputs.owner?.id}
                   onChange={handleChange}
                 />
               </Block>
@@ -211,7 +211,7 @@ export default function Umix({ id, initialData }) {
           ) : (
             <RowReadOnly>
               <Label>{t('common:owner')}</Label>
-              <span>{inputs.owner.name}</span>
+              <span>{inputs.owner?.name}</span>
             </RowReadOnly>
           )}
         </FormBody>

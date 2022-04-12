@@ -26,5 +26,6 @@
   "duration": "Durée d'émission",
   "type-signal": "Type de signal",
   "signal": "Code du signal",
-  "play-at": "Jouer le"
+  "play-at": "Jouer le",
+  "unassigned": "Non affecté"
 }
