@@ -225,7 +225,7 @@ export default function handler(req, res) {
    * @param {Array} bufferSignal Buffer of th signal to save
    * @returns {String} url of the signal
    */
-  function saveFile(bufferSignal) {
+  function saveFile(bufferSignal, atom = false) {
     const wav = new WaveFile();
     const credentials = new AWS.Credentials({
       accessKeyId: process.env.NEXT_AWS_ID,
@@ -238,7 +238,7 @@ export default function handler(req, res) {
     wav.fromScratch(1, fe, '16', bufferSignal);
     const params = {
       Bucket: process.env.NEXT_AWS_BUCKET,
-      Key: `${signal}_${fc}_${duration}.wav`,
+      Key: atom ? `${signal}_${fc}_atom.wav` : `${signal}_${fc}_${duration}.wav`,
       Body: Buffer.from(wav.toBuffer()),
     };
     return new Promise((resolve, reject) => {
@@ -275,9 +275,15 @@ export default function handler(req, res) {
     for (let i = 0; i < signalComplet.length; i += 1) {
       signalComplet[i] = parseInt(((signalComplet[i] * volume) / max) * wavParam, 10);
     }
-    return saveFile(signalComplet).then(({ url, fileName }) =>
-      res.status(200).json({ url, fileName })
-    );
+    saveFile(buffSignal, true).then(({ url, fileName }) => {
+      const urlAtom = url;
+      const fileNameAtom = fileName;
+      console.log('urlAtom', urlAtom);
+      saveFile(signalComplet).then(({ url, fileName }) => {
+        console.log('url', url);
+
+        return res.status(200).json({ url, fileName, urlAtom, fileNameAtom });
+      });
+    });
   }
-  return res.status(400).json({ error: 'mode 1 not implemented yet' });
 }

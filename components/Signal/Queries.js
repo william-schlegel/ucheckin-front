@@ -120,6 +120,8 @@ export const MUTATION_ADD_SIGNAL_FILE = gql`
     $gain: Int
     $url: String!
     $fileName: String!
+    $urlAtom: String!
+    $fileNameAtom: String!
   ) {
     createSignalFile(
       data: {
@@ -132,11 +134,15 @@ export const MUTATION_ADD_SIGNAL_FILE = gql`
         gain: $gain
         url: $url
         fileName: $fileName
+        urlAtom: $urlAtom
+        fileNameAtom: $fileNameAtom
       }
     ) {
       id
       url
       fileName
+      urlAtom
+      fileNameAtom
     }
   }
 `;

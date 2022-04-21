@@ -67,7 +67,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
     }).toString();
     const res = await fetch(`/api/signal?${searchString}`, { method: 'GET' });
     // console.log(`res`, res);
-    const { url, fileName } = await res.json();
+    const { url, fileName, urlAtom, fileNameAtom } = await res.json();
     if (res.status === 200) {
       addToast(t('file-created', { fileName }), {
         appearance: 'success',
@@ -80,6 +80,8 @@ export default function SignalFiles({ signalId, signalCode, files }) {
           centralFrequency: fc,
           url,
           fileName,
+          urlAtom,
+          fileNameAtom,
         },
       };
       // console.log(`variables`, variables);
