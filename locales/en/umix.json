@@ -27,5 +27,9 @@
   "type-signal": "Signal type",
   "signal": "Signal code",
   "play-at": "Play at",
-  "unassigned": "Unassigned"
+  "unassigned": "Unassigned",
+  "connected": "Connected",
+  "disconnected": "Disconnected",
+  "connection-status": "Connection",
+  "server-status": "Real time UMIX server status : {{status}}"
 }

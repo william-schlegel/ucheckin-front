@@ -64,6 +64,7 @@ export default Page;
 const colors = theme('mode', {
   light: css`
     --green: #20c05c;
+    --red: #f31a1c;
     --primary: #3c64a4;
     --secondary: #e63586;
     --black: #101010;
@@ -90,6 +91,7 @@ const colors = theme('mode', {
   `,
   dark: css`
     --green: #20c05c;
+    --red: #f31a1c;
     --primary: #3c64a4;
     --secondary: #e63586;
     --black: #101010;

@@ -27,5 +27,9 @@
   "type-signal": "Type de signal",
   "signal": "Code du signal",
   "play-at": "Jouer le",
-  "unassigned": "Non affecté"
+  "unassigned": "Non affecté",
+  "connected": "Connecté",
+  "disconnected": "Déconnecté",
+  "connection-status": "Connexion",
+  "server-status": "Statut du serveur UMIX temps réel : {{status}}"
 }

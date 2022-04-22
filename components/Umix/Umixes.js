@@ -3,6 +3,8 @@ import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import styled from 'styled-components';
 
 import { perPage } from '../../config';
 import ButtonNew from '../Buttons/ButtonNew';
@@ -14,6 +16,7 @@ import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
 import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
+import UmixRT from '../Tables/UmixRT';
 import UmixStatus from '../Tables/UmixStatus';
 import { useUser } from '../User/Queries';
 import {
@@ -24,6 +27,8 @@ import {
 } from './Queries';
 import UmixDetails from './UmixDetails';
 import UmixNew from './UmixNew';
+
+const socket = io(process.env.NEXT_PUBLIC_SERVER_UMIX);
 
 export default function Umixes() {
   const router = useRouter();
@@ -53,6 +58,9 @@ export default function Umixes() {
   const [newUmix, setNewUmix] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umix');
   const { user } = useUser();
+  const userId = user?.id;
+  const [umixes, setUmixes] = useState([]);
+  const [connected, setConnected] = useState(false);
 
   const searchFields = [
     { field: 'name.contains', label: t('umix'), type: 'text' },
@@ -70,6 +78,12 @@ export default function Umixes() {
     queryPagination({ variables });
     queryUmixes({ variables });
   }, [filters, queryPagination, queryUmixes, page]);
+
+  useEffect(() => {
+    if (data?.umixes) {
+      setUmixes(data.umixes.map((umix) => ({ ...umix, connected: false })));
+    }
+  }, [data?.umixes]);
 
   function viewUmix(id) {
     if (id) setShowUmix(id);
@@ -117,7 +131,43 @@ export default function Umixes() {
       ),
     ],
     [t('common:owner'), 'owner.name'],
+    [
+      t('umix:connection-status'),
+      'connected',
+      ({ cell: { value } }) => <UmixRT connected={value} />,
+    ],
   ]);
+
+  useEffect(() => {
+    if (userId && socket && socket.connected && umixes.length) {
+      socket.once().emit('identification', { userId }, () => {
+        console.log(`${userId} connected to RT`);
+      });
+      socket.once().emit('umix-status', null, (umixesStatus) => {
+        for (const umix of umixes) {
+          const status = umixesStatus.find((u) => u.umixId === umix.id);
+          if (status) {
+            umix.connected = status.connected;
+          }
+        }
+        setUmixes([...umixes]);
+      });
+      socket.on('umix-connexion-status', (id, status) => {
+        const umix = umixes.find((umix) => umix.id === id);
+        if (umix) {
+          umix.connected = status;
+          setUmixes([...umixes]);
+        }
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [userId, umixes.length]);
+
+  if (socket.connected !== connected) setConnected(socket.connected);
 
   function handleCloseShowUmix() {
     setShowUmix('');
@@ -156,9 +206,12 @@ export default function Umixes() {
         isAdmin={user.role?.canManageAllUmix}
       />
       <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
+      <RTServerStatus status={connected}>
+        {t('server-status', { status: connected ? t('connected') : t('disconnected') })}
+      </RTServerStatus>
       <Table
         columns={columns}
-        data={data?.umixes}
+        data={umixes}
         error={error}
         loading={loading}
         actionButtons={[
@@ -169,3 +222,12 @@ export default function Umixes() {
     </>
   );
 }
+
+export const RTServerStatus = styled.div`
+  background-color: ${(props) => (props.status ? 'var(--green)' : 'var(--red)')};
+  color: white;
+  padding: 5px 2rem;
+  border-radius: 2rem;
+  max-width: fit-content;
+  margin-bottom: 1rem;
+`;

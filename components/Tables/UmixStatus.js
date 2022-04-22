@@ -15,8 +15,8 @@ const STATUS = [
   { key: 'delivered', color: '#fb9e1f' },
   { key: 'maintenance', color: '#d933c8' },
   { key: 'dead', color: '#e31a1c' },
-  { key: 'operational', color: '#49eb4b' },
-  { key: 'unassigned', color: '#f31a1c' },
+  { key: 'operational', color: 'var(--green)' },
+  { key: 'unassigned', color: 'var(--red)' },
 ];
 
 export default function UmixStatus({ status, modificationDate, onChangeStatus, noChange }) {
