@@ -2,9 +2,8 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/dist/client/router';
 import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 
+import useSocket from '../../lib/useSocket';
 import Dashboard from '../Dashboard';
 import DisplayError from '../ErrorMessage';
 import Loading from '../Loading';
@@ -13,7 +12,6 @@ import Table, { useColumns } from '../Tables/Table';
 import UmixRT from '../Tables/UmixRT';
 import UmixStatus from '../Tables/UmixStatus';
 import { RTServerStatus } from '../Umix/Umixes';
-import { useUser } from '../User/Queries';
 
 const nbUmix = 5;
 
@@ -32,25 +30,15 @@ const QUERY_UMIXES = gql`
   }
 `;
 
-const socket = io(process.env.NEXT_PUBLIC_SERVER_UMIX);
-
 export default function DashboardUmix() {
   const { t } = useTranslation('dashboard');
   const { error, loading, data } = useQuery(QUERY_UMIXES);
   const router = useRouter();
-  const user = useUser();
-  const userId = user?.user?.id;
-  const [umixes, setUmixes] = useState([]);
-  const [connected, setConnected] = useState(false);
+  const { isConnected } = useSocket();
 
   function viewUmix(umixId) {
     router.push(`/umix/${umixId}`);
   }
-  useEffect(() => {
-    if (data?.umixes) {
-      setUmixes(data.umixes.map((umix) => ({ ...umix, connected: false })));
-    }
-  }, [data?.umixes]);
 
   const columns = useColumns(
     [
@@ -78,39 +66,15 @@ export default function DashboardUmix() {
       [
         t('umix:connection-status'),
         'connected',
-        ({ cell: { value } }) => <UmixRT connected={value} />,
+        ({
+          row: {
+            values: { id },
+          },
+        }) => <UmixRT umixId={id} />,
       ],
     ],
     false
   );
-  useEffect(() => {
-    if (userId && socket && socket.connected && umixes.length) {
-      socket.once().emit('identification', { userId }, () => {
-        console.log(`${userId} connected to RT`);
-      });
-      socket.once().emit('umix-status', null, (umixesStatus) => {
-        for (const umix of umixes) {
-          const status = umixesStatus.find((u) => u.umixId === umix.id);
-          if (status) umix.connected = status.connected;
-        }
-        setUmixes([...umixes]);
-      });
-      socket.on('umix-connexion-status', (id, status) => {
-        const umix = umixes.find((umix) => umix.id === id);
-        if (umix) {
-          umix.connected = status;
-          setUmixes([...umixes]);
-        }
-      });
-    }
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [userId, umixes.length]);
-
-  if (socket.connected !== connected) setConnected(socket.connected);
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
@@ -120,13 +84,13 @@ export default function DashboardUmix() {
       total={t('umixes-total')}
       count={data.umixesCount}
     >
-      <RTServerStatus status={connected}>
+      <RTServerStatus status={isConnected}>
         {t('umix:server-status', {
-          status: connected ? t('umix:connected') : t('umix:disconnected'),
+          status: isConnected ? t('umix:connected') : t('umix:disconnected'),
         })}
       </RTServerStatus>
 
-      <Table columns={columns} data={umixes} />
+      <Table columns={columns} data={data?.umixes} />
     </Dashboard>
   );
 }

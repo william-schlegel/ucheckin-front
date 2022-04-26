@@ -1,8 +1,15 @@
 import useTranslation from 'next-translate/useTranslation';
+import { useState } from 'react';
 import styled from 'styled-components';
 
-export default function UmixRT({ connected }) {
+import useSocket from '../../lib/useSocket';
+
+export default function UmixRT({ umixId }) {
   const { t } = useTranslation('umix');
+  const [connected, setConnected] = useState(false);
+  useSocket(umixId, (data) => {
+    setConnected(!!data?.connected);
+  });
 
   return (
     <StatusContainer>

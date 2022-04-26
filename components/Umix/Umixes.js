@@ -3,10 +3,10 @@ import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 import styled from 'styled-components';
 
 import { perPage } from '../../config';
+import useSocket from '../../lib/useSocket';
 import ButtonNew from '../Buttons/ButtonNew';
 import DisplayError from '../ErrorMessage';
 import { Help, HelpButton, useHelp } from '../Help';
@@ -27,8 +27,6 @@ import {
 } from './Queries';
 import UmixDetails from './UmixDetails';
 import UmixNew from './UmixNew';
-
-const socket = io(process.env.NEXT_PUBLIC_SERVER_UMIX);
 
 export default function Umixes() {
   const router = useRouter();
@@ -58,16 +56,16 @@ export default function Umixes() {
   const [newUmix, setNewUmix] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umix');
   const { user } = useUser();
-  const userId = user?.id;
-  const [umixes, setUmixes] = useState([]);
-  const [connected, setConnected] = useState(false);
+  const { isConnected } = useSocket();
 
   const searchFields = [
     { field: 'name.contains', label: t('umix'), type: 'text' },
     { field: 'owner.name.contains', label: t('common:owner'), type: 'text' },
     { field: 'playlistActive.equals', label: t('active'), type: 'switch' },
   ];
-  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } = useFilter();
+
+  const { showFilter, setShowFilter, filters, handleNewFilter, resetFilters } =
+    useFilter(updateConnectionStatus);
 
   useEffect(() => {
     const variables = {
@@ -78,12 +76,6 @@ export default function Umixes() {
     queryPagination({ variables });
     queryUmixes({ variables });
   }, [filters, queryPagination, queryUmixes, page]);
-
-  useEffect(() => {
-    if (data?.umixes) {
-      setUmixes(data.umixes.map((umix) => ({ ...umix, connected: false })));
-    }
-  }, [data?.umixes]);
 
   function viewUmix(id) {
     if (id) setShowUmix(id);
@@ -134,40 +126,17 @@ export default function Umixes() {
     [
       t('umix:connection-status'),
       'connected',
-      ({ cell: { value } }) => <UmixRT connected={value} />,
+      ({
+        row: {
+          values: { id },
+        },
+      }) => <UmixRT umixId={id} />,
     ],
   ]);
 
-  useEffect(() => {
-    if (userId && socket && socket.connected && umixes.length) {
-      socket.once().emit('identification', { userId }, () => {
-        console.log(`${userId} connected to RT`);
-      });
-      socket.once().emit('umix-status', null, (umixesStatus) => {
-        for (const umix of umixes) {
-          const status = umixesStatus.find((u) => u.umixId === umix.id);
-          if (status) {
-            umix.connected = status.connected;
-          }
-        }
-        setUmixes([...umixes]);
-      });
-      socket.on('umix-connexion-status', (id, status) => {
-        const umix = umixes.find((umix) => umix.id === id);
-        if (umix) {
-          umix.connected = status;
-          setUmixes([...umixes]);
-        }
-      });
-    }
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [userId, umixes.length]);
-
-  if (socket.connected !== connected) setConnected(socket.connected);
+  function updateConnectionStatus(umixId, connected) {
+    console.log(`update status ${umixId} ${connected}`);
+  }
 
   function handleCloseShowUmix() {
     setShowUmix('');
@@ -176,6 +145,7 @@ export default function Umixes() {
 
   if (loading) return <Loading />;
   if (error) return <DisplayError error={error} />;
+
   return (
     <>
       <Head>
@@ -206,12 +176,12 @@ export default function Umixes() {
         isAdmin={user.role?.canManageAllUmix}
       />
       <ActualFilter fields={searchFields} actualFilter={filters} removeFilters={resetFilters} />
-      <RTServerStatus status={connected}>
-        {t('server-status', { status: connected ? t('connected') : t('disconnected') })}
+      <RTServerStatus status={isConnected}>
+        {t('server-status', { status: isConnected ? t('connected') : t('disconnected') })}
       </RTServerStatus>
       <Table
         columns={columns}
-        data={umixes}
+        data={data?.umixes}
         error={error}
         loading={loading}
         actionButtons={[

@@ -21,6 +21,7 @@ import {
 import { LicenseType } from '../Tables/LicenseType';
 import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
+import UmixRT from '../Tables/UmixRT';
 import UmixStatus from '../Tables/UmixStatus';
 import ValidityDate from '../Tables/ValidityDate';
 import NewPlaylistItem from './NewPlaylistItem';
@@ -104,6 +105,10 @@ export default function UmixDetails({ open, onClose, id }) {
           <RowReadOnly>
             <Label>{t('common:owner')}</Label>
             <span>{data.umix.owner.name}</span>
+          </RowReadOnly>
+          <RowReadOnly>
+            <Label>{t('connection-status')}</Label>
+            <UmixRT umixId={id} />
           </RowReadOnly>
           <Row>
             <Block>

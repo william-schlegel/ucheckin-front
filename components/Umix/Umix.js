@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import isEmpty from 'lodash.isempty';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -32,6 +33,7 @@ import {
 } from '../styles/Card';
 import { LicenseType } from '../Tables/LicenseType';
 import Table, { useColumns } from '../Tables/Table';
+import UmixRT from '../Tables/UmixRT';
 import UmixStatus from '../Tables/UmixStatus';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
@@ -151,6 +153,11 @@ export default function Umix({ id, initialData }) {
 
   return (
     <>
+      <Head>
+        <title>
+          UCheck In - {t('umix')} {inputs.name}
+        </title>
+      </Head>
       <Form>
         <FormHeader>
           <FormTitle> {t('umix')} </FormTitle>
@@ -214,6 +221,10 @@ export default function Umix({ id, initialData }) {
               <span>{inputs.owner?.name}</span>
             </RowReadOnly>
           )}
+          <RowReadOnly>
+            <Label>{t('connection-status')}</Label>
+            <UmixRT umixId={id} />
+          </RowReadOnly>
         </FormBody>
         <FormBodyFull>
           <Row>

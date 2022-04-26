@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import Head from 'next/head';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { Download } from 'react-feather';
@@ -31,6 +32,9 @@ export default function Sdk({ initialData = [] }) {
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('sdk');
   return (
     <>
+      <Head>
+        <title>UCheck In - {t('sdk')}</title>
+      </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
       <FormHeader>
         <FormTitle>
