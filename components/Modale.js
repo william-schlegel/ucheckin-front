@@ -4,108 +4,83 @@ import styled from 'styled-components';
 
 import CancelButton from './Buttons/ButtonCancel';
 
-export default function Modale({ isOpen, setIsOpen, title, children, actionButtons, cancelLabel }) {
-  function handleClose() {
-    setIsOpen(false);
-  }
-
+export default function Modale({ isOpen, onClose, title, children, actionButtons, cancelLabel }) {
   if (!isOpen) return null;
   return (
-    <DialogStyled open={isOpen} onClose={handleClose}>
-      <Dialog.Overlay className="overlay" />
-      <Dialog.Title as="h3">{title}</Dialog.Title>
-      {children}
-      <div className="footer">
-        {actionButtons}
-        <CancelButton onClick={handleClose} label={cancelLabel} />
-      </div>
-      {/* <Backdrop onClick={handleClose} />
-      <Modal>
-        <div className="header">
-          <h2>{title}</h2>
-          <ActionButton type="close" cb={handleClose} />
-        </div>
+    <Dialog open={isOpen} onClose={onClose} style={DIALOG_STYLE}>
+      <Dialog.Overlay style={OVERLAY_STYLE} />
+      <MyModal>
+        <Dialog.Title as="h3">{title}</Dialog.Title>
         {children}
         <div className="footer">
           {actionButtons}
-          <CancelButton onClick={handleClose} label={cancelLabel} />
+          <CancelButton onClick={onClose} label={cancelLabel} />
         </div>
-      </Modal> */}
-    </DialogStyled>
+      </MyModal>
+    </Dialog>
   );
 }
 
 Modale.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  setIsOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   title: PropTypes.string,
   cancelLabel: PropTypes.string,
   children: PropTypes.node,
   actionButtons: PropTypes.arrayOf(PropTypes.node),
 };
 
-const DialogStyled = styled(Dialog)`
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  overflow-y: auto;
-  .overlay {
-    background-color: black;
-    opacity: 0.3;
+const OVERLAY_STYLE = {
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+};
+
+const DIALOG_STYLE = {
+  position: 'fixed',
+  inset: 0,
+  overflowY: 'auto',
+  display: 'grid',
+  placeItems: 'center',
+  zIndex: 10,
+  maxWidth: '100%',
+};
+
+const MyModal = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 1rem;
+  max-width: 90vw;
+  position: relative;
+  .title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
   }
-  h3 {
+  a {
     color: var(--primary);
+    margin-inline-end: 1rem;
+    &:last-child {
+      margin-inline-end: 0;
+    }
+  }
+  .footer {
+    margin-block-start: 1rem;
+    padding-block-start: 1rem;
+    border-top: 1px solid var(--primary);
+  }
+  .deux-champs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0.5rem;
+    .champ {
+      display: flex;
+      flex-direction: column;
+    }
   }
 `;
-
-// const Modal = styled.div`
-//   max-width: 80vh;
-//   max-height: 80vh;
-//   background-color: var(--background);
-//   opacity: 1;
-//   border: 1px solid var(--lightgray);
-//   border-radius: 5px;
-//   position: absolute;
-//   top: 20%;
-//   left: 50%;
-//   right: auto;
-//   bottom: auto;
-//   margin-right: -50%;
-//   transform: translate(-50%, -50%);
-//   z-index: 1001;
-//   padding: 0.5rem 2rem;
-//   .header {
-//     border-bottom: 1px solid var(--light-grey);
-//     margin-bottom: 0.5rem;
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     h2 {
-//       display: inline;
-//       color: var(--primary);
-//     }
-//     a {
-//       margin-left: 2rem;
-//       border-left: 1px solid var(--light-grey);
-//       padding-left: 0.5rem;
-//     }
-//   }
-//   .footer {
-//     border-top: 1px solid var(--light-grey);
-//     margin-top: 0.5rem;
-//     margin-bottom: 0.5rem;
-//     padding-top: 0.5rem;
-//     display: flex;
-//   }
-// `;
-
-// const Backdrop = styled.div`
-//   position: fixed;
-//   left: 0;
-//   top: 0;
-//   width: 100vw;
-//   height: 100vh;
-//   background-color: black;
-//   opacity: 0.3;
-//   z-index: 1000;
-// `;

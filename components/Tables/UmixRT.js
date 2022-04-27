@@ -1,10 +1,11 @@
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
+import { Play } from 'react-feather';
 import styled from 'styled-components';
 
 import useSocket from '../../lib/useSocket';
 
-export default function UmixRT({ umixId }) {
+export default function UmixRT({ umixId, playNow, onPlay }) {
   const { t } = useTranslation('umix');
   const [connected, setConnected] = useState(false);
   useSocket(umixId, (data) => {
@@ -12,10 +13,19 @@ export default function UmixRT({ umixId }) {
   });
 
   return (
-    <StatusContainer>
-      <ColorBox color={connected ? 'var(--green)' : 'var(--red)'} />
-      <span>{connected ? t('connected') : t('disconnected')}</span>
-    </StatusContainer>
+    <>
+      <StatusContainer>
+        <ColorBox color={connected ? 'var(--green)' : 'var(--red)'} />
+        <span>{connected ? t('connected') : t('disconnected')}</span>
+        {connected && playNow && (
+          <Play
+            style={{ marginLeft: 'auto' }}
+            color="var(--primary)"
+            onClick={() => onPlay(umixId)}
+          />
+        )}
+      </StatusContainer>
+    </>
   );
 }
 

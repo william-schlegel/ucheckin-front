@@ -43,7 +43,7 @@ export default function SignalFiles({ signalId, signalCode, files }) {
     overlap: 0,
     gain: 80,
   });
-  const { inputs, handleChange, setInputs } = useForm(initialValues.current);
+  const { inputs, handleChange } = useForm(initialValues.current);
   const [createFile] = useMutation(MUTATION_ADD_SIGNAL_FILE, {
     refetchQueries: [{ query: SIGNAL_QUERY, variables: { id: signalId } }],
   });
@@ -133,13 +133,6 @@ export default function SignalFiles({ signalId, signalCode, files }) {
     }
   }
 
-  function duplicateFile(id) {
-    const org = files.find((f) => f.id === id);
-    if (!org) return null;
-    setInputs(org);
-    setNewFile(true);
-  }
-
   function viewFile(id) {
     const org = files.find((f) => f.id === id);
     setFileData(org);
@@ -161,7 +154,6 @@ export default function SignalFiles({ signalId, signalCode, files }) {
             actionButtons={[
               { type: 'play', action: playFile },
               { type: 'download', action: downloadFile },
-              { type: 'clone', action: duplicateFile },
               { type: 'view', action: viewFile },
             ]}
           />

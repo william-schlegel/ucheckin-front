@@ -27,6 +27,7 @@ import {
 } from './Queries';
 import UmixDetails from './UmixDetails';
 import UmixNew from './UmixNew';
+import UmixPlayNow from './UmixPlayNow';
 
 export default function Umixes() {
   const router = useRouter();
@@ -53,6 +54,7 @@ export default function Umixes() {
   const count = dataPage?.count;
   const { t } = useTranslation('umix');
   const [showUmix, setShowUmix] = useState('');
+  const [showPlayNow, setShowPlayNow] = useState('');
   const [newUmix, setNewUmix] = useState(false);
   const { helpContent, toggleHelpVisibility, helpVisible } = useHelp('umix');
   const { user } = useUser();
@@ -130,17 +132,19 @@ export default function Umixes() {
         row: {
           values: { id },
         },
-      }) => <UmixRT umixId={id} />,
+      }) => <UmixRT umixId={id} playNow onPlay={onPlay} />,
     ],
   ]);
+
+  function onPlay(id) {
+    console.log('id', id);
+    setShowPlayNow(id);
+  }
 
   function updateConnectionStatus(umixId, connected) {
     console.log(`update status ${umixId} ${connected}`);
   }
 
-  function handleCloseShowUmix() {
-    setShowUmix('');
-  }
   // console.log(`data umixes`, data);
 
   if (loading) return <Loading />;
@@ -152,8 +156,18 @@ export default function Umixes() {
         <title>UCheck In - {t('umixes')}</title>
       </Head>
       <Help contents={helpContent} visible={helpVisible} handleClose={toggleHelpVisibility} />
-      {showUmix && <UmixDetails open={!!showUmix} onClose={handleCloseShowUmix} id={showUmix} />}
+      {showUmix !== '' && (
+        <UmixDetails open={!!showUmix} onClose={() => setShowUmix('')} id={showUmix} />
+      )}
       {newUmix && <UmixNew open={!!newUmix} onClose={() => setNewUmix(false)} ownerId={user.id} />}
+      {showPlayNow !== '' && (
+        <UmixPlayNow
+          open={!!showPlayNow}
+          onClose={() => setShowPlayNow('')}
+          id={showPlayNow}
+          ownerId={user.id}
+        />
+      )}
       <EntetePage>
         <h3>{t('umixes')}</h3>
         <HelpButton showHelp={toggleHelpVisibility} />

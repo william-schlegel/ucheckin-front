@@ -10,6 +10,7 @@ export default function handler(req, res) {
   const duration = Number(req.query.duration || 30); // durée totale du signal
   const volume = Number(req.query.volume || 0.8); // gain à appliquer (entre 0 et 1)
   const mode = Number(req.query.mode || 0); // mode (0 pour ucheckin, 1 pour wi-us - pas encore implémenté)
+  const atomOnly = Number(req.query.atom || 0); // Uniquement le fichier atomique (pour les UMIX)
 
   if (mode === 0) {
     if (signal.length !== 5)
@@ -279,11 +280,15 @@ export default function handler(req, res) {
       const urlAtom = url;
       const fileNameAtom = fileName;
       console.log('urlAtom', urlAtom);
-      saveFile(signalComplet).then(({ url, fileName }) => {
-        console.log('url', url);
+      if (!atomOnly) {
+        saveFile(signalComplet).then(({ url, fileName }) => {
+          console.log('url', url);
 
-        return res.status(200).json({ url, fileName, urlAtom, fileNameAtom });
-      });
+          return res.status(200).json({ url, fileName, urlAtom, fileNameAtom });
+        });
+      } else {
+        return res.status(200).json({ urlAtom, fileNameAtom });
+      }
     });
   }
 }

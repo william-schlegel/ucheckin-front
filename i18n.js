@@ -34,7 +34,7 @@ module.exports = {
     'rgx:^/accept-invitation': ['application'],
     'rgx:^/statistic': ['statistic'],
     'rgx:^/umit': ['umit'],
-    'rgx:^/umix': ['umix'],
+    'rgx:^/umix': ['umix', 'signal'],
     'rgx:^/reset': ['user'],
   },
 };

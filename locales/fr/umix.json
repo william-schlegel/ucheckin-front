@@ -31,5 +31,6 @@
   "connected": "Connecté",
   "disconnected": "Déconnecté",
   "connection-status": "Connexion",
-  "server-status": "Statut du serveur UMIX temps réel : {{status}}"
+  "server-status": "Statut du serveur UMIX temps réel : {{status}}",
+  "play-now": "Jouer maintenant"
 }
