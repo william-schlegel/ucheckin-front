@@ -14,7 +14,7 @@ export default function handler(req, res) {
 
   if (mode === 0) {
     if (signal.length !== 5)
-      return res.status(400).json({ error: `Signal ${volume} must have 5 hex characters` });
+      return res.status(400).json({ error: `Signal ${signal} must have 5 hex characters` });
     if (volume > 1)
       return res.status(400).json({ error: `Volume ${volume} must be between 0 and 1` });
   } else {
@@ -261,20 +261,21 @@ export default function handler(req, res) {
     const intervSpl = parseInt((interval / 1000) * fe);
     const blank = new Array(intervSpl).fill(0);
 
+    let max = 0;
+    for (let i = 0; i < buffSignal.length; i += 1) {
+      const v = Math.abs(buffSignal[i]);
+      if (v > max) max = v;
+    }
+
+    for (let i = 0; i < buffSignal.length; i += 1) {
+      buffSignal[i] = parseInt(((buffSignal[i] * volume) / max) * wavParam, 10);
+    }
+
     const lg1Sig = (buffSignal.length + blank.length) / fe;
     const repeat = Math.floor(duration / lg1Sig);
     const signalComplet = [];
     for (let i = 0; i < repeat; i += 1) {
       signalComplet.push(...buffSignal, ...blank);
-    }
-    let max = 0;
-    for (let i = 0; i < signalComplet.length; i += 1) {
-      const v = Math.abs(signalComplet[i]);
-      if (v > max) max = v;
-    }
-
-    for (let i = 0; i < signalComplet.length; i += 1) {
-      signalComplet[i] = parseInt(((signalComplet[i] * volume) / max) * wavParam, 10);
     }
     saveFile(buffSignal, true).then(({ url, fileName }) => {
       const urlAtom = url;

@@ -214,7 +214,7 @@ export default function FormSignalSelection({
 FormSignalSelection.propTypes = {
   subTitle: PropTypes.string,
   ownerId: PropTypes.string.isRequired,
-  BtnValidation: PropTypes.element.isRequired,
+  BtnValidation: PropTypes.func.isRequired,
   onValidate: PropTypes.func.isRequired,
   createAtomFile: PropTypes.bool,
 };

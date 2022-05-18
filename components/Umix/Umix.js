@@ -40,6 +40,7 @@ import { useUser } from '../User/Queries';
 import NewPlaylistItem from './NewPlaylistItem';
 import {
   ALL_UMIXES_QUERY,
+  DELETE_PLAYLIST_ITEM,
   DELETE_UMIX_MUTATION,
   UMIX_QUERY,
   UPDATE_UMIX_MUTATION,
@@ -115,6 +116,15 @@ export default function Umix({ id, initialData }) {
     }
   );
 
+  const [deletePlaylistItemMutation] = useMutation(DELETE_PLAYLIST_ITEM, {
+    refetchQueries: [
+      {
+        query: UMIX_QUERY,
+        variables: { id },
+      },
+    ],
+  });
+
   function handleValidation() {
     const newInputs = validate();
     if (!newInputs) return;
@@ -141,8 +151,8 @@ export default function Umix({ id, initialData }) {
   }
 
   function deletePlaylistItem(id) {
-    // TODO: delete playlist item
     console.log('id', id);
+    deletePlaylistItemMutation({ variables: { id } });
   }
 
   if (loading) return <Loading />;

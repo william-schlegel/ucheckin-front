@@ -134,6 +134,14 @@ export const CREATE_PLAYLIST_ITEM = gql`
   }
 `;
 
+export const DELETE_PLAYLIST_ITEM = gql`
+  mutation DELETE_PLAYLIST_ITEM($id: ID!) {
+    deleteUmixPlaylistItem(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 export function useFindUmix(umixId) {
   const [findUmix, { data, error, loading }] = useLazyQuery(UMIX_QUERY);
   useEffect(() => {
