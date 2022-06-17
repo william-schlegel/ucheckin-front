@@ -24,8 +24,10 @@ export default function UmixPlayNow({ open, onClose, id, ownerId }) {
       socket.emit('ucheckin-play-now', {
         umixId: id,
         url: inputs.fileNameAtom,
-        duration: inputs.duration,
+        duration: inputs.duration * 1000,
         interval: inputs.interval,
+        sigName: inputs.sigName,
+        centralFrequency: inputs.centralFrequency,
       });
     }
     onClose();

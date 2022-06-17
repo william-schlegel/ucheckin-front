@@ -66,7 +66,7 @@ export default function FormSignalSelection({
 
   function handleClick(e) {
     e.preventDefault();
-    async function createSignal() {
+    async function createSignal(signal) {
       const searchString = new URLSearchParams({
         signal: signal.label,
         fc,
@@ -95,11 +95,11 @@ export default function FormSignalSelection({
     const fc = getChanelFC(inputs.chanel);
     const signal = optionsSignals.find((s) => s.value === inputs.signalId);
     if (createAtomFile) {
-      createSignal().then((fileNameAtom) => {
-        onValidate({ ...inputs, fc, fileNameAtom });
+      createSignal(signal).then((fileNameAtom) => {
+        onValidate({ ...inputs, fc, fileNameAtom, sigName: signal.label });
       });
     } else {
-      onValidate({ ...inputs, fc });
+      onValidate({ ...inputs, fc, sigName: signal.label });
     }
   }
 
