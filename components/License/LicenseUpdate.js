@@ -104,6 +104,7 @@ export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId
             itemName: t(`item-name-${license.licenseType.name}-renew-yearly`),
             quantity: parseInt(monthLicense),
             nbArea: license.nbArea || 1,
+            nbSignal: 1,
             monthly: true,
           });
         }
@@ -114,6 +115,7 @@ export default function LicenseUpdate({ open, onClose, licenseId, appId, ownerId
             itemName: t(`item-name-${license.licenseType.name}-renew-yearly`),
             quantity: parseInt(yearLicense),
             nbArea: license.nbArea || 1,
+            nbSignal: 1,
             monthly: false,
           });
         }
