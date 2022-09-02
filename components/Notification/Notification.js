@@ -80,6 +80,9 @@ export const QUERY_SIGNAL_FROM_APP = gql`
     signals(where: { licenses: { some: { application: { id: { equals: $appId } } } } }) {
       id
       name
+      notification {
+        id
+      }
     }
   }
 `;
@@ -200,9 +203,12 @@ export default function Notification({ id, initialData }) {
 
   useEffect(() => {
     if (dataSig?.signals) {
-      setOptionsSignals(dataSig.signals.map((d) => ({ value: d.id, label: d.name })));
+      const signals = dataSig.signals
+        .filter((s) => s.notification === null || s.notification?.id === id)
+        .map((d) => ({ value: d.id, label: d.name }));
+      setOptionsSignals(signals);
     }
-  }, [dataSig, setOptionsSignals]);
+  }, [dataSig, setOptionsSignals, id]);
 
   const totalPrct = () => inputs.items.reduce((tot, itm) => tot + itm.probability, 0);
 
