@@ -18,6 +18,7 @@ export const ALL_EVENTS_QUERY = gql`
       validityEnd
       publishStart
       publishEnd
+      privateEvent
       owner {
         id
         name
@@ -49,6 +50,8 @@ export const EVENT_QUERY = gql`
       location
       lat
       lng
+      privateEvent
+      privateEventPassword
       application {
         id
         name

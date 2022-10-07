@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
 import { formatDate } from '../DatePicker';
 
 export default function EventHome({ event }) {
   return (
     <Container>
-      <img
-        src={event.imageHome?.publicUrlTransformed || '/images/UNKNOWN.png'}
-        alt="home icon"
-      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={event.imageHome?.publicUrlTransformed || '/images/UNKNOWN.png'} alt="home icon" />
       <div>
         <p className="title">{event.name}</p>
         <p className="localisation">{`${event.location || '?'}, ${formatDate(

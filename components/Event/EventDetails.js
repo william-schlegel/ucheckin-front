@@ -49,6 +49,9 @@ export default function EventDetails({ open, onClose, id }) {
         <FormHeader>
           <FormTitle>
             {t('event')} <span>{data.event.name}</span>
+            {data.event.privateEvent && (
+              <span style={{ color: 'var(--primary)' }}>({t('private')})</span>
+            )}
           </FormTitle>
         </FormHeader>
         <FormBodyFull>

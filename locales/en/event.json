@@ -25,5 +25,7 @@
   "image-event": "Event image",
   "location": "Event location",
   "preview": "Preview",
-  "notifications": "Attached notifications"
+  "notifications": "Attached notifications",
+  "private": "Private",
+  "password": "Access code"
 }

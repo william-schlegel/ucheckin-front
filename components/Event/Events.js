@@ -15,6 +15,7 @@ import Pagination from '../Pagination';
 import SearchField, { ActualFilter, useFilter } from '../SearchField';
 import EntetePage from '../styles/EntetePage';
 import Image from '../Tables/Image';
+import Switch from '../Tables/Switch';
 import Table, { useColumns } from '../Tables/Table';
 import ValidityDate from '../Tables/ValidityDate';
 import { useUser } from '../User/Queries';
@@ -80,6 +81,7 @@ export default function Events() {
       ({ cell: { value } }) => <ValidityDate value={value} after />,
     ],
     [t('publish-end'), 'publishEnd', ({ cell: { value } }) => <ValidityDate value={value} />],
+    [t('private'), 'privateEvent', ({ cell: { value } }) => <Switch disabled value={value} />],
   ]);
 
   const { Confirm, setIsOpen, setArgs } = useConfirm({

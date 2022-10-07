@@ -29,6 +29,7 @@ export default function EventContent({ event }) {
         <span>{event.name}</span>
       </div>
       <div className="image">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={event.imageEvent?.publicUrlTransformed || '/images/UNKNOWN.png'} alt="event" />
         <div className="event-description-container">
           <p className="event-title">{event.description}</p>

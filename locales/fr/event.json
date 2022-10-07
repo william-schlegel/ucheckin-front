@@ -25,5 +25,7 @@
   "image-event": "Image de l'évenement",
   "location": "Lieu de l'événement",
   "preview": "Prévisualisation",
-  "notifications": "Notifications attachées"
+  "notifications": "Notifications attachées",
+  "private": "Privé",
+  "password": "Code d'accès"
 }

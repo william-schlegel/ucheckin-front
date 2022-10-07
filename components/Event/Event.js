@@ -42,6 +42,7 @@ import { ImageSelection } from '../styles/ImageSelection';
 import Phone from '../styles/Phone';
 import selectTheme from '../styles/selectTheme';
 import Image from '../Tables/Image';
+import Switch from '../Tables/Switch';
 import { useUser } from '../User/Queries';
 import EventContent from './EventContent';
 import EventHome from './EventHome';
@@ -300,6 +301,32 @@ export default function Event({ id, initialData }) {
                   </Row>
                   <Row>
                     <Block>
+                      <Label>{t('private')}</Label>
+                      <Switch
+                        value={inputs.privateEvent}
+                        callBack={(value) =>
+                          handleChange({
+                            name: 'privateEvent',
+                            value,
+                          })
+                        }
+                      />
+                    </Block>
+                    {inputs.privateEvent && (
+                      <Block>
+                        <Label>{t('password')}</Label>
+                        <input
+                          type="text"
+                          id="password"
+                          name="password"
+                          value={inputs.password}
+                          onChange={handleChange}
+                        />
+                      </Block>
+                    )}
+                  </Row>
+                  <Row>
+                    <Block>
                       <Label htmlFor="publishStart">{t('publish-start')}</Label>
                       <DatePicker
                         id="publishStart"
@@ -400,17 +427,6 @@ export default function Event({ id, initialData }) {
                       {t('event-description')}
                     </Label>
                     <FieldError error={validationError.eventDescription} />
-                    {/* <RichEditor
-                      id="eventDescription"
-                      value={initialValues.current.eventDescription?.document}
-                      setValue={(value) =>
-                        handleChange({
-                          name: 'eventDescription.document',
-                          value,
-                        })
-                      }
-                      placeholder={t('description-placeholder')}
-                    /> */}
                     <KsEditor
                       id="eventDescription"
                       value={initialValues.current.eventDescription?.document}
