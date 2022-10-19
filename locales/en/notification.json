@@ -25,6 +25,7 @@
   "image-selection": "Select an image (prefered size: portrait 1600x900)",
   "probability": "Probability of drawing",
   "quota": "Global display quota",
+  "remaining": "Remaining quota",
   "default": "Default display",
   "simple-desc": "This notification will appear each time the signal is detected. You can also manage a maximum number of displays (0 for no limit) and a delay in minutes between two consecutive displays.",
   "random-draw-desc": "This interaction allows you to manage a draw between several possible notifications such as 'won' and 'lost' for example for the same signal. Choose already the number of notifications you will manage, at least 2. Then for each notification (selectable in the display tab) choose the probability it has to appear and the number of times it can do so. If it can appear several times, a delay between two consecutive displays is manageable (in minutes)",

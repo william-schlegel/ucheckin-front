@@ -99,6 +99,7 @@ export const NOTIFICATION_QUERY = gql`
         probability
         defaultNotification
         quota
+        remainingQuota
       }
     }
   }

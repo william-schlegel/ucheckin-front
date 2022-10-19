@@ -234,17 +234,23 @@ export default function NotificationContent({ open, onClose, item, notifId }) {
             </>
           )}
           {notification.notification.type === 'instant-win' && !inputs.defaultNotification && (
-            <Row>
-              <Counter
-                input={inputs.quota}
-                min={1}
-                max={100}
-                name="quota"
-                handleChange={handleChange}
-                label={t('quota')}
-                fullWidth
-              />
-            </Row>
+            <>
+              <Row>
+                <Counter
+                  input={inputs.quota}
+                  min={1}
+                  max={100}
+                  name="quota"
+                  handleChange={handleChange}
+                  label={t('quota')}
+                  fullWidth
+                />
+              </Row>
+              <RowReadOnly>
+                <Label>{t('remaining')}</Label>
+                <span>{inputs.remainingQuota ?? inputs.quota}</span>
+              </RowReadOnly>
+            </>
           )}
 
           {/* defaultNotification quota */}

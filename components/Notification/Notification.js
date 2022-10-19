@@ -693,6 +693,11 @@ export function Notif({
           </div>
         </div>
       )}
+      {typeNotif === 'instant-win' && !item.defaultNotification && (
+        <div className="quota">
+          {item.remainingQuota}/{item.quota}
+        </div>
+      )}
     </NotifStyle>
   );
 }
@@ -801,5 +806,18 @@ const NotifStyle = styled.div`
     color: var(--secondary);
     justify-content: center;
     text-align: center;
+  }
+  .quota {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    background-color: var(--secondary);
+    color: white;
+    padding: 5px;
+    min-width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
   }
 `;
