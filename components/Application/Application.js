@@ -393,7 +393,9 @@ export default function Application({ id, initialData }) {
           {canEdit && id && (
             <ButtonValidation disabled={loadingUpdate} onClick={handleUpdateApplication} update />
           )}
-          {canEdit && id && (
+          {canEdit && id && data.application.locked ? (
+            <div style={{ color: 'red' }}>Application vérouillée</div>
+          ) : (
             <ButtonDelete disabled={loadingDelete} onClick={handleDeleteApplication} />
           )}
           <ButtonCancel onClick={() => router.back()} />

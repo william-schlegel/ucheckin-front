@@ -9,6 +9,7 @@ export const APPLICATION_QUERY = gql`
       id
       name
       apiKey
+      locked
       owner {
         id
         name
@@ -67,6 +68,7 @@ export const ALL_APPLICATIONS_QUERY = gql`
       id
       name
       apiKey
+      locked
       licenseTypes {
         id
       }

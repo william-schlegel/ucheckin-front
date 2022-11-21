@@ -14,6 +14,7 @@ import {
   Edit,
   Eye,
   HelpCircle,
+  Lock,
   MapPin,
   MinusCircle,
   Pause,
@@ -85,6 +86,7 @@ export default function ActionButton({ type, cb = () => {}, label, size = 24, id
       {type === 'chart' && <BarChart size={size} />}
       {type === 'printer' && <Printer size={size} />}
       {type === 'settings' && <Settings size={size} />}
+      {type === 'locked' && <Lock size={size} />}
     </IconButtonStyles>
   );
 }
@@ -124,6 +126,7 @@ ActionButton.propTypes = {
     'chart',
     'printer',
     'settings',
+    'locked',
   ]).isRequired,
   cb: PropTypes.func.isRequired,
   label: PropTypes.string,
