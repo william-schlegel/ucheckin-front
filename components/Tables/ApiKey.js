@@ -13,7 +13,7 @@ const ApiKeyStyled = styled.div`
   gap: 1rem;
 `;
 
-export default function ApiKey({ apiKey, showCopied }) {
+export default function ApiKey({ apiKey = '', showCopied }) {
   const clipboard = useClipboard({
     copiedTimeout: 1000,
     onSuccess() {
@@ -24,7 +24,7 @@ export default function ApiKey({ apiKey, showCopied }) {
   const { t } = useTranslation('common');
   const { addToast } = useToasts();
 
-  const lenKey = apiKey.length;
+  const lenKey = apiKey?.length ?? 0;
   const obfuscatedKey = [apiKey.slice(0, lenKey / 4), apiKey.slice((lenKey * 3) / 4)].join(
     '  ......  '
   );
